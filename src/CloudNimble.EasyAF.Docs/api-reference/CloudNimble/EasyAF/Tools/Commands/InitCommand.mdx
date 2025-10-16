@@ -1,0 +1,216 @@
+---
+title: InitCommand
+description: "Command for initializing EasyAF project configuration including database scaffolding, project types, and analyzer setup."
+icon: file-brackets-curly
+keywords: ['InitCommand', 'CloudNimble.EasyAF.Tools.Commands.InitCommand', 'CloudNimble.EasyAF.Tools.Commands', 'class', 'CloudNimble.EasyAF.Tools.Commands.EasyAFBaseCommand']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Commands
+
+**Inheritance:** CloudNimble.EasyAF.Tools.Commands.EasyAFBaseCommand
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Commands.InitCommand
+```
+
+## Summary
+
+Command for initializing EasyAF project configuration including database scaffolding, project types, and analyzer setup.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [InitCommand](/api-reference/CloudNimble/EasyAF/Tools/Commands/InitCommand) class.
+
+#### Syntax
+
+```csharp
+public InitCommand(CloudNimble.EasyAF.EFCoreToEdmx.EdmxConfigManager configManager)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `configManager` | `CloudNimble.EasyAF.EFCoreToEdmx.EdmxConfigManager` | The configuration manager service. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ConnectionString
+
+Gets or sets the connection string source.
+
+#### Syntax
+
+```csharp
+public string ConnectionString { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ContextName
+
+Gets or sets the DbContext class name.
+
+#### Syntax
+
+```csharp
+public string ContextName { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DbContextNamespace
+
+Gets or sets the namespace for the generated DbContext.
+
+#### Syntax
+
+```csharp
+public string DbContextNamespace { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ExcludeTables
+
+Gets or sets the tables to exclude.
+
+#### Syntax
+
+```csharp
+public string[] ExcludeTables { get; set; }
+```
+
+#### Property Value
+
+Type: `string[]`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  NoDataAnnotations
+
+Gets or sets a value indicating whether to disable data annotations.
+
+#### Syntax
+
+```csharp
+public bool NoDataAnnotations { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  NoPluralize
+
+Gets or sets a value indicating whether to disable pluralization.
+
+#### Syntax
+
+```csharp
+public bool NoPluralize { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ObjectsNamespace
+
+Gets or sets the namespace for the generated entity objects.
+
+#### Syntax
+
+```csharp
+public string ObjectsNamespace { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Provider
+
+Gets or sets the database provider.
+
+#### Syntax
+
+```csharp
+public string Provider { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SimpleMessageBusProject
+
+Gets or sets the SimpleMessageBus project name to create. If specified, creates a new SimpleMessageBus project.
+
+#### Syntax
+
+```csharp
+public string SimpleMessageBusProject { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SolutionFolder
+
+Gets or sets the working directory for the solution. Defaults to current directory.
+
+#### Syntax
+
+```csharp
+public string SolutionFolder { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Tables
+
+Gets or sets the specific tables to include.
+
+#### Syntax
+
+```csharp
+public string[] Tables { get; set; }
+```
+
+#### Property Value
+
+Type: `string[]`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnExecuteAsync
+
+Executes the init command.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<int> OnExecuteAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<int>`
+Exit code.
+

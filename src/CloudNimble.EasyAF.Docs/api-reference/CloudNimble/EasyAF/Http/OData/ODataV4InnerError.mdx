@@ -1,0 +1,98 @@
+---
+title: ODataV4InnerError
+description: "Represents implementation-specific debugging information for OData errors.             Contains detailed error information such as exception details, stack t..."
+icon: file-brackets-curly
+keywords: ['ODataV4InnerError', 'CloudNimble.EasyAF.Http.OData.ODataV4InnerError', 'CloudNimble.EasyAF.Http.OData', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Http.dll
+
+**Namespace:** CloudNimble.EasyAF.Http.OData
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Http.OData.ODataV4InnerError
+```
+
+## Summary
+
+Represents implementation-specific debugging information for OData errors.
+            Contains detailed error information such as exception details, stack traces, and nested errors.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public ODataV4InnerError()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  InnerError
+
+Gets or sets nested inner error information for chained exceptions.
+            This property allows for hierarchical error reporting when multiple exceptions are involved.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.Http.OData.ODataV4InnerError InnerError { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.EasyAF.Http.OData.ODataV4InnerError`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Message
+
+Gets or sets the detailed error message providing implementation-specific information about the error.
+            This message is typically more technical than the outer error message.
+
+#### Syntax
+
+```csharp
+public string Message { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  StackTrace
+
+Gets or sets the stack trace information for debugging purposes.
+            This property provides detailed execution path information when the error occurred.
+
+#### Syntax
+
+```csharp
+public string StackTrace { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  TypeName
+
+Gets or sets the type name of the exception that caused the error.
+            This property helps identify the specific type of error that occurred on the server.
+
+#### Syntax
+
+```csharp
+public string TypeName { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+

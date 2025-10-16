@@ -1,0 +1,63 @@
+---
+title: DatabaseRootCommand
+description: "Command-line interface for generating EDMX files from databases."
+icon: file-brackets-curly
+keywords: ['DatabaseRootCommand', 'CloudNimble.EasyAF.Tools.Commands.Root.DatabaseRootCommand', 'CloudNimble.EasyAF.Tools.Commands.Root', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Commands.Root
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Commands.Root.DatabaseRootCommand
+```
+
+## Summary
+
+Command-line interface for generating EDMX files from databases.
+
+## Remarks
+
+This class provides CLI commands for database scaffolding and EDMX generation,
+            using McMaster.Extensions.CommandLineUtils for attribute-based command definition.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public DatabaseRootCommand()
+```
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnExecute
+
+Executes the database command. Shows help since this is a parent command.
+
+#### Syntax
+
+```csharp
+public int OnExecute(McMaster.Extensions.CommandLineUtils.CommandLineApplication app)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `app` | `McMaster.Extensions.CommandLineUtils.CommandLineApplication` | The command line application. |
+
+#### Returns
+
+Type: `int`
+Exit code.
+

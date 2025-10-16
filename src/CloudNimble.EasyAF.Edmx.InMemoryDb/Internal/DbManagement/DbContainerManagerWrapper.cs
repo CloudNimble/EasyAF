@@ -1,0 +1,148 @@
+﻿// --------------------------------------------------------------------------------------------
+// <copyright file="DbContainerManagerWrapper.cs" company="Effort Team">
+//     Copyright (C) Effort Team
+//
+//     Permission is hereby granted, free of charge, to any person obtaining a copy
+//     of this software and associated documentation files (the "Software"), to deal
+//     in the Software without restriction, including without limitation the rights
+//     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//     copies of the Software, and to permit persons to whom the Software is
+//     furnished to do so, subject to the following conditions:
+//
+//     The above copyright notice and this permission notice shall be included in
+//     all copies or substantial portions of the Software.
+//
+//     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//     THE SOFTWARE.
+// </copyright>
+// --------------------------------------------------------------------------------------------
+
+namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement
+{
+    using System.Collections.Generic;
+    using System.Linq;
+    using NMemory.Tables;
+    using System;
+    using System.Reflection;
+    using CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement.Schema;
+    using CloudNimble.EasyAF.Edmx.InMemoryDb.Provider;
+    using CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement.Engine;
+    using CloudNimble.EasyAF.Edmx.InMemoryDb.Exceptions;
+
+    internal class DbContainerManagerWrapper : IDbManager
+    {
+        private DbContainer container;
+
+        private static readonly string MigrationHistoryTable = "__MigrationHistory";
+
+        public DbContainerManagerWrapper(DbContainer container)
+        {
+            this.container = container;
+        }
+
+        public void SetIdentityFields(bool enabled)
+        {
+            container.SetIdentityFields(enabled);
+        }
+
+        public void SetIdentity<TEntity>(int? seed, int? increment = null)
+        {
+            var table = TryGetTable<TEntity>();
+
+            if (table != null)
+            {
+                table.SetIdentity(seed, increment);
+            }
+            else
+            {
+                throw new Exception("Invalid table name");
+            }
+        }
+
+        public void ClearMigrationHistory()
+        {
+            foreach (var tableName in container.TableNames)
+            {
+                if (tableName.Name == MigrationHistoryTable)
+                {
+                    var table = container.GetTable(tableName) as IExtendedTable;
+                    table.Clear();
+                }
+            }
+        }
+
+        public void ClearTables()
+        {
+            var specialTables = new List<string>() { MigrationHistoryTable };
+
+            SetRelations(false);
+
+            foreach (var name in container.TableNames)
+            {
+                if (specialTables.Contains(name.Name))
+                {
+                    continue;
+                }
+
+                var table = (IExtendedTable)container.GetTable(name);
+                table.Clear();
+            }
+
+            SetRelations(true);
+        }
+
+        private void SetRelations(bool enabled)
+        {
+            var db = container.Internal;
+
+            foreach (var relation in db.Tables.GetAllRelations())
+            {
+                relation.IsEnabled = enabled;
+            }
+        }
+
+        internal IExtendedTable TryGetTable<TEntity>()
+        {
+            if (container.database == null)
+            {
+                throw new Exception(ExceptionMessages.DatabaseNotInitialized);
+            }
+
+            var tables = (List<ITable>)container.GetAllTables();
+
+            var listDbTableInfo = new Dictionary<string, DbTableInfo>();
+
+            foreach (var tableToFindDbTableInfo in tables)
+            {
+                // copy & paste  public DbTableInfo GetTableInfo(string schema, string name) from EffortConnection
+                {
+                    var _TableInfo = tableToFindDbTableInfo.GetType().GetProperty("TableInfo",
+                          BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+
+                    if (_TableInfo != null)
+                    {
+                        var TableInfo = (DbTableInfo)_TableInfo.GetValue(tableToFindDbTableInfo, BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, null, null);
+                        if (TableInfo != null && TableInfo.EntitySet != null && TableInfo.EntitySet.Name != null)
+                        {
+                            listDbTableInfo.Add(TableInfo.EntitySet.Name, TableInfo);
+                        }
+                    }
+                }
+            }
+
+            DbTableInfo dbTableInfo = null;
+            IExtendedTable table = null;
+            if (listDbTableInfo.TryGetValue(typeof(TEntity).Name, out dbTableInfo))
+            {
+                table = tables.Where(x => x.EntityType.FullName == dbTableInfo.EntityType.FullName).FirstOrDefault() as IExtendedTable;
+            }
+
+            return table;
+        }
+    }
+}

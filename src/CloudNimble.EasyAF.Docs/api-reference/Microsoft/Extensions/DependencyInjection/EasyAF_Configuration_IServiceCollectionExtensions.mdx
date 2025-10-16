@@ -1,0 +1,72 @@
+---
+title: EasyAF_Configuration_IServiceCollectionExtensions
+description: "Provides extension methods for registering EasyAF configuration services in the dependency injection container."
+icon: bolt
+sidebarTitle: EasyAF_Configuration_IServiceCollectionExtensions
+tag: "STATIC"
+keywords: ['EasyAF_Configuration_IServiceCollectionExtensions', 'Microsoft.Extensions.DependencyInjection.EasyAF_Configuration_IServiceCollectionExtensions', 'Microsoft.Extensions.DependencyInjection', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Configuration.dll
+
+**Namespace:** Microsoft.Extensions.DependencyInjection
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.Extensions.DependencyInjection.EasyAF_Configuration_IServiceCollectionExtensions
+```
+
+## Summary
+
+Provides extension methods for registering EasyAF configuration services in the dependency injection container.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  AddConfigurationBase
+
+Adds a configuration class that inherits from [ConfigurationBase](/api-reference/CloudNimble/EasyAF/Configuration/ConfigurationBase) to the service collection.
+            The configuration is bound from the specified configuration section and registered as both the specific
+            type and the base [ConfigurationBase](/api-reference/CloudNimble/EasyAF/Configuration/ConfigurationBase) type for dependency injection.
+
+#### Syntax
+
+```csharp
+public static TConfiguration AddConfigurationBase<TConfiguration>(Microsoft.Extensions.DependencyInjection.IServiceCollection services, Microsoft.Extensions.Configuration.IConfiguration configuration, string configSectionName) where TConfiguration : CloudNimble.EasyAF.Configuration.ConfigurationBase
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The service collection to add the configuration to. |
+| `configuration` | `Microsoft.Extensions.Configuration.IConfiguration` | The configuration instance to bind from. |
+| `configSectionName` | `string` | The name of the configuration section to bind from. |
+
+#### Returns
+
+Type: `TConfiguration`
+The bound configuration instance for immediate use or further configuration.
+
+#### Type Parameters
+
+- `TConfiguration` - The type of configuration class that inherits from [ConfigurationBase](/api-reference/CloudNimble/EasyAF/Configuration/ConfigurationBase).
+
+#### Examples
+
+```csharp
+// In Program.cs or Startup.cs
+var myConfig = builder.Services.AddConfigurationBase&lt;MyAppConfiguration&gt;(
+    builder.Configuration,
+    "AppSettings"
+);
+
+// The configuration can now be injected as either type:
+// [Inject] public MyAppConfiguration Config { get; set; }
+// [Inject] public ConfigurationBase BaseConfig { get; set; }
+```
+

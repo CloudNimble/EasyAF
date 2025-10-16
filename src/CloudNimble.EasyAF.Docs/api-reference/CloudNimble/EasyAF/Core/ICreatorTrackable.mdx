@@ -1,0 +1,43 @@
+---
+title: ICreatorTrackable
+description: "An interface that implements the CloudNimble common pattern for tracking who created an Entity."
+icon: plug
+keywords: ['ICreatorTrackable', 'CloudNimble.EasyAF.Core.ICreatorTrackable<T>', 'CloudNimble.EasyAF.Core', 'interface']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.ICreatorTrackable<T>
+```
+
+## Summary
+
+An interface that implements the CloudNimble common pattern for tracking who created an Entity.
+
+## Type Parameters
+
+- `T` - The type for the identifier.
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  CreatedById
+
+The unique identifier for the User that created this particular Entity.
+
+#### Syntax
+
+```csharp
+T CreatedById { get; set; }
+```
+
+#### Property Value
+
+Type: `T`
+

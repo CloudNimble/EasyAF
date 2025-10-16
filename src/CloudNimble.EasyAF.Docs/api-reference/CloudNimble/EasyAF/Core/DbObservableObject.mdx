@@ -1,0 +1,242 @@
+---
+title: DbObservableObject
+description: "A base class for Entity Framework objects to implement [INotifyPropertyChanged](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertyc..."
+icon: file-brackets-curly
+keywords: ['DbObservableObject', 'CloudNimble.EasyAF.Core.DbObservableObject', 'CloudNimble.EasyAF.Core', 'class', 'CloudNimble.EasyAF.Core.EasyObservableObject', 'System.ComponentModel.INotifyPropertyChanged', 'System.IDisposable', 'System.ComponentModel.IChangeTracking', 'System.ComponentModel.IRevertibleChangeTracking']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+**Inheritance:** CloudNimble.EasyAF.Core.EasyObservableObject
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.DbObservableObject
+```
+
+## Summary
+
+A base class for Entity Framework objects to implement [INotifyPropertyChanged](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged), [IChangeTracking](https://learn.microsoft.com/dotnet/api/system.componentmodel.ichangetracking), 
+            and [IRevertibleChangeTracking](https://learn.microsoft.com/dotnet/api/system.componentmodel.irevertiblechangetracking) in front-end development.
+
+## Remarks
+
+https://stackoverflow.com/questions/2363801/what-would-be-the-best-way-to-implement-change-tracking-on-an-object
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public DbObservableObject()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  IsChanged
+
+Specifies whether or not the object has changed.
+
+#### Syntax
+
+```csharp
+public bool IsChanged { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+#### Remarks
+
+Setting this manually allows you to override the default behavior in case your app needs it.
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  IsGraphChanged
+
+#### Syntax
+
+```csharp
+public bool IsGraphChanged { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OriginalValues
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> OriginalValues { get; private set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ShouldTrackChanges
+
+Specifies whether or not property value changes should be tracked.
+
+#### Syntax
+
+```csharp
+public bool ShouldTrackChanges { get; internal set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+#### Remarks
+
+To track changes, call `Boolean)`. PropertyChanged events will still be fired, regardless of this setting.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  AcceptChanges
+
+Clears the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#originalvalues) list and sets [DbObservableObject.IsChanged](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#ischanged) to [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Syntax
+
+```csharp
+public void AcceptChanges()
+```
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  AcceptChanges
+
+Clears the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#originalvalues) list and sets [DbObservableObject.IsChanged](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#ischanged) to [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool), and optionally traverses the object graph to call [DbObservableObject.AcceptChanges](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#acceptchanges) on any children.
+
+#### Syntax
+
+```csharp
+public void AcceptChanges(bool goDeep)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `goDeep` | `bool` | - |
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ClearRelationships
+
+Sets any child relationships (0..1:1 or 1:*) to null.
+
+#### Syntax
+
+```csharp
+public void ClearRelationships()
+```
+
+#### Remarks
+
+This is typically used to clean an entity before it is POSTed or PUT over an OData API.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetRelatedEntityCollectionProperties
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<System.Reflection.PropertyInfo> GetRelatedEntityCollectionProperties()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<System.Reflection.PropertyInfo>`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetRelatedEntityProperties
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<System.Reflection.PropertyInfo> GetRelatedEntityProperties()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<System.Reflection.PropertyInfo>`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RejectChanges
+
+Loops through the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#originalvalues) list, sets any property that has changed back to the value it had when `Boolean)` was called,
+            clears the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#originalvalues) list, and sets [DbObservableObject.IsChanged](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#ischanged) to [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Syntax
+
+```csharp
+public void RejectChanges()
+```
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RejectChanges
+
+#### Syntax
+
+```csharp
+public void RejectChanges(bool goDeep)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `goDeep` | `bool` | - |
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToDeltaPayload
+
+Loops through the keys in the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#originalvalues) list and returns an [ExpandoObject](https://learn.microsoft.com/dotnet/api/system.dynamic.expandoobject) containing JUST the new values for the properties that changed.
+
+#### Syntax
+
+```csharp
+public System.Dynamic.ExpandoObject ToDeltaPayload(bool deepTracking = false)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `deepTracking` | `bool` | - |
+
+#### Returns
+
+Type: `System.Dynamic.ExpandoObject`
+An [ExpandoObject](https://learn.microsoft.com/dotnet/api/system.dynamic.expandoobject) containing JUST the new values for the properties that changed.
+
+#### Remarks
+
+If the object implements `IIdentifiable`1`, then the payload will always include the ID.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  TrackChanges
+
+Starts tracking property value changes for every property, optionally activating this behavior for the entire object graph.
+
+#### Syntax
+
+```csharp
+public void TrackChanges(bool deepTracking = false)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `deepTracking` | `bool` | When [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool), loops recursively through the object graph and calls `Boolean)` on every object that 
+            inherits from [EasyObservableObject](/api-reference/CloudNimble/EasyAF/Core/EasyObservableObject). |
+
+## Related APIs
+
+- System.ComponentModel.INotifyPropertyChanged
+- System.IDisposable
+- System.ComponentModel.IChangeTracking
+- System.ComponentModel.IRevertibleChangeTracking
+

@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup Label="Globals">
+        <SccProjectName>SAK</SccProjectName>
+        <SccProvider>SAK</SccProvider>
+        <SccAuxPath>SAK</SccAuxPath>
+        <SccLocalPath>SAK</SccLocalPath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net9.0;net8.0;</TargetFrameworks>
+        <DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.OData.Core" Version="[7.*, 8.0.0)" />
+        <PackageReference Include="Microsoft.AspNetCore.OData" Version="[7.*, 8.0.0)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CloudNimble.EasyAF.Core\CloudNimble.EasyAF.Core.csproj" />
+    </ItemGroup>
+
+</Project>

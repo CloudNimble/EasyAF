@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:mintlify.com)",
+      "WebFetch(domain:localhost)",
+      "WebFetch(domain:leaves.mintlify.com)",
+      "WebFetch(domain:www.npgsql.org)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:dotnet.github.io)",
+      "WebFetch(domain:learn.microsoft.com)",
+      "WebFetch(domain:stackoverflow.com)",
+      "WebFetch(domain:dotnet.microsoft.com)",
+      "WebFetch(domain:www.meziantou.net)",
+      "WebFetch(domain:roslyn-analyzers.readthedocs.io)",
+      "WebFetch(domain:www.nuget.org)",
+      "Bash(dotnet:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(rg:*)",
+      "Bash(grep:*)",
+      "Bash(cp:*)",
+      "Bash(rm:*)",
+      "WebFetch(domain:www.mintlify.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:easyaf.dev)",
+      "Bash(mkdir:*)",
+      "Bash(mint dev:*)",
+      "Bash(npx mint:*)",
+      "mcp__github__get_file_contents",
+      "mcp__Mintlify__SearchMintlify"
+    ],
+    "deny": []
+  }
+}

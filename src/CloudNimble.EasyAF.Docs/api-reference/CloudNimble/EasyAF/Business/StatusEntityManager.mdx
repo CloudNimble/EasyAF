@@ -1,0 +1,92 @@
+---
+title: StatusEntityManager
+description: "A Manager inheriting from `IdentifiableEntityManager`3` that contains reusable logic for updating a *TEntity*'s current Status."
+icon: code-branch
+tag: "ABSTRACT"
+keywords: ['StatusEntityManager', 'CloudNimble.EasyAF.Business.StatusEntityManager<TContext, TEntity, TId, TStatusType>', 'CloudNimble.EasyAF.Business', 'class', 'CloudNimble.EasyAF.Business.IdentifiableEntityManager<TContext, TEntity, TId>']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Business.dll
+
+**Namespace:** CloudNimble.EasyAF.Business
+
+**Inheritance:** CloudNimble.EasyAF.Business.IdentifiableEntityManager&lt;TContext, TEntity, TId&gt;
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Business.StatusEntityManager<TContext, TEntity, TId, TStatusType>
+```
+
+## Summary
+
+A Manager inheriting from `IdentifiableEntityManager`3` that contains reusable logic for updating a *TEntity*'s current Status.
+
+## Type Parameters
+
+- `TContext` - 
+- `TEntity` - 
+- `TId` - 
+- `TStatusType` - 
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  StatusTypes
+
+Gets the collection of active status types available for entities managed by this manager.
+            This collection is populated during initialization from the database.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<TStatusType> StatusTypes { get; private set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<TStatusType>`
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Initialize
+
+Initializes the StatusTypes collection by loading active status types from the database.
+            This method is called automatically by status update methods if the collection is empty.
+
+#### Syntax
+
+```csharp
+public virtual void Initialize()
+```
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  UpdateStatusAsync
+
+Updates the entity's status to the status type with the specified sort order.
+            Logs the status transition for tracking purposes.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> UpdateStatusAsync(TEntity entity, int sortOrder)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to update. |
+| `sortOrder` | `int` | The sort order of the target status type. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the status was successfully updated; otherwise, false.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `Exception` | Thrown when no status type is found with the specified sort order. |
+

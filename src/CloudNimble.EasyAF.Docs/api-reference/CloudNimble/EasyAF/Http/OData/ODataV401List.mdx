@@ -1,0 +1,87 @@
+---
+title: ODataV401List
+description: "Represents an OData v4.01 collection response containing a list of entities with optional pagination metadata.             Uses simplified OData v4.01 notati..."
+icon: code-branch
+keywords: ['ODataV401List', 'CloudNimble.EasyAF.Http.OData.ODataV401List<T>', 'CloudNimble.EasyAF.Http.OData', 'class', 'CloudNimble.EasyAF.Http.OData.ODataV401ResponseBase']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Http.dll
+
+**Namespace:** CloudNimble.EasyAF.Http.OData
+
+**Inheritance:** CloudNimble.EasyAF.Http.OData.ODataV401ResponseBase
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Http.OData.ODataV401List<T>
+```
+
+## Summary
+
+Represents an OData v4.01 collection response containing a list of entities with optional pagination metadata.
+            Uses simplified OData v4.01 notation for context and metadata properties.
+
+## Type Parameters
+
+- `T` - The type of entities in the collection.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public ODataV401List()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Items
+
+Gets or sets the collection of entities returned by the OData v4.01 service.
+            This property contains the actual data payload of the response.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<T> Items { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<T>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ODataCount
+
+Gets or sets the total number of entities in the collection using OData v4.01 simplified count notation.
+            This property is only populated when the $count query option is used.
+
+#### Syntax
+
+```csharp
+public long ODataCount { get; set; }
+```
+
+#### Property Value
+
+Type: `long`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ODataNextLink
+
+Gets or sets the URL for retrieving the next page of results using OData v4.01 simplified notation.
+            This property is null if there are no more pages available.
+
+#### Syntax
+
+```csharp
+public string ODataNextLink { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+

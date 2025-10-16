@@ -1,0 +1,95 @@
+---
+title: IIdentifiableEqualityComparer
+description: "Provides an equality comparer for objects that implement `IIdentifiable`1`.             Compares objects based on their Id property values for equality and h..."
+icon: code-branch
+keywords: ['IIdentifiableEqualityComparer', 'CloudNimble.EasyAF.Core.IIdentifiableEqualityComparer<T>', 'CloudNimble.EasyAF.Core', 'class', 'System.Object', 'System.Collections.Generic.IEqualityComparer<CloudNimble.EasyAF.Core.IIdentifiable<T>>']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.IIdentifiableEqualityComparer<T>
+```
+
+## Summary
+
+Provides an equality comparer for objects that implement `IIdentifiable`1`.
+            Compares objects based on their Id property values for equality and hash code generation.
+
+## Type Parameters
+
+- `T` - The type of the identifier used by the identifiable objects.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public IIdentifiableEqualityComparer()
+```
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals
+
+Determines whether the specified `IIdentifiable`1` objects are equal by comparing their Id properties.
+
+#### Syntax
+
+```csharp
+public bool Equals(CloudNimble.EasyAF.Core.IIdentifiable<T> x, CloudNimble.EasyAF.Core.IIdentifiable<T> y)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `x` | `CloudNimble.EasyAF.Core.IIdentifiable<T>` | The first object to compare. |
+| `y` | `CloudNimble.EasyAF.Core.IIdentifiable<T>` | The second object to compare. |
+
+#### Returns
+
+Type: `bool`
+True if the objects are equal (including both being null), false otherwise.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetHashCode
+
+Returns a hash code for the specified `IIdentifiable`1` object based on its Id property.
+
+#### Syntax
+
+```csharp
+public int GetHashCode(CloudNimble.EasyAF.Core.IIdentifiable<T> obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `CloudNimble.EasyAF.Core.IIdentifiable<T>` | The object for which to get a hash code. |
+
+#### Returns
+
+Type: `int`
+A hash code for the specified object.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when obj is null. |
+
+## Related APIs
+
+- System.Collections.Generic.IEqualityComparer<CloudNimble.EasyAF.Core.IIdentifiable<T>>
+

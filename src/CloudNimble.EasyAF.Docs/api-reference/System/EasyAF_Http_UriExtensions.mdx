@@ -1,0 +1,62 @@
+---
+title: EasyAF_Http_UriExtensions
+description: "Provides extension methods for Uri objects to support OData query string construction.             Enables fluent API for building OData-compliant URLs with ..."
+icon: bolt
+tag: "STATIC"
+keywords: ['EasyAF_Http_UriExtensions', 'System.EasyAF_Http_UriExtensions', 'System', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Http.dll
+
+**Namespace:** System
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+System.EasyAF_Http_UriExtensions
+```
+
+## Summary
+
+Provides extension methods for Uri objects to support OData query string construction.
+            Enables fluent API for building OData-compliant URLs with filtering, paging, and sorting capabilities.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToODataUri
+
+Creates an properly-constructed OData Uri with the correct querystring values, if specified.
+
+#### Syntax
+
+```csharp
+public static System.Uri ToODataUri(System.Uri uri, bool dollarSign = true, string filter = null, System.Nullable<int> top = null, System.Nullable<int> skip = null, string orderby = null, string expand = null, string select = null, System.Nullable<bool> count = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `uri` | `System.Uri` | The [Uri](https://learn.microsoft.com/dotnet/api/system.uri) instance to extend. |
+| `dollarSign` | `bool` | Specifies whether or not the query string name should have a "$" in it. Defaults to [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). |
+| `filter` | `string` | The filter. |
+| `top` | `System.Nullable<int>` | An [Int32](https://learn.microsoft.com/dotnet/api/system.int32) representing the number of records to take. |
+| `skip` | `System.Nullable<int>` | An [Int32](https://learn.microsoft.com/dotnet/api/system.int32) representing the number of records to skip over. |
+| `orderby` | `string` | The orderby. |
+| `expand` | `string` | The expand. |
+| `select` | `string` | The select. |
+| `count` | `System.Nullable<bool>` | A [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) representing whether to return a count of the total number of records in the response. |
+
+#### Returns
+
+Type: `System.Uri`
+A new [Uri](https://learn.microsoft.com/dotnet/api/system.uri) instance with a properly-formatted OData-compatible query string.
+
+#### Remarks
+
+Inspired by https://github.com/radzenhq/radzen-blazor/blob/master/Radzen.Blazor/OData.cs#L235, but performs better.
+

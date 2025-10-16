@@ -1,0 +1,31 @@
+﻿<Project Sdk="DotNetDocs.Sdk/1.0.0-preview.31">
+
+    <PropertyGroup Label="Globals">
+        <SccProjectName>SAK</SccProjectName>
+        <SccProvider>SAK</SccProvider>
+        <SccAuxPath>SAK</SccAuxPath>
+        <SccLocalPath>SAK</SccLocalPath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <KeepLocalOutput>true</KeepLocalOutput>
+        <DocumentationType>Mintlify</DocumentationType>
+        <GenerateDocumentation>true</GenerateDocumentation>
+        <NamespaceMode>Folder</NamespaceMode>
+        <ShowDocumentationStats>true</ShowDocumentationStats>
+        <!-- Exclude test projects from documentation -->
+        <ExcludePatterns>Edmx;Analyzers;CodeGen</ExcludePatterns>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <MintlifyNavigationMode>Unified</MintlifyNavigationMode>
+        <MintlifyTemplate>
+            <Name>EasyAF</Name>
+            <Theme>mint</Theme>
+            <Colors>
+                <Primary>#0D9373</Primary>
+            </Colors>
+        </MintlifyTemplate>
+    </PropertyGroup>
+
+</Project>

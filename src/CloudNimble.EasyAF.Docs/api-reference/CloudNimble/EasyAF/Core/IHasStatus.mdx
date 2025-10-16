@@ -1,0 +1,62 @@
+---
+title: IHasStatus
+description: "An interface that specifes an implementing Entity contains a child Entity of T that implements [IDbStatusEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStat..."
+icon: plug
+keywords: ['IHasStatus', 'CloudNimble.EasyAF.Core.IHasStatus<T>', 'CloudNimble.EasyAF.Core', 'interface', 'CloudNimble.EasyAF.Core.IIdentifiable<System.Guid>']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.IHasStatus<T>
+```
+
+## Summary
+
+An interface that specifes an implementing Entity contains a child Entity of T that implements [IDbStatusEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStatusEnum) and
+            represents the Entity's current status.
+
+## Type Parameters
+
+- `T` - The type implementing [IDbStatusEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStatusEnum).
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  StatusType
+
+The populated instance of [IDbStatusEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStatusEnum).
+
+#### Syntax
+
+```csharp
+T StatusType { get; set; }
+```
+
+#### Property Value
+
+Type: `T`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  StatusTypeId
+
+The unique identifier for the SimpleStateMachine [IDbStatusEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStatusEnum).
+
+#### Syntax
+
+```csharp
+System.Guid StatusTypeId { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Guid`
+
+## Related APIs
+
+- CloudNimble.EasyAF.Core.IIdentifiable<System.Guid>
+

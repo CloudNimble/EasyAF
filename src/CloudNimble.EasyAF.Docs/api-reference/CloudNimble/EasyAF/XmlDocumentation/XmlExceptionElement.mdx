@@ -1,0 +1,91 @@
+---
+title: XmlExceptionElement
+description: "Represents an exception XML documentation element."
+icon: file-brackets-curly
+keywords: ['XmlExceptionElement', 'CloudNimble.EasyAF.XmlDocumentation.XmlExceptionElement', 'CloudNimble.EasyAF.XmlDocumentation', 'class', 'CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.XmlDocumentation.dll
+
+**Namespace:** CloudNimble.EasyAF.XmlDocumentation
+
+**Inheritance:** CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.XmlDocumentation.XmlExceptionElement
+```
+
+## Summary
+
+Represents an exception XML documentation element.
+
+## Remarks
+
+The exception element documents exceptions that can be thrown by a method or property.
+            It includes the exception type and conditions under which it is thrown.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlExceptionElement class.
+
+#### Syntax
+
+```csharp
+public XmlExceptionElement()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlExceptionElement class with XML content.
+
+#### Syntax
+
+```csharp
+public XmlExceptionElement(System.Xml.Linq.XElement element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Xml.Linq.XElement` | The XML element to parse. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Cref
+
+Gets or sets the fully qualified name of the exception type.
+
+#### Syntax
+
+```csharp
+public string Cref { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToMdx
+
+Converts this exception element to MDX format.
+
+#### Syntax
+
+```csharp
+public override string ToMdx()
+```
+
+#### Returns
+
+Type: `string`
+The MDX representation of this exception.
+

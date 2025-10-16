@@ -1,0 +1,134 @@
+---
+title: ItemBuilder
+description: "Builder class for configuring individual MSBuild items in a fluent manner."
+icon: file-brackets-curly
+keywords: ['ItemBuilder', 'CloudNimble.EasyAF.MSBuild.ItemBuilder', 'CloudNimble.EasyAF.MSBuild', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.MSBuild.dll
+
+**Namespace:** CloudNimble.EasyAF.MSBuild
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.MSBuild.ItemBuilder
+```
+
+## Summary
+
+Builder class for configuring individual MSBuild items in a fluent manner.
+
+## Remarks
+
+This class provides a fluent API for adding metadata to MSBuild items.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  AddMetadata
+
+Adds metadata to the item.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.MSBuild.ItemBuilder AddMetadata(string name, string value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The metadata name. |
+| `value` | `string` | The metadata value. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.MSBuild.ItemBuilder`
+The current instance for method chaining.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when name or value is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SetLink
+
+Sets the Link metadata for the item (commonly used with AdditionalFiles).
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.MSBuild.ItemBuilder SetLink(string value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `string` | The Link value. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.MSBuild.ItemBuilder`
+The current instance for method chaining.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when value is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SetPrivateAssets
+
+Sets the PrivateAssets metadata for the item (commonly used with PackageReference).
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.MSBuild.ItemBuilder SetPrivateAssets(string value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `string` | The PrivateAssets value (e.g., "all", "runtime", "compile"). |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.MSBuild.ItemBuilder`
+The current instance for method chaining.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when value is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SetVisible
+
+Sets the Visible metadata for the item.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.MSBuild.ItemBuilder SetVisible(bool visible)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `visible` | `bool` | Whether the item should be visible. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.MSBuild.ItemBuilder`
+The current instance for method chaining.
+

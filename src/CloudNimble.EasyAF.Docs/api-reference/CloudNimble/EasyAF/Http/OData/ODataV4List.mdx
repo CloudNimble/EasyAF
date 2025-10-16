@@ -1,0 +1,87 @@
+---
+title: ODataV4List
+description: "Represents an OData v4.0 collection response containing a list of entities with optional pagination metadata.             Provides strongly-typed access to c..."
+icon: code-branch
+keywords: ['ODataV4List', 'CloudNimble.EasyAF.Http.OData.ODataV4List<T>', 'CloudNimble.EasyAF.Http.OData', 'class', 'CloudNimble.EasyAF.Http.OData.ODataV4ResponseBase']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Http.dll
+
+**Namespace:** CloudNimble.EasyAF.Http.OData
+
+**Inheritance:** CloudNimble.EasyAF.Http.OData.ODataV4ResponseBase
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Http.OData.ODataV4List<T>
+```
+
+## Summary
+
+Represents an OData v4.0 collection response containing a list of entities with optional pagination metadata.
+            Provides strongly-typed access to collection data with count and next link information.
+
+## Type Parameters
+
+- `T` - The type of entities in the collection.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public ODataV4List()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Items
+
+Gets or sets the collection of entities returned by the OData service.
+            This property contains the actual data payload of the response.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<T> Items { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<T>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ODataCount
+
+Gets or sets the total number of entities in the collection, regardless of pagination.
+            This property is only populated when the $count query option is used.
+
+#### Syntax
+
+```csharp
+public long ODataCount { get; set; }
+```
+
+#### Property Value
+
+Type: `long`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ODataNextLink
+
+Gets or sets the URL for retrieving the next page of results when server-side paging is enabled.
+            This property is null if there are no more pages available.
+
+#### Syntax
+
+```csharp
+public string ODataNextLink { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+

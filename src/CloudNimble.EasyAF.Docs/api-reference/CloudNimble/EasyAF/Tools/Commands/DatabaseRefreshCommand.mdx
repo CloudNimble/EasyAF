@@ -1,0 +1,105 @@
+---
+title: DatabaseRefreshCommand
+description: "Command for refreshing existing EDMX files."
+icon: file-brackets-curly
+keywords: ['DatabaseRefreshCommand', 'CloudNimble.EasyAF.Tools.Commands.DatabaseRefreshCommand', 'CloudNimble.EasyAF.Tools.Commands', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Commands
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Commands.DatabaseRefreshCommand
+```
+
+## Summary
+
+Command for refreshing existing EDMX files.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [DatabaseRefreshCommand](/api-reference/CloudNimble/EasyAF/Tools/Commands/DatabaseRefreshCommand) class.
+
+#### Syntax
+
+```csharp
+public DatabaseRefreshCommand(CloudNimble.EasyAF.EFCoreToEdmx.EdmxConverter converter)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `converter` | `CloudNimble.EasyAF.EFCoreToEdmx.EdmxConverter` | The EDMX converter service. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ContextName
+
+Gets or sets the DbContext class name to use for finding the EDMX and configuration files.
+            When not specified, all .edmx files will be processed.
+
+#### Syntax
+
+```csharp
+public string ContextName { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Project
+
+Gets or sets the project directory path (defaults to auto-detected .Data folder).
+
+#### Syntax
+
+```csharp
+public string Project { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SolutionFolder
+
+Gets or sets the working directory for the solution. Defaults to current directory.
+
+#### Syntax
+
+```csharp
+public string SolutionFolder { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnExecuteAsync
+
+Executes the refresh command.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<int> OnExecuteAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<int>`
+Exit code.
+

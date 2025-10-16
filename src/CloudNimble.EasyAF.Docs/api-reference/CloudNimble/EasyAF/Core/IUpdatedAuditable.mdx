@@ -1,0 +1,39 @@
+---
+title: IUpdatedAuditable
+description: "An interface that implements the CloudNimble common pattern for tracking who created an Entity."
+icon: plug
+keywords: ['IUpdatedAuditable', 'CloudNimble.EasyAF.Core.IUpdatedAuditable', 'CloudNimble.EasyAF.Core', 'interface']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.IUpdatedAuditable
+```
+
+## Summary
+
+An interface that implements the CloudNimble common pattern for tracking who created an Entity.
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DateUpdated
+
+The unique identifier for the User that created this particular Entity.
+
+#### Syntax
+
+```csharp
+System.Nullable<System.DateTimeOffset> DateUpdated { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<System.DateTimeOffset>`
+

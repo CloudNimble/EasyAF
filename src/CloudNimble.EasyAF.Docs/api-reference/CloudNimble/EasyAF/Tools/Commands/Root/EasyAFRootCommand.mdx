@@ -1,0 +1,69 @@
+---
+title: EasyAFRootCommand
+description: "Root command for the EasyAF command line tool."
+icon: file-brackets-curly
+keywords: ['EasyAFRootCommand', 'CloudNimble.EasyAF.Tools.Commands.Root.EasyAFRootCommand', 'CloudNimble.EasyAF.Tools.Commands.Root', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Commands.Root
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Commands.Root.EasyAFRootCommand
+```
+
+## Summary
+
+Root command for the EasyAF command line tool.
+
+## Remarks
+
+This class serves as the entry point for the EasyAF CLI tool and defines available subcommands.
+            When executed without specific subcommands, it displays the help information.
+
+## Examples
+
+```csharp
+dotnet easyaf
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public EasyAFRootCommand()
+```
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnExecute
+
+Executes when the root command is invoked without subcommands.
+
+#### Syntax
+
+```csharp
+public int OnExecute(McMaster.Extensions.CommandLineUtils.CommandLineApplication app)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `app` | `McMaster.Extensions.CommandLineUtils.CommandLineApplication` | The command line application instance. |
+
+#### Returns
+
+Type: `int`
+Exit code 1 to indicate no specific command was executed.
+

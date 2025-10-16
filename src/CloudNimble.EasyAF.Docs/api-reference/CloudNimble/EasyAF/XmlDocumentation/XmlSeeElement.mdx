@@ -1,0 +1,105 @@
+---
+title: XmlSeeElement
+description: "Represents a see XML documentation element for cross-references."
+icon: file-brackets-curly
+keywords: ['XmlSeeElement', 'CloudNimble.EasyAF.XmlDocumentation.XmlSeeElement', 'CloudNimble.EasyAF.XmlDocumentation', 'class', 'CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.XmlDocumentation.dll
+
+**Namespace:** CloudNimble.EasyAF.XmlDocumentation
+
+**Inheritance:** CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.XmlDocumentation.XmlSeeElement
+```
+
+## Summary
+
+Represents a see XML documentation element for cross-references.
+
+## Remarks
+
+The see element creates a link to another type or member within the documentation.
+            It is used for inline cross-references within text.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlSeeElement class.
+
+#### Syntax
+
+```csharp
+public XmlSeeElement()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlSeeElement class with XML content.
+
+#### Syntax
+
+```csharp
+public XmlSeeElement(System.Xml.Linq.XElement element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Xml.Linq.XElement` | The XML element to parse. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Cref
+
+Gets or sets the cross-reference target.
+
+#### Syntax
+
+```csharp
+public string Cref { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  LinkText
+
+Gets or sets the link text to display.
+
+#### Syntax
+
+```csharp
+public string LinkText { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToMdx
+
+Converts this see element to MDX format as a link.
+
+#### Syntax
+
+```csharp
+public override string ToMdx()
+```
+
+#### Returns
+
+Type: `string`
+The MDX representation of this cross-reference.
+

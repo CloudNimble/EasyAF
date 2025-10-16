@@ -1,0 +1,81 @@
+---
+title: IModelBuilderExtensions
+description: "Provides extension methods for Restier model configuration to handle EasyAF-specific entity properties.             Includes methods to ignore tracking field..."
+icon: bolt
+tag: "STATIC"
+keywords: ['IModelBuilderExtensions', 'Microsoft.Restier.Core.Model.IModelBuilderExtensions', 'Microsoft.Restier.Core.Model', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Restier.dll
+
+**Namespace:** Microsoft.Restier.Core.Model
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.Restier.Core.Model.IModelBuilderExtensions
+```
+
+## Summary
+
+Provides extension methods for Restier model configuration to handle EasyAF-specific entity properties.
+            Includes methods to ignore tracking fields and audit fields in OData model generation.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  IgnoreAuditFields
+
+Configures the entity set to ignore audit trail fields in the OData model.
+            Dynamically removes DateCreated, DateUpdated, CreatedById, and UpdatedById properties based on implemented interfaces.
+
+#### Syntax
+
+```csharp
+public static Microsoft.AspNet.OData.Builder.EntitySetConfiguration<T> IgnoreAuditFields<T>(Microsoft.AspNet.OData.Builder.EntitySetConfiguration<T> configuration) where T : CloudNimble.EasyAF.Core.EasyObservableObject
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `configuration` | `Microsoft.AspNet.OData.Builder.EntitySetConfiguration<T>` | The entity set configuration to modify. |
+
+#### Returns
+
+Type: `Microsoft.AspNet.OData.Builder.EntitySetConfiguration<T>`
+The entity set configuration for method chaining.
+
+#### Type Parameters
+
+- `T` - The entity type that inherits from EasyObservableObject.
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  IgnoreTrackingFields
+
+Configures the entity set to ignore DbObservableObject tracking fields in the OData model.
+            Excludes IsChanged, IsGraphChanged, ShouldTrackChanges, and OriginalValues from the model.
+
+#### Syntax
+
+```csharp
+public static Microsoft.AspNet.OData.Builder.EntitySetConfiguration<T> IgnoreTrackingFields<T>(Microsoft.AspNet.OData.Builder.EntitySetConfiguration<T> configuration) where T : CloudNimble.EasyAF.Core.DbObservableObject
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `configuration` | `Microsoft.AspNet.OData.Builder.EntitySetConfiguration<T>` | The entity set configuration to modify. |
+
+#### Returns
+
+Type: `Microsoft.AspNet.OData.Builder.EntitySetConfiguration<T>`
+The entity set configuration for method chaining.
+
+#### Type Parameters
+
+- `T` - The entity type that inherits from DbObservableObject.
+

@@ -1,0 +1,87 @@
+---
+title: Ensure
+description: "Provides methods for ensuring that method arguments meet specific criteria.             This class provides a consistent way to validate arguments and throw ..."
+icon: bolt
+tag: "STATIC"
+keywords: ['Ensure', 'CloudNimble.EasyAF.Core.Ensure', 'CloudNimble.EasyAF.Core', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.Ensure
+```
+
+## Summary
+
+Provides methods for ensuring that method arguments meet specific criteria.
+            This class provides a consistent way to validate arguments and throw appropriate exceptions.
+
+## Examples
+
+```csharp
+public void ProcessData(string input, List&lt;string&gt; items)
+{
+    Ensure.ArgumentNotNull(input, nameof(input));
+    Ensure.ArgumentNotNull(items, nameof(items));
+
+    // Process the validated arguments
+}
+```
+
+## Methods
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ArgumentNotNull
+
+Ensures that the specified argument is not null.
+
+#### Syntax
+
+```csharp
+public static void ArgumentNotNull(object argument, string argumentName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `argument` | `object` | The argument to validate. |
+| `argumentName` | `string` | The name of the argument being validated. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *argument* is null. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ArgumentNotNullOrWhiteSpace
+
+Ensures that the specified argument is not null or whitespace.
+
+#### Syntax
+
+```csharp
+public static void ArgumentNotNullOrWhiteSpace(string argument, string argumentName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `argument` | `string` | The argument to validate. |
+| `argumentName` | `string` | The name of the argument being validated. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *argument* is null or whitespace. |
+

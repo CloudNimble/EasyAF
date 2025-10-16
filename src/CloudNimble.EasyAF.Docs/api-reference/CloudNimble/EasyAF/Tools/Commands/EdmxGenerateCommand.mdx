@@ -1,0 +1,149 @@
+---
+title: EdmxGenerateCommand
+description: "Command to generate an EDMX file from an EF Core DbContext in the Data project."
+icon: file-brackets-curly
+keywords: ['EdmxGenerateCommand', 'CloudNimble.EasyAF.Tools.Commands.EdmxGenerateCommand', 'CloudNimble.EasyAF.Tools.Commands', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Commands
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Commands.EdmxGenerateCommand
+```
+
+## Summary
+
+Command to generate an EDMX file from an EF Core DbContext in the Data project.
+
+## Remarks
+
+This command locates the Data project, finds the compiled assembly, and generates an EDMX file
+            using the `EdmxConverter`. The output file is placed in the Data project directory.
+
+## Examples
+
+```csharp
+dotnet easyaf edmx generate --path "C:\MySolution"
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmxGenerateCommand](/api-reference/CloudNimble/EasyAF/Tools/Commands/EdmxGenerateCommand) class.
+
+#### Syntax
+
+```csharp
+public EdmxGenerateCommand(CloudNimble.EasyAF.EFCoreToEdmx.EdmxConverter converter)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `converter` | `CloudNimble.EasyAF.EFCoreToEdmx.EdmxConverter` | The EDMX converter service. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Context
+
+Gets or sets the DbContext class to use.
+
+#### Syntax
+
+```csharp
+public string Context { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Environment
+
+Gets or sets the environment to use (Development, Production, etc).
+
+#### Syntax
+
+```csharp
+public string Environment { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Project
+
+Gets or sets the project folder containing the DbContext.
+
+#### Syntax
+
+```csharp
+public string Project { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Root
+
+Gets or sets the working directory for the code compiler. Defaults to current directory.
+
+#### Syntax
+
+```csharp
+public string Root { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  StartupProject
+
+Gets or sets the startup project folder.
+
+#### Syntax
+
+```csharp
+public string StartupProject { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnExecuteAsync
+
+Executes the EDMX generation command.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<int> OnExecuteAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<int>`
+0 if successful, 1 if an error occurred.
+
+#### Examples
+
+```csharp
+dotnet easyaf edmx generate --path "C:\MySolution"
+```
+

@@ -1,0 +1,85 @@
+---
+title: EdmxWatchCommand
+description: "Command to watch EDMX files in your Data project for changes and regenerate the framework."
+icon: file-brackets-curly
+keywords: ['EdmxWatchCommand', 'CloudNimble.EasyAF.Tools.Commands.EdmxWatchCommand', 'CloudNimble.EasyAF.Tools.Commands', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Commands
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Commands.EdmxWatchCommand
+```
+
+## Summary
+
+Command to watch EDMX files in your Data project for changes and regenerate the framework.
+
+## Remarks
+
+This command monitors the Data project for changes to EDMX files and triggers regeneration logic
+            when changes are detected. It is useful for development workflows where EDMX files are updated frequently.
+
+## Examples
+
+```csharp
+dotnet easyaf edmx watch --path "C:\MySolution"
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public EdmxWatchCommand()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Root
+
+Gets or sets the working directory for the code compiler. Defaults to current directory.
+
+#### Syntax
+
+```csharp
+public string Root { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnExecuteAsync
+
+Executes the EDMX watch command, monitoring for file changes.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<int> OnExecuteAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<int>`
+0 when completed.
+
+#### Examples
+
+```csharp
+dotnet easyaf edmx watch --path "C:\MySolution"
+```
+

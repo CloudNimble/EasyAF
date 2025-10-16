@@ -1,0 +1,56 @@
+---
+title: ODataV401PrimitiveResult
+description: "A container that allows you to capture metadata from an OData V4 response."
+icon: code-branch
+keywords: ['ODataV401PrimitiveResult', 'CloudNimble.EasyAF.Http.OData.ODataV401PrimitiveResult<T>', 'CloudNimble.EasyAF.Http.OData', 'class', 'CloudNimble.EasyAF.Http.OData.ODataV401ResponseBase']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Http.dll
+
+**Namespace:** CloudNimble.EasyAF.Http.OData
+
+**Inheritance:** CloudNimble.EasyAF.Http.OData.ODataV401ResponseBase
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Http.OData.ODataV401PrimitiveResult<T>
+```
+
+## Summary
+
+A container that allows you to capture metadata from an OData V4 response.
+
+## Type Parameters
+
+- `T` - The type that will be deserialized from the OData V4 "value" property.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public ODataV401PrimitiveResult()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Value
+
+Gets or sets the primitive value returned by the OData v4.01 service.
+            This property contains the actual data payload for primitive type responses.
+
+#### Syntax
+
+```csharp
+public T Value { get; set; }
+```
+
+#### Property Value
+
+Type: `T`
+

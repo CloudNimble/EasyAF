@@ -1,0 +1,75 @@
+---
+title: XmlExampleElement
+description: "Represents an example XML documentation element."
+icon: file-brackets-curly
+keywords: ['XmlExampleElement', 'CloudNimble.EasyAF.XmlDocumentation.XmlExampleElement', 'CloudNimble.EasyAF.XmlDocumentation', 'class', 'CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.XmlDocumentation.dll
+
+**Namespace:** CloudNimble.EasyAF.XmlDocumentation
+
+**Inheritance:** CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.XmlDocumentation.XmlExampleElement
+```
+
+## Summary
+
+Represents an example XML documentation element.
+
+## Remarks
+
+The example element contains code examples that demonstrate how to use a type or member.
+            It can contain both description text and code blocks.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlExampleElement class.
+
+#### Syntax
+
+```csharp
+public XmlExampleElement()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlExampleElement class with XML content.
+
+#### Syntax
+
+```csharp
+public XmlExampleElement(System.Xml.Linq.XElement element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Xml.Linq.XElement` | The XML element to parse. |
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToMdx
+
+Converts this example element to MDX format with proper code formatting.
+
+#### Syntax
+
+```csharp
+public override string ToMdx()
+```
+
+#### Returns
+
+Type: `string`
+The MDX representation of this example.
+

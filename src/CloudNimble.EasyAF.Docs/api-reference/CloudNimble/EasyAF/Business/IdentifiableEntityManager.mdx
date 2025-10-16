@@ -1,0 +1,74 @@
+---
+title: IdentifiableEntityManager
+description: "Provides a specialized entity manager for entities that implement IIdentifiable&lt;TId&gt;.             Automatically generates GUID identifiers for entities..."
+icon: code-branch
+tag: "ABSTRACT"
+keywords: ['IdentifiableEntityManager', 'CloudNimble.EasyAF.Business.IdentifiableEntityManager<TContext, TEntity, TId>', 'CloudNimble.EasyAF.Business', 'class', 'CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Business.dll
+
+**Namespace:** CloudNimble.EasyAF.Business
+
+**Inheritance:** CloudNimble.EasyAF.Business.EntityManager&lt;TContext, TEntity&gt;
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Business.IdentifiableEntityManager<TContext, TEntity, TId>
+```
+
+## Summary
+
+Provides a specialized entity manager for entities that implement IIdentifiable&lt;TId&gt;.
+            Automatically generates GUID identifiers for entities with empty IDs during insertion.
+
+## Type Parameters
+
+- `TContext` - The [DbContext](https://learn.microsoft.com/dotnet/api/system.data.entity.dbcontext) type to use for this Manager.
+- `TEntity` - The entity type for this Manager.
+- `TId` - The data type of the Id column for this Entity.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Create a new instance of the given Manager for a given [DbContext](https://learn.microsoft.com/dotnet/api/system.data.entity.dbcontext).
+
+#### Syntax
+
+```csharp
+public IdentifiableEntityManager(TContext dataContext, CloudNimble.SimpleMessageBus.Publish.IMessagePublisher messagePublisher)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `dataContext` | `TContext` | The [DbContext](https://learn.microsoft.com/dotnet/api/system.data.entity.dbcontext) instance to use for the database connection. Should be injected by the DI container. |
+| `messagePublisher` | `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher` | The SimpleMessageBus `IMessagePublisher` instance to use to publish Messages to a Queue. Should be injected by the DI container. |
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnInsertingAsync
+
+Perform business logic (like setting the entity's Id) prior to saving the *TEntity* to the *TContext*.
+
+#### Syntax
+
+```csharp
+public override System.Threading.Tasks.Task OnInsertingAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The *TEntity* to be inserted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+

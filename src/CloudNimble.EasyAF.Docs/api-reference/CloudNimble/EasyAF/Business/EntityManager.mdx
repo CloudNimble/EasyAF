@@ -1,0 +1,771 @@
+---
+title: EntityManager
+description: "Provides a base class for entity-specific business logic managers with built-in CRUD operations,             audit trail support, and lifecycle event hooks. ..."
+icon: code-branch
+tag: "ABSTRACT"
+keywords: ['EntityManager', 'CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>', 'CloudNimble.EasyAF.Business', 'class', 'CloudNimble.EasyAF.Business.ManagerBase<TContext>']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Business.dll
+
+**Namespace:** CloudNimble.EasyAF.Business
+
+**Inheritance:** CloudNimble.EasyAF.Business.ManagerBase&lt;TContext&gt;
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>
+```
+
+## Summary
+
+Provides a base class for entity-specific business logic managers with built-in CRUD operations,
+            audit trail support, and lifecycle event hooks. Handles common entity operations and automatically
+            manages audit fields for entities that implement auditing interfaces.
+
+## Remarks
+
+This manager provides comprehensive entity lifecycle management including:
+            - Automatic audit trail creation for entities implementing [ICreatedAuditable](/api-reference/CloudNimble/EasyAF/Core/ICreatedAuditable), [IUpdatedAuditable](/api-reference/CloudNimble/EasyAF/Core/IUpdatedAuditable)
+            - User tracking for entities implementing `ICreatorTrackable`1`, `IUpdaterTrackable`1`
+            - Virtual hooks for custom business logic before and after CRUD operations
+            - Batch operations support for improved performance
+            - Thread-safe interface caching for performance optimization
+
+## Type Parameters
+
+- `TContext` - The type of DbContext used for database operations.
+- `TEntity` - The type of entity managed by this manager.
+
+## Examples
+
+```csharp
+public class UserManager : EntityManager&lt;MyDbContext, User&gt;
+{
+    public UserManager(MyDbContext context, IMessagePublisher publisher)
+        : base(context, publisher) { }
+
+    public override async Task OnInsertingAsync(User entity)
+    {
+        await base.OnInsertingAsync(entity); // Handles audit fields
+        entity.IsActive = true; // Custom business logic
+    }
+
+    public override async Task&lt;bool&gt; OnInsertedAsync(User entity)
+    {
+        await MessagePublisher.PublishAsync(new UserCreatedEvent { UserId = entity.Id });
+        return await base.OnInsertedAsync(entity);
+    }
+}
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the `EntityManager`2` class.
+
+#### Syntax
+
+```csharp
+public EntityManager(TContext dataContext, CloudNimble.SimpleMessageBus.Publish.IMessagePublisher messagePublisher)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `dataContext` | `TContext` | The database context instance for data operations. Should be injected by the DI container. |
+| `messagePublisher` | `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher` | The message publisher instance for publishing events. Should be injected by the DI container. |
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DeleteAsync
+
+Delete a specific [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) with optional save operation.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> DeleteAsync(TEntity entity, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | - |
+| `save` | `bool` | - |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DeleteAsync
+
+Delete a specific [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) with optional save operation using a specified [DbContext](https://learn.microsoft.com/dotnet/api/system.data.entity.dbcontext).
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> DeleteAsync(TEntity entity, TContext context, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | - |
+| `context` | `TContext` | - |
+| `save` | `bool` | - |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DeleteAsync
+
+Delete all [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) from a list with optional save operation.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> DeleteAsync(System.Collections.Generic.List<TEntity> entities, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | - |
+| `save` | `bool` | - |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+
+#### Remarks
+
+RWM: This will need to be Deleted to be generic if it's going to be in a NuGet package.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DeleteAsync
+
+Delete all [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) from a list with optional save operation using a specified [DbContext](https://learn.microsoft.com/dotnet/api/system.data.entity.dbcontext).
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> DeleteAsync(System.Collections.Generic.List<TEntity> entities, TContext context, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | - |
+| `context` | `TContext` | - |
+| `save` | `bool` | - |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DirectDelete
+
+Delete entities returned by the specified query without individual entity processing.
+
+#### Syntax
+
+```csharp
+public int DirectDelete(System.Linq.Expressions.Expression<System.Func<TEntity, bool>> predicate)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `predicate` | `System.Linq.Expressions.Expression<System.Func<TEntity, bool>>` | An [Expression`1](https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1) to execute against the [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) |
+
+#### Returns
+
+Type: `int`
+
+#### Remarks
+
+This overload will give you all of the performance of deleting a set of data without loading entities in the context but none of
+            the extra processing provided by OnDeleting / OnDeleted.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DirectDeleteAsync
+
+Delete entities returned by the specified query without individual entity processing.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<int> DirectDeleteAsync(System.Linq.Expressions.Expression<System.Func<TEntity, bool>> predicate)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `predicate` | `System.Linq.Expressions.Expression<System.Func<TEntity, bool>>` | An [Expression`1](https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1) to execute against the [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<int>`
+
+#### Remarks
+
+This overload will give you all of the performance of deleting a set of data without loading entities in the context but none of
+            the extra processing provided by OnDeleting / OnDeleted.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DirectUpdate
+
+Executes a direct UPDATE query on the database without returning objects or processing them through the interceptors.
+
+#### Syntax
+
+```csharp
+public int DirectUpdate(System.Linq.Expressions.Expression<System.Func<TEntity, bool>> predicate, System.Linq.Expressions.Expression<System.Func<TEntity, TEntity>> updateExpression)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `predicate` | `System.Linq.Expressions.Expression<System.Func<TEntity, bool>>` | An [Expression`1](https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1) to execute against the [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) |
+| `updateExpression` | `System.Linq.Expressions.Expression<System.Func<TEntity, TEntity>>` | An [Expression`1](https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1) defining the updates to be performed on the records returned by the predicate. |
+
+#### Returns
+
+Type: `int`
+
+#### Remarks
+
+This overload will give you all of the performance of updating a set of data without loading entities in the context but none of
+            the extra processing provided by OnUpdating / OnUpdated.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DirectUpdateAsync
+
+Executes a direct UPDATE query on the database without returning objects or processing them through the interceptors.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<int> DirectUpdateAsync(System.Linq.Expressions.Expression<System.Func<TEntity, bool>> predicate, System.Linq.Expressions.Expression<System.Func<TEntity, TEntity>> updateExpression)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `predicate` | `System.Linq.Expressions.Expression<System.Func<TEntity, bool>>` | An [Expression`1](https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1) to execute against the [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) |
+| `updateExpression` | `System.Linq.Expressions.Expression<System.Func<TEntity, TEntity>>` | An [Expression`1](https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1) defining the updates to be performed on the records returned by the predicate. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<int>`
+
+#### Remarks
+
+This overload will give you all of the performance of updating a set of data without loading entities in the context but none of
+            the extra processing provided by OnUpdating / OnUpdated.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  InsertAsync
+
+Inserts a single entity into the database with optional save operation.
+            Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> InsertAsync(TEntity entity, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to be inserted. |
+| `save` | `bool` | Whether to immediately save changes to the database. Defaults to true. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the entity was successfully inserted; otherwise, false.
+
+#### Remarks
+
+RWM: This will need to be updated to be generic if it's going to be in a NuGet package.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  InsertAsync
+
+Inserts a single entity into the database using a specified context with optional save operation.
+            Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> InsertAsync(TEntity entity, TContext context, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to be inserted. |
+| `context` | `TContext` | The database context to use for the operation. |
+| `save` | `bool` | Whether to immediately save changes to the database. Defaults to true. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the entity was successfully inserted; otherwise, false.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  InsertAsync
+
+Inserts a collection of entities into the database with optional save operation.
+            Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks for each entity.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> InsertAsync(System.Collections.Generic.List<TEntity> entities, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities to be inserted. |
+| `save` | `bool` | Whether to immediately save changes to the database. Defaults to true. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the entities were successfully inserted; otherwise, false.
+
+#### Remarks
+
+RWM: This will need to be updated to be generic if it's going to be in a NuGet package.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  InsertAsync
+
+Inserts a collection of entities into the database using a specified context with optional save operation.
+            Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks for each entity.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> InsertAsync(System.Collections.Generic.List<TEntity> entities, TContext context, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities to be inserted. |
+| `context` | `TContext` | The database context to use for the operation. |
+| `save` | `bool` | Whether to immediately save changes to the database. Defaults to true. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the entities were successfully inserted; otherwise, false.
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnDeletedAsync
+
+Called after successfully deleting an entity from the database. Use this method for post-deletion
+            business logic such as cleanup operations, sending notifications, or triggering external systems.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task<bool> OnDeletedAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity that was deleted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if post-deletion processing was successful; otherwise, false.
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnDeletedAsync
+
+Called after successfully deleting a collection of entities from the database.
+            Applies OnDeletedAsync logic to each entity in the collection.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task OnDeletedAsync(System.Collections.Generic.List<TEntity> entities)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities that were deleted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnDeletingAsync
+
+Called before deleting an entity from the database. Override this method to add
+            custom business logic or validation before deletion.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task OnDeletingAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to be deleted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnDeletingAsync
+
+Called before deleting a collection of entities from the database.
+            Applies OnDeletingAsync logic to each entity in the collection.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task OnDeletingAsync(System.Collections.Generic.List<TEntity> entities)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities to be deleted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnInsertedAsync
+
+Called after successfully inserting an entity into the database. Use this method for post-insertion
+            business logic such as sending notifications, publishing events, or triggering external systems.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task<bool> OnInsertedAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity that was inserted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if post-insertion processing was successful; otherwise, false.
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnInsertedAsync
+
+Called after successfully inserting a collection of entities into the database.
+            Applies OnInsertedAsync logic to each entity in the collection.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task OnInsertedAsync(System.Collections.Generic.List<TEntity> entities)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities that were inserted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnInsertingAsync
+
+Called before inserting an entity into the database. Automatically handles audit field population
+            and user tracking for entities implementing the appropriate interfaces.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task OnInsertingAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to be inserted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+#### Remarks
+
+This method automatically sets:
+            - CreatedById for entities implementing `ICreatorTrackable`1`
+            - DateCreated for entities implementing [ICreatedAuditable](/api-reference/CloudNimble/EasyAF/Core/ICreatedAuditable)
+            Override this method to add custom business logic before insertion.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnInsertingAsync
+
+Called before inserting a collection of entities into the database.
+            Applies OnInsertingAsync logic to each entity in the collection.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task OnInsertingAsync(System.Collections.Generic.List<TEntity> entities)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities to be inserted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnUpdatedAsync
+
+Called after successfully updating an entity in the database. Use this method for post-update
+            business logic such as sending notifications, publishing events, or triggering external systems.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task<bool> OnUpdatedAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity that was updated. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if post-update processing was successful; otherwise, false.
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnUpdatedAsync
+
+Called after successfully updating a collection of entities in the database.
+            Applies OnUpdatedAsync logic to each entity in the collection.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task OnUpdatedAsync(System.Collections.Generic.List<TEntity> entities)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities that were updated. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnUpdatingAsync
+
+Called before updating an entity in the database. Automatically handles audit field population
+            and user tracking for entities implementing the appropriate interfaces.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task OnUpdatingAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to be updated. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+#### Remarks
+
+This method automatically sets:
+            - UpdatedById for entities implementing `IUpdaterTrackable`1`
+            - DateUpdated for entities implementing [IUpdatedAuditable](/api-reference/CloudNimble/EasyAF/Core/IUpdatedAuditable)
+            Override this method to add custom business logic before updating.
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnUpdatingAsync
+
+Called before updating a collection of entities in the database.
+            Applies OnUpdatingAsync logic to each entity in the collection.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task OnUpdatingAsync(System.Collections.Generic.List<TEntity> entities)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities to be updated. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ResetAuditProperties
+
+Resets audit properties to an "Inserted" state by setting creation fields and clearing update fields.
+            Sets CreatedById and DateCreated to current values, while clearing UpdatedById and DateUpdated.
+
+#### Syntax
+
+```csharp
+public void ResetAuditProperties<TDbObservable>(TDbObservable entity) where TDbObservable : CloudNimble.EasyAF.Core.DbObservableObject
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TDbObservable` | The entity whose audit properties should be reset. |
+
+#### Type Parameters
+
+- `TDbObservable` - Any [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject) in the object model. DOES NOT have to be the entity for this Manager.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  UpdateAsync
+
+Updates a single entity in the database with optional save operation.
+            Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> UpdateAsync(TEntity entity, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to be updated. |
+| `save` | `bool` | Whether to immediately save changes to the database. Defaults to true. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the entity was successfully updated; otherwise, false.
+
+#### Remarks
+
+RWM: This will need to be updated to be generic if it's going to be in a NuGet package.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  UpdateAsync
+
+Updates a single entity in the database using a specified context with optional save operation.
+            Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> UpdateAsync(TEntity entity, TContext context, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to be updated. |
+| `context` | `TContext` | The database context to use for the operation. |
+| `save` | `bool` | Whether to immediately save changes to the database. Defaults to true. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the entity was successfully updated; otherwise, false.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  UpdateAsync
+
+Updates a collection of entities in the database with optional save operation.
+            Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks for each entity.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> UpdateAsync(System.Collections.Generic.List<TEntity> entities, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities to be updated. |
+| `save` | `bool` | Whether to immediately save changes to the database. Defaults to true. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the entities were successfully updated; otherwise, false.
+
+#### Remarks
+
+RWM: This will need to be updated to be generic if it's going to be in a NuGet package.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  UpdateAsync
+
+Updates a collection of entities in the database using a specified context with optional save operation.
+            Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks for each entity.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> UpdateAsync(System.Collections.Generic.List<TEntity> entities, TContext context, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities to be updated. |
+| `context` | `TContext` | The database context to use for the operation. |
+| `save` | `bool` | Whether to immediately save changes to the database. Defaults to true. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the entities were successfully updated; otherwise, false.
+

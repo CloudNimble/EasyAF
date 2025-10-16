@@ -1,0 +1,84 @@
+---
+title: ODataV401SingleEntityResponseBase
+description: "Represents the base class for OData v4.01 single entity responses containing entity-specific metadata.             Uses simplified OData v4.01 notation for e..."
+icon: file-brackets-curly
+sidebarTitle: ODataV401SingleEntityResponseBase
+keywords: ['ODataV401SingleEntityResponseBase', 'CloudNimble.EasyAF.Http.OData.ODataV401SingleEntityResponseBase', 'CloudNimble.EasyAF.Http.OData', 'class', 'CloudNimble.EasyAF.Http.OData.ODataV401ResponseBase']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Http.dll
+
+**Namespace:** CloudNimble.EasyAF.Http.OData
+
+**Inheritance:** CloudNimble.EasyAF.Http.OData.ODataV401ResponseBase
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Http.OData.ODataV401SingleEntityResponseBase
+```
+
+## Summary
+
+Represents the base class for OData v4.01 single entity responses containing entity-specific metadata.
+            Uses simplified OData v4.01 notation for entity type information and identification.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public ODataV401SingleEntityResponseBase()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ODataEditLink
+
+Gets or sets the URL that can be used to edit the entity using OData v4.01 simplified notation.
+            This property provides the endpoint for performing update operations on the entity.
+
+#### Syntax
+
+```csharp
+public string ODataEditLink { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ODataId
+
+Gets or sets the canonical URL that identifies the entity using OData v4.01 simplified notation.
+            This property provides a unique identifier for the entity resource.
+
+#### Syntax
+
+```csharp
+public string ODataId { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ODataType
+
+Gets or sets the type annotation specifying the entity type using OData v4.01 simplified notation.
+            This property provides runtime type information for the entity.
+
+#### Syntax
+
+```csharp
+public string ODataType { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+

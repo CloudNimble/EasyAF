@@ -1,0 +1,123 @@
+---
+title: EasyAFEntityFrameworkApi
+description: "Provides a base implementation of an Entity Framework API for EasyAF,              integrating SimpleMessageBus event publishing and logging capabilities.   ..."
+icon: code-branch
+tag: "ABSTRACT"
+keywords: ['EasyAFEntityFrameworkApi', 'CloudNimble.EasyAF.Restier.EasyAFEntityFrameworkApi<TContext>', 'CloudNimble.EasyAF.Restier', 'class', 'Microsoft.Restier.EntityFramework.EntityFrameworkApi<TContext>']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Restier.EF6.dll
+
+**Namespace:** CloudNimble.EasyAF.Restier
+
+**Inheritance:** Microsoft.Restier.EntityFramework.EntityFrameworkApi&lt;TContext&gt;
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Restier.EasyAFEntityFrameworkApi<TContext>
+```
+
+## Summary
+
+Provides a base implementation of an Entity Framework API for EasyAF, 
+            integrating SimpleMessageBus event publishing and logging capabilities.
+            
+
+
+            This class extends [EntityFrameworkApi`1](https://learn.microsoft.com/dotnet/api/microsoft.restier.entityframework.entityframeworkapi-1) and is intended to be used as a base class 
+            for APIs that require access to the current HTTP context, logging, and SimpleMessageBus publishing.
+            
+
+
+
+## Type Parameters
+
+- `TContext` - The type of the [DbContext](https://learn.microsoft.com/dotnet/api/system.data.entity.dbcontext) used by the API.
+
+## Examples
+
+```csharp
+public class MyApi : EasyAFEntityFrameworkApi&lt;MyDbContext&gt;
+{
+    public MyApi(IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor, IMessagePublisher messagePublisher, ILogger&lt;EasyAFEntityFrameworkApi&lt;MyDbContext&gt;&gt; logger)
+        : base(serviceProvider, httpContextAccessor, messagePublisher, logger)
+    {
+    }
+}
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the `EasyAFEntityFrameworkApi`1` class.
+
+#### Syntax
+
+```csharp
+public EasyAFEntityFrameworkApi(System.IServiceProvider serviceProvider, Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor, CloudNimble.SimpleMessageBus.Publish.IMessagePublisher messagePublisher, Microsoft.Extensions.Logging.ILogger<CloudNimble.EasyAF.Restier.EasyAFEntityFrameworkApi<TContext>> logger)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `serviceProvider` | `System.IServiceProvider` | The service provider for dependency injection. |
+| `httpContextAccessor` | `Microsoft.AspNetCore.Http.IHttpContextAccessor` | The [IHttpContextAccessor](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor) for the current HTTP context. |
+| `messagePublisher` | `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher` | The `IMessagePublisher` used for publishing messages to SimpleMessageBus. |
+| `logger` | `Microsoft.Extensions.Logging.ILogger<CloudNimble.EasyAF.Restier.EasyAFEntityFrameworkApi<TContext>>` | The [ILogger`1](https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1) instance for writing log traces. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown if *httpContextAccessor* or *messagePublisher* is `null`. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  HttpContextAccessor
+
+Gets or sets the accessor for the current HTTP context.
+            Used to access HTTP-specific information about the current request.
+
+#### Syntax
+
+```csharp
+public Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.AspNetCore.Http.IHttpContextAccessor`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Logger
+
+Gets or sets the [ILogger`1](https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1) instance used for writing log traces.
+
+#### Syntax
+
+```csharp
+public Microsoft.Extensions.Logging.ILogger<CloudNimble.EasyAF.Restier.EasyAFEntityFrameworkApi<TContext>> Logger { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.Extensions.Logging.ILogger<CloudNimble.EasyAF.Restier.EasyAFEntityFrameworkApi<TContext>>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  MessagePublisher
+
+Gets or sets the `IMessagePublisher` used for publishing messages to SimpleMessageBus.
+
+#### Syntax
+
+```csharp
+public CloudNimble.SimpleMessageBus.Publish.IMessagePublisher MessagePublisher { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher`
+

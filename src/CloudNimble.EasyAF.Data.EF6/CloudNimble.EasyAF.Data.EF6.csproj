@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup Label="Globals">
+        <SccProjectName>SAK</SccProjectName>
+        <SccProvider>SAK</SccProvider>
+        <SccAuxPath>SAK</SccAuxPath>
+        <SccLocalPath>SAK</SccLocalPath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <!-- Leave .NET 4.8 in here first so that the tests and EDMX designer pick up the NET 4.8 reference first.-->
+        <TargetFrameworks>net48;net10.0;net9.0;net8.0;</TargetFrameworks>
+        <DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Azure.Identity" Version="1.*" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="[6.*, 7.0.0)" />
+        <PackageReference Include="Microsoft.EntityFramework.SqlServer" Version="[6.*, 7.0.0)" />
+    </ItemGroup>
+
+</Project>

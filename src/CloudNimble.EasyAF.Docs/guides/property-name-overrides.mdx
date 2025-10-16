@@ -1,0 +1,206 @@
+---
+title: 'Property Name Overrides'
+description: 'Customize CLR property names when scaffolding from databases with different naming conventions'
+icon: 'code'
+---
+
+## Overview
+
+When scaffolding Entity Framework Core models from an existing database, you may encounter databases that use naming conventions that don't align with C# coding standards. For example, a PostgreSQL database might have columns named `NIIN`, `FSC`, `INC`, while C# conventions prefer `Niin`, `Fsc`, `Inc`.
+
+The Property Name Overrides feature in EasyAF.EFCoreToEdmx allows you to define custom mappings between database column names and CLR property names while maintaining accurate EDMX generation.
+
+## Features
+
+- **Custom Property Naming**: Map database column names to C# property names on a per-entity basis
+- **Automatic HasColumnName Generation**: Injects `HasColumnName()` calls in `OnModelCreating`
+- **IgnoreTrackingFields Support**: Automatically adds `IgnoreTrackingFields()` for all entities
+- **Self-Reference Fixes**: Improves naming for self-referential relationships (InverseParent → Children)
+
+## Configuration
+
+Add a `propertyNameOverrides` section to your `.edmx.config` file:
+
+```json
+{
+  "connectionStringSource": "appsettings.json:ConnectionStrings:DefaultConnection",
+  "provider": "PostgreSQL",
+  "contextName": "MyDbContext",
+  "propertyNameOverrides": {
+    "NationalStockNumber": {
+      "NIIN": "Niin",
+      "FSC": "Fsc",
+      "INC": "Inc",
+      "SOS": "Sos"
+    },
+    "Agent": {
+      "SSN": "SocialSecurityNumber",
+      "DOB": "DateOfBirth"
+    }
+  }
+}
+```
+
+### Configuration Structure
+
+- **Outer Dictionary Key**: Entity name (after pluralization, e.g., "NationalStockNumber" not "NationalStockNumbers")
+- **Inner Dictionary**: 
+  - **Key**: Database column name (e.g., "NIIN")
+  - **Value**: Desired CLR property name (e.g., "Niin")
+
+## How It Works
+
+### 1. Database Scaffolding
+When scaffolding from your database, EF Core generates entities with properties that match C# naming conventions:
+
+```csharp
+public class NationalStockNumber
+{
+    public string Niin { get; set; }  // Database column: NIIN
+    public string Fsc { get; set; }   // Database column: FSC
+}
+```
+
+### 2. OnModelCreating Enhancement
+The scaffolder enhances the `OnModelCreating` method with:
+
+**Before Enhancement:**
+```csharp
+modelBuilder.Entity<NationalStockNumber>(entity =>
+{
+    entity.Property(e => e.Niin).HasMaxLength(9);
+    entity.Property(e => e.Fsc).HasMaxLength(4);
+});
+```
+
+**After Enhancement:**
+```csharp
+modelBuilder.Entity<NationalStockNumber>(entity =>
+{
+    entity.IgnoreTrackingFields();
+    
+    entity.Property(e => e.Niin)
+        .HasColumnName("NIIN")
+        .HasMaxLength(9);
+        
+    entity.Property(e => e.Fsc)
+        .HasColumnName("FSC")
+        .HasMaxLength(4);
+});
+```
+
+### 3. EDMX Generation
+The EDMX file correctly maps:
+- **SSDL (Storage)**: Uses actual database column names (NIIN, FSC)
+- **CSDL (Conceptual)**: Uses CLR property names (Niin, Fsc)
+- **MSL (Mapping)**: Maps between storage and conceptual names
+
+## Benefits
+
+### 1. Database Accuracy
+Maintains `UseDatabaseNames = true` for accurate database column representation while allowing custom CLR naming.
+
+### 2. Clean Code Generation
+Generated entities follow C# naming conventions while preserving database column mappings.
+
+### 3. Tracking Fields Support
+Automatically adds `IgnoreTrackingFields()` for entities that implement tracking interfaces like `ICreatedAuditable` or `IUpdatedAuditable`.
+
+### 4. Backward Compatibility
+Existing configurations without `propertyNameOverrides` continue to work unchanged.
+
+## Common Scenarios
+
+### PostgreSQL with Uppercase Columns
+```json
+"propertyNameOverrides": {
+  "Product": {
+    "PRODUCT_ID": "ProductId",
+    "PRODUCT_NAME": "ProductName",
+    "UNIT_PRICE": "UnitPrice"
+  }
+}
+```
+
+### Legacy Database with Abbreviations
+```json
+"propertyNameOverrides": {
+  "Customer": {
+    "CUST_ID": "CustomerId",
+    "ADDR": "Address",
+    "PHONE_NUM": "PhoneNumber"
+  }
+}
+```
+
+### Mixed Naming Conventions
+```json
+"propertyNameOverrides": {
+  "Order": {
+    "order_id": "OrderId",
+    "CustomerID": "CustomerId",
+    "ORDER_DATE": "OrderDate"
+  }
+}
+```
+
+## Best Practices
+
+1. **Entity Names**: Use the singular entity name in configuration, not the pluralized table name
+2. **Consistency**: Apply consistent naming patterns across related entities
+3. **Documentation**: Document why specific overrides are needed for future developers
+4. **Testing**: Verify generated EDMX files map correctly to your database schema
+
+## Troubleshooting
+
+### HasColumnName Not Generated
+- Verify the entity name matches exactly (case-sensitive)
+- Check that the database column name in the config matches the actual database
+- Ensure `UseDatabaseNames` is set to `true` (default)
+
+### IgnoreTrackingFields Not Added
+- Confirm you're using the latest version of EasyAF.EFCoreToEdmx
+- Check console output during scaffolding for any enhancement errors
+
+### Self-References Still Show InverseParent
+- The enhancement automatically fixes this, but verify no custom navigation properties override the fix
+
+## Example: Complete Configuration
+
+```json
+{
+  "connectionStringSource": "appsettings.json:ConnectionStrings:VibraniumDb",
+  "provider": "PostgreSQL",
+  "contextName": "VibraniumDbContext",
+  "dbContextNamespace": "Sustainment.Vibranium.Data",
+  "objectsNamespace": "Sustainment.Vibranium.Core",
+  "usePluralizer": true,
+  "useDataAnnotations": false,
+  "includedTables": [
+    "FederalSupplyClasses",
+    "FederalSupplyGroups",
+    "NationalStockNumbers",
+    "Parts",
+    "ReportParts"
+  ],
+  "propertyNameOverrides": {
+    "NationalStockNumber": {
+      "NIIN": "Niin",
+      "FSC": "Fsc",
+      "INC": "Inc",
+      "SOS": "Sos"
+    },
+    "Part": {
+      "PART_ID": "PartId",
+      "PARENT_ID": "ParentId"
+    }
+  }
+}
+```
+
+This configuration will:
+1. Scaffold only the specified tables
+2. Apply custom property names for NationalStockNumber and Part entities
+3. Generate HasColumnName() calls for mapped properties
+4. Add IgnoreTrackingFields() to all entities
+5. Fix any self-referential relationships

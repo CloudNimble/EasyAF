@@ -1,0 +1,218 @@
+---
+title: AssemblyXmlDocumentation
+description: "Represents the root XML documentation structure for a .NET assembly."
+icon: file-brackets-curly
+keywords: ['AssemblyXmlDocumentation', 'CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation', 'CloudNimble.EasyAF.XmlDocumentation', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.XmlDocumentation.dll
+
+**Namespace:** CloudNimble.EasyAF.XmlDocumentation
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation
+```
+
+## Summary
+
+Represents the root XML documentation structure for a .NET assembly.
+
+## Remarks
+
+This class parses and contains all the XML documentation for a single assembly,
+            including all types, members, and their associated documentation elements.
+            It provides methods to access and filter documentation by various criteria.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlDocumentationDocument class.
+
+#### Syntax
+
+```csharp
+public AssemblyXmlDocumentation()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlDocumentationDocument class from an XML document.
+
+#### Syntax
+
+```csharp
+public AssemblyXmlDocumentation(System.Xml.Linq.XDocument xmlDocument)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xmlDocument` | `System.Xml.Linq.XDocument` | The XML documentation to parse. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  AssemblyName
+
+Gets or sets the name of the assembly this documentation belongs to.
+
+#### Syntax
+
+```csharp
+public string AssemblyName { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Events
+
+Gets the collection of all documented events in the assembly.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocumentation.XmlMember> Events { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocumentation.XmlMember>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Fields
+
+Gets the collection of all documented fields in the assembly.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocumentation.XmlMember> Fields { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocumentation.XmlMember>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Members
+
+Gets the collection of all documented members in the assembly.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocumentation.XmlMember> Members { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocumentation.XmlMember>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Methods
+
+Gets the collection of all documented methods in the assembly.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocumentation.XmlMember> Methods { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocumentation.XmlMember>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Properties
+
+Gets the collection of all documented properties in the assembly.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocumentation.XmlMember> Properties { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocumentation.XmlMember>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Types
+
+Gets the collection of all documented types in the assembly.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocumentation.XmlMember> Types { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocumentation.XmlMember>`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetMembersByType
+
+Gets all members belonging to a specific type.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocumentation.XmlMember> GetMembersByType(string typeName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `typeName` | `string` | The fully qualified type name (without T: prefix). |
+
+#### Returns
+
+Type: `System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocumentation.XmlMember>`
+A dictionary of members belonging to the specified type.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetNamespaces
+
+Gets all unique namespaces represented in the documentation.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> GetNamespaces()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.List<string>`
+A list of unique namespace names.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetTypesByNamespace
+
+Gets all types within a specific namespace.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocumentation.XmlMember> GetTypesByNamespace(string namespace)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `namespace` | `string` | The namespace to filter by. |
+
+#### Returns
+
+Type: `System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocumentation.XmlMember>`
+A dictionary of types in the specified namespace.
+

@@ -1,0 +1,72 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+    <PropertyGroup>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net9.0;net8.0;</TargetFrameworks>
+        <DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
+        <DefineConstants>EFCORE</DefineConstants>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Ben.TypeDictionary" Version="[*, 2.0.0)" />
+        <PackageReference Include="SimpleMessageBus.Publish" Version="[5.*-*, 6.0.0)" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[10.*-*, 11.0.0)" />
+        <PackageReference Include="System.Text.Json" Version="[10.*-*, 11.0.0)" />
+        <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="[9.*-*, 11.0.0)" />
+
+        <!-- Dealing with security vulnerabilities -->
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="[10.*-*, 11.0.0)" PrivateAssets="All" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[9.*, 11.0.0)" />
+        <PackageReference Include="System.Text.Json" Version="[9.*, 11.0.0)" />
+        <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="[9.*, 11.0.0)" />
+
+        <!-- Dealing with security vulnerabilities -->
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="[9.*, 11.0.0)" PrivateAssets="All" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[8.*, 11.0.0)" />
+        <PackageReference Include="System.Text.Json" Version="[8.*, 11.0.0)" />
+        <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="[8.*, 11.0.0)" />
+
+        <!-- Dealing with security vulnerabilities -->
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="[8.*, 11.0.0)" PrivateAssets="All" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[8.*, 11.0.0)" />
+        <PackageReference Include="System.Text.Json" Version="[8.*, 11.0.0)" />
+        <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="[8.*, 11.0.0)" />
+
+        <!-- Dealing with security vulnerabilities -->
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="[8.*, 11.0.0)" PrivateAssets="All" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CloudNimble.EasyAF.Core\CloudNimble.EasyAF.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Include="..\CloudNimble.EasyAF.Business\EntityManager.cs" Link="EntityManager.cs" />
+      <Compile Include="..\CloudNimble.EasyAF.Business\IdentifiableEntityManager.cs" Link="IdentifiableEntityManager.cs" />
+      <Compile Include="..\CloudNimble.EasyAF.Business\ManagerBase.cs" Link="ManagerBase.cs" />
+      <Compile Include="..\CloudNimble.EasyAF.Business\StateMachineEntityManager.cs" Link="StateMachineEntityManager.cs" />
+      <Compile Include="..\CloudNimble.EasyAF.Business\StatusEntityManager.cs" Link="StatusEntityManager.cs" />
+    </ItemGroup>
+
+</Project>

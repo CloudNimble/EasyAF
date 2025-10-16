@@ -1,0 +1,178 @@
+---
+title: StateMachineEntityManager
+description: "A Manager inheriting from `IdentifiableEntityManager`3` that contains reusable logic for updating a *TEntity*'s current State."
+icon: code-branch
+tag: "ABSTRACT"
+keywords: ['StateMachineEntityManager', 'CloudNimble.EasyAF.Business.StateMachineEntityManager<TContext, TEntity, TId, TStateType>', 'CloudNimble.EasyAF.Business', 'class', 'CloudNimble.EasyAF.Business.IdentifiableEntityManager<TContext, TEntity, TId>']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Business.dll
+
+**Namespace:** CloudNimble.EasyAF.Business
+
+**Inheritance:** CloudNimble.EasyAF.Business.IdentifiableEntityManager&lt;TContext, TEntity, TId&gt;
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Business.StateMachineEntityManager<TContext, TEntity, TId, TStateType>
+```
+
+## Summary
+
+A Manager inheriting from `IdentifiableEntityManager`3` that contains reusable logic for updating a *TEntity*'s current State.
+
+## Type Parameters
+
+- `TContext` - 
+- `TEntity` - 
+- `TId` - 
+- `TStateType` - 
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  StateTypes
+
+Gets the collection of active state types available for entities managed by this manager.
+            This collection is populated during initialization from the database.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<TStateType> StateTypes { get; private set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<TStateType>`
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Initialize
+
+Initializes the StateTypes collection by loading active state types from the database.
+            This method is called automatically by state update methods if the collection is empty.
+
+#### Syntax
+
+```csharp
+public virtual void Initialize()
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SetCancelledAsync
+
+Sets the entity's state to "Cancelled" (sort order 98).
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task<bool> SetCancelledAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to update. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the state was successfully updated; otherwise, false.
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SetCompletedAsync
+
+Sets the entity's state to "Completed" (sort order 100).
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task<bool> SetCompletedAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to update. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the state was successfully updated; otherwise, false.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SetCreatedAsync
+
+Sets the entity's state to "Created" (sort order 0).
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> SetCreatedAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to update. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the state was successfully updated; otherwise, false.
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SetFailedAsync
+
+Sets the entity's state to "Failed" (sort order 99).
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task<bool> SetFailedAsync(TEntity entity, string errorMessage = "", string errorDetail = "")
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to update. |
+| `errorMessage` | `string` | Optional error message (currently not used in implementation). |
+| `errorDetail` | `string` | Optional error detail (currently not used in implementation). |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the state was successfully updated; otherwise, false.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  UpdateStateAsync
+
+Updates the entity's state to the state type with the specified sort order.
+            Logs the state transition for tracking purposes.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> UpdateStateAsync(TEntity entity, int sortOrder)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to update. |
+| `sortOrder` | `int` | The sort order of the target state type. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the state was successfully updated; otherwise, false.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `Exception` | Thrown when no state type is found with the specified sort order. |
+

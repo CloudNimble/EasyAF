@@ -1,0 +1,278 @@
+---
+title: ProjectInfo
+description: "Represents information about a discovered project."
+icon: file-brackets-curly
+keywords: ['ProjectInfo', 'CloudNimble.EasyAF.Tools.ProjectDiscovery.ProjectInfo', 'CloudNimble.EasyAF.Tools.ProjectDiscovery', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.ProjectDiscovery
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.ProjectDiscovery.ProjectInfo
+```
+
+## Summary
+
+Represents information about a discovered project.
+
+## Remarks
+
+This class contains metadata about a project file, including its path,
+            target frameworks, output directories, and XML documentation settings.
+            It is used by the project discovery system to identify eligible projects
+            for documentation generation.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the ProjectInfo class.
+
+#### Syntax
+
+```csharp
+public ProjectInfo()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the ProjectInfo class with a project path.
+
+#### Syntax
+
+```csharp
+public ProjectInfo(string projectPath)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `projectPath` | `string` | The path to the project file. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  AssemblyName
+
+Gets or sets the assembly name for the project.
+
+#### Syntax
+
+```csharp
+public string AssemblyName { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DocumentationFile
+
+Gets or sets the XML documentation file path pattern.
+
+#### Syntax
+
+```csharp
+public string DocumentationFile { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GeneratesDocumentation
+
+Gets or sets whether this project generates XML documentation.
+
+#### Syntax
+
+```csharp
+public bool GeneratesDocumentation { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  IsTemplateProject
+
+Gets or sets whether this is a template project.
+
+#### Syntax
+
+```csharp
+public bool IsTemplateProject { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  IsTestProject
+
+Gets or sets whether this is a test project.
+
+#### Syntax
+
+```csharp
+public bool IsTestProject { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  IsToolProject
+
+Gets or sets whether this is a tool project.
+
+#### Syntax
+
+```csharp
+public bool IsToolProject { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  LatestTargetFramework
+
+Gets or sets the latest (highest version) target framework.
+
+#### Syntax
+
+```csharp
+public string LatestTargetFramework { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ProjectDirectory
+
+Gets or sets the project directory path.
+
+#### Syntax
+
+```csharp
+public string ProjectDirectory { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ProjectName
+
+Gets or sets the project name (without extension).
+
+#### Syntax
+
+```csharp
+public string ProjectName { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ProjectPath
+
+Gets or sets the full path to the project file.
+
+#### Syntax
+
+```csharp
+public string ProjectPath { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  TargetFrameworks
+
+Gets the collection of target frameworks for this project.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> TargetFrameworks { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetAllDocumentationFilePaths
+
+Gets all XML documentation file paths for all target frameworks.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, string> GetAllDocumentationFilePaths()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.Dictionary<string, string>`
+A dictionary mapping target frameworks to documentation file paths.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetLatestDocumentationFilePath
+
+Gets the XML documentation file path for the latest target framework.
+
+#### Syntax
+
+```csharp
+public string GetLatestDocumentationFilePath()
+```
+
+#### Returns
+
+Type: `string`
+The path to the XML documentation file, or empty string if not available.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ShouldIncludeInDocumentation
+
+Determines whether this project should be included in documentation generation.
+
+#### Syntax
+
+```csharp
+public bool ShouldIncludeInDocumentation()
+```
+
+#### Returns
+
+Type: `bool`
+True if the project should be included; otherwise, false.
+
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToString
+
+Returns a string representation of the project information.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A string containing the project name and target frameworks.
+

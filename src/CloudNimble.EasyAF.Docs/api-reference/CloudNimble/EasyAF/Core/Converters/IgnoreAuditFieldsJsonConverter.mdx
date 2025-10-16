@@ -1,0 +1,97 @@
+---
+title: IgnoreAuditFieldsJsonConverter
+description: "A [JsonConverter`1](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonconverter-1) that ignores certain properties on a [DbObservable..."
+icon: code-branch
+keywords: ['IgnoreAuditFieldsJsonConverter', 'CloudNimble.EasyAF.Core.Converters.IgnoreAuditFieldsJsonConverter<T>', 'CloudNimble.EasyAF.Core.Converters', 'class', 'System.Text.Json.Serialization.JsonConverter<T>']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core.Converters
+
+**Inheritance:** System.Text.Json.Serialization.JsonConverter&lt;T&gt;
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.Converters.IgnoreAuditFieldsJsonConverter<T>
+```
+
+## Summary
+
+A [JsonConverter`1](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonconverter-1) that ignores certain properties on a [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject).
+
+## Remarks
+
+This converter also honors [JsonIgnoreAttribute](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonignoreattribute) decorations on properties.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public IgnoreAuditFieldsJsonConverter(System.Text.Json.JsonSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options` | `System.Text.Json.JsonSerializerOptions` | - |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  HandleNull
+
+#### Syntax
+
+```csharp
+public override bool HandleNull { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Read
+
+#### Syntax
+
+```csharp
+public override T Read(ref System.Text.Json.Utf8JsonReader reader, System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `reader` | `System.Text.Json.Utf8JsonReader` | - |
+| `typeToConvert` | `System.Type` | - |
+| `options` | `System.Text.Json.JsonSerializerOptions` | - |
+
+#### Returns
+
+Type: `T`
+
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Write
+
+#### Syntax
+
+```csharp
+public override void Write(System.Text.Json.Utf8JsonWriter writer, T value, System.Text.Json.JsonSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `System.Text.Json.Utf8JsonWriter` | - |
+| `value` | `T` | - |
+| `options` | `System.Text.Json.JsonSerializerOptions` | - |
+

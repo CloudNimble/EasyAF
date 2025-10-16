@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup Label="Globals">
+        <SccProjectName>SAK</SccProjectName>
+        <SccProvider>SAK</SccProvider>
+        <SccAuxPath>SAK</SccAuxPath>
+        <SccLocalPath>SAK</SccLocalPath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net9.0;net8.0;netstandard2.0;</TargetFrameworks>
+        <DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CloudNimble.EasyAF.Core\CloudNimble.EasyAF.Core.csproj" />
+    </ItemGroup>
+
+</Project>

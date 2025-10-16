@@ -1,0 +1,68 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    
+    <PropertyGroup Label="Globals">
+        <SccProjectName>SAK</SccProjectName>
+        <SccProvider>SAK</SccProvider>
+        <SccAuxPath>SAK</SccAuxPath>
+        <SccLocalPath>SAK</SccLocalPath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net9.0;net8.0;</TargetFrameworks>
+        <IsPackable>false</IsPackable>
+        <NoWarn>$(NoWarn);NU1705</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="EntityFramework" Version="6.*" ExcludeAssets="compile,runtime" NoWarn="NU1605" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CloudNimble.EasyAF.Business\CloudNimble.EasyAF.Business.csproj" />
+        <ProjectReference Include="..\CloudNimble.EasyAF.Core\CloudNimble.EasyAF.Core.csproj" />
+        <ProjectReference Include="..\CloudNimble.EasyAF.Data.EF6\CloudNimble.EasyAF.Data.EF6.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\CloudNimble.EasyAF.Tests.CodeGen\Baselines\DbContexts\EasyAFEntities.Generated.cs" Link="EasyAFModel\EasyAFEntities.Generated.cs" />
+        <Compile Include="..\CloudNimble.EasyAF.Tests.CodeGen\Baselines\Entities\Inquiry.Generated.cs" Link="EasyAFModel\Inquiry.Generated.cs" />
+        <Compile Include="..\CloudNimble.EasyAF.Tests.CodeGen\Baselines\Entities\InquiryStateType.Generated.cs" Link="EasyAFModel\InquiryStateType.Generated.cs" />
+        <Compile Include="..\CloudNimble.EasyAF.Tests.CodeGen\Baselines\Entities\Product.Generated.cs" Link="EasyAFModel\Product.Generated.cs" />
+        <Compile Include="..\CloudNimble.EasyAF.Tests.CodeGen\Baselines\Entities\ProductStatusType.Generated.cs" Link="EasyAFModel\ProductStatusType.Generated.cs" />
+        <Compile Include="..\CloudNimble.EasyAF.Tests.CodeGen\Baselines\Entities\User.Generated.cs" Link="EasyAFModel\User.Generated.cs" />
+        <Compile Include="..\CloudNimble.EasyAF.Tests.CodeGen\Baselines\Managers\InquiryManager.Generated.cs" Link="EasyAFModel\InquiryManager.Generated.cs" />
+        <Compile Include="..\CloudNimble.EasyAF.Tests.CodeGen\Baselines\Managers\ProductManager.Generated.cs" Link="EasyAFModel\ProductManager.Generated.cs" />
+
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Properties\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="EntityModel.edmx" />
+        <EntityDeploy Include="EntityModel.edmx" />
+        <None Update="App.Config">
+            <TransformOnBuild>true</TransformOnBuild>
+        </None>
+        <None Update="App.Debug.Config">
+            <IsTransformFile>true</IsTransformFile>
+            <DependentUpon>App.Config</DependentUpon>
+        </None>
+        <None Update="App.PROD.Config">
+            <IsTransformFile>true</IsTransformFile>
+            <DependentUpon>App.Config</DependentUpon>
+        </None>
+        <None Update="EntityModel.edmx.diagram">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>EntityModel.edmx</DependentUpon>
+        </None>
+        <Compile Update="*.cs" DependentUpon="BurnRateContext.cs" />
+    </ItemGroup>
+    
+</Project>

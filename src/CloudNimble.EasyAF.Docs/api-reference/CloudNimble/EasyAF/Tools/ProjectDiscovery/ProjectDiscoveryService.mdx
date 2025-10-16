@@ -1,0 +1,107 @@
+---
+title: ProjectDiscoveryService
+description: "Service for discovering and analyzing .NET projects in a solution."
+icon: file-brackets-curly
+keywords: ['ProjectDiscoveryService', 'CloudNimble.EasyAF.Tools.ProjectDiscovery.ProjectDiscoveryService', 'CloudNimble.EasyAF.Tools.ProjectDiscovery', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.ProjectDiscovery
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.ProjectDiscovery.ProjectDiscoveryService
+```
+
+## Summary
+
+Service for discovering and analyzing .NET projects in a solution.
+
+## Remarks
+
+This service scans for solution files, project files, and analyzes their configurations
+            to identify projects that are eligible for documentation generation. It handles
+            multi-targeting scenarios and determines the best documentation files to use.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public ProjectDiscoveryService()
+```
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  AnalyzeProject
+
+Analyzes a single project file to extract project information.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.Tools.ProjectDiscovery.ProjectInfo AnalyzeProject(string projectPath)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `projectPath` | `string` | The path to the project file. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.Tools.ProjectDiscovery.ProjectInfo`
+The project information, or null if the project cannot be analyzed.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DiscoverProjects
+
+Discovers all eligible projects in the specified directory.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<CloudNimble.EasyAF.Tools.ProjectDiscovery.ProjectInfo> DiscoverProjects(string rootDirectory, string specificProject = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `rootDirectory` | `string` | The root directory to search. |
+| `specificProject` | `string` | Optional specific project name to filter by. |
+
+#### Returns
+
+Type: `System.Collections.Generic.List<CloudNimble.EasyAF.Tools.ProjectDiscovery.ProjectInfo>`
+A collection of discovered project information.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  FindSolutionFile
+
+Finds the solution file in the specified directory.
+
+#### Syntax
+
+```csharp
+public string FindSolutionFile(string directory)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `directory` | `string` | The directory to search. |
+
+#### Returns
+
+Type: `string`
+The path to the solution file, or null if not found.
+

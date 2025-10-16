@@ -1,0 +1,105 @@
+---
+title: DatabaseGenerateCommand
+description: "Command for generating EDMX from database."
+icon: file-brackets-curly
+keywords: ['DatabaseGenerateCommand', 'CloudNimble.EasyAF.Tools.Commands.DatabaseGenerateCommand', 'CloudNimble.EasyAF.Tools.Commands', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Commands
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Commands.DatabaseGenerateCommand
+```
+
+## Summary
+
+Command for generating EDMX from database.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [DatabaseGenerateCommand](/api-reference/CloudNimble/EasyAF/Tools/Commands/DatabaseGenerateCommand) class.
+
+#### Syntax
+
+```csharp
+public DatabaseGenerateCommand(CloudNimble.EasyAF.EFCoreToEdmx.EdmxConverter converter)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `converter` | `CloudNimble.EasyAF.EFCoreToEdmx.EdmxConverter` | The EDMX converter service. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ContextName
+
+Gets or sets the DbContext class name to use for finding the configuration file.
+            When not specified, all .edmx.config files will be processed.
+
+#### Syntax
+
+```csharp
+public string ContextName { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Project
+
+Gets or sets the project directory path (defaults to auto-detected .Data folder).
+
+#### Syntax
+
+```csharp
+public string Project { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SolutionFolder
+
+Gets or sets the working directory for the solution. Defaults to current directory.
+
+#### Syntax
+
+```csharp
+public string SolutionFolder { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnExecuteAsync
+
+Executes the generate command.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<int> OnExecuteAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<int>`
+Exit code.
+

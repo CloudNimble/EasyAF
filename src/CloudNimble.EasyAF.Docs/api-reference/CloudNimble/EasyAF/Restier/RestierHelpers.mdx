@@ -1,0 +1,88 @@
+---
+title: RestierHelpers
+description: "Provides utility methods for logging Restier operations and entity lifecycle events.             Supports logging for both named entities and identifiable en..."
+icon: bolt
+tag: "STATIC"
+keywords: ['RestierHelpers', 'CloudNimble.EasyAF.Restier.RestierHelpers', 'CloudNimble.EasyAF.Restier', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Restier.dll
+
+**Namespace:** CloudNimble.EasyAF.Restier
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Restier.RestierHelpers
+```
+
+## Summary
+
+Provides utility methods for logging Restier operations and entity lifecycle events.
+            Supports logging for both named entities and identifiable entities with detailed operation tracking.
+
+## Methods
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  LogOperation
+
+Logs a Restier operation for the specified entity type name.
+            Formats the log message with appropriate verb tense based on operation type.
+
+#### Syntax
+
+```csharp
+public static void LogOperation(string entityName, CloudNimble.EasyAF.Restier.RestierOperationType operation)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityName` | `string` | The name of the entity type being operated on. |
+| `operation` | `CloudNimble.EasyAF.Restier.RestierOperationType` | The type of operation being performed. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  LogOperation
+
+Logs a Restier operation for the specified DbObservableObject entity.
+            Extracts the entity type name and delegates to the string-based logging method.
+
+#### Syntax
+
+```csharp
+public static void LogOperation(CloudNimble.EasyAF.Core.DbObservableObject entity, CloudNimble.EasyAF.Restier.RestierOperationType operation)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `CloudNimble.EasyAF.Core.DbObservableObject` | The entity being operated on. |
+| `operation` | `CloudNimble.EasyAF.Restier.RestierOperationType` | The type of operation being performed. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  LogOperation
+
+Logs a Restier operation for the specified identifiable entity, including the entity's ID in the log message.
+            Provides more detailed logging by including the specific entity identifier.
+
+#### Syntax
+
+```csharp
+public static void LogOperation<T, TId>(T entity, CloudNimble.EasyAF.Restier.RestierOperationType operation) where T : CloudNimble.EasyAF.Core.IIdentifiable<TId> where TId : struct, System.ValueType
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `T` | The identifiable entity being operated on. |
+| `operation` | `CloudNimble.EasyAF.Restier.RestierOperationType` | The type of operation being performed. |
+
+#### Type Parameters
+
+- `T` - The type of entity that implements IIdentifiable.
+- `TId` - The type of the entity's identifier.
+

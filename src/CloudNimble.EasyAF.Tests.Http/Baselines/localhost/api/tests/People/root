@@ -1,0 +1,13 @@
+﻿{
+  "@odata.context": "http://localhost/api/tests/$metadata#People",
+  "value": [
+    {
+      "@odata.type": "#Microsoft.Restier.Tests.Shared.Scenarios.Library.Person",
+      "@odata.id": "http://localhost/api/tests/People(19d68c75-1313-4369-b2bf-521f2b260a59)",
+      "@odata.editLink": "http://localhost/api/tests/People(19d68c75-1313-4369-b2bf-521f2b260a59)",
+      "Id@odata.type": "#Guid",
+      "Id": "19d68c75-1313-4369-b2bf-521f2b260a59",
+      "first_name": "Robert"
+    }
+  ]
+}

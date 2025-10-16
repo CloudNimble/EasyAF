@@ -1,0 +1,118 @@
+---
+title: SetupCommand
+description: "Command for setting up local development environment for existing EasyAF projects."
+icon: file-brackets-curly
+keywords: ['SetupCommand', 'CloudNimble.EasyAF.Tools.Commands.SetupCommand', 'CloudNimble.EasyAF.Tools.Commands', 'class', 'CloudNimble.EasyAF.Tools.Commands.EasyAFBaseCommand']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Commands
+
+**Inheritance:** CloudNimble.EasyAF.Tools.Commands.EasyAFBaseCommand
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Commands.SetupCommand
+```
+
+## Summary
+
+Command for setting up local development environment for existing EasyAF projects.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [SetupCommand](/api-reference/CloudNimble/EasyAF/Tools/Commands/SetupCommand) class.
+
+#### Syntax
+
+```csharp
+public SetupCommand(CloudNimble.EasyAF.EFCoreToEdmx.EdmxConfigManager configManager)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `configManager` | `CloudNimble.EasyAF.EFCoreToEdmx.EdmxConfigManager` | The configuration manager service. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ConnectionString
+
+Gets or sets the connection string to store locally.
+
+#### Syntax
+
+```csharp
+public string ConnectionString { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ContextName
+
+Gets or sets the DbContext class name to configure.
+
+#### Syntax
+
+```csharp
+public string ContextName { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DryRun
+
+Gets or sets a value indicating whether to show what would be configured without making changes.
+
+#### Syntax
+
+```csharp
+public bool DryRun { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SolutionFolder
+
+Gets or sets the working directory for the solution. Defaults to current directory.
+
+#### Syntax
+
+```csharp
+public string SolutionFolder { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnExecuteAsync
+
+Executes the setup command.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<int> OnExecuteAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<int>`
+Exit code.
+

@@ -1,0 +1,186 @@
+---
+title: EasyAF_ClaimsPrincipalExtensions
+icon: bolt
+sidebarTitle: EasyAF_ClaimsPrincipalExtensions
+tag: "STATIC"
+keywords: ['EasyAF_ClaimsPrincipalExtensions', 'System.Security.Claims.EasyAF_ClaimsPrincipalExtensions', 'System.Security.Claims', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** System.Security.Claims
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+System.Security.Claims.EasyAF_ClaimsPrincipalExtensions
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  NameClaimType
+
+#### Syntax
+
+```csharp
+public static string NameClaimType { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RoleClaimType
+
+#### Syntax
+
+```csharp
+public static string RoleClaimType { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetAllClaims
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IEnumerable<System.Security.Claims.Claim> GetAllClaims(System.Security.Claims.ClaimsPrincipal claimsPrincipal, string claimType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `claimsPrincipal` | `System.Security.Claims.ClaimsPrincipal` | The ClaimsPrincipal instance to check for Claims. Should be [Current](https://learn.microsoft.com/dotnet/api/system.security.claims.claimsprincipal.current), except in unit testing. |
+| `claimType` | `string` | - |
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<System.Security.Claims.Claim>`
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetClaimGuid
+
+#### Syntax
+
+```csharp
+public static System.Guid GetClaimGuid(System.Security.Claims.ClaimsPrincipal claimsPrincipal, string claimType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `claimsPrincipal` | `System.Security.Claims.ClaimsPrincipal` | - |
+| `claimType` | `string` | - |
+
+#### Returns
+
+Type: `System.Guid`
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `FormatException` | If the *claimType* is not formatted like a Guid (32 characters with 4 dashes), this exception will be thrown. |
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetClaimValue
+
+#### Syntax
+
+```csharp
+public static string GetClaimValue(System.Security.Claims.ClaimsPrincipal claimsPrincipal, string claimType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `claimsPrincipal` | `System.Security.Claims.ClaimsPrincipal` | The ClaimsPrincipal instance to check for Claims. Should be [Current](https://learn.microsoft.com/dotnet/api/system.security.claims.claimsprincipal.current), except in unit testing. |
+| `claimType` | `string` | - |
+
+#### Returns
+
+Type: `string`
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetIdClaim
+
+A shortcut for returning the AppUserProfileId for the current User.
+
+#### Syntax
+
+```csharp
+public static System.Guid GetIdClaim(System.Security.Claims.ClaimsPrincipal principal)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The ClaimsPrincipal instance we're extending. |
+
+#### Returns
+
+Type: `System.Guid`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Initialize
+
+#### Syntax
+
+```csharp
+public static void Initialize()
+```
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Initialize
+
+#### Syntax
+
+```csharp
+public static void Initialize(string schemaUri, string idClaimName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `schemaUri` | `string` | - |
+| `idClaimName` | `string` | - |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SetIdClaimName
+
+#### Syntax
+
+```csharp
+public static void SetIdClaimName(string idClaimName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `idClaimName` | `string` | - |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SetSchemaUri
+
+Sets the SchemaUrl used [`async`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/async)the basis for all custom claims.
+
+#### Syntax
+
+```csharp
+public static void SetSchemaUri(string schemaUri)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `schemaUri` | `string` | - |
+

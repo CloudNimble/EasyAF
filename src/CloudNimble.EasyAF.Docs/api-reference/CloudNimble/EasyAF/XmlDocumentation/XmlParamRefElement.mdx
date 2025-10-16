@@ -1,0 +1,91 @@
+---
+title: XmlParamRefElement
+description: "Represents a paramref XML documentation element for parameter references."
+icon: file-brackets-curly
+keywords: ['XmlParamRefElement', 'CloudNimble.EasyAF.XmlDocumentation.XmlParamRefElement', 'CloudNimble.EasyAF.XmlDocumentation', 'class', 'CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.XmlDocumentation.dll
+
+**Namespace:** CloudNimble.EasyAF.XmlDocumentation
+
+**Inheritance:** CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.XmlDocumentation.XmlParamRefElement
+```
+
+## Summary
+
+Represents a paramref XML documentation element for parameter references.
+
+## Remarks
+
+The paramref element creates a reference to a parameter within the documentation.
+            It is used to refer to parameters inline within text.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlParamRefElement class.
+
+#### Syntax
+
+```csharp
+public XmlParamRefElement()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlParamRefElement class with XML content.
+
+#### Syntax
+
+```csharp
+public XmlParamRefElement(System.Xml.Linq.XElement element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Xml.Linq.XElement` | The XML element to parse. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Name
+
+Gets or sets the name of the referenced parameter.
+
+#### Syntax
+
+```csharp
+public string Name { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToMdx
+
+Converts this paramref element to MDX format as inline code.
+
+#### Syntax
+
+```csharp
+public override string ToMdx()
+```
+
+#### Returns
+
+Type: `string`
+The MDX representation of this parameter reference.
+

@@ -1,0 +1,54 @@
+---
+title: DataEFCore_EntityTypeBuilderExtensions
+description: "Provides extension methods for the [EntityTypeBuilder`1](https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.metadata.builders.entitytypebui..."
+icon: bolt
+sidebarTitle: DataEFCore_EntityTypeBuilderExtensions
+tag: "STATIC"
+keywords: ['DataEFCore_EntityTypeBuilderExtensions', 'Microsoft.EntityFrameworkCore.Metadata.Builders.DataEFCore_EntityTypeBuilderExtensions', 'Microsoft.EntityFrameworkCore.Metadata.Builders', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Data.EFCore.dll
+
+**Namespace:** Microsoft.EntityFrameworkCore.Metadata.Builders
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.EntityFrameworkCore.Metadata.Builders.DataEFCore_EntityTypeBuilderExtensions
+```
+
+## Summary
+
+Provides extension methods for the [EntityTypeBuilder`1](https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.metadata.builders.entitytypebuilder-1) class to configure EasyAF-based types in the Entity Framework Core model.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  IgnoreTrackingFields
+
+Configures the entity type to ignore tracking fields defined in the [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject) class.
+
+#### Syntax
+
+```csharp
+public static Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<T> IgnoreTrackingFields<T>(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<T> builder) where T : CloudNimble.EasyAF.Core.DbObservableObject
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `builder` | `Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<T>` | The [EntityTypeBuilder`1](https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.metadata.builders.entitytypebuilder-1) used to configure the entity type. |
+
+#### Returns
+
+Type: `Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<T>`
+The same [EntityTypeBuilder`1](https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.metadata.builders.entitytypebuilder-1) instance so that multiple calls can be chained.
+
+#### Type Parameters
+
+- `T` - The type of the entity being configured.
+

@@ -1,0 +1,109 @@
+---
+title: CleanupCommand
+description: "Command for cleaning up build artifacts and lock files from the solution."
+icon: file-brackets-curly
+keywords: ['CleanupCommand', 'CloudNimble.EasyAF.Tools.Commands.CleanupCommand', 'CloudNimble.EasyAF.Tools.Commands', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Commands
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Commands.CleanupCommand
+```
+
+## Summary
+
+Command for cleaning up build artifacts and lock files from the solution.
+
+## Remarks
+
+This command recursively deletes bin, obj, TestResults directories and packages.lock.json files
+            from the current directory and all subdirectories.
+
+## Examples
+
+```csharp
+dotnet easyaf cleanup
+dotnet easyaf cleanup --dry-run
+dotnet easyaf cleanup --path "C:\Projects\MyApp"
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public CleanupCommand()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DryRun
+
+Gets or sets a value indicating whether to show what would be deleted without actually deleting.
+
+#### Syntax
+
+```csharp
+public bool DryRun { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Path
+
+Gets or sets the root directory to clean. Defaults to current directory.
+
+#### Syntax
+
+```csharp
+public string Path { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Quiet
+
+Gets or sets a value indicating whether to run in quiet mode with minimal output.
+
+#### Syntax
+
+```csharp
+public bool Quiet { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnExecuteAsync
+
+Executes the cleanup command.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<int> OnExecuteAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<int>`
+Exit code (0 for success, 1 for error).
+

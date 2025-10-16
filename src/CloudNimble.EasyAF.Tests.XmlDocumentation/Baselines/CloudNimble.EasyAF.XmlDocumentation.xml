@@ -1,0 +1,814 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CloudNimble.EasyAF.XmlDocumentation</name>
+    </assembly>
+    <members>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation">
+            <summary>
+            Represents the root XML documentation structure for a .NET assembly.
+            </summary>
+            <remarks>
+            This class parses and contains all the XML documentation for a single assembly,
+            including all types, members, and their associated documentation elements.
+            It provides methods to access and filter documentation by various criteria.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation.AssemblyName">
+            <summary>
+            Gets or sets the name of the assembly this documentation belongs to.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation.Members">
+            <summary>
+            Gets the collection of all documented members in the assembly.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation.Types">
+            <summary>
+            Gets the collection of all documented types in the assembly.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation.Methods">
+            <summary>
+            Gets the collection of all documented methods in the assembly.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation.Properties">
+            <summary>
+            Gets the collection of all documented properties in the assembly.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation.Fields">
+            <summary>
+            Gets the collection of all documented fields in the assembly.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation.Events">
+            <summary>
+            Gets the collection of all documented events in the assembly.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation.#ctor">
+            <summary>
+            Initializes a new instance of the XmlDocumentationDocument class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation.#ctor(System.Xml.Linq.XDocument)">
+            <summary>
+            Initializes a new instance of the XmlDocumentationDocument class from an XML document.
+            </summary>
+            <param name="xmlDocument">The XML documentation to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation.GetTypesByNamespace(System.String)">
+            <summary>
+            Gets all types within a specific namespace.
+            </summary>
+            <param name="namespace">The namespace to filter by.</param>
+            <returns>A dictionary of types in the specified namespace.</returns>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation.GetMembersByType(System.String)">
+            <summary>
+            Gets all members belonging to a specific type.
+            </summary>
+            <param name="typeName">The fully qualified type name (without T: prefix).</param>
+            <returns>A dictionary of members belonging to the specified type.</returns>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation.GetNamespaces">
+            <summary>
+            Gets all unique namespaces represented in the documentation.
+            </summary>
+            <returns>A list of unique namespace names.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlCodeBlockElement">
+            <summary>
+            Represents a code block XML documentation element.
+            </summary>
+            <remarks>
+            The code element contains code examples or snippets.
+            It is typically rendered as a formatted code block with syntax highlighting.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlCodeBlockElement.Language">
+            <summary>
+            Gets or sets the programming language for syntax highlighting.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlCodeBlockElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlCodeBlockElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlCodeBlockElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlCodeBlockElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlCodeBlockElement.ToMdx">
+            <summary>
+            Converts this code block element to MDX format with syntax highlighting.
+            </summary>
+            <returns>The MDX representation of this code block.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlCodeElement">
+            <summary>
+            Represents an inline code XML documentation element.
+            </summary>
+            <remarks>
+            The c element marks text as inline code within documentation.
+            It is typically rendered with monospace font and different styling.
+            </remarks>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlCodeElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlCodeElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlCodeElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlCodeElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlCodeElement.ToMdx">
+            <summary>
+            Converts this inline code element to MDX format.
+            </summary>
+            <returns>The MDX representation of this inline code.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement">
+            <summary>
+            Represents a base XML documentation element with common properties.
+            </summary>
+            <remarks>
+            This abstract class provides the foundation for all XML documentation elements,
+            including summary, remarks, parameters, returns, and other documentation tags.
+            It handles parsing of XML content and preserves the original structure for
+            conversion to MDX format.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement.RawXml">
+            <summary>
+            Gets or sets the raw XML content of the element.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement.Text">
+            <summary>
+            Gets or sets the parsed text content of the element.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement.InnerElements">
+            <summary>
+            Gets or sets the inner XML elements for nested content.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlDocumentationElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlDocumentationElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement.ParseInnerElements(System.Xml.Linq.XElement)">
+            <summary>
+            Parses inner XML elements recursively.
+            </summary>
+            <param name="element">The parent XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement.CreateDocumentationElement(System.Xml.Linq.XElement)">
+            <summary>
+            Creates the appropriate documentation element based on the XML element name.
+            </summary>
+            <param name="element">The XML element to convert.</param>
+            <returns>The appropriate documentation element, or null if not supported.</returns>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement.ToMdx">
+            <summary>
+            Converts this element to MDX format.
+            </summary>
+            <returns>The MDX representation of this element.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlExampleElement">
+            <summary>
+            Represents an example XML documentation element.
+            </summary>
+            <remarks>
+            The example element contains code examples that demonstrate how to use a type or member.
+            It can contain both description text and code blocks.
+            </remarks>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlExampleElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlExampleElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlExampleElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlExampleElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlExampleElement.ToMdx">
+            <summary>
+            Converts this example element to MDX format with proper code formatting.
+            </summary>
+            <returns>The MDX representation of this example.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlExceptionElement">
+            <summary>
+            Represents an exception XML documentation element.
+            </summary>
+            <remarks>
+            The exception element documents exceptions that can be thrown by a method or property.
+            It includes the exception type and conditions under which it is thrown.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlExceptionElement.Cref">
+            <summary>
+            Gets or sets the fully qualified name of the exception type.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlExceptionElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlExceptionElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlExceptionElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlExceptionElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlExceptionElement.ToMdx">
+            <summary>
+            Converts this exception element to MDX format.
+            </summary>
+            <returns>The MDX representation of this exception.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlGenericElement">
+            <summary>
+            Represents a generic XML documentation element for unrecognized tags.
+            </summary>
+            <remarks>
+            This class handles XML documentation elements that don't have specific implementations.
+            It provides basic text extraction and formatting capabilities for any XML element.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlGenericElement.ElementName">
+            <summary>
+            Gets or sets the XML element name.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlGenericElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlGenericElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlGenericElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlGenericElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlGenericElement.ToMdx">
+            <summary>
+            Converts this generic element to MDX format.
+            </summary>
+            <returns>The MDX representation of this element.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlListElement">
+            <summary>
+            Represents a list XML documentation element.
+            </summary>
+            <remarks>
+            The list element creates bulleted or numbered lists within documentation.
+            It supports different list types including bullet, number, and table formats.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlListElement.Type">
+            <summary>
+            Gets or sets the type of list (bullet, number, table).
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlListElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlListElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlListElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlListElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlListElement.ToMdx">
+            <summary>
+            Converts this list element to MDX format.
+            </summary>
+            <returns>The MDX representation of this list.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlMember">
+            <summary>
+            Represents a documented member from XML documentation.
+            </summary>
+            <remarks>
+            This class contains all the documentation elements for a single member,
+            including summary, remarks, parameters, return values, exceptions, and examples.
+            It provides methods to convert the documentation to various formats.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlMember.Name">
+            <summary>
+            Gets or sets the full member name with prefix (e.g., T:System.String, M:System.String.Length).
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlMember.MemberType">
+            <summary>
+            Gets or sets the member type (Type, Method, Property, Field, Event).
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlMember.Summary">
+            <summary>
+            Gets or sets the summary documentation element.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlMember.Remarks">
+            <summary>
+            Gets or sets the remarks documentation element.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlMember.Parameters">
+            <summary>
+            Gets the collection of parameter documentation elements.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlMember.TypeParameters">
+            <summary>
+            Gets the collection of type parameter documentation elements.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlMember.Returns">
+            <summary>
+            Gets or sets the returns documentation element.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlMember.Value">
+            <summary>
+            Gets or sets the value documentation element (for properties).
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlMember.Exceptions">
+            <summary>
+            Gets the collection of exception documentation elements.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlMember.Examples">
+            <summary>
+            Gets the collection of example documentation elements.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlMember.SeeAlso">
+            <summary>
+            Gets the collection of see also references.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlMember.Permissions">
+            <summary>
+            Gets the collection of permission documentation elements.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlMember.#ctor">
+            <summary>
+            Initializes a new instance of the XmlMember class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlMember.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlMember class from an XML element.
+            </summary>
+            <param name="memberElement">The XML member element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlMember.GetSimpleName">
+            <summary>
+            Gets the simple name of the member without prefix and namespace.
+            </summary>
+            <returns>The simple member name.</returns>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlMember.GetNamespace">
+            <summary>
+            Gets the namespace of the member.
+            </summary>
+            <returns>The namespace name.</returns>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlMember.GetContainingType">
+            <summary>
+            Gets the containing type name for members.
+            </summary>
+            <returns>The containing type name, or empty string for types.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.MemberType">
+            <summary>
+            Enumeration of member types in XML documentation.
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.XmlDocumentation.MemberType.Unknown">
+            <summary>
+            Unknown member type.
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.XmlDocumentation.MemberType.Type">
+            <summary>
+            Type (class, interface, struct, enum, delegate).
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.XmlDocumentation.MemberType.Method">
+            <summary>
+            Method or constructor.
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.XmlDocumentation.MemberType.Property">
+            <summary>
+            Property or indexer.
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.XmlDocumentation.MemberType.Field">
+            <summary>
+            Field or constant.
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.XmlDocumentation.MemberType.Event">
+            <summary>
+            Event.
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.XmlDocumentation.MemberType.Namespace">
+            <summary>
+            Namespace.
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlParagraphElement">
+            <summary>
+            Represents a paragraph XML documentation element.
+            </summary>
+            <remarks>
+            The para element represents a paragraph break within documentation text.
+            It is used to separate sections of content for better readability.
+            </remarks>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlParagraphElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlParagraphElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlParagraphElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlParagraphElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlParagraphElement.ToMdx">
+            <summary>
+            Converts this paragraph element to MDX format.
+            </summary>
+            <returns>The MDX representation of this paragraph.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlParameterElement">
+            <summary>
+            Represents a parameter XML documentation element.
+            </summary>
+            <remarks>
+            The param element describes a parameter of a method, constructor, or indexer.
+            It includes the parameter name and description of its purpose and usage.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlParameterElement.Name">
+            <summary>
+            Gets or sets the name of the parameter.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlParameterElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlParameterElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlParameterElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlParameterElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlParameterElement.ToMdx">
+            <summary>
+            Converts this parameter element to MDX format.
+            </summary>
+            <returns>The MDX representation of this parameter.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlParamRefElement">
+            <summary>
+            Represents a paramref XML documentation element for parameter references.
+            </summary>
+            <remarks>
+            The paramref element creates a reference to a parameter within the documentation.
+            It is used to refer to parameters inline within text.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlParamRefElement.Name">
+            <summary>
+            Gets or sets the name of the referenced parameter.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlParamRefElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlParamRefElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlParamRefElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlParamRefElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlParamRefElement.ToMdx">
+            <summary>
+            Converts this paramref element to MDX format as inline code.
+            </summary>
+            <returns>The MDX representation of this parameter reference.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlPermissionElement">
+            <summary>
+            Represents a permission XML documentation element.
+            </summary>
+            <remarks>
+            The permission element documents the security permissions required
+            to access or use a particular type or member.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlPermissionElement.Cref">
+            <summary>
+            Gets or sets the permission type reference.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlPermissionElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlPermissionElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlPermissionElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlPermissionElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlPermissionElement.ToMdx">
+            <summary>
+            Converts this permission element to MDX format.
+            </summary>
+            <returns>The MDX representation of this permission requirement.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlRemarksElement">
+            <summary>
+            Represents a remarks XML documentation element.
+            </summary>
+            <remarks>
+            The remarks element provides additional detailed information about a type or member.
+            It is typically displayed after the summary and can contain more extensive explanations,
+            usage notes, or implementation details.
+            </remarks>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlRemarksElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlRemarksElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlRemarksElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlRemarksElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlRemarksElement.ToMdx">
+            <summary>
+            Converts this remarks element to MDX format.
+            </summary>
+            <returns>The MDX representation of these remarks.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlReturnsElement">
+            <summary>
+            Represents a returns XML documentation element.
+            </summary>
+            <remarks>
+            The returns element describes the return value of a method or property.
+            It explains what the method returns and under what conditions.
+            </remarks>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlReturnsElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlReturnsElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlReturnsElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlReturnsElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlReturnsElement.ToMdx">
+            <summary>
+            Converts this returns element to MDX format.
+            </summary>
+            <returns>The MDX representation of this returns description.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlSeeAlsoElement">
+            <summary>
+            Represents a seealso XML documentation element for related references.
+            </summary>
+            <remarks>
+            The seealso element creates a link to related types or members.
+            These are typically displayed in a "See Also" section.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlSeeAlsoElement.Cref">
+            <summary>
+            Gets or sets the cross-reference target.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlSeeAlsoElement.LinkText">
+            <summary>
+            Gets or sets the link text to display.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlSeeAlsoElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlSeeAlsoElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlSeeAlsoElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlSeeAlsoElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlSeeAlsoElement.ToMdx">
+            <summary>
+            Converts this seealso element to MDX format as a link.
+            </summary>
+            <returns>The MDX representation of this related reference.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlSeeElement">
+            <summary>
+            Represents a see XML documentation element for cross-references.
+            </summary>
+            <remarks>
+            The see element creates a link to another type or member within the documentation.
+            It is used for inline cross-references within text.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlSeeElement.Cref">
+            <summary>
+            Gets or sets the cross-reference target.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlSeeElement.LinkText">
+            <summary>
+            Gets or sets the link text to display.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlSeeElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlSeeElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlSeeElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlSeeElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlSeeElement.ToMdx">
+            <summary>
+            Converts this see element to MDX format as a link.
+            </summary>
+            <returns>The MDX representation of this cross-reference.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlSummaryElement">
+            <summary>
+            Represents a summary XML documentation element.
+            </summary>
+            <remarks>
+            The summary element provides a brief description of a type or member.
+            It is typically displayed prominently in documentation and should be
+            concise but informative.
+            </remarks>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlSummaryElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlSummaryElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlSummaryElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlSummaryElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlSummaryElement.ToMdx">
+            <summary>
+            Converts this summary element to MDX format.
+            </summary>
+            <returns>The MDX representation of this summary.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlTypeParameterElement">
+            <summary>
+            Represents a type parameter XML documentation element.
+            </summary>
+            <remarks>
+            The typeparam element describes a generic type parameter.
+            It includes the parameter name and description of its constraints and usage.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlTypeParameterElement.Name">
+            <summary>
+            Gets or sets the name of the type parameter.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlTypeParameterElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlTypeParameterElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlTypeParameterElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlTypeParameterElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlTypeParameterElement.ToMdx">
+            <summary>
+            Converts this type parameter element to MDX format.
+            </summary>
+            <returns>The MDX representation of this type parameter.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlTypeParamRefElement">
+            <summary>
+            Represents a typeparamref XML documentation element for type parameter references.
+            </summary>
+            <remarks>
+            The typeparamref element creates a reference to a generic type parameter within the documentation.
+            It is used to refer to type parameters inline within text.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.XmlDocumentation.XmlTypeParamRefElement.Name">
+            <summary>
+            Gets or sets the name of the referenced type parameter.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlTypeParamRefElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlTypeParamRefElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlTypeParamRefElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlTypeParamRefElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlTypeParamRefElement.ToMdx">
+            <summary>
+            Converts this typeparamref element to MDX format as inline code.
+            </summary>
+            <returns>The MDX representation of this type parameter reference.</returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.XmlDocumentation.XmlValueElement">
+            <summary>
+            Represents a value XML documentation element for properties.
+            </summary>
+            <remarks>
+            The value element describes the value that a property represents.
+            It is used primarily for properties to explain what the property value means.
+            </remarks>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlValueElement.#ctor">
+            <summary>
+            Initializes a new instance of the XmlValueElement class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlValueElement.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            Initializes a new instance of the XmlValueElement class with XML content.
+            </summary>
+            <param name="element">The XML element to parse.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.XmlDocumentation.XmlValueElement.ToMdx">
+            <summary>
+            Converts this value element to MDX format.
+            </summary>
+            <returns>The MDX representation of this value description.</returns>
+        </member>
+    </members>
+</doc>

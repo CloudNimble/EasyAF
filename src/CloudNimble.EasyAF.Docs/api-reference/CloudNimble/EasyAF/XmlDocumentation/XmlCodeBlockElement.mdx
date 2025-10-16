@@ -1,0 +1,91 @@
+---
+title: XmlCodeBlockElement
+description: "Represents a code block XML documentation element."
+icon: file-brackets-curly
+keywords: ['XmlCodeBlockElement', 'CloudNimble.EasyAF.XmlDocumentation.XmlCodeBlockElement', 'CloudNimble.EasyAF.XmlDocumentation', 'class', 'CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.XmlDocumentation.dll
+
+**Namespace:** CloudNimble.EasyAF.XmlDocumentation
+
+**Inheritance:** CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.XmlDocumentation.XmlCodeBlockElement
+```
+
+## Summary
+
+Represents a code block XML documentation element.
+
+## Remarks
+
+The code element contains code examples or snippets.
+            It is typically rendered as a formatted code block with syntax highlighting.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlCodeBlockElement class.
+
+#### Syntax
+
+```csharp
+public XmlCodeBlockElement()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlCodeBlockElement class with XML content.
+
+#### Syntax
+
+```csharp
+public XmlCodeBlockElement(System.Xml.Linq.XElement element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Xml.Linq.XElement` | The XML element to parse. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Language
+
+Gets or sets the programming language for syntax highlighting.
+
+#### Syntax
+
+```csharp
+public string Language { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToMdx
+
+Converts this code block element to MDX format with syntax highlighting.
+
+#### Syntax
+
+```csharp
+public override string ToMdx()
+```
+
+#### Returns
+
+Type: `string`
+The MDX representation of this code block.
+

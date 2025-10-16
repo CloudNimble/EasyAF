@@ -1,0 +1,135 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup Label="Globals">
+        <SccProjectName>SAK</SccProjectName>
+        <SccProvider>SAK</SccProvider>
+        <SccAuxPath>SAK</SccAuxPath>
+        <SccLocalPath>SAK</SccLocalPath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;</TargetFrameworks>
+        <DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <DefineConstants>TRACE;ENTITYFRAMEWORK;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Portable.System.DateTimeOnly" Version="8.0.1" />
+        <PackageReference Include="System.ComponentModel.Annotations" Version="5.*" />
+        <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.*" />
+        <PackageReference Include="System.Data.SqlClient" Version="4.*" />
+        <PackageReference Include="System.Reflection.DispatchProxy" Version="4.*" />
+        <PackageReference Include="System.Reflection.Emit" Version="4.*" />
+        <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.*" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\System\Data\EntityModel\System.Data.Resources.AnnotationSchema.xsd">
+            <LogicalName>System.Data.Resources.AnnotationSchema.xsd</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\System\Data\EntityModel\System.Data.Resources.CodeGenerationSchema.xsd">
+            <LogicalName>System.Data.Resources.CodeGenerationSchema.xsd</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\System\Data\EntityModel\System.Data.Resources.CSDLSchema_1.xsd">
+            <LogicalName>System.Data.Resources.CSDLSchema_1.xsd</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\System\Data\EntityModel\System.Data.Resources.CSDLSchema_1_1.xsd">
+            <LogicalName>System.Data.Resources.CSDLSchema_1_1.xsd</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\System\Data\EntityModel\System.Data.Resources.CSDLSchema_2.xsd">
+            <LogicalName>System.Data.Resources.CSDLSchema_2.xsd</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\System\Data\EntityModel\System.Data.Resources.CSDLSchema_3.xsd">
+            <LogicalName>System.Data.Resources.CSDLSchema_3.xsd</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\System\Data\EntityModel\System.Data.Resources.EntityStoreSchemaGenerator.xsd">
+            <LogicalName>System.Data.Resources.EntityStoreSchemaGenerator.xsd</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\System\Data\EntityModel\System.Data.Resources.SSDLSchema.xsd">
+            <LogicalName>System.Data.Resources.SSDLSchema.xsd</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\System\Data\EntityModel\System.Data.Resources.SSDLSchema_2.xsd">
+            <LogicalName>System.Data.Resources.SSDLSchema_2.xsd</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\System\Data\EntityModel\System.Data.Resources.SSDLSchema_3.xsd">
+            <LogicalName>System.Data.Resources.SSDLSchema_3.xsd</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\System\Data\MappingSpecification\System.Data.Resources.CSMSL_1.xsd">
+            <LogicalName>System.Data.Resources.CSMSL_1.xsd</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\System\Data\MappingSpecification\System.Data.Resources.CSMSL_2.xsd">
+            <LogicalName>System.Data.Resources.CSMSL_2.xsd</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\System\Data\MappingSpecification\System.Data.Resources.CSMSL_3.xsd">
+            <LogicalName>System.Data.Resources.CSMSL_3.xsd</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\System\Data\System.Data.Resources.DbProviderServices.ConceptualSchemaDefinition.csdl">
+            <LogicalName>System.Data.Resources.DbProviderServices.ConceptualSchemaDefinition.csdl</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\System\Data\System.Data.Resources.DbProviderServices.ConceptualSchemaDefinitionVersion3.csdl">
+            <LogicalName>System.Data.Resources.DbProviderServices.ConceptualSchemaDefinitionVersion3.csdl</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\System\Data\System.Data.Resources.ProviderServices.ProviderManifest.xsd">
+            <LogicalName>System.Data.Resources.ProviderServices.ProviderManifest.xsd</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Properties\Resources.resx">
+            <LogicalName>System.Data.Entity.Properties.Resources.resources</LogicalName>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="Properties\Resources.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>Resources.cs</LastGenOutput>
+            <CustomToolNamespace>System.Data.Entity</CustomToolNamespace>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Core\EntityClient\EntityCommand.cs" />
+        <Compile Update="Core\EntityClient\EntityConnection.cs" />
+        <Compile Update="Infrastructure\DbConnectionInfo.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Internal\InterceptableDbCommand.cs" />
+        <Compile Update="Migrations\DbMigrator.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Migrations\Design\ToolingFacade.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Migrations\History\HistoryRepository.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Migrations\Infrastructure\MigratorScriptingDecorator.cs">
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Properties\Resources.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>Resources.tt</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="CLSCompliantAttribute">
+            <_Parameter1>true</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="CloudNimble.EasyAF.Tests.CodeGen, $(StrongNamePublicKey)" />
+        <InternalsVisibleTo Include="CloudNimble.EasyAF.Tests.Edmx, $(StrongNamePublicKey)" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,75 @@
+---
+title: XmlCodeElement
+description: "Represents an inline code XML documentation element."
+icon: file-brackets-curly
+keywords: ['XmlCodeElement', 'CloudNimble.EasyAF.XmlDocumentation.XmlCodeElement', 'CloudNimble.EasyAF.XmlDocumentation', 'class', 'CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.XmlDocumentation.dll
+
+**Namespace:** CloudNimble.EasyAF.XmlDocumentation
+
+**Inheritance:** CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.XmlDocumentation.XmlCodeElement
+```
+
+## Summary
+
+Represents an inline code XML documentation element.
+
+## Remarks
+
+The c element marks text as inline code within documentation.
+            It is typically rendered with monospace font and different styling.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlCodeElement class.
+
+#### Syntax
+
+```csharp
+public XmlCodeElement()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlCodeElement class with XML content.
+
+#### Syntax
+
+```csharp
+public XmlCodeElement(System.Xml.Linq.XElement element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Xml.Linq.XElement` | The XML element to parse. |
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToMdx
+
+Converts this inline code element to MDX format.
+
+#### Syntax
+
+```csharp
+public override string ToMdx()
+```
+
+#### Returns
+
+Type: `string`
+The MDX representation of this inline code.
+

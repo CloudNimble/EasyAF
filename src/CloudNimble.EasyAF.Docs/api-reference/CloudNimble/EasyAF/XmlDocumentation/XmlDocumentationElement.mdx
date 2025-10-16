@@ -1,0 +1,94 @@
+---
+title: XmlDocumentationElement
+description: "Represents a base XML documentation element with common properties."
+icon: shapes
+tag: "ABSTRACT"
+keywords: ['XmlDocumentationElement', 'CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement', 'CloudNimble.EasyAF.XmlDocumentation', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.XmlDocumentation.dll
+
+**Namespace:** CloudNimble.EasyAF.XmlDocumentation
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement
+```
+
+## Summary
+
+Represents a base XML documentation element with common properties.
+
+## Remarks
+
+This abstract class provides the foundation for all XML documentation elements,
+            including summary, remarks, parameters, returns, and other documentation tags.
+            It handles parsing of XML content and preserves the original structure for
+            conversion to MDX format.
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  InnerElements
+
+Gets or sets the inner XML elements for nested content.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement> InnerElements { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RawXml
+
+Gets or sets the raw XML content of the element.
+
+#### Syntax
+
+```csharp
+public string RawXml { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Text
+
+Gets or sets the parsed text content of the element.
+
+#### Syntax
+
+```csharp
+public string Text { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToMdx
+
+Converts this element to MDX format.
+
+#### Syntax
+
+```csharp
+public abstract string ToMdx()
+```
+
+#### Returns
+
+Type: `string`
+The MDX representation of this element.
+

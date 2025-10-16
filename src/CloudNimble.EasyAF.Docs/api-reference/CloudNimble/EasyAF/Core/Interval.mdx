@@ -1,0 +1,456 @@
+---
+title: Interval
+description: "Describes an interval of time to be used in time-based calculations.             Provides methods to calculate rates and frequencies based on the interval va..."
+icon: code-branch
+keywords: ['Interval', 'CloudNimble.EasyAF.Core.Interval<T>', 'CloudNimble.EasyAF.Core', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.Interval<T>
+```
+
+## Summary
+
+Describes an interval of time to be used in time-based calculations.
+            Provides methods to calculate rates and frequencies based on the interval value and type.
+
+## Type Parameters
+
+- `T` - The data type for the interval value. Must implement [IComparable`1](https://learn.microsoft.com/dotnet/api/system.icomparable-1) and [IConvertible](https://learn.microsoft.com/dotnet/api/system.iconvertible).
+
+## Examples
+
+```csharp
+// Create an interval representing something that happens every 3 hours
+var interval = new Interval&lt;int&gt;(3, IntervalType.Hours);
+
+// Calculate how many times per day this would occur
+decimal timesPerDay = interval.PerDay(); // Returns 8.0
+
+// Calculate how many minutes between occurrences
+decimal minutesBetween = interval.PerMinute(); // Returns 0.0556 (1/18)
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Creates a new instance of the `Interval`1` class.
+
+#### Syntax
+
+```csharp
+public Interval()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Creates a new instance of the `Interval`1` class.
+
+#### Syntax
+
+```csharp
+public Interval(T value, CloudNimble.EasyAF.Core.IntervalType type)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `T` | The duration of the interval. |
+| `type` | `CloudNimble.EasyAF.Core.IntervalType` | The base unit that describes what the quantity of this Interval references. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Type
+
+The base unit that describes what the quantity of this Interval references.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.Core.IntervalType Type { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.EasyAF.Core.IntervalType`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Value
+
+The duration of the Interval.
+
+#### Syntax
+
+```csharp
+public T Value { get; set; }
+```
+
+#### Property Value
+
+Type: `T`
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerDay
+
+Given this `Interval`1` instance, calculates how many occurrences will happen per day.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerDay()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The number of occurrences per day as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerDay
+
+Given this `Interval`1` instance and a quantity, calculates the total output per day.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerDay(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total output per day as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+#### Examples
+
+```csharp
+// Widget production: 1 widget every 1.5 hours, total from 100 units of material per day
+var production = new Interval&lt;double&gt;(1.5, IntervalType.Hours);
+decimal totalPerDay = production.PerDay(100); // 1600 widgets per day (16 * 100)
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerHour
+
+Given this `Interval`1` instance, calculates how many occurrences will happen per hour.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerHour()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The number of occurrences per hour as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerHour
+
+Given this `Interval`1` instance and a quantity, calculates the total output per hour.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerHour(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total output per hour as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+#### Examples
+
+```csharp
+// Widget production: 1 widget every 1.5 hours, total from 100 units of material per hour
+var production = new Interval&lt;double&gt;(1.5, IntervalType.Hours);
+decimal totalPerHour = production.PerHour(100); // 66.67 widgets per hour (1/1.5 * 100)
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerMinute
+
+Given this `Interval`1` instance, calculates how many occurrences will happen per minute.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerMinute()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The number of occurrences per minute as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+#### Remarks
+
+If you need this as a whole number, wrap the result in [Decimal)](https://learn.microsoft.com/dotnet/api/system.math.floor(system.decimal)).
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerMinute
+
+Given this `Interval`1` instance and a quantity, calculates the total output per minute.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerMinute(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total output per minute as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+#### Examples
+
+```csharp
+// Widget production: 1 widget every 90 minutes, total from 100 units of material per minute
+var production = new Interval&lt;int&gt;(90, IntervalType.Minutes);
+decimal totalPerMinute = production.PerMinute(100); // 1.11 widgets per minute (1/90 * 100)
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerMonth
+
+Given this `Interval`1` instance, calculates how many occurrences will happen per month.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerMonth()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The number of occurrences per month as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerMonth
+
+Given this `Interval`1` instance and a quantity, calculates the total output per month.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerMonth(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total output per month as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+#### Examples
+
+```csharp
+// Widget production: 1 widget every 3 days, total from 200 units of material per month
+var production = new Interval&lt;int&gt;(3, IntervalType.Days);
+decimal totalPerMonth = production.PerMonth(200); // 2000 widgets per month (10 * 200)
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerWeek
+
+Given this `Interval`1` instance, calculates how many occurrences will happen per week.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerWeek()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The number of occurrences per week as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerWeek
+
+Given this `Interval`1` instance and a quantity, calculates the total output per week.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerWeek(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total output per week as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+#### Examples
+
+```csharp
+// Widget production: 1 widget every 2 days, total from 50 units of material per week
+var production = new Interval&lt;int&gt;(2, IntervalType.Days);
+decimal totalPerWeek = production.PerWeek(50); // 175 widgets per week (3.5 * 50)
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerYear
+
+Given this `Interval`1` instance, calculates how many occurrences will happen per year.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerYear()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The number of occurrences per year as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerYear
+
+Given this `Interval`1` instance and a quantity, calculates the total output per year.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerYear(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total output per year as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+#### Examples
+
+```csharp
+// Widget production: 1 widget every 1 week, total from 500 units of material per year
+var production = new Interval&lt;int&gt;(1, IntervalType.Weeks);
+decimal totalPerYear = production.PerYear(500); // 26071 widgets per year (52.14 * 500)
+```
+
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToString
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="9a759341c5d048a08c4e30cf2c19115d" Name="Diagram1" ZoomLevel="103">
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.Company" Width="2" PointX="35.75" PointY="8" FillColor="24, 52, 106" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.CompanyInvestor" Width="2" PointX="17.25" PointY="10" FillColor="49, 122, 143" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.CompanyScenario" Width="2.625" PointX="35.5" PointY="21.5" FillColor="17, 123, 30" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.LedgerEntryCategory" Width="1.875" PointX="65.625" PointY="20.125" FillColor="77, 19, 106" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.Person" Width="1.75" PointX="20.375" PointY="9.375" FillColor="49, 122, 143" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.User" Width="1.75" PointX="20.375" PointY="13.75" FillColor="49, 122, 143" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.CompanyEmployee" Width="2" PointX="14.25" PointY="7.625" FillColor="49, 122, 143" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.Department" Width="2" PointX="52.875" PointY="6.25" FillColor="77, 19, 106" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.CompanyTeam" Width="2.125" PointX="48.625" PointY="7.625" FillColor="24, 52, 106" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.CompanyOfferingPricePoint" Width="2.25" PointX="31.875" PointY="17.75" FillColor="159, 80, 22" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.CompanyOffering" Width="2.25" PointX="31.875" PointY="12.625" FillColor="159, 80, 22" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.OfferingType" Width="2" PointX="29.125" PointY="14.75" FillColor="77, 19, 106" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.DepartmentRole" Width="2" PointX="52.875" PointY="12.375" FillColor="77, 19, 106" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyInvestors_Companies" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyScenarios_Companies" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyInvestors_People" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_Users_People" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyEmployees_Companies" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyEmployees_People" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyTeams_Companies" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyTeams_Departments" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyOfferings_Companies" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyOfferingPricePoints_CompanyOfferings" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyOfferings_OfferingTypes" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_Roles_Departments" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyScenarios_CompanyScenarios" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.ScenarioTeamLedgerEntry" Width="2.125" PointX="62.375" PointY="20.125" FillColor="17, 123, 30" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.ScenarioTeamPricePointTarget" Width="2.5" PointX="39.25" PointY="20.125" FillColor="17, 123, 30" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioPricePointTargets_CompanyScenarios" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioTeamLedgerEntries_CompanyScenarios" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioPricePointTargets_CompanyTeams" ManuallyRouted="false" >
+        </AssociationConnector>
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioTeamLedgerEntries_CompanyTeams" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioTeamLedgerEntries_LedgerEntryCategories" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioPricePointTargets_CompanyOfferingPricePoints" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.CompanyDepartmentIntegration" Width="2.625" PointX="39" PointY="3.375" FillColor="24, 52, 106" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.DepartmentIntegrationProvider" Width="2.625" PointX="52.5" PointY="2.375" FillColor="77, 19, 106" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyDepartmentIntegrations_Companies" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyDepartmentIntegrations_DepartmentIntegrationProviders" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_DepartmentIntegrationProviders_Departments" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_Companies_People" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.UserPreferences" Width="2" PointX="20.25" PointY="17.25" FillColor="49, 122, 143" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_UserPreferences_Users" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.CompanyEmployeeTeam" Width="2.375" PointX="14.25" PointY="3.375" FillColor="49, 122, 143" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyEmployeeTeams_CompanyEmployees" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyEmployeeTeams_CompanyTeams" ManuallyRouted="true" >
+          <ConnectorPoint PointX="49.939489065317588" PointY="7.625" />
+          <ConnectorPoint PointX="49.939489065317588" PointY="1.2746916878968477" />
+          <ConnectorPoint PointX="15.345653340737217" PointY="1.2746916878968477" />
+          <ConnectorPoint PointX="15.345653340737217" PointY="3.375" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.JourneyStageType" Width="2" PointX="59.125" PointY="7.625" FillColor="77, 19, 106" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.JourneyTemplate" Width="1.875" PointX="62.125" PointY="7.625" FillColor="77, 19, 106" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.PricePointJourneyStage" Width="2" PointX="59.125" PointY="12.25" FillColor="159, 80, 22" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.ScenarioTeamJourneyStage" Width="2.375" PointX="59.125" PointY="20.125" FillColor="17, 123, 30" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioTeamJourneyStages_Scenarios" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioTeamJourneyStages_CompanyTeams" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_JourneyStageTypes_Departments" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_PricePointJourneyStages_JourneyStageTypes" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.JourneyTemplateStageTypes" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioTeamJourneyStages_PricePointJourneyStages1" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_PricePointJourneyStages_Departments" ManuallyRouted="false" >
+        </AssociationConnector>
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.ScenarioPricePointBookingsTarget" Width="2.5" PointX="42.625" PointY="20.125" FillColor="17, 123, 30" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyOfferingPricePoints_JourneyTemplates" ManuallyRouted="true" >
+          <ConnectorPoint PointX="64" PointY="8.92705238772123" />
+          <ConnectorPoint PointX="68.061287523950881" PointY="8.92705238772123" />
+          <ConnectorPoint PointX="68.061287523950881" PointY="29.127085987602666" />
+          <ConnectorPoint PointX="31.575" PointY="29.127085987602666" />
+          <ConnectorPoint PointX="31.575" PointY="22.60411175585778" />
+          <ConnectorPoint PointX="31.875" PointY="22.60411175585778" />
+        </AssociationConnector>
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioPricePointBookingsTargets_CompanyOfferingPricePoints" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioPricePointBookingsTargets_CompanyScenarios" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.ScenarioRole" Width="2.125" PointX="49.5" PointY="19.75" FillColor="17, 123, 30" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoles_CompanyOfferingPricePoints" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoles_CompanyOfferings" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoles_Scenarios" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoles_CompanyTeams" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.ScenarioRoleTeamStackPricePoint" Width="2.5" PointX="31.875" PointY="24.5" FillColor="159, 80, 22" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoleTeamStackPricePoints_CompanyOfferingPricePoints" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoleTeamStackPricePoints_CompanyScenarios" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoleTeamStackPricePoints_CompanyTeams" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoleTeamStackPricePoints_ScenarioRoles" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_PricePointJourneyStages_CompanyOfferingPricePoints" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.ScenarioRoleThreshold" Width="1.875" PointX="46" PointY="19.625" FillColor="17, 123, 30" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoleThresholds_CompanyScenarios" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoleThresholds_CompanyTeams" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoleThresholds_Departments" ManuallyRouted="false" >
+        </AssociationConnector>
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoleThresholds_PricePointJourneyStages" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.CompanyRolePromotionPath" Width="2.375" PointX="44.375" PointY="10.125" FillColor="24, 52, 106" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.CompanyRole" Width="1.875" PointX="41.375" PointY="9.125" FillColor="24, 52, 106" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyRoles_Companies" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyRolePromotionPaths_CompanyRoles" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyRolePromotionPaths_PromotionRoles" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyRoles_DepartmentRoles" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoles_CompanyRoles" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyRoles_CompanyRoles" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.ScenarioRoleQuota" Width="2" PointX="56.125" PointY="20.125" FillColor="17, 123, 30" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoleQuotas_Scenarios" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoleQuotas_PricePointJourneyStages" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoleQuotas_ScenarioRole" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoleThresholds_Role1" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioRoleThresholds_SourceRole1" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.BookingsType" Width="2.125" PointX="29.125" PointY="20.5" FillColor="77, 19, 106" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_CompanyOfferingPricePoints_BookingsTypes" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.CompanyType" Width="1.5" PointX="38.5" PointY="10.25" FillColor="77, 19, 106" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.HiringStageType" Width="1.875" PointX="52.875" PointY="18.75" FillColor="77, 19, 106" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.ScenarioRoleHiringStage" Width="2.125" PointX="52.75" PointY="21.625" FillColor="17, 123, 30" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioTeamHiringStages_Scenarios" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioTeamHiringStages_HiringStageTypes" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_ScenarioTeamHiringStages_ScenarioRole" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_Companies_CompanyTypes" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.PlaybookTemplate" Width="1.875" PointX="23.875" PointY="3.375" FillColor="24, 52, 106" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.PlaybookTemplateTask" Width="2" PointX="26.5" PointY="3.375" FillColor="24, 52, 106" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_PlaybookTemplates_Companies" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_PlaybookTemplateTasks_Departments" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_PlaybookTemplateTasks_PlaybookTemplates" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.Playbook" Width="2" PointX="23.875" PointY="10.875" FillColor="24, 52, 106" />
+        <EntityTypeShape EntityType="CloudNimble.BurnRate.Data.PlaybookTask" Width="1.875" PointX="26.5" PointY="10.875" FillColor="24, 52, 106" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_Playbooks_Companies" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_PlaybookTasks_Departments" ManuallyRouted="false" >
+        </AssociationConnector>
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_PlaybookTasks_Playbooks" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_PlaybookTasks_PlaybookTemplateTasks" />
+        <AssociationConnector Association="CloudNimble.BurnRate.Data.FK_Playbooks_PlaybookTemplates" />
+        </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

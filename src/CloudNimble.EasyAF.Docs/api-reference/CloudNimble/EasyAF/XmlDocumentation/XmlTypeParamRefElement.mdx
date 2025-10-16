@@ -1,0 +1,91 @@
+---
+title: XmlTypeParamRefElement
+description: "Represents a typeparamref XML documentation element for type parameter references."
+icon: file-brackets-curly
+keywords: ['XmlTypeParamRefElement', 'CloudNimble.EasyAF.XmlDocumentation.XmlTypeParamRefElement', 'CloudNimble.EasyAF.XmlDocumentation', 'class', 'CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.XmlDocumentation.dll
+
+**Namespace:** CloudNimble.EasyAF.XmlDocumentation
+
+**Inheritance:** CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.XmlDocumentation.XmlTypeParamRefElement
+```
+
+## Summary
+
+Represents a typeparamref XML documentation element for type parameter references.
+
+## Remarks
+
+The typeparamref element creates a reference to a generic type parameter within the documentation.
+            It is used to refer to type parameters inline within text.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlTypeParamRefElement class.
+
+#### Syntax
+
+```csharp
+public XmlTypeParamRefElement()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlTypeParamRefElement class with XML content.
+
+#### Syntax
+
+```csharp
+public XmlTypeParamRefElement(System.Xml.Linq.XElement element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Xml.Linq.XElement` | The XML element to parse. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Name
+
+Gets or sets the name of the referenced type parameter.
+
+#### Syntax
+
+```csharp
+public string Name { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToMdx
+
+Converts this typeparamref element to MDX format as inline code.
+
+#### Syntax
+
+```csharp
+public override string ToMdx()
+```
+
+#### Returns
+
+Type: `string`
+The MDX representation of this type parameter reference.
+

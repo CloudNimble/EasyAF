@@ -1,0 +1,252 @@
+<Solution>
+    <Configurations>
+        <BuildType Name="BETA" />
+        <BuildType Name="Debug" />
+        <BuildType Name="DEV" />
+        <BuildType Name="PROD" />
+        <BuildType Name="Release" />
+    </Configurations>
+    <Folder Name="/Core/">
+        <Project Path="CloudNimble.EasyAF.Configuration/CloudNimble.EasyAF.Configuration.csproj" />
+        <Project Path="CloudNimble.EasyAF.Core/CloudNimble.EasyAF.Core.csproj" />
+        <Project Path="CloudNimble.EasyAF.Http.NewtonsoftJson/CloudNimble.EasyAF.Http.NewtonsoftJson.csproj" />
+        <Project Path="CloudNimble.EasyAF.Http.SystemTextJson/CloudNimble.EasyAF.Http.SystemTextJson.csproj" />
+        <Project Path="CloudNimble.EasyAF.Http/CloudNimble.EasyAF.Http.csproj" />
+        <Project Path="CloudNimble.EasyAF.NewtonsoftJson.Compatibility/CloudNimble.EasyAF.NewtonsoftJson.Compatibility.csproj" />
+        <Project Path="CloudNimble.EasyAF.ODataClient/CloudNimble.EasyAF.ODataClient.csproj" />
+        <Project Path="CloudNimble.EasyAF.Restier.Breakdance/CloudNimble.EasyAF.Restier.Breakdance.csproj" />
+        <Project Path="CloudNimble.EasyAF.Restier/CloudNimble.EasyAF.Restier.csproj" />
+    </Folder>
+    <Folder Name="/Docs/">
+        <Project Path="CloudNimble.EasyAF.Docs/CloudNimble.EasyAF.Docs.docsproj" Type="C#" />
+    </Folder>
+    <Folder Name="/EF6/">
+        <Project Path="CloudNimble.EasyAF.Business/CloudNimble.EasyAF.Business.csproj" />
+        <Project Path="CloudNimble.EasyAF.Data.EF6/CloudNimble.EasyAF.Data.EF6.csproj" />
+        <Project Path="CloudNimble.EasyAF.Restier.EF6/CloudNimble.EasyAF.Restier.EF6.csproj" Id="d9826c0d-43f2-467b-b157-725cb97f5a40" />
+    </Folder>
+    <Folder Name="/EFCore/">
+        <Project Path="CloudNimble.EasyAF.Business.EFCore/CloudNimble.EasyAF.Business.EFCore.csproj" />
+        <Project Path="CloudNimble.EasyAF.Data.EFCore/CloudNimble.EasyAF.Data.EFCore.csproj" />
+        <Project Path="CloudNimble.EasyAF.Restier.EFCore/CloudNimble.EasyAF.Restier.EFCore.csproj" Id="124cd496-4fcd-4480-a006-4e5aa46b93d8" />
+    </Folder>
+    <Folder Name="/Solution Items/">
+        <File Path=".claude/settings.local.json" />
+        <File Path=".editorconfig" />
+        <File Path=".github/copilot-instructions.md" />
+        <File Path=".runsettings" />
+        <File Path="CLAUDE.md" />
+        <File Path="Directory.Build.props" />
+        <File Path="easyaf-logo.png" />
+        <File Path="easyaf.snk" />
+        <File Path="global.json" />
+        <File Path="SystemWebSdk.props" />
+    </Folder>
+    <Folder Name="/Tests/">
+        <Project Path="CloudNimble.EasyAF.Tests.Analyzers.EF6/CloudNimble.EasyAF.Tests.Analyzers.EF6.csproj">
+            <Build Solution="Debug|*" Project="false" />
+        </Project>
+        <Project Path="CloudNimble.EasyAF.Tests.Business/CloudNimble.EasyAF.Tests.Business.csproj" />
+        <Project Path="CloudNimble.EasyAF.Tests.CodeGen/CloudNimble.EasyAF.Tests.CodeGen.csproj" />
+        <Project Path="CloudNimble.EasyAF.Tests.Configuration/CloudNimble.EasyAF.Tests.Configuration.csproj" />
+        <Project Path="CloudNimble.EasyAF.Tests.Core/CloudNimble.EasyAF.Tests.Core.csproj" />
+        <Project Path="CloudNimble.EasyAF.Tests.Data.EF6/CloudNimble.EasyAF.Tests.Data.EF6.csproj" />
+        <Project Path="CloudNimble.EasyAF.Tests.EFCoreToEdmx/CloudNimble.EasyAF.Tests.EFCoreToEdmx.csproj" />
+        <Project Path="CloudNimble.EasyAF.Tests.Http.NewtonsoftJson/CloudNimble.EasyAF.Tests.Http.NewtonsoftJson.csproj" />
+        <Project Path="CloudNimble.EasyAF.Tests.Http.SystemTextJson/CloudNimble.EasyAF.Tests.Http.SystemTextJson.csproj" />
+        <Project Path="CloudNimble.EasyAF.Tests.Http/CloudNimble.EasyAF.Tests.Http.csproj" />
+        <Project Path="CloudNimble.EasyAF.Tests.MSBuild/CloudNimble.EasyAF.Tests.MSBuild.csproj" />
+        <Project Path="CloudNimble.EasyAF.Tests.ODataClient/CloudNimble.EasyAF.Tests.ODataClient.csproj" />
+        <Project Path="CloudNimble.EasyAF.Tests.Restier/CloudNimble.EasyAF.Tests.Restier.csproj" />
+        <Project Path="CloudNimble.EasyAF.Tests.Shared/CloudNimble.EasyAF.Tests.Shared.csproj" />
+        <Project Path="CloudNimble.EasyAF.Tests.Tools/CloudNimble.EasyAF.Tests.Tools.csproj" />
+        <Project Path="CloudNimble.EasyAF.Tests.XmlDocumentation/CloudNimble.EasyAF.Tests.XmlDocumentation.csproj" Id="704244c3-ac6c-41a9-be2d-d7c9122d5174" />
+    </Folder>
+    <Folder Name="/Tools/" />
+    <Folder Name="/Tools/Analyzers/">
+        <Project Path="CloudNimble.EasyAF.Analyzers.EF6/CloudNimble.EasyAF.Analyzers.EF6.csproj" />
+    </Folder>
+    <Folder Name="/Tools/CLI/">
+        <Project Path="CloudNimble.EasyAF.Tools/CloudNimble.EasyAF.Tools.csproj" />
+    </Folder>
+    <Folder Name="/Tools/Core/">
+        <Project Path="CloudNimble.EasyAF.CodeGen/CloudNimble.EasyAF.CodeGen.csproj" />
+    </Folder>
+    <Folder Name="/Tools/EF6/">
+        <Project Path="CloudNimble.EasyAF.Edmx.InMemoryDb/CloudNimble.EasyAF.Edmx.InMemoryDb.csproj" />
+        <Project Path="CloudNimble.EasyAF.Edmx/CloudNimble.EasyAF.Edmx.csproj" />
+    </Folder>
+    <Folder Name="/Tools/EFCore/">
+        <Project Path="CloudNimble.EasyAF.EFCoreToEdmx/CloudNimble.EasyAF.EFCoreToEdmx.csproj" />
+    </Folder>
+    <Folder Name="/Tools/Utilities/">
+        <Project Path="CloudNimble.EasyAF.MSBuild/CloudNimble.EasyAF.MSBuild.csproj" />
+        <Project Path="CloudNimble.EasyAF.XmlDocumentation/CloudNimble.EasyAF.XmlDocumentation.csproj" Id="3ba60ba8-b38d-419e-8673-8aafda8f749c" />
+    </Folder>
+    <Properties Name="TeamFoundationVersionControl">
+        <Property Name="SccEnterpriseProvider" Value="{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}" />
+        <Property Name="SccLocalPath0" Value="." />
+        <Property Name="SccLocalPath1" Value="CloudNimble.EasyAF.Business" />
+        <Property Name="SccLocalPath10" Value="CloudNimble.EasyAF.ODataClient" />
+        <Property Name="SccLocalPath11" Value="CloudNimble.EasyAF.Tests.ODataClient" />
+        <Property Name="SccLocalPath12" Value="CloudNimble.EasyAF.Tests.Restier" />
+        <Property Name="SccLocalPath13" Value="CloudNimble.EasyAF.Http" />
+        <Property Name="SccLocalPath14" Value="CloudNimble.EasyAF.Configuration" />
+        <Property Name="SccLocalPath15" Value="CloudNimble.EasyAF.Http.NewtonsoftJson" />
+        <Property Name="SccLocalPath16" Value="CloudNimble.EasyAF.Http.SystemTextJson" />
+        <Property Name="SccLocalPath17" Value="CloudNimble.EasyAF.Tests.Http" />
+        <Property Name="SccLocalPath18" Value="CloudNimble.EasyAF.Tests.Http.NewtonsoftJson" />
+        <Property Name="SccLocalPath19" Value="CloudNimble.EasyAF.Tests.Http.SystemTextJson" />
+        <Property Name="SccLocalPath2" Value="CloudNimble.EasyAF.Core" />
+        <Property Name="SccLocalPath20" Value="CloudNimble.EasyAF.Tests.Configuration" />
+        <Property Name="SccLocalPath21" Value="CloudNimble.EasyAF.Data.EF6" />
+        <Property Name="SccLocalPath22" Value="CloudNimble.EasyAF.NewtonsoftJson.Compatibility" />
+        <Property Name="SccLocalPath23" Value="CloudNimble.EasyAF.Restier.Breakdance" />
+        <Property Name="SccLocalPath24" Value="CloudNimble.EasyAF.Tests.Data.EF6" />
+        <Property Name="SccLocalPath25" Value="CloudNimble.EasyAF.Edmx" />
+        <Property Name="SccLocalPath26" Value="CloudNimble.EasyAF.Analyzers.EF6" />
+        <Property Name="SccLocalPath27" Value="CloudNimble.EasyAF.Tests.Analyzers.EF6" />
+        <Property Name="SccLocalPath28" Value="CloudNimble.EasyAF.Edmx.InMemoryDb" />
+        <Property Name="SccLocalPath29" Value="CloudNimble.EasyAF.Data.EFCore" />
+        <Property Name="SccLocalPath3" Value="CloudNimble.EasyAF.Tests.Core" />
+        <Property Name="SccLocalPath30" Value="CloudNimble.EasyAF.Business.EFCore" />
+        <Property Name="SccLocalPath31" Value="CloudNimble.EasyAF.EFCoreToEdmx" />
+        <Property Name="SccLocalPath32" Value="CloudNimble.EasyAF.Tests.EFCoreToEdmx" />
+        <Property Name="SccLocalPath33" Value="CloudNimble.EasyAF.Tests.Tools" />
+        <Property Name="SccLocalPath34" Value="CloudNimble.EasyAF.XmlDocumentation" />
+        <Property Name="SccLocalPath35" Value="CloudNimble.EasyAF.Tests.XmlDocumentation" />
+        <Property Name="SccLocalPath36" Value="CloudNimble.EasyAF.Restier.EF6" />
+        <Property Name="SccLocalPath37" Value="CloudNimble.EasyAF.Restier.EFCore" />
+        <Property Name="SccLocalPath38" Value="CloudNimble.EasyAF.Docs" />
+        <Property Name="SccLocalPath39" Value="CloudNimble.EasyAF.MSBuild" />
+        <Property Name="SccLocalPath4" Value="CloudNimble.EasyAF.CodeGen" />
+        <Property Name="SccLocalPath40" Value="CloudNimble.EasyAF.Tests.MSBuild" />
+        <Property Name="SccLocalPath5" Value="CloudNimble.EasyAF.Tests.Shared" />
+        <Property Name="SccLocalPath6" Value="CloudNimble.EasyAF.Tests.CodeGen" />
+        <Property Name="SccLocalPath7" Value="CloudNimble.EasyAF.Tools" />
+        <Property Name="SccLocalPath8" Value="CloudNimble.EasyAF.Tests.Business" />
+        <Property Name="SccLocalPath9" Value="CloudNimble.EasyAF.Restier" />
+        <Property Name="SccNumberOfProjects" Value="41" />
+        <Property Name="SccProjectName1" Value="CloudNimble.EasyAF.Business" />
+        <Property Name="SccProjectName10" Value="CloudNimble.EasyAF.ODataClient" />
+        <Property Name="SccProjectName11" Value="CloudNimble.EasyAF.Tests.ODataClient" />
+        <Property Name="SccProjectName12" Value="CloudNimble.EasyAF.Tests.Restier" />
+        <Property Name="SccProjectName13" Value="CloudNimble.EasyAF.Http" />
+        <Property Name="SccProjectName14" Value="CloudNimble.EasyAF.Configuration" />
+        <Property Name="SccProjectName15" Value="CloudNimble.EasyAF.Http.NewtonsoftJson" />
+        <Property Name="SccProjectName16" Value="CloudNimble.EasyAF.Http.SystemTextJson" />
+        <Property Name="SccProjectName17" Value="CloudNimble.EasyAF.Tests.Http" />
+        <Property Name="SccProjectName18" Value="CloudNimble.EasyAF.Tests.Http.NewtonsoftJson" />
+        <Property Name="SccProjectName19" Value="CloudNimble.EasyAF.Tests.Http.SystemTextJson" />
+        <Property Name="SccProjectName2" Value="CloudNimble.EasyAF.Core" />
+        <Property Name="SccProjectName20" Value="CloudNimble.EasyAF.Tests.Configuration" />
+        <Property Name="SccProjectName21" Value="CloudNimble.EasyAF.Data.EF6" />
+        <Property Name="SccProjectName22" Value="CloudNimble.EasyAF.NewtonsoftJson.Compatibility" />
+        <Property Name="SccProjectName23" Value="CloudNimble.EasyAF.Restier.Breakdance" />
+        <Property Name="SccProjectName24" Value="CloudNimble.EasyAF.Tests.Data.EF6" />
+        <Property Name="SccProjectName25" Value="CloudNimble.EasyAF.Edmx" />
+        <Property Name="SccProjectName26" Value="CloudNimble.EasyAF.Analyzers.EF6" />
+        <Property Name="SccProjectName27" Value="CloudNimble.EasyAF.Tests.Analyzers.EF6" />
+        <Property Name="SccProjectName28" Value="CloudNimble.EasyAF.Edmx.InMemoryDb" />
+        <Property Name="SccProjectName29" Value="CloudNimble.EasyAF.Data.EFCore" />
+        <Property Name="SccProjectName3" Value="CloudNimble.EasyAF.Tests.Core" />
+        <Property Name="SccProjectName30" Value="CloudNimble.EasyAF.Business.EFCore" />
+        <Property Name="SccProjectName31" Value="CloudNimble.EasyAF.EFCoreToEdmx" />
+        <Property Name="SccProjectName32" Value="CloudNimble.EasyAF.Tests.EFCoreToEdmx" />
+        <Property Name="SccProjectName33" Value="CloudNimble.EasyAF.Tests.Tools" />
+        <Property Name="SccProjectName34" Value="CloudNimble.EasyAF.XmlDocumentation" />
+        <Property Name="SccProjectName35" Value="CloudNimble.EasyAF.Tests.XmlDocumentation" />
+        <Property Name="SccProjectName36" Value="CloudNimble.EasyAF.Restier.EF6" />
+        <Property Name="SccProjectName37" Value="CloudNimble.EasyAF.Restier.EFCore" />
+        <Property Name="SccProjectName38" Value="CloudNimble.EasyAF.Docs" />
+        <Property Name="SccProjectName39" Value="CloudNimble.EasyAF.MSBuild" />
+        <Property Name="SccProjectName4" Value="CloudNimble.EasyAF.CodeGen" />
+        <Property Name="SccProjectName40" Value="CloudNimble.EasyAF.Tests.MSBuild" />
+        <Property Name="SccProjectName5" Value="CloudNimble.EasyAF.Tests.Shared" />
+        <Property Name="SccProjectName6" Value="CloudNimble.EasyAF.Tests.CodeGen" />
+        <Property Name="SccProjectName7" Value="CloudNimble.EasyAF.Tools" />
+        <Property Name="SccProjectName8" Value="CloudNimble.EasyAF.Tests.Business" />
+        <Property Name="SccProjectName9" Value="CloudNimble.EasyAF.Restier" />
+        <Property Name="SccProjectTopLevelParentUniqueName1" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName10" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName11" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName12" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName13" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName14" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName15" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName16" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName17" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName18" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName19" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName2" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName20" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName21" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName22" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName23" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName24" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName25" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName26" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName27" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName28" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName29" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName3" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName30" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName31" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName32" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName33" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName34" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName35" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName36" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName37" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName38" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName39" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName4" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName40" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName5" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName6" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName7" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName8" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectTopLevelParentUniqueName9" Value="CloudNimble.EasyAF.slnx" />
+        <Property Name="SccProjectUniqueName1" Value="CloudNimble.EasyAF.Business\\CloudNimble.EasyAF.Business.csproj" />
+        <Property Name="SccProjectUniqueName10" Value="CloudNimble.EasyAF.ODataClient\\CloudNimble.EasyAF.ODataClient.csproj" />
+        <Property Name="SccProjectUniqueName11" Value="CloudNimble.EasyAF.Tests.ODataClient\\CloudNimble.EasyAF.Tests.ODataClient.csproj" />
+        <Property Name="SccProjectUniqueName12" Value="CloudNimble.EasyAF.Tests.Restier\\CloudNimble.EasyAF.Tests.Restier.csproj" />
+        <Property Name="SccProjectUniqueName13" Value="CloudNimble.EasyAF.Http\\CloudNimble.EasyAF.Http.csproj" />
+        <Property Name="SccProjectUniqueName14" Value="CloudNimble.EasyAF.Configuration\\CloudNimble.EasyAF.Configuration.csproj" />
+        <Property Name="SccProjectUniqueName15" Value="CloudNimble.EasyAF.Http.NewtonsoftJson\\CloudNimble.EasyAF.Http.NewtonsoftJson.csproj" />
+        <Property Name="SccProjectUniqueName16" Value="CloudNimble.EasyAF.Http.SystemTextJson\\CloudNimble.EasyAF.Http.SystemTextJson.csproj" />
+        <Property Name="SccProjectUniqueName17" Value="CloudNimble.EasyAF.Tests.Http\\CloudNimble.EasyAF.Tests.Http.csproj" />
+        <Property Name="SccProjectUniqueName18" Value="CloudNimble.EasyAF.Tests.Http.NewtonsoftJson\\CloudNimble.EasyAF.Tests.Http.NewtonsoftJson.csproj" />
+        <Property Name="SccProjectUniqueName19" Value="CloudNimble.EasyAF.Tests.Http.SystemTextJson\\CloudNimble.EasyAF.Tests.Http.SystemTextJson.csproj" />
+        <Property Name="SccProjectUniqueName2" Value="CloudNimble.EasyAF.Core\\CloudNimble.EasyAF.Core.csproj" />
+        <Property Name="SccProjectUniqueName20" Value="CloudNimble.EasyAF.Tests.Configuration\\CloudNimble.EasyAF.Tests.Configuration.csproj" />
+        <Property Name="SccProjectUniqueName21" Value="CloudNimble.EasyAF.Data.EF6\\CloudNimble.EasyAF.Data.EF6.csproj" />
+        <Property Name="SccProjectUniqueName22" Value="CloudNimble.EasyAF.NewtonsoftJson.Compatibility\\CloudNimble.EasyAF.NewtonsoftJson.Compatibility.csproj" />
+        <Property Name="SccProjectUniqueName23" Value="CloudNimble.EasyAF.Restier.Breakdance\\CloudNimble.EasyAF.Restier.Breakdance.csproj" />
+        <Property Name="SccProjectUniqueName24" Value="CloudNimble.EasyAF.Tests.Data.EF6\\CloudNimble.EasyAF.Tests.Data.EF6.csproj" />
+        <Property Name="SccProjectUniqueName25" Value="CloudNimble.EasyAF.Edmx\\CloudNimble.EasyAF.Edmx.csproj" />
+        <Property Name="SccProjectUniqueName26" Value="CloudNimble.EasyAF.Analyzers.EF6\\CloudNimble.EasyAF.Analyzers.EF6.csproj" />
+        <Property Name="SccProjectUniqueName27" Value="CloudNimble.EasyAF.Tests.Analyzers.EF6\\CloudNimble.EasyAF.Tests.Analyzers.EF6.csproj" />
+        <Property Name="SccProjectUniqueName28" Value="CloudNimble.EasyAF.Edmx.InMemoryDb\\CloudNimble.EasyAF.Edmx.InMemoryDb.csproj" />
+        <Property Name="SccProjectUniqueName29" Value="CloudNimble.EasyAF.Data.EFCore\\CloudNimble.EasyAF.Data.EFCore.csproj" />
+        <Property Name="SccProjectUniqueName3" Value="CloudNimble.EasyAF.Tests.Core\\CloudNimble.EasyAF.Tests.Core.csproj" />
+        <Property Name="SccProjectUniqueName30" Value="CloudNimble.EasyAF.Business.EFCore\\CloudNimble.EasyAF.Business.EFCore.csproj" />
+        <Property Name="SccProjectUniqueName31" Value="CloudNimble.EasyAF.EFCoreToEdmx\\CloudNimble.EasyAF.EFCoreToEdmx.csproj" />
+        <Property Name="SccProjectUniqueName32" Value="CloudNimble.EasyAF.Tests.EFCoreToEdmx\\CloudNimble.EasyAF.Tests.EFCoreToEdmx.csproj" />
+        <Property Name="SccProjectUniqueName33" Value="CloudNimble.EasyAF.Tests.Tools\\CloudNimble.EasyAF.Tests.Tools.csproj" />
+        <Property Name="SccProjectUniqueName34" Value="CloudNimble.EasyAF.XmlDocumentation\\CloudNimble.EasyAF.XmlDocumentation.csproj" />
+        <Property Name="SccProjectUniqueName35" Value="CloudNimble.EasyAF.Tests.XmlDocumentation\\CloudNimble.EasyAF.Tests.XmlDocumentation.csproj" />
+        <Property Name="SccProjectUniqueName36" Value="CloudNimble.EasyAF.Restier.EF6\\CloudNimble.EasyAF.Restier.EF6.csproj" />
+        <Property Name="SccProjectUniqueName37" Value="CloudNimble.EasyAF.Restier.EFCore\\CloudNimble.EasyAF.Restier.EFCore.csproj" />
+        <Property Name="SccProjectUniqueName38" Value="CloudNimble.EasyAF.Docs\\CloudNimble.EasyAF.Docs.docsproj" />
+        <Property Name="SccProjectUniqueName39" Value="CloudNimble.EasyAF.MSBuild\\CloudNimble.EasyAF.MSBuild.csproj" />
+        <Property Name="SccProjectUniqueName4" Value="CloudNimble.EasyAF.CodeGen\\CloudNimble.EasyAF.CodeGen.csproj" />
+        <Property Name="SccProjectUniqueName40" Value="CloudNimble.EasyAF.Tests.MSBuild\\CloudNimble.EasyAF.Tests.MSBuild.csproj" />
+        <Property Name="SccProjectUniqueName5" Value="CloudNimble.EasyAF.Tests.Shared\\CloudNimble.EasyAF.Tests.Shared.csproj" />
+        <Property Name="SccProjectUniqueName6" Value="CloudNimble.EasyAF.Tests.CodeGen\\CloudNimble.EasyAF.Tests.CodeGen.csproj" />
+        <Property Name="SccProjectUniqueName7" Value="CloudNimble.EasyAF.Tools\\CloudNimble.EasyAF.Tools.csproj" />
+        <Property Name="SccProjectUniqueName8" Value="CloudNimble.EasyAF.Tests.Business\\CloudNimble.EasyAF.Tests.Business.csproj" />
+        <Property Name="SccProjectUniqueName9" Value="CloudNimble.EasyAF.Restier\\CloudNimble.EasyAF.Restier.csproj" />
+        <Property Name="SccTeamFoundationServer" Value="https://dev.azure.com/cloudnimble" />
+    </Properties>
+</Solution>

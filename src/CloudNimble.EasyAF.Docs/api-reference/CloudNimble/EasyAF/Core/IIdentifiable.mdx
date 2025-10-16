@@ -1,0 +1,43 @@
+---
+title: IIdentifiable
+description: "An interface that guarantees a particular Entity contains an 'Id' property with a type *T*."
+icon: plug
+keywords: ['IIdentifiable', 'CloudNimble.EasyAF.Core.IIdentifiable<T>', 'CloudNimble.EasyAF.Core', 'interface']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.IIdentifiable<T>
+```
+
+## Summary
+
+An interface that guarantees a particular Entity contains an "Id" property with a type *T*.
+
+## Type Parameters
+
+- `T` - The type for the identifier.
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Id
+
+The unique identifier for this particular Entity.
+
+#### Syntax
+
+```csharp
+T Id { get; set; }
+```
+
+#### Property Value
+
+Type: `T`
+

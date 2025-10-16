@@ -1,0 +1,259 @@
+---
+title: EasyAF_IEnumerableExtensions
+icon: bolt
+tag: "STATIC"
+keywords: ['EasyAF_IEnumerableExtensions', 'System.Collections.Generic.EasyAF_IEnumerableExtensions', 'System.Collections.Generic', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** System.Collections.Generic
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+System.Collections.Generic.EasyAF_IEnumerableExtensions
+```
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  AcceptChanges
+
+Loops through the entries in a given [IEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1) and accepts all current changes for each entry.
+
+#### Syntax
+
+```csharp
+public static void AcceptChanges<T>(System.Collections.Generic.IEnumerable<T> enumerable, bool goDeep = false) where T : CloudNimble.EasyAF.Core.DbObservableObject
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `enumerable` | `System.Collections.Generic.IEnumerable<T>` | - |
+| `goDeep` | `bool` | - |
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ChangedCount
+
+Returns a [Int32](https://learn.microsoft.com/dotnet/api/system.int32) representing the number of objects in the enumerable that have changes.
+
+#### Syntax
+
+```csharp
+public static int ChangedCount<T>(System.Collections.Generic.IEnumerable<T> enumerable, bool checkGraph = false) where T : CloudNimble.EasyAF.Core.DbObservableObject
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `enumerable` | `System.Collections.Generic.IEnumerable<T>` | - |
+| `checkGraph` | `bool` | - |
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ContainsId
+
+Returns a [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) if a list of `Id`s from the given [IEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1) contains
+            the specified value.
+
+#### Syntax
+
+```csharp
+public static bool ContainsId<T, TId>(System.Collections.Generic.IEnumerable<T> list, TId idValue) where T : class, CloudNimble.EasyAF.Core.IIdentifiable<TId> where TId : struct, System.ValueType
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `list` | `System.Collections.Generic.IEnumerable<T>` | The [List`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1) to check for the given ID value. |
+| `idValue` | `TId` | The value to check for. |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ContentsAreChanged
+
+Returns a [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) if any [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject) in the [IEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1) has changes.
+
+#### Syntax
+
+```csharp
+public static bool ContentsAreChanged<T>(System.Collections.Generic.IEnumerable<T> enumerable, bool checkGraph = false) where T : CloudNimble.EasyAF.Core.DbObservableObject
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `enumerable` | `System.Collections.Generic.IEnumerable<T>` | - |
+| `checkGraph` | `bool` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ContentsAreChanged
+
+Returns a [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) if any [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject) in the [IEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1) has changes.
+
+#### Syntax
+
+```csharp
+public static bool ContentsAreChanged<T>(System.Collections.Generic.IEnumerable<T> enumerable, System.Func<T, bool> predicate, bool checkGraph = false) where T : CloudNimble.EasyAF.Core.DbObservableObject
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `enumerable` | `System.Collections.Generic.IEnumerable<T>` | - |
+| `predicate` | `System.Func<T, bool>` | - |
+| `checkGraph` | `bool` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ContentsAreChanged
+
+Returns a [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) if any [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject) in the [IEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1) has changes.
+
+#### Syntax
+
+```csharp
+public static bool ContentsAreChanged<T, TForeign, TId>(System.Collections.Generic.IEnumerable<T> enumerable, System.Collections.Generic.IEnumerable<TForeign> foreignList, System.Func<T, TId> foreignIdFunc, bool checkGraph = false) where T : CloudNimble.EasyAF.Core.DbObservableObject, CloudNimble.EasyAF.Core.IIdentifiable<TId> where TForeign : CloudNimble.EasyAF.Core.DbObservableObject, CloudNimble.EasyAF.Core.IIdentifiable<TId> where TId : struct, System.ValueType
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `enumerable` | `System.Collections.Generic.IEnumerable<T>` | - |
+| `foreignList` | `System.Collections.Generic.IEnumerable<TForeign>` | The list of related objects that we want to filter the *enumerable* down to. |
+| `foreignIdFunc` | `System.Func<T, TId>` | The property from the *enumerable* that points to the `Id` for the objects in *foreignList*. |
+| `checkGraph` | `bool` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  FilterForChanges
+
+For a given [IEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1), filter down the result to the changed items in *enumerable* 
+            whose foreign keys appear in the *foreignList*.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IEnumerable<T> FilterForChanges<T, TForeign, TId>(System.Collections.Generic.IEnumerable<T> enumerable, System.Collections.Generic.IEnumerable<TForeign> foreignList, System.Func<T, TId> foreignIdFunc) where T : CloudNimble.EasyAF.Core.DbObservableObject, CloudNimble.EasyAF.Core.IIdentifiable<TId> where TForeign : CloudNimble.EasyAF.Core.DbObservableObject, CloudNimble.EasyAF.Core.IIdentifiable<TId> where TId : struct, System.ValueType
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `enumerable` | `System.Collections.Generic.IEnumerable<T>` | The list we want to check for changes in. |
+| `foreignList` | `System.Collections.Generic.IEnumerable<TForeign>` | The list of related objects that we want to filter the *enumerable* down to. |
+| `foreignIdFunc` | `System.Func<T, TId>` | The property from the *enumerable* that points to the `Id` for the objects in *foreignList*. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<T>`
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  None
+
+Returns a [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) specifying whether or not the [IEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1) has any items in it.
+
+#### Syntax
+
+```csharp
+public static bool None<T>(System.Collections.Generic.IEnumerable<T> source)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `source` | `System.Collections.Generic.IEnumerable<T>` | The [IEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1) to check. |
+
+#### Returns
+
+Type: `bool`
+
+#### Type Parameters
+
+- `T` - The type of the items inside the [IEnumerable](https://learn.microsoft.com/dotnet/api/system.collections.ienumerable).
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  None
+
+Returns a [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) specifying whether or not the [IEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1) has any items in it.
+
+#### Syntax
+
+```csharp
+public static bool None<T>(System.Collections.Generic.IEnumerable<T> source, System.Func<T, bool> predicate)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `source` | `System.Collections.Generic.IEnumerable<T>` | The [IEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1) to check. |
+| `predicate` | `System.Func<T, bool>` | A set of additional parameters to check against. |
+
+#### Returns
+
+Type: `bool`
+
+#### Type Parameters
+
+- `T` - The type of the items inside the [IEnumerable](https://learn.microsoft.com/dotnet/api/system.collections.ienumerable).
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RejectChanges
+
+Loops through the entries in a given [IEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1) and clears all current changes for each entry.
+
+#### Syntax
+
+```csharp
+public static void RejectChanges<T>(System.Collections.Generic.IEnumerable<T> enumerable, bool goDeep = false) where T : CloudNimble.EasyAF.Core.DbObservableObject
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `enumerable` | `System.Collections.Generic.IEnumerable<T>` | - |
+| `goDeep` | `bool` | - |
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToTrackedList
+
+Returns a [List`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1) where the [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject)DbObservableObjects</see> have `Boolean)` turned on.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.List<T> ToTrackedList<T>(System.Collections.Generic.IEnumerable<T> enumerable, bool deepTracking = false) where T : CloudNimble.EasyAF.Core.DbObservableObject
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `enumerable` | `System.Collections.Generic.IEnumerable<T>` | The list of objects to turn change tracking on for. |
+| `deepTracking` | `bool` | - |
+
+#### Returns
+
+Type: `System.Collections.Generic.List<T>`
+

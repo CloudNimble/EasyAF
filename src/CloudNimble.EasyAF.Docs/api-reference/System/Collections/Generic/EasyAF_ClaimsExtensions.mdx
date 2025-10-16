@@ -1,0 +1,44 @@
+---
+title: EasyAF_ClaimsExtensions
+icon: bolt
+tag: "STATIC"
+keywords: ['EasyAF_ClaimsExtensions', 'System.Collections.Generic.EasyAF_ClaimsExtensions', 'System.Collections.Generic', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** System.Collections.Generic
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+System.Collections.Generic.EasyAF_ClaimsExtensions
+```
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetStandardizedClaims
+
+Translates a set of generic Claims (like the ones returned from Auth0) to a set of Claims from the
+            [ClaimTypes](https://learn.microsoft.com/dotnet/api/system.security.claims.claimtypes) constants wherever possible.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.List<System.Security.Claims.Claim> GetStandardizedClaims(System.Collections.Generic.IEnumerable<System.Security.Claims.Claim> claims)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `claims` | `System.Collections.Generic.IEnumerable<System.Security.Claims.Claim>` | - |
+
+#### Returns
+
+Type: `System.Collections.Generic.List<System.Security.Claims.Claim>`
+

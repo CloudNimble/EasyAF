@@ -1,0 +1,380 @@
+---
+title: "Interval Calculations"
+description: "Understanding the EasyAF interval calculation system for time-based financial and rate calculations"
+---
+
+# Interval Calculations in EasyAF
+
+The EasyAF library provides a powerful and flexible system for handling time-based calculations through its `Interval` class hierarchy. This system enables you to work with frequencies, rates, and monetary amounts across different time periods with automatic conversion capabilities.
+
+## Core Concepts
+
+### Base Interval Class
+
+The foundation of the system is the `Interval<T>` class, which represents **frequency** - how often something occurs over time. The key insight is that an interval represents "time per occurrence," not "occurrences per time."
+
+```csharp
+// Example: Making widgets
+// If it takes 1.5 hours to make 1 widget, how many widgets per day?
+var widgetInterval = new Interval<double>(1.5, IntervalType.Hours);
+decimal widgetsPerDay = widgetInterval.PerDay(); // 16 widgets (24 hours ÷ 1.5 hours)
+```
+
+### Key Properties
+
+- **Value**: Always represents a time duration (e.g., 1.5 hours, 3 days, 2 weeks)
+- **Type**: The time unit for the Value (Hours, Days, Weeks, Months, Years)
+
+### Method Types
+
+The interval classes provide two distinct types of calculation methods:
+
+1. **Per* methods (inherited)**: Calculate interval frequency - how many intervals fit in a time period
+2. **Specialized rate methods**: Calculate total amounts for derived classes (money, ratios, percentages)
+
+## Interval Types
+
+### 1. Base Interval Class
+
+Calculates pure frequency - how many intervals occur within different time periods.
+
+```csharp
+// Widget production: 1 widget every 1.5 hours
+var productionInterval = new Interval<double>(1.5, IntervalType.Hours);
+
+decimal widgetsPerHour = productionInterval.PerHour();     // 0.67 widgets
+decimal widgetsPerDay = productionInterval.PerDay();       // 16 widgets  
+decimal widgetsPerWeek = productionInterval.PerWeek();     // 112 widgets
+decimal widgetsPerMonth = productionInterval.PerMonth();   // 486.67 widgets
+decimal widgetsPerYear = productionInterval.PerYear();     // 5840 widgets
+```
+
+### 2. MoneyInterval Class
+
+Represents financial amounts that occur at regular intervals. Unlike other derived classes, `MoneyInterval` **overrides** the base methods to directly return monetary amounts.
+
+```csharp
+// Salary: $100 every 1.5 hours
+var salaryInterval = new MoneyInterval<double>(100m, 1.5, IntervalType.Hours);
+
+// These return dollar amounts directly
+decimal dollarsPerHour = salaryInterval.PerHour();     // $66.67
+decimal dollarsPerDay = salaryInterval.PerDay();       // $1600.00
+decimal dollarsPerWeek = salaryInterval.PerWeek();     // $11,200.00
+decimal dollarsPerMonth = salaryInterval.PerMonth();   // $48,666.67
+decimal dollarsPerYear = salaryInterval.PerYear();     // $584,000.00
+```
+
+#### MoneyInterval ToString Methods
+
+```csharp
+var salary = new MoneyInterval<double>(75000m, 1, IntervalType.Years);
+
+string display1 = salary.ToString();           // "$75,000.00 / 1 year"
+string display2 = salary.ToString(0);          // "$75,000 / 1 year"
+string display3 = salary.ToString(2);          // "$75,000.00 / 1 year"
+```
+
+### 3. RatioInterval Class
+
+Combines base interval calculations with ratio multiplication. Provides both inherited frequency methods and new ratio calculation methods.
+
+```csharp
+// Conversion rate: 70% success every 2 weeks
+var conversionInterval = new RatioInterval<double>(0.70m, 2, IntervalType.Weeks);
+
+// Frequency methods (inherited) - how many 2-week periods?
+decimal periodsPerMonth = conversionInterval.PerMonth();    // 2.17 periods
+decimal periodsPerYear = conversionInterval.PerYear();      // 26 periods
+
+// Ratio methods - total conversion amounts
+decimal ratioPerWeek = conversionInterval.RatioPerWeek();   // 0.35 (0.70 × 0.5)
+decimal ratioPerMonth = conversionInterval.RatioPerMonth(); // 1.52 (0.70 × 2.17)
+decimal ratioPerYear = conversionInterval.RatioPerYear();   // 18.2 (0.70 × 26)
+```
+
+#### RatioInterval Use Cases
+
+```csharp
+// Performance metrics: 95% efficiency every 8 hours
+var efficiencyInterval = new RatioInterval<double>(0.95m, 8, IntervalType.Hours);
+decimal efficiencyPerDay = efficiencyInterval.RatioPerDay(); // 2.85 (0.95 × 3)
+
+// Quality metrics: 99.5% success rate every day
+var qualityInterval = new RatioInterval<double>(0.995m, 1, IntervalType.Days);
+decimal qualityPerWeek = qualityInterval.RatioPerWeek();     // 6.965 (0.995 × 7)
+```
+
+### 4. PercentageInterval Class
+
+Similar to RatioInterval but designed specifically for percentage-based calculations. Uses `Rate` property and provides `RatePer*` methods.
+
+```csharp
+// Interest rate: 2.5% every quarter (3 months)
+var interestInterval = new PercentageInterval<double>(0.025m, 3, IntervalType.Months);
+
+// Frequency methods (inherited) - how many quarters?
+decimal quartersPerYear = interestInterval.PerYear();       // 4 quarters
+
+// Rate methods - total interest percentages
+decimal ratePerMonth = interestInterval.RatePerMonth();     // 0.0083 (0.025 × 0.33)
+decimal ratePerYear = interestInterval.RatePerYear();       // 0.10 (0.025 × 4)
+```
+
+#### PercentageInterval Use Cases
+
+```csharp
+// Growth rate: 5% growth every month
+var growthInterval = new PercentageInterval<double>(0.05m, 1, IntervalType.Months);
+decimal annualGrowth = growthInterval.RatePerYear();        // 0.60 (0.05 × 12)
+
+// Discount rate: 10% discount every week
+var discountInterval = new PercentageInterval<double>(0.10m, 1, IntervalType.Weeks);
+decimal monthlyDiscount = discountInterval.RatePerMonth();  // 0.434 (0.10 × 4.34)
+
+// Error rate: 0.1% error rate every hour
+var errorInterval = new PercentageInterval<double>(0.001m, 1, IntervalType.Hours);
+decimal dailyErrorRate = errorInterval.RatePerDay();        // 0.024 (0.001 × 24)
+```
+
+## Advanced Examples
+
+### Complex Financial Scenarios
+
+```csharp
+// Freelance work: $150 every 2.5 hours
+var freelanceWork = new MoneyInterval<double>(150m, 2.5, IntervalType.Hours);
+
+decimal hourlyRate = freelanceWork.PerHour();               // $60.00
+decimal dailyEarnings = freelanceWork.PerDay();             // $1,440.00 (24 ÷ 2.5 × $150)
+decimal weeklyEarnings = freelanceWork.PerWeek();           // $10,080.00
+decimal monthlyEarnings = freelanceWork.PerMonth();         // $43,733.33
+decimal annualEarnings = freelanceWork.PerYear();           // $524,800.00
+
+// NEW: Calculate earnings for specific work hours
+decimal earnings8Hours = freelanceWork.PerDay(8);           // $11,520.00 (for 8 hours of work)
+decimal earnings40Hours = freelanceWork.PerWeek(40);        // $403,200.00 (for 40 hours of work)
+```
+
+### Quantity-Based Calculations
+
+The new overloaded methods allow you to directly calculate results for specific quantities:
+
+#### Widget Production with Materials
+
+```csharp
+// Widget production: 1 widget every 1.5 hours
+var production = new Interval<double>(1.5, IntervalType.Hours);
+
+// Traditional calculation
+decimal widgetsPerHour = production.PerHour();              // 0.67 widgets
+decimal widgetsFrom100Materials = widgetsPerHour * 100;    // 66.67 widgets
+
+// NEW: Direct calculation with quantity
+decimal totalWidgetsPerHour = production.PerHour(100);     // 66.67 widgets (direct)
+decimal totalWidgetsPerDay = production.PerDay(100);       // 1,600 widgets
+```
+
+#### Lead Conversion with Customer Quantities
+
+```csharp
+// Sales conversion: 70% conversion rate every month
+var conversion = new RatioInterval<double>(0.70m, 1, IntervalType.Months);
+
+// Traditional calculation
+decimal conversionRate = conversion.RatioPerMonth();        // 0.70
+decimal conversionsFrom30 = conversionRate * 30;           // 21 customers
+
+// NEW: Direct calculation with customer quantity
+decimal totalConversions = conversion.RatioPerMonth(30);   // 21 customers (direct)
+decimal weeklyConversions = conversion.RatioPerWeek(30);   // ~4.88 customers
+decimal dailyConversions = conversion.RatioPerDay(30);     // ~0.69 customers
+```
+
+#### Interest Calculations with Principal Amounts
+
+```csharp
+// Interest rate: 2.5% every quarter (3 months)
+var interest = new PercentageInterval<double>(0.025m, 3, IntervalType.Months);
+
+// Traditional calculation
+decimal quarterlyRate = interest.RatePerYear();             // 0.10 (10% annually)
+decimal interestOn50k = quarterlyRate * 50000;             // $5,000
+
+// NEW: Direct calculation with principal amount
+decimal annualInterest = interest.RatePerYear(50000);      // $5,000 (direct)
+decimal monthlyInterest = interest.RatePerMonth(50000);    // ~$416.67
+decimal dailyInterest = interest.RatePerDay(50000);        // ~$13.70
+```
+
+### Performance and Conversion Tracking
+
+```csharp
+// Sales conversion: 35% conversion rate every 3 days
+var salesConversion = new RatioInterval<double>(0.35m, 3, IntervalType.Days);
+
+// How many 3-day periods per week?
+decimal periodsPerWeek = salesConversion.PerWeek();         // 2.33 periods
+
+// Total conversion rate per week?
+decimal weeklyConversion = salesConversion.RatioPerWeek();  // 0.817 (0.35 × 2.33)
+
+// Monthly conversion totals
+decimal monthlyConversion = salesConversion.RatioPerMonth(); // 3.62 (0.35 × 10.33)
+```
+
+### Interest and Growth Calculations
+
+```csharp
+// Compound interest: 1.2% every month
+var monthlyInterest = new PercentageInterval<double>(0.012m, 1, IntervalType.Months);
+
+decimal quarterlyRate = monthlyInterest.RatePerMonth() * 3;  // 0.036 (3.6% per quarter)
+decimal annualRate = monthlyInterest.RatePerYear();          // 0.144 (14.4% per year)
+
+// Investment growth: 8% every quarter
+var quarterlyGrowth = new PercentageInterval<double>(0.08m, 3, IntervalType.Months);
+decimal annualGrowthRate = quarterlyGrowth.RatePerYear();    // 0.32 (32% per year)
+```
+
+## Method Reference
+
+### Base Interval Methods (All Classes)
+
+These methods calculate frequency - how many intervals fit within the specified time period:
+
+- `PerMinute()` - Intervals per minute
+- `PerHour()` - Intervals per hour  
+- `PerDay()` - Intervals per day
+- `PerWeek()` - Intervals per week
+- `PerMonth()` - Intervals per month
+- `PerYear()` - Intervals per year
+
+**NEW: Quantity-based overloads:**
+- `PerMinute(decimal quantity)` - Total output per minute for given quantity
+- `PerHour(decimal quantity)` - Total output per hour for given quantity
+- `PerDay(decimal quantity)` - Total output per day for given quantity
+- `PerWeek(decimal quantity)` - Total output per week for given quantity
+- `PerMonth(decimal quantity)` - Total output per month for given quantity
+- `PerYear(decimal quantity)` - Total output per year for given quantity
+
+### MoneyInterval Methods
+
+MoneyInterval **overrides** the base methods to return monetary amounts:
+
+- `PerMinute()` - Dollars per minute
+- `PerHour()` - Dollars per hour
+- `PerDay()` - Dollars per day
+- `PerWeek()` - Dollars per week
+- `PerMonth()` - Dollars per month
+- `PerYear()` - Dollars per year
+
+**NEW: Quantity-based overloads (e.g., hours worked, units sold):**
+- `PerMinute(decimal quantity)` - Total earnings per minute for given quantity
+- `PerHour(decimal quantity)` - Total earnings per hour for given quantity
+- `PerDay(decimal quantity)` - Total earnings per day for given quantity
+- `PerWeek(decimal quantity)` - Total earnings per week for given quantity
+- `PerMonth(decimal quantity)` - Total earnings per month for given quantity
+- `PerYear(decimal quantity)` - Total earnings per year for given quantity
+
+### RatioInterval Methods
+
+RatioInterval provides both inherited frequency methods and new ratio methods:
+
+**Frequency methods (inherited):**
+- `PerMinute()`, `PerHour()`, `PerDay()`, etc. - Number of intervals per time period
+- `PerMinute(decimal quantity)`, `PerHour(decimal quantity)`, etc. - Total output for given quantity
+
+**Ratio methods:**
+- `RatioPerMinute()` - Total ratio per minute (intervals × ratio)
+- `RatioPerHour()` - Total ratio per hour
+- `RatioPerDay()` - Total ratio per day
+- `RatioPerWeek()` - Total ratio per week
+- `RatioPerMonth()` - Total ratio per month
+- `RatioPerYear()` - Total ratio per year
+
+**NEW: Quantity-based ratio overloads:**
+- `RatioPerMinute(decimal quantity)` - Total ratio applied to quantity per minute
+- `RatioPerHour(decimal quantity)` - Total ratio applied to quantity per hour
+- `RatioPerDay(decimal quantity)` - Total ratio applied to quantity per day
+- `RatioPerWeek(decimal quantity)` - Total ratio applied to quantity per week
+- `RatioPerMonth(decimal quantity)` - Total ratio applied to quantity per month
+- `RatioPerYear(decimal quantity)` - Total ratio applied to quantity per year
+
+### PercentageInterval Methods
+
+PercentageInterval provides both inherited frequency methods and new rate methods:
+
+**Frequency methods (inherited):**
+- `PerMinute()`, `PerHour()`, `PerDay()`, etc. - Number of intervals per time period
+- `PerMinute(decimal quantity)`, `PerHour(decimal quantity)`, etc. - Total output for given quantity
+
+**Rate methods:**
+- `RatePerMinute()` - Total rate per minute (intervals × rate)
+- `RatePerHour()` - Total rate per hour
+- `RatePerDay()` - Total rate per day
+- `RatePerWeek()` - Total rate per week
+- `RatePerMonth()` - Total rate per month
+- `RatePerYear()` - Total rate per year
+
+**NEW: Principal-based rate overloads:**
+- `RatePerMinute(decimal principal)` - Total rate applied to principal per minute
+- `RatePerHour(decimal principal)` - Total rate applied to principal per hour
+- `RatePerDay(decimal principal)` - Total rate applied to principal per day
+- `RatePerWeek(decimal principal)` - Total rate applied to principal per week
+- `RatePerMonth(decimal principal)` - Total rate applied to principal per month
+- `RatePerYear(decimal principal)` - Total rate applied to principal per year
+
+## Time Conversion Constants
+
+The system uses these conversion factors for calculations:
+
+- **Minutes per hour**: 60
+- **Hours per day**: 24  
+- **Days per week**: 7
+- **Days per month**: 30.4375 (365.25 ÷ 12)
+- **Days per year**: 365.25
+- **Weeks per month**: 4.345 (30.4375 ÷ 7)
+- **Months per year**: 12
+
+## Best Practices
+
+### 1. Choose the Right Class
+
+- Use `Interval<T>` for pure frequency calculations
+- Use `MoneyInterval<T>` for financial amounts where you want direct monetary results
+- Use `RatioInterval<T>` for general ratio/rate calculations where you need both frequency and rate methods
+- Use `PercentageInterval<T>` for percentage-based calculations
+
+### 2. Understanding Method Behavior
+
+```csharp
+// MoneyInterval overrides base methods
+var salary = new MoneyInterval<double>(50m, 1, IntervalType.Hours);
+decimal dollarsPerHour = salary.PerHour();  // $50.00 (direct monetary amount)
+
+// RatioInterval keeps base methods and adds new ones
+var conversion = new RatioInterval<double>(0.5m, 1, IntervalType.Hours);
+decimal intervalsPerHour = conversion.PerHour();        // 1.0 (frequency)
+decimal ratioPerHour = conversion.RatioPerHour();       // 0.5 (rate calculation)
+```
+
+### 3. Precision Considerations
+
+All calculations return `decimal` values for maximum precision in financial and rate calculations. Be aware that some conversions may result in repeating decimals.
+
+### 4. Validation
+
+Always validate input values:
+
+```csharp
+// Ensure positive values for time durations
+if (Convert.ToDecimal(value) <= 0)
+    throw new ArgumentException("Interval value must be positive");
+
+// Validate reasonable ranges for rates and percentages
+if (rate < 0 || rate > 1)
+    throw new ArgumentException("Rate should be between 0 and 1");
+```
+
+This interval system provides a robust foundation for time-based calculations across financial, performance, and analytical scenarios in your applications.

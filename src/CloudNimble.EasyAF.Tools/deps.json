@@ -1,0 +1,1718 @@
+{
+  "version": 1,
+  "parameters": "--include-transitive",
+  "projects": [
+    {
+      "path": "D:/Work/EasyAF/Dev/CloudNimble.EasyAF.Tools/CloudNimble.EasyAF.Tools.csproj",
+      "frameworks": [
+        {
+          "framework": "net10.0",
+          "topLevelPackages": [
+            {
+              "id": "McMaster.Extensions.Hosting.CommandLine",
+              "requestedVersion": "4.*",
+              "resolvedVersion": "4.1.1"
+            },
+            {
+              "id": "Microsoft.Build",
+              "requestedVersion": "17.*",
+              "resolvedVersion": "17.14.8"
+            },
+            {
+              "id": "Microsoft.Build.Locator",
+              "requestedVersion": "1.*",
+              "resolvedVersion": "1.9.1"
+            },
+            {
+              "id": "Microsoft.Extensions.DependencyInjection",
+              "requestedVersion": "10.*-*",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Hosting",
+              "requestedVersion": "10.*-*",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging",
+              "requestedVersion": "10.*-*",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            }
+          ],
+          "transitivePackages": [
+            {
+              "id": "Acornima",
+              "resolvedVersion": "1.1.1"
+            },
+            {
+              "id": "Azure.Core",
+              "resolvedVersion": "1.38.0"
+            },
+            {
+              "id": "Azure.Identity",
+              "resolvedVersion": "1.11.4"
+            },
+            {
+              "id": "Ben.Demystifier",
+              "resolvedVersion": "0.4.1"
+            },
+            {
+              "id": "Docfx.App",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.Common",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.ManagedReference",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.OverwriteDocuments",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.RestApi",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.SchemaDriven",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.UniversalReference",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Common",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.DataContracts.Common",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.DataContracts.RestApi",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.DataContracts.UniversalReference",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Dotnet",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Glob",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.MarkdigEngine",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.MarkdigEngine.Extensions",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Plugins",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.YamlSerialization",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "EntityFramework",
+              "resolvedVersion": "6.5.1"
+            },
+            {
+              "id": "HtmlAgilityPack",
+              "resolvedVersion": "1.11.72"
+            },
+            {
+              "id": "Humanizer.Core",
+              "resolvedVersion": "2.14.1"
+            },
+            {
+              "id": "ICSharpCode.Decompiler",
+              "resolvedVersion": "9.0.0.7889"
+            },
+            {
+              "id": "Jint",
+              "resolvedVersion": "4.2.0"
+            },
+            {
+              "id": "Json.More.Net",
+              "resolvedVersion": "2.1.1"
+            },
+            {
+              "id": "JsonPointer.Net",
+              "resolvedVersion": "5.3.1"
+            },
+            {
+              "id": "JsonSchema.Net",
+              "resolvedVersion": "7.3.3"
+            },
+            {
+              "id": "Markdig",
+              "resolvedVersion": "0.40.0"
+            },
+            {
+              "id": "McMaster.Extensions.CommandLineUtils",
+              "resolvedVersion": "4.1.1"
+            },
+            {
+              "id": "Microsoft.Bcl.AsyncInterfaces",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "Microsoft.Bcl.Cryptography",
+              "resolvedVersion": "9.0.4"
+            },
+            {
+              "id": "Microsoft.Build.Framework",
+              "resolvedVersion": "17.14.8"
+            },
+            {
+              "id": "Microsoft.Build.Tasks.Core",
+              "resolvedVersion": "17.14.8"
+            },
+            {
+              "id": "Microsoft.Build.Utilities.Core",
+              "resolvedVersion": "17.14.8"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.Analyzers",
+              "resolvedVersion": "3.11.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.Common",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.CSharp",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.CSharp.Workspaces",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.VisualBasic",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.VisualBasic.Workspaces",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.Workspaces.Common",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.Workspaces.MSBuild",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.Data.SqlClient",
+              "resolvedVersion": "6.0.2"
+            },
+            {
+              "id": "Microsoft.Data.SqlClient.SNI.runtime",
+              "resolvedVersion": "6.0.2"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore.Abstractions",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore.Design",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore.Relational",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore.SqlServer",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore.Tools",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Caching.Abstractions",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Caching.Memory",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.Abstractions",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.Binder",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.CommandLine",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.EnvironmentVariables",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.FileExtensions",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.Json",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.UserSecrets",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.DependencyModel",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Diagnostics",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Diagnostics.Abstractions",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.FileProviders.Abstractions",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.FileProviders.Physical",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.FileSystemGlobbing",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Hosting.Abstractions",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.Abstractions",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.Configuration",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.Console",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.Debug",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.EventLog",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.EventSource",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Options",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Options.ConfigurationExtensions",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Extensions.Primitives",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "Microsoft.Identity.Client",
+              "resolvedVersion": "4.61.3"
+            },
+            {
+              "id": "Microsoft.Identity.Client.Extensions.Msal",
+              "resolvedVersion": "4.61.3"
+            },
+            {
+              "id": "Microsoft.IdentityModel.Abstractions",
+              "resolvedVersion": "7.5.0"
+            },
+            {
+              "id": "Microsoft.IdentityModel.JsonWebTokens",
+              "resolvedVersion": "7.5.0"
+            },
+            {
+              "id": "Microsoft.IdentityModel.Logging",
+              "resolvedVersion": "7.5.0"
+            },
+            {
+              "id": "Microsoft.IdentityModel.Protocols",
+              "resolvedVersion": "7.5.0"
+            },
+            {
+              "id": "Microsoft.IdentityModel.Protocols.OpenIdConnect",
+              "resolvedVersion": "7.5.0"
+            },
+            {
+              "id": "Microsoft.IdentityModel.Tokens",
+              "resolvedVersion": "7.5.0"
+            },
+            {
+              "id": "Microsoft.NET.StringTools",
+              "resolvedVersion": "17.14.8"
+            },
+            {
+              "id": "Microsoft.Playwright",
+              "resolvedVersion": "1.50.0"
+            },
+            {
+              "id": "Microsoft.SqlServer.Server",
+              "resolvedVersion": "1.0.0"
+            },
+            {
+              "id": "Mono.TextTemplating",
+              "resolvedVersion": "3.0.0"
+            },
+            {
+              "id": "Newtonsoft.Json",
+              "resolvedVersion": "13.0.3"
+            },
+            {
+              "id": "Npgsql",
+              "resolvedVersion": "9.0.3"
+            },
+            {
+              "id": "Npgsql.EntityFrameworkCore.PostgreSQL",
+              "resolvedVersion": "10.0.0-preview.5"
+            },
+            {
+              "id": "OneOf",
+              "resolvedVersion": "3.0.271"
+            },
+            {
+              "id": "PdfPig",
+              "resolvedVersion": "0.1.9"
+            },
+            {
+              "id": "PlantUml.Net",
+              "resolvedVersion": "1.4.80"
+            },
+            {
+              "id": "runtime.native.System.Data.SqlClient.sni",
+              "resolvedVersion": "4.7.0"
+            },
+            {
+              "id": "runtime.win-arm64.runtime.native.System.Data.SqlClient.sni",
+              "resolvedVersion": "4.4.0"
+            },
+            {
+              "id": "runtime.win-x64.runtime.native.System.Data.SqlClient.sni",
+              "resolvedVersion": "4.4.0"
+            },
+            {
+              "id": "runtime.win-x86.runtime.native.System.Data.SqlClient.sni",
+              "resolvedVersion": "4.4.0"
+            },
+            {
+              "id": "Spectre.Console",
+              "resolvedVersion": "0.49.1"
+            },
+            {
+              "id": "Stubble.Core",
+              "resolvedVersion": "1.10.8"
+            },
+            {
+              "id": "System.ClientModel",
+              "resolvedVersion": "1.0.0"
+            },
+            {
+              "id": "System.CodeDom",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "System.ComponentModel.Annotations",
+              "resolvedVersion": "5.0.0"
+            },
+            {
+              "id": "System.Composition",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Composition.AttributedModel",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Composition.Convention",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Composition.Hosting",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Composition.Runtime",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Composition.TypedParts",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Configuration.ConfigurationManager",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "System.Data.SqlClient",
+              "resolvedVersion": "4.8.6"
+            },
+            {
+              "id": "System.Diagnostics.EventLog",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "System.Formats.Nrbf",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "System.IdentityModel.Tokens.Jwt",
+              "resolvedVersion": "7.5.0"
+            },
+            {
+              "id": "System.Memory.Data",
+              "resolvedVersion": "1.0.2"
+            },
+            {
+              "id": "System.Reflection.MetadataLoadContext",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "System.Resources.Extensions",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "System.Security.Cryptography.Pkcs",
+              "resolvedVersion": "9.0.4"
+            },
+            {
+              "id": "System.Security.Cryptography.ProtectedData",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "System.Security.Cryptography.Xml",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "System.Security.Permissions",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "System.Windows.Extensions",
+              "resolvedVersion": "10.0.0-preview.5.25277.114"
+            },
+            {
+              "id": "YamlDotNet",
+              "resolvedVersion": "16.3.0"
+            }
+          ]
+        },
+        {
+          "framework": "net8.0",
+          "topLevelPackages": [
+            {
+              "id": "McMaster.Extensions.Hosting.CommandLine",
+              "requestedVersion": "4.*",
+              "resolvedVersion": "4.1.1"
+            },
+            {
+              "id": "Microsoft.Build",
+              "requestedVersion": "17.*",
+              "resolvedVersion": "17.14.8"
+            },
+            {
+              "id": "Microsoft.Build.Locator",
+              "requestedVersion": "1.*",
+              "resolvedVersion": "1.9.1"
+            },
+            {
+              "id": "Microsoft.Extensions.DependencyInjection",
+              "requestedVersion": "9.*",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Hosting",
+              "requestedVersion": "9.*",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging",
+              "requestedVersion": "9.*",
+              "resolvedVersion": "9.0.7"
+            }
+          ],
+          "transitivePackages": [
+            {
+              "id": "Acornima",
+              "resolvedVersion": "1.1.1"
+            },
+            {
+              "id": "Azure.Core",
+              "resolvedVersion": "1.38.0"
+            },
+            {
+              "id": "Azure.Identity",
+              "resolvedVersion": "1.11.4"
+            },
+            {
+              "id": "Ben.Demystifier",
+              "resolvedVersion": "0.4.1"
+            },
+            {
+              "id": "Docfx.App",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.Common",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.ManagedReference",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.OverwriteDocuments",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.RestApi",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.SchemaDriven",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.UniversalReference",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Common",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.DataContracts.Common",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.DataContracts.RestApi",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.DataContracts.UniversalReference",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Dotnet",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Glob",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.MarkdigEngine",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.MarkdigEngine.Extensions",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Plugins",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.YamlSerialization",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "EntityFramework",
+              "resolvedVersion": "6.5.1"
+            },
+            {
+              "id": "HtmlAgilityPack",
+              "resolvedVersion": "1.11.72"
+            },
+            {
+              "id": "Humanizer.Core",
+              "resolvedVersion": "2.14.1"
+            },
+            {
+              "id": "ICSharpCode.Decompiler",
+              "resolvedVersion": "9.0.0.7889"
+            },
+            {
+              "id": "Jint",
+              "resolvedVersion": "4.2.0"
+            },
+            {
+              "id": "Json.More.Net",
+              "resolvedVersion": "2.1.1"
+            },
+            {
+              "id": "JsonPointer.Net",
+              "resolvedVersion": "5.3.1"
+            },
+            {
+              "id": "JsonSchema.Net",
+              "resolvedVersion": "7.3.3"
+            },
+            {
+              "id": "Markdig",
+              "resolvedVersion": "0.40.0"
+            },
+            {
+              "id": "McMaster.Extensions.CommandLineUtils",
+              "resolvedVersion": "4.1.1"
+            },
+            {
+              "id": "Microsoft.Bcl.AsyncInterfaces",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "Microsoft.Bcl.Cryptography",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "Microsoft.Build.Framework",
+              "resolvedVersion": "17.14.8"
+            },
+            {
+              "id": "Microsoft.Build.Tasks.Core",
+              "resolvedVersion": "17.14.8"
+            },
+            {
+              "id": "Microsoft.Build.Utilities.Core",
+              "resolvedVersion": "17.14.8"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.Analyzers",
+              "resolvedVersion": "3.11.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.Common",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.CSharp",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.CSharp.Workspaces",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.VisualBasic",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.VisualBasic.Workspaces",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.Workspaces.Common",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.Workspaces.MSBuild",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.Data.SqlClient",
+              "resolvedVersion": "5.2.3"
+            },
+            {
+              "id": "Microsoft.Data.SqlClient.SNI.runtime",
+              "resolvedVersion": "5.2.0"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore",
+              "resolvedVersion": "8.0.18"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore.Abstractions",
+              "resolvedVersion": "8.0.18"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore.Analyzers",
+              "resolvedVersion": "8.0.18"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore.Design",
+              "resolvedVersion": "8.0.18"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore.Relational",
+              "resolvedVersion": "8.0.18"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore.SqlServer",
+              "resolvedVersion": "8.0.18"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore.Tools",
+              "resolvedVersion": "8.0.18"
+            },
+            {
+              "id": "Microsoft.Extensions.Caching.Abstractions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Caching.Memory",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.Abstractions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.Binder",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.CommandLine",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.EnvironmentVariables",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.FileExtensions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.Json",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.UserSecrets",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.DependencyModel",
+              "resolvedVersion": "8.0.2"
+            },
+            {
+              "id": "Microsoft.Extensions.Diagnostics",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Diagnostics.Abstractions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.FileProviders.Abstractions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.FileProviders.Physical",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.FileSystemGlobbing",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Hosting.Abstractions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.Abstractions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.Configuration",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.Console",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.Debug",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.EventLog",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.EventSource",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Options",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Options.ConfigurationExtensions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Primitives",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Identity.Client",
+              "resolvedVersion": "4.61.3"
+            },
+            {
+              "id": "Microsoft.Identity.Client.Extensions.Msal",
+              "resolvedVersion": "4.61.3"
+            },
+            {
+              "id": "Microsoft.IdentityModel.Abstractions",
+              "resolvedVersion": "6.35.0"
+            },
+            {
+              "id": "Microsoft.IdentityModel.JsonWebTokens",
+              "resolvedVersion": "6.35.0"
+            },
+            {
+              "id": "Microsoft.IdentityModel.Logging",
+              "resolvedVersion": "6.35.0"
+            },
+            {
+              "id": "Microsoft.IdentityModel.Protocols",
+              "resolvedVersion": "6.35.0"
+            },
+            {
+              "id": "Microsoft.IdentityModel.Protocols.OpenIdConnect",
+              "resolvedVersion": "6.35.0"
+            },
+            {
+              "id": "Microsoft.IdentityModel.Tokens",
+              "resolvedVersion": "6.35.0"
+            },
+            {
+              "id": "Microsoft.IO.Redist",
+              "resolvedVersion": "6.1.0"
+            },
+            {
+              "id": "Microsoft.NET.StringTools",
+              "resolvedVersion": "17.14.8"
+            },
+            {
+              "id": "Microsoft.Playwright",
+              "resolvedVersion": "1.50.0"
+            },
+            {
+              "id": "Microsoft.SqlServer.Server",
+              "resolvedVersion": "1.0.0"
+            },
+            {
+              "id": "Mono.TextTemplating",
+              "resolvedVersion": "2.2.1"
+            },
+            {
+              "id": "Newtonsoft.Json",
+              "resolvedVersion": "13.0.3"
+            },
+            {
+              "id": "Npgsql",
+              "resolvedVersion": "8.0.6"
+            },
+            {
+              "id": "Npgsql.EntityFrameworkCore.PostgreSQL",
+              "resolvedVersion": "8.0.11"
+            },
+            {
+              "id": "OneOf",
+              "resolvedVersion": "3.0.271"
+            },
+            {
+              "id": "PdfPig",
+              "resolvedVersion": "0.1.9"
+            },
+            {
+              "id": "PlantUml.Net",
+              "resolvedVersion": "1.4.80"
+            },
+            {
+              "id": "runtime.native.System.Data.SqlClient.sni",
+              "resolvedVersion": "4.7.0"
+            },
+            {
+              "id": "runtime.win-arm64.runtime.native.System.Data.SqlClient.sni",
+              "resolvedVersion": "4.4.0"
+            },
+            {
+              "id": "runtime.win-x64.runtime.native.System.Data.SqlClient.sni",
+              "resolvedVersion": "4.4.0"
+            },
+            {
+              "id": "runtime.win-x86.runtime.native.System.Data.SqlClient.sni",
+              "resolvedVersion": "4.4.0"
+            },
+            {
+              "id": "Spectre.Console",
+              "resolvedVersion": "0.49.1"
+            },
+            {
+              "id": "Stubble.Core",
+              "resolvedVersion": "1.10.8"
+            },
+            {
+              "id": "System.Buffers",
+              "resolvedVersion": "4.6.0"
+            },
+            {
+              "id": "System.ClientModel",
+              "resolvedVersion": "1.0.0"
+            },
+            {
+              "id": "System.CodeDom",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "System.Collections.Immutable",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Composition",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Composition.AttributedModel",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Composition.Convention",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Composition.Hosting",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Composition.Runtime",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Composition.TypedParts",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Configuration.ConfigurationManager",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "System.Data.SqlClient",
+              "resolvedVersion": "4.8.6"
+            },
+            {
+              "id": "System.Diagnostics.DiagnosticSource",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "System.Diagnostics.EventLog",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "System.Formats.Asn1",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Formats.Nrbf",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "System.IdentityModel.Tokens.Jwt",
+              "resolvedVersion": "6.35.0"
+            },
+            {
+              "id": "System.IO.Pipelines",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "System.Memory",
+              "resolvedVersion": "4.6.0"
+            },
+            {
+              "id": "System.Memory.Data",
+              "resolvedVersion": "1.0.2"
+            },
+            {
+              "id": "System.Reflection.Metadata",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "System.Reflection.MetadataLoadContext",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "System.Resources.Extensions",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "System.Runtime.Caching",
+              "resolvedVersion": "8.0.0"
+            },
+            {
+              "id": "System.Runtime.CompilerServices.Unsafe",
+              "resolvedVersion": "6.1.0"
+            },
+            {
+              "id": "System.Security.Cryptography.Pkcs",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "System.Security.Cryptography.ProtectedData",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "System.Security.Cryptography.Xml",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "System.Security.Permissions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "System.Text.Encoding.CodePages",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "System.Text.Encodings.Web",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "System.Text.Json",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "System.Threading.Tasks.Dataflow",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "System.Threading.Tasks.Extensions",
+              "resolvedVersion": "4.6.0"
+            },
+            {
+              "id": "System.Windows.Extensions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "YamlDotNet",
+              "resolvedVersion": "16.3.0"
+            }
+          ]
+        },
+        {
+          "framework": "net9.0",
+          "topLevelPackages": [
+            {
+              "id": "McMaster.Extensions.Hosting.CommandLine",
+              "requestedVersion": "4.*",
+              "resolvedVersion": "4.1.1"
+            },
+            {
+              "id": "Microsoft.Build",
+              "requestedVersion": "17.*",
+              "resolvedVersion": "17.14.8"
+            },
+            {
+              "id": "Microsoft.Build.Locator",
+              "requestedVersion": "1.*",
+              "resolvedVersion": "1.9.1"
+            },
+            {
+              "id": "Microsoft.Extensions.DependencyInjection",
+              "requestedVersion": "9.*",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Hosting",
+              "requestedVersion": "9.*",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging",
+              "requestedVersion": "9.*",
+              "resolvedVersion": "9.0.7"
+            }
+          ],
+          "transitivePackages": [
+            {
+              "id": "Acornima",
+              "resolvedVersion": "1.1.1"
+            },
+            {
+              "id": "Azure.Core",
+              "resolvedVersion": "1.38.0"
+            },
+            {
+              "id": "Azure.Identity",
+              "resolvedVersion": "1.11.4"
+            },
+            {
+              "id": "Ben.Demystifier",
+              "resolvedVersion": "0.4.1"
+            },
+            {
+              "id": "Docfx.App",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.Common",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.ManagedReference",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.OverwriteDocuments",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.RestApi",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.SchemaDriven",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Build.UniversalReference",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Common",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.DataContracts.Common",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.DataContracts.RestApi",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.DataContracts.UniversalReference",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Dotnet",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Glob",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.MarkdigEngine",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.MarkdigEngine.Extensions",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.Plugins",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "Docfx.YamlSerialization",
+              "resolvedVersion": "2.78.3"
+            },
+            {
+              "id": "EntityFramework",
+              "resolvedVersion": "6.5.1"
+            },
+            {
+              "id": "HtmlAgilityPack",
+              "resolvedVersion": "1.11.72"
+            },
+            {
+              "id": "Humanizer.Core",
+              "resolvedVersion": "2.14.1"
+            },
+            {
+              "id": "ICSharpCode.Decompiler",
+              "resolvedVersion": "9.0.0.7889"
+            },
+            {
+              "id": "Jint",
+              "resolvedVersion": "4.2.0"
+            },
+            {
+              "id": "Json.More.Net",
+              "resolvedVersion": "2.1.1"
+            },
+            {
+              "id": "JsonPointer.Net",
+              "resolvedVersion": "5.3.1"
+            },
+            {
+              "id": "JsonSchema.Net",
+              "resolvedVersion": "7.3.3"
+            },
+            {
+              "id": "Markdig",
+              "resolvedVersion": "0.40.0"
+            },
+            {
+              "id": "McMaster.Extensions.CommandLineUtils",
+              "resolvedVersion": "4.1.1"
+            },
+            {
+              "id": "Microsoft.Bcl.AsyncInterfaces",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "Microsoft.Build.Framework",
+              "resolvedVersion": "17.14.8"
+            },
+            {
+              "id": "Microsoft.Build.Tasks.Core",
+              "resolvedVersion": "17.14.8"
+            },
+            {
+              "id": "Microsoft.Build.Utilities.Core",
+              "resolvedVersion": "17.14.8"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.Analyzers",
+              "resolvedVersion": "3.11.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.Common",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.CSharp",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.CSharp.Workspaces",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.VisualBasic",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.VisualBasic.Workspaces",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.Workspaces.Common",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.CodeAnalysis.Workspaces.MSBuild",
+              "resolvedVersion": "4.14.0"
+            },
+            {
+              "id": "Microsoft.Data.SqlClient",
+              "resolvedVersion": "5.2.3"
+            },
+            {
+              "id": "Microsoft.Data.SqlClient.SNI.runtime",
+              "resolvedVersion": "5.2.0"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore.Abstractions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore.Analyzers",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore.Design",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore.Relational",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore.SqlServer",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.EntityFrameworkCore.Tools",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Caching.Abstractions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Caching.Memory",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.Abstractions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.Binder",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.CommandLine",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.EnvironmentVariables",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.FileExtensions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.Json",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Configuration.UserSecrets",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.DependencyModel",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Diagnostics",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Diagnostics.Abstractions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.FileProviders.Abstractions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.FileProviders.Physical",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.FileSystemGlobbing",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Hosting.Abstractions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.Abstractions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.Configuration",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.Console",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.Debug",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.EventLog",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Logging.EventSource",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Options",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Options.ConfigurationExtensions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Extensions.Primitives",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "Microsoft.Identity.Client",
+              "resolvedVersion": "4.61.3"
+            },
+            {
+              "id": "Microsoft.Identity.Client.Extensions.Msal",
+              "resolvedVersion": "4.61.3"
+            },
+            {
+              "id": "Microsoft.IdentityModel.Abstractions",
+              "resolvedVersion": "6.35.0"
+            },
+            {
+              "id": "Microsoft.IdentityModel.JsonWebTokens",
+              "resolvedVersion": "6.35.0"
+            },
+            {
+              "id": "Microsoft.IdentityModel.Logging",
+              "resolvedVersion": "6.35.0"
+            },
+            {
+              "id": "Microsoft.IdentityModel.Protocols",
+              "resolvedVersion": "6.35.0"
+            },
+            {
+              "id": "Microsoft.IdentityModel.Protocols.OpenIdConnect",
+              "resolvedVersion": "6.35.0"
+            },
+            {
+              "id": "Microsoft.IdentityModel.Tokens",
+              "resolvedVersion": "6.35.0"
+            },
+            {
+              "id": "Microsoft.NET.StringTools",
+              "resolvedVersion": "17.14.8"
+            },
+            {
+              "id": "Microsoft.Playwright",
+              "resolvedVersion": "1.50.0"
+            },
+            {
+              "id": "Microsoft.SqlServer.Server",
+              "resolvedVersion": "1.0.0"
+            },
+            {
+              "id": "Mono.TextTemplating",
+              "resolvedVersion": "3.0.0"
+            },
+            {
+              "id": "Newtonsoft.Json",
+              "resolvedVersion": "13.0.3"
+            },
+            {
+              "id": "Npgsql",
+              "resolvedVersion": "9.0.3"
+            },
+            {
+              "id": "Npgsql.EntityFrameworkCore.PostgreSQL",
+              "resolvedVersion": "9.0.4"
+            },
+            {
+              "id": "OneOf",
+              "resolvedVersion": "3.0.271"
+            },
+            {
+              "id": "PdfPig",
+              "resolvedVersion": "0.1.9"
+            },
+            {
+              "id": "PlantUml.Net",
+              "resolvedVersion": "1.4.80"
+            },
+            {
+              "id": "runtime.native.System.Data.SqlClient.sni",
+              "resolvedVersion": "4.7.0"
+            },
+            {
+              "id": "runtime.win-arm64.runtime.native.System.Data.SqlClient.sni",
+              "resolvedVersion": "4.4.0"
+            },
+            {
+              "id": "runtime.win-x64.runtime.native.System.Data.SqlClient.sni",
+              "resolvedVersion": "4.4.0"
+            },
+            {
+              "id": "runtime.win-x86.runtime.native.System.Data.SqlClient.sni",
+              "resolvedVersion": "4.4.0"
+            },
+            {
+              "id": "Spectre.Console",
+              "resolvedVersion": "0.49.1"
+            },
+            {
+              "id": "Stubble.Core",
+              "resolvedVersion": "1.10.8"
+            },
+            {
+              "id": "System.ClientModel",
+              "resolvedVersion": "1.0.0"
+            },
+            {
+              "id": "System.CodeDom",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "System.Composition",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Composition.AttributedModel",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Composition.Convention",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Composition.Hosting",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Composition.Runtime",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Composition.TypedParts",
+              "resolvedVersion": "9.0.2"
+            },
+            {
+              "id": "System.Configuration.ConfigurationManager",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "System.Data.SqlClient",
+              "resolvedVersion": "4.8.6"
+            },
+            {
+              "id": "System.Diagnostics.EventLog",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "System.Formats.Nrbf",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "System.IdentityModel.Tokens.Jwt",
+              "resolvedVersion": "6.35.0"
+            },
+            {
+              "id": "System.Memory.Data",
+              "resolvedVersion": "1.0.2"
+            },
+            {
+              "id": "System.Reflection.MetadataLoadContext",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "System.Resources.Extensions",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "System.Runtime.Caching",
+              "resolvedVersion": "8.0.0"
+            },
+            {
+              "id": "System.Security.Cryptography.Pkcs",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "System.Security.Cryptography.ProtectedData",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "System.Security.Cryptography.Xml",
+              "resolvedVersion": "9.0.0"
+            },
+            {
+              "id": "System.Security.Permissions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "System.Windows.Extensions",
+              "resolvedVersion": "9.0.7"
+            },
+            {
+              "id": "YamlDotNet",
+              "resolvedVersion": "16.3.0"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

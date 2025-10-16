@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup Label="Globals">
+        <SccProjectName>SAK</SccProjectName>
+        <SccProvider>SAK</SccProvider>
+        <SccAuxPath>SAK</SccAuxPath>
+        <SccLocalPath>SAK</SccLocalPath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
+        <IsPackable>false</IsPackable>
+        <SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CloudNimble.EasyAF.MSBuild\CloudNimble.EasyAF.MSBuild.csproj" />
+    </ItemGroup>
+
+</Project>

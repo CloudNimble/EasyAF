@@ -1,0 +1,121 @@
+---
+title: CleanupResult
+description: "Represents the result of a cleanup operation."
+icon: file-brackets-curly
+keywords: ['CleanupResult', 'CloudNimble.EasyAF.Tools.Models.CleanupResult', 'CloudNimble.EasyAF.Tools.Models', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Models.CleanupResult
+```
+
+## Summary
+
+Represents the result of a cleanup operation.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public CleanupResult()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ErrorCount
+
+Gets or sets the number of errors encountered during deletion.
+
+#### Syntax
+
+```csharp
+public int ErrorCount { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ErrorMessage
+
+Gets or sets any error message if the operation failed.
+
+#### Syntax
+
+```csharp
+public string ErrorMessage { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  FilesDeleted
+
+Gets or sets the number of files deleted.
+
+#### Syntax
+
+```csharp
+public int FilesDeleted { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Message
+
+Gets or sets the result message.
+
+#### Syntax
+
+```csharp
+public string Message { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OrphanedFilesFound
+
+Gets or sets the number of orphaned files found.
+
+#### Syntax
+
+```csharp
+public int OrphanedFilesFound { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Success
+
+Gets or sets whether the cleanup operation was successful.
+
+#### Syntax
+
+```csharp
+public bool Success { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+

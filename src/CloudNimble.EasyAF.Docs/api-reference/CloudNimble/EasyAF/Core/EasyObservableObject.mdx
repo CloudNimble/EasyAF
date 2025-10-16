@@ -1,0 +1,114 @@
+---
+title: EasyObservableObject
+description: "A base class for objects to implement [INotifyPropertyChanged](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged).         ..."
+icon: file-brackets-curly
+keywords: ['EasyObservableObject', 'CloudNimble.EasyAF.Core.EasyObservableObject', 'CloudNimble.EasyAF.Core', 'class', 'System.Object', 'System.ComponentModel.INotifyPropertyChanged', 'System.IDisposable']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.EasyObservableObject
+```
+
+## Summary
+
+A base class for objects to implement [INotifyPropertyChanged](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged).
+            Provides strongly-typed property change notifications and automatic property setting with change detection.
+
+## Examples
+
+```csharp
+public class Person : EasyObservableObject
+{
+    private string _name;
+    private int _age;
+
+    public string Name
+    {
+        get =&gt; _name;
+        set =&gt; Set(nameof(Name), ref _name, value);
+    }
+
+    public int Age
+    {
+        get =&gt; _age;
+        set =&gt; Set(() =&gt; Age, ref _age, value);
+    }
+}
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EasyObservableObject](/api-reference/CloudNimble/EasyAF/Core/EasyObservableObject) class.
+
+#### Syntax
+
+```csharp
+public EasyObservableObject()
+```
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a deep copy of the current object using JSON serialization.
+
+#### Syntax
+
+```csharp
+public T Clone<T>() where T : CloudNimble.EasyAF.Core.EasyObservableObject
+```
+
+#### Returns
+
+Type: `T`
+A new instance of type *T* that is a deep copy of the current object.
+
+#### Type Parameters
+
+- `T` - The type of object to clone. Must inherit from [EasyObservableObject](/api-reference/CloudNimble/EasyAF/Core/EasyObservableObject).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `JsonException` | Thrown when the object cannot be serialized or deserialized. |
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Dispose
+
+Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+
+#### Syntax
+
+```csharp
+public void Dispose()
+```
+
+## Events
+
+### <Icon icon="bell" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PropertyChanged
+
+Occurs when a property value changes.
+
+#### Syntax
+
+```csharp
+public System.ComponentModel.PropertyChangedEventHandler PropertyChanged
+```
+
+## Related APIs
+
+- System.ComponentModel.INotifyPropertyChanged
+- System.IDisposable
+

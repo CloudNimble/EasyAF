@@ -1,0 +1,103 @@
+---
+title: IDbStateEnum
+description: "An interface that identifies this Entity as being the enumeration details for the SimpleStateMachine."
+icon: plug
+keywords: ['IDbStateEnum', 'CloudNimble.EasyAF.Core.IDbStateEnum', 'CloudNimble.EasyAF.Core', 'interface', 'CloudNimble.EasyAF.Core.IDbEnum', 'CloudNimble.EasyAF.Core.IIdentifiable<System.Guid>', 'CloudNimble.EasyAF.Core.IActiveTrackable', 'CloudNimble.EasyAF.Core.IHumanReadable', 'CloudNimble.EasyAF.Core.ISortable']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.IDbStateEnum
+```
+
+## Summary
+
+An interface that identifies this Entity as being the enumeration details for the SimpleStateMachine.
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  InstructionText
+
+Text to display to the user regarding the current state, and what needs to happen next.
+
+#### Syntax
+
+```csharp
+string InstructionText { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PrimaryTargetDisplayText
+
+A string that describes the next action in the SimpleStateMachine, usually displayed on a button or link.
+
+#### Syntax
+
+```csharp
+string PrimaryTargetDisplayText { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PrimaryTargetSortOrder
+
+An integer that represents the State the Entity should be moved to once this action completes successfully.
+
+#### Syntax
+
+```csharp
+int PrimaryTargetSortOrder { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SecondaryTargetDisplayText
+
+A string that describes an alternate action in the SimpleStateMachine. This action could skip States moving forward, or return the Entity to a previous State. This text is usually displayed on a button or link.
+
+#### Syntax
+
+```csharp
+string SecondaryTargetDisplayText { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SecondaryTargetSortOrder
+
+An integer that represents an alternate State the Entity should be moved to once this action is finished.
+
+#### Syntax
+
+```csharp
+int SecondaryTargetSortOrder { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+## Related APIs
+
+- CloudNimble.EasyAF.Core.IDbEnum
+- CloudNimble.EasyAF.Core.IIdentifiable<System.Guid>
+- CloudNimble.EasyAF.Core.IActiveTrackable
+- CloudNimble.EasyAF.Core.IHumanReadable
+- CloudNimble.EasyAF.Core.ISortable
+

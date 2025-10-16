@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup Label="Globals">
+        <SccProjectName>SAK</SccProjectName>
+        <SccProvider>SAK</SccProvider>
+        <SccAuxPath>SAK</SccAuxPath>
+        <SccLocalPath>SAK</SccLocalPath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net9.0;net8.0;</TargetFrameworks>
+        <DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
+        <DefineConstants>EF6</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Title>EasyAF Restier API for EF 6</Title>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Restier.AspNetCore" Version="1.*-*" NoWarn="NU1605" />
+        <PackageReference Include="Microsoft.Restier.EntityFramework" Version="1.*-*" NoWarn="NU1605" />
+        <PackageReference Include="SimpleMessageBus.Publish" Version="5.*" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)'=='net10.0'">
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.*-*" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.*-*" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)'=='net9.0'">
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.*" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.*" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)'=='net8.0'">
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.*" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.*" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CloudNimble.EasyAF.Restier\CloudNimble.EasyAF.Restier.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,145 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "SimpleMessageBus",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.ico",
+  "colors": {
+    "primary": "#0078d4",
+    "light": "#4da6ff", 
+    "dark": "#0056b3",
+    "anchors": {
+      "from": "#0078d4",
+      "to": "#4da6ff"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "Support",
+      "url": "https://github.com/CloudNimble/SimpleMessageBus/issues"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "GitHub",
+    "url": "https://github.com/CloudNimble/SimpleMessageBus"
+  },
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    },
+    {
+      "name": "Providers",
+      "url": "providers"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "Documentation",
+      "icon": "book-open-cover",
+      "url": "https://docs.simplemessagebus.com"
+    },
+    {
+      "name": "Community",
+      "icon": "github",
+      "url": "https://github.com/CloudNimble/SimpleMessageBus"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": [
+        "introduction",
+        "quickstart",
+        "installation"
+      ]
+    },
+    {
+      "group": "Core Concepts",
+      "pages": [
+        "concepts/overview",
+        "concepts/messages",
+        "concepts/publishers", 
+        "concepts/handlers",
+        "concepts/dispatchers"
+      ]
+    },
+    {
+      "group": "Providers",
+      "pages": [
+        "providers/overview",
+        "providers/azure-storage-queue",
+        "providers/amazon-sqs",
+        "providers/filesystem",
+        "providers/indexeddb"
+      ]
+    },
+    {
+      "group": "Guides",
+      "pages": [
+        "guides/configuration",
+        "guides/dependency-injection",
+        "guides/testing",
+        "guides/error-handling",
+        "guides/performance"
+      ]
+    },
+    {
+      "group": "API Documentation",
+      "pages": [
+        "api-reference/overview"
+      ]
+    },
+    {
+      "group": "Core",
+      "pages": [
+        "api-reference/core/imessage",
+        "api-reference/core/imessagehandler",
+        "api-reference/core/messagebase",
+        "api-reference/core/messageenvelope",
+        "api-reference/core/imetadataaware",
+        "api-reference/core/itrackable"
+      ]
+    },
+    {
+      "group": "Publishing",
+      "pages": [
+        "api-reference/publish/imessagepublisher",
+        "api-reference/publish/filesystemmessagepublisher"
+      ]
+    },
+    {
+      "group": "Dispatching", 
+      "pages": [
+        "api-reference/dispatch/imessagedispatcher",
+        "api-reference/dispatch/iqueueprocessor"
+      ]
+    },
+    {
+      "group": "Providers API",
+      "pages": [
+        "api-reference/providers/azure",
+        "api-reference/providers/amazon",
+        "api-reference/providers/filesystem",
+        "api-reference/providers/indexeddb"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/CloudNimble/SimpleMessageBus",
+    "linkedin": "https://www.linkedin.com/company/cloudnimble"
+  },
+  "analytics": {
+    "ga4": {
+      "measurementId": "G-XXXXXXXXXX"
+    }
+  },
+  "seo": {
+    "indexHiddenPages": true
+  },
+  "search": {
+    "prompt": "Search SimpleMessageBus documentation..."
+  }
+}

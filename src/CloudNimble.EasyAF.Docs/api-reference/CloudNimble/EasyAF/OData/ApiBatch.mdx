@@ -1,0 +1,70 @@
+---
+title: ApiBatch
+description: "Provides a pre-configured Simple.OData.V4 `ODataBatch` Client."
+icon: file-brackets-curly
+keywords: ['ApiBatch', 'CloudNimble.EasyAF.OData.ApiBatch', 'CloudNimble.EasyAF.OData', 'class', 'Simple.OData.Client.ODataBatch']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.ODataClient.dll
+
+**Namespace:** CloudNimble.EasyAF.OData
+
+**Inheritance:** Simple.OData.Client.ODataBatch
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.OData.ApiBatch
+```
+
+## Summary
+
+Provides a pre-configured Simple.OData.V4 `ODataBatch` Client.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the Simple.OData.Client.ODataClient class with custom configuration
+
+#### Syntax
+
+```csharp
+public ApiBatch(System.Net.Http.IHttpClientFactory httpClientFactory, CloudNimble.EasyAF.Configuration.ConfigurationBase configurationBase, string apiClientName = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `httpClientFactory` | `System.Net.Http.IHttpClientFactory` | An [IHttpClientFactory](https://learn.microsoft.com/dotnet/api/system.net.http.ihttpclientfactory) instance, provided by DI. |
+| `configurationBase` | `CloudNimble.EasyAF.Configuration.ConfigurationBase` | A [ConfigurationBase](/api-reference/CloudNimble/EasyAF/Configuration/ConfigurationBase) instance, containing the name identifier for the [HttpClient](https://learn.microsoft.com/dotnet/api/system.net.http.httpclient). |
+| `apiClientName` | `string` | Optional name for the API client. If not provided, uses the ApiClientName from the configuration. |
+
+## Methods
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Add
+
+Overloads the Add operator used to add `IODataClient` operations to the `ODataBatch`.
+            Provides an alternative method-based syntax for adding operations to the batch.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.EasyAF.OData.ApiBatch Add(CloudNimble.EasyAF.OData.ApiBatch batch, System.Func<Simple.OData.Client.IODataClient, System.Threading.Tasks.Task> action)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `batch` | `CloudNimble.EasyAF.OData.ApiBatch` | The ApiBatch instance to add the operation to. |
+| `action` | `System.Func<Simple.OData.Client.IODataClient, System.Threading.Tasks.Task>` | The async operation to add to the batch. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.OData.ApiBatch`
+The ApiBatch instance for method chaining.
+

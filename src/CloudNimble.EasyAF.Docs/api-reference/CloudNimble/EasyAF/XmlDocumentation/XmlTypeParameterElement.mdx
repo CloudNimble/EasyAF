@@ -1,0 +1,91 @@
+---
+title: XmlTypeParameterElement
+description: "Represents a type parameter XML documentation element."
+icon: file-brackets-curly
+keywords: ['XmlTypeParameterElement', 'CloudNimble.EasyAF.XmlDocumentation.XmlTypeParameterElement', 'CloudNimble.EasyAF.XmlDocumentation', 'class', 'CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.XmlDocumentation.dll
+
+**Namespace:** CloudNimble.EasyAF.XmlDocumentation
+
+**Inheritance:** CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.XmlDocumentation.XmlTypeParameterElement
+```
+
+## Summary
+
+Represents a type parameter XML documentation element.
+
+## Remarks
+
+The typeparam element describes a generic type parameter.
+            It includes the parameter name and description of its constraints and usage.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlTypeParameterElement class.
+
+#### Syntax
+
+```csharp
+public XmlTypeParameterElement()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlTypeParameterElement class with XML content.
+
+#### Syntax
+
+```csharp
+public XmlTypeParameterElement(System.Xml.Linq.XElement element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Xml.Linq.XElement` | The XML element to parse. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Name
+
+Gets or sets the name of the type parameter.
+
+#### Syntax
+
+```csharp
+public string Name { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToMdx
+
+Converts this type parameter element to MDX format.
+
+#### Syntax
+
+```csharp
+public override string ToMdx()
+```
+
+#### Returns
+
+Type: `string`
+The MDX representation of this type parameter.
+

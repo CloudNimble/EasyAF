@@ -1,0 +1,101 @@
+---
+title: ODataV4ResultList
+description: "A container for deserializing an OData v4 result and its associated metadata."
+icon: code-branch
+keywords: ['ODataV4ResultList', 'CloudNimble.EasyAF.Http.OData.ODataV4ResultList<T>', 'CloudNimble.EasyAF.Http.OData', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Http.dll
+
+**Namespace:** CloudNimble.EasyAF.Http.OData
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Http.OData.ODataV4ResultList<T>
+```
+
+## Summary
+
+A container for deserializing an OData v4 result and its associated metadata.
+
+## Type Parameters
+
+- `T` - The type of Items in the OData payload.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public ODataV4ResultList()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ExpectedItemCount
+
+Maps to the "odata.count" property.
+
+#### Syntax
+
+```csharp
+public string ExpectedItemCount { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Remarks
+
+A mismatch between `ExpectedItemCount` and `Items`.Count can indicate an issue with deserialization.
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Items
+
+A [List`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1) containing the items returned from the service.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<T> Items { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<T>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  MetadataReferenceLink
+
+Maps to the "@odata.context" property, and specifies which item in the model metadata is being returned.
+
+#### Syntax
+
+```csharp
+public string MetadataReferenceLink { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  NextPageLink
+
+Maps to the "@odata.nextLink" property, and specifies the URL to call to get the next page of results.
+
+#### Syntax
+
+```csharp
+public string NextPageLink { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+

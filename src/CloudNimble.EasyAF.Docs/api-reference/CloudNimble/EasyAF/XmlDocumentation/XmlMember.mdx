@@ -1,0 +1,276 @@
+---
+title: XmlMember
+description: "Represents a documented member from XML documentation."
+icon: file-brackets-curly
+keywords: ['XmlMember', 'CloudNimble.EasyAF.XmlDocumentation.XmlMember', 'CloudNimble.EasyAF.XmlDocumentation', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.XmlDocumentation.dll
+
+**Namespace:** CloudNimble.EasyAF.XmlDocumentation
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.XmlDocumentation.XmlMember
+```
+
+## Summary
+
+Represents a documented member from XML documentation.
+
+## Remarks
+
+This class contains all the documentation elements for a single member,
+            including summary, remarks, parameters, return values, exceptions, and examples.
+            It provides methods to convert the documentation to various formats.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlMember class.
+
+#### Syntax
+
+```csharp
+public XmlMember()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlMember class from an XML element.
+
+#### Syntax
+
+```csharp
+public XmlMember(System.Xml.Linq.XElement memberElement)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `memberElement` | `System.Xml.Linq.XElement` | The XML member element to parse. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Examples
+
+Gets the collection of example documentation elements.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<CloudNimble.EasyAF.XmlDocumentation.XmlExampleElement> Examples { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<CloudNimble.EasyAF.XmlDocumentation.XmlExampleElement>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Exceptions
+
+Gets the collection of exception documentation elements.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<CloudNimble.EasyAF.XmlDocumentation.XmlExceptionElement> Exceptions { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<CloudNimble.EasyAF.XmlDocumentation.XmlExceptionElement>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  MemberType
+
+Gets or sets the member type (Type, Method, Property, Field, Event).
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.XmlDocumentation.MemberType MemberType { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.EasyAF.XmlDocumentation.MemberType`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Name
+
+Gets or sets the full member name with prefix (e.g., T:System.String, M:System.String.Length).
+
+#### Syntax
+
+```csharp
+public string Name { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Parameters
+
+Gets the collection of parameter documentation elements.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<CloudNimble.EasyAF.XmlDocumentation.XmlParameterElement> Parameters { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<CloudNimble.EasyAF.XmlDocumentation.XmlParameterElement>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Permissions
+
+Gets the collection of permission documentation elements.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<CloudNimble.EasyAF.XmlDocumentation.XmlPermissionElement> Permissions { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<CloudNimble.EasyAF.XmlDocumentation.XmlPermissionElement>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Remarks
+
+Gets or sets the remarks documentation element.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.XmlDocumentation.XmlRemarksElement Remarks { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.EasyAF.XmlDocumentation.XmlRemarksElement`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Returns
+
+Gets or sets the returns documentation element.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.XmlDocumentation.XmlReturnsElement Returns { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.EasyAF.XmlDocumentation.XmlReturnsElement`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SeeAlso
+
+Gets the collection of see also references.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<CloudNimble.EasyAF.XmlDocumentation.XmlSeeAlsoElement> SeeAlso { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<CloudNimble.EasyAF.XmlDocumentation.XmlSeeAlsoElement>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Summary
+
+Gets or sets the summary documentation element.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.XmlDocumentation.XmlSummaryElement Summary { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.EasyAF.XmlDocumentation.XmlSummaryElement`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  TypeParameters
+
+Gets the collection of type parameter documentation elements.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<CloudNimble.EasyAF.XmlDocumentation.XmlTypeParameterElement> TypeParameters { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<CloudNimble.EasyAF.XmlDocumentation.XmlTypeParameterElement>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Value
+
+Gets or sets the value documentation element (for properties).
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.XmlDocumentation.XmlValueElement Value { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.EasyAF.XmlDocumentation.XmlValueElement`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetContainingType
+
+Gets the containing type name for members.
+
+#### Syntax
+
+```csharp
+public string GetContainingType()
+```
+
+#### Returns
+
+Type: `string`
+The containing type name, or empty string for types.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetNamespace
+
+Gets the namespace of the member.
+
+#### Syntax
+
+```csharp
+public string GetNamespace()
+```
+
+#### Returns
+
+Type: `string`
+The namespace name.
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetSimpleName
+
+Gets the simple name of the member without prefix and namespace.
+
+#### Syntax
+
+```csharp
+public string GetSimpleName()
+```
+
+#### Returns
+
+Type: `string`
+The simple member name.
+

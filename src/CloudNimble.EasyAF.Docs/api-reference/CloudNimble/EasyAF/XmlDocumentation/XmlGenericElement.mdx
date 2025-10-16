@@ -1,0 +1,91 @@
+---
+title: XmlGenericElement
+description: "Represents a generic XML documentation element for unrecognized tags."
+icon: file-brackets-curly
+keywords: ['XmlGenericElement', 'CloudNimble.EasyAF.XmlDocumentation.XmlGenericElement', 'CloudNimble.EasyAF.XmlDocumentation', 'class', 'CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.XmlDocumentation.dll
+
+**Namespace:** CloudNimble.EasyAF.XmlDocumentation
+
+**Inheritance:** CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.XmlDocumentation.XmlGenericElement
+```
+
+## Summary
+
+Represents a generic XML documentation element for unrecognized tags.
+
+## Remarks
+
+This class handles XML documentation elements that don't have specific implementations.
+            It provides basic text extraction and formatting capabilities for any XML element.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlGenericElement class.
+
+#### Syntax
+
+```csharp
+public XmlGenericElement()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlGenericElement class with XML content.
+
+#### Syntax
+
+```csharp
+public XmlGenericElement(System.Xml.Linq.XElement element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Xml.Linq.XElement` | The XML element to parse. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ElementName
+
+Gets or sets the XML element name.
+
+#### Syntax
+
+```csharp
+public string ElementName { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToMdx
+
+Converts this generic element to MDX format.
+
+#### Syntax
+
+```csharp
+public override string ToMdx()
+```
+
+#### Returns
+
+Type: `string`
+The MDX representation of this element.
+

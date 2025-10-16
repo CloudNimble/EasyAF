@@ -1,0 +1,452 @@
+---
+title: RatioInterval
+description: "Represents a ratio value that occurs at regular time intervals, enabling conversion between different time periods.             This class combines a base ti..."
+icon: code-branch
+keywords: ['RatioInterval', 'CloudNimble.EasyAF.Core.RatioInterval<T>', 'CloudNimble.EasyAF.Core', 'class', 'CloudNimble.EasyAF.Core.Interval<T>']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+**Inheritance:** CloudNimble.EasyAF.Core.Interval&lt;T&gt;
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.RatioInterval<T>
+```
+
+## Summary
+
+Represents a ratio value that occurs at regular time intervals, enabling conversion between different time periods.
+            This class combines a base time interval (from the `Interval`1` class) with a ratio value to calculate 
+            total ratio amounts across different time periods.
+
+## Remarks
+
+
+
+
+  &lt;strong&gt;Key Concepts:&lt;/strong&gt;
+
+
+
+
+
+
+  &lt;strong&gt;Method Types:&lt;/strong&gt;
+
+
+
+
+
+
+  &lt;strong&gt;Common Use Cases:&lt;/strong&gt;
+
+
+
+
+
+## Examples
+
+```csharp
+// Example: 70% conversion rate every 2 weeks
+var conversionInterval = new RatioInterval&lt;double&gt;(0.70, 2, IntervalType.Weeks);
+
+// How many 2-week intervals are there per month?
+decimal intervalsPerMonth = conversionInterval.PerMonth(); // ~2.17 intervals
+
+// What's the total conversion ratio per month?
+decimal totalConversionPerMonth = conversionInterval.RatioPerMonth(); // ~1.52 (0.70 × 2.17)
+
+// Daily breakdown
+decimal totalConversionPerDay = conversionInterval.RatioPerDay(); // ~0.05 (0.70 × 0.071)
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the `RatioInterval`1` class with default values.
+
+#### Syntax
+
+```csharp
+public RatioInterval()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the `RatioInterval`1` class with the specified interval value and type.
+
+#### Syntax
+
+```csharp
+public RatioInterval(T value, CloudNimble.EasyAF.Core.IntervalType type)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `T` | The duration of the interval. |
+| `type` | `CloudNimble.EasyAF.Core.IntervalType` | The base unit that describes what the quantity of this interval references. |
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the `RatioInterval`1` class with the specified ratio, interval value, and type.
+
+#### Syntax
+
+```csharp
+public RatioInterval(System.Decimal ratio, T value, CloudNimble.EasyAF.Core.IntervalType type)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `ratio` | `System.Decimal` | The decimal ratio value that is calculated over the given interval. |
+| `value` | `T` | The duration of the interval. |
+| `type` | `CloudNimble.EasyAF.Core.IntervalType` | The base unit that describes what the quantity of this interval references. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Ratio
+
+Gets or sets the decimal ratio value that is calculated over the given interval.
+            Can represent a ratio, rate, or other decimal value per time period.
+
+#### Syntax
+
+```csharp
+public System.Decimal Ratio { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Decimal`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RatioPerDay
+
+Calculates the total ratio value per day based on the interval and ratio.
+            This method multiplies the interval frequency (how many intervals occur per day) by the ratio value.
+
+#### Syntax
+
+```csharp
+public System.Decimal RatioPerDay()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The total ratio value per day as a decimal.
+
+#### Examples
+
+```csharp
+// 0.75 ratio every 6 hours = 0.75 * 4 = 3.0 ratio per day
+var interval = new RatioInterval&lt;double&gt;(0.75, 6, IntervalType.Hours);
+decimal ratioPerDay = interval.RatioPerDay();
+```
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RatioPerDay
+
+Calculates the total ratio value per day for a given quantity based on the interval and ratio.
+
+#### Syntax
+
+```csharp
+public System.Decimal RatioPerDay(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to apply the ratio calculation to. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total ratio value per day as a decimal.
+
+#### Examples
+
+```csharp
+// 70% conversion every month, total conversions from 30 customers per day
+var conversion = new RatioInterval&lt;double&gt;(0.70m, 1, IntervalType.Months);
+decimal conversionsPerDay = conversion.RatioPerDay(30); // ~0.69 conversions per day
+```
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RatioPerHour
+
+Calculates the total ratio value per hour based on the interval and ratio.
+            This method multiplies the interval frequency (how many intervals occur per hour) by the ratio value.
+
+#### Syntax
+
+```csharp
+public System.Decimal RatioPerHour()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The total ratio value per hour as a decimal.
+
+#### Examples
+
+```csharp
+// 0.7 ratio every 1.5 hours = 0.7 * (60/90) = 0.467 ratio per hour
+var interval = new RatioInterval&lt;double&gt;(0.7, 1.5, IntervalType.Hours);
+decimal ratioPerHour = interval.RatioPerHour();
+```
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RatioPerHour
+
+Calculates the total ratio value per hour for a given quantity based on the interval and ratio.
+
+#### Syntax
+
+```csharp
+public System.Decimal RatioPerHour(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to apply the ratio calculation to. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total ratio value per hour as a decimal.
+
+#### Examples
+
+```csharp
+// 70% conversion every 1.5 hours, total conversions from 100 leads per hour
+var conversion = new RatioInterval&lt;double&gt;(0.70m, 1.5, IntervalType.Hours);
+decimal conversionsPerHour = conversion.RatioPerHour(100); // ~46.67 conversions per hour
+```
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RatioPerMinute
+
+Calculates the total ratio value per minute based on the interval and ratio.
+            This method multiplies the interval frequency (how many intervals occur per minute) by the ratio value.
+
+#### Syntax
+
+```csharp
+public System.Decimal RatioPerMinute()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The total ratio value per minute as a decimal.
+
+#### Examples
+
+```csharp
+// 0.5 ratio every 2 hours = 0.5 * (60/120) = 0.25 ratio per minute
+var interval = new RatioInterval&lt;double&gt;(0.5, 2, IntervalType.Hours);
+decimal ratioPerMinute = interval.RatioPerMinute();
+```
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RatioPerMinute
+
+Calculates the total ratio value per minute for a given quantity based on the interval and ratio.
+
+#### Syntax
+
+```csharp
+public System.Decimal RatioPerMinute(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to apply the ratio calculation to. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total ratio value per minute as a decimal.
+
+#### Examples
+
+```csharp
+// 70% conversion every month, total conversions from 1000 leads per minute
+var conversion = new RatioInterval&lt;double&gt;(0.70m, 1, IntervalType.Months);
+decimal conversionsPerMinute = conversion.RatioPerMinute(1000); // ~0.016 conversions per minute
+```
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RatioPerMonth
+
+Calculates the total ratio value per month based on the interval and ratio.
+            This method multiplies the interval frequency (how many intervals occur per month) by the ratio value.
+
+#### Syntax
+
+```csharp
+public System.Decimal RatioPerMonth()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The total ratio value per month as a decimal.
+
+#### Examples
+
+```csharp
+// 0.6 ratio every 1 week = 0.6 * 4.34 = 2.6 ratio per month
+var interval = new RatioInterval&lt;double&gt;(0.6, 1, IntervalType.Weeks);
+decimal ratioPerMonth = interval.RatioPerMonth();
+```
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RatioPerMonth
+
+Calculates the total ratio value per month for a given quantity based on the interval and ratio.
+
+#### Syntax
+
+```csharp
+public System.Decimal RatioPerMonth(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to apply the ratio calculation to. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total ratio value per month as a decimal.
+
+#### Examples
+
+```csharp
+// 60% conversion every week, total conversions from 100 leads per month
+var conversion = new RatioInterval&lt;double&gt;(0.60m, 1, IntervalType.Weeks);
+decimal conversionsPerMonth = conversion.RatioPerMonth(100); // 260 conversions per month
+```
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RatioPerWeek
+
+Calculates the total ratio value per week based on the interval and ratio.
+            This method multiplies the interval frequency (how many intervals occur per week) by the ratio value.
+
+#### Syntax
+
+```csharp
+public System.Decimal RatioPerWeek()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The total ratio value per week as a decimal.
+
+#### Examples
+
+```csharp
+// 0.8 ratio every 2 days = 0.8 * 3.5 = 2.8 ratio per week
+var interval = new RatioInterval&lt;double&gt;(0.8, 2, IntervalType.Days);
+decimal ratioPerWeek = interval.RatioPerWeek();
+```
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RatioPerWeek
+
+Calculates the total ratio value per week for a given quantity based on the interval and ratio.
+
+#### Syntax
+
+```csharp
+public System.Decimal RatioPerWeek(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to apply the ratio calculation to. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total ratio value per week as a decimal.
+
+#### Examples
+
+```csharp
+// 80% conversion every 2 days, total conversions from 50 leads per week
+var conversion = new RatioInterval&lt;double&gt;(0.80m, 2, IntervalType.Days);
+decimal conversionsPerWeek = conversion.RatioPerWeek(50); // 140 conversions per week
+```
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RatioPerYear
+
+Calculates the total ratio value per year based on the interval and ratio.
+            This method multiplies the interval frequency (how many intervals occur per year) by the ratio value.
+
+#### Syntax
+
+```csharp
+public System.Decimal RatioPerYear()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The total ratio value per year as a decimal.
+
+#### Examples
+
+```csharp
+// 0.9 ratio every 3 months = 0.9 * 4 = 3.6 ratio per year
+var interval = new RatioInterval&lt;double&gt;(0.9, 3, IntervalType.Months);
+decimal ratioPerYear = interval.RatioPerYear();
+```
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RatioPerYear
+
+Calculates the total ratio value per year for a given quantity based on the interval and ratio.
+
+#### Syntax
+
+```csharp
+public System.Decimal RatioPerYear(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to apply the ratio calculation to. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total ratio value per year as a decimal.
+
+#### Examples
+
+```csharp
+// 90% conversion every 3 months, total conversions from 1000 leads per year
+var conversion = new RatioInterval&lt;double&gt;(0.90m, 3, IntervalType.Months);
+decimal conversionsPerYear = conversion.RatioPerYear(1000); // 3600 conversions per year
+```
+

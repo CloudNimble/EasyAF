@@ -1,0 +1,105 @@
+---
+title: XmlSeeAlsoElement
+description: "Represents a seealso XML documentation element for related references."
+icon: file-brackets-curly
+keywords: ['XmlSeeAlsoElement', 'CloudNimble.EasyAF.XmlDocumentation.XmlSeeAlsoElement', 'CloudNimble.EasyAF.XmlDocumentation', 'class', 'CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.XmlDocumentation.dll
+
+**Namespace:** CloudNimble.EasyAF.XmlDocumentation
+
+**Inheritance:** CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.XmlDocumentation.XmlSeeAlsoElement
+```
+
+## Summary
+
+Represents a seealso XML documentation element for related references.
+
+## Remarks
+
+The seealso element creates a link to related types or members.
+            These are typically displayed in a "See Also" section.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlSeeAlsoElement class.
+
+#### Syntax
+
+```csharp
+public XmlSeeAlsoElement()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the XmlSeeAlsoElement class with XML content.
+
+#### Syntax
+
+```csharp
+public XmlSeeAlsoElement(System.Xml.Linq.XElement element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Xml.Linq.XElement` | The XML element to parse. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Cref
+
+Gets or sets the cross-reference target.
+
+#### Syntax
+
+```csharp
+public string Cref { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  LinkText
+
+Gets or sets the link text to display.
+
+#### Syntax
+
+```csharp
+public string LinkText { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToMdx
+
+Converts this seealso element to MDX format as a link.
+
+#### Syntax
+
+```csharp
+public override string ToMdx()
+```
+
+#### Returns
+
+Type: `string`
+The MDX representation of this related reference.
+

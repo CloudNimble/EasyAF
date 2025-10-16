@@ -1,0 +1,123 @@
+---
+title: CodeGenerateCommand
+description: "Represents a command for generating code for a specified EasyAF component."
+icon: file-brackets-curly
+keywords: ['CodeGenerateCommand', 'CloudNimble.EasyAF.Tools.Commands.CodeGenerateCommand', 'CloudNimble.EasyAF.Tools.Commands', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Commands
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Commands.CodeGenerateCommand
+```
+
+## Summary
+
+Represents a command for generating code for a specified EasyAF component.
+
+## Remarks
+
+This command is used within the EasyAF tooling to automate the generation of code for various components,
+            such as business logic, core libraries, data access, APIs, or all components at once.
+
+## Examples
+
+```csharp
+dotnet easyaf generate business -path "C:\Projects\MyApp" -dontdelete "Controllers\Public" -notpublic "User,Role"
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public CodeGenerateCommand()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Component
+
+Gets or sets the component to generate.
+            Available options: business, core, data, api, simplemessagebus, all.
+
+#### Syntax
+
+```csharp
+public string Component { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DontDelete
+
+Gets or sets a directory that will be ignored when deleting files during code generation.
+
+#### Syntax
+
+```csharp
+public string DontDelete { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  NotPublic
+
+Gets or sets a comma-separated list of table names to ignore when generating the public API surface.
+
+#### Syntax
+
+```csharp
+public string NotPublic { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Root
+
+Gets or sets the working directory for the code compiler.
+            Defaults to the current directory if not specified.
+
+#### Syntax
+
+```csharp
+public string Root { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnExecuteAsync
+
+Executes the code generation command asynchronously.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<int> OnExecuteAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<int>`
+A [Task`1](https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1) representing the asynchronous operation, with a result of 0 on success.
+

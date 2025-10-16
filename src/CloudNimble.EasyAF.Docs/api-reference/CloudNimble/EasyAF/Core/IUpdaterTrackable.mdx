@@ -1,0 +1,43 @@
+---
+title: IUpdaterTrackable
+description: "An interface that implements the CloudNimble common pattern for tracking who updated an Entity."
+icon: plug
+keywords: ['IUpdaterTrackable', 'CloudNimble.EasyAF.Core.IUpdaterTrackable<T>', 'CloudNimble.EasyAF.Core', 'interface']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.IUpdaterTrackable<T>
+```
+
+## Summary
+
+An interface that implements the CloudNimble common pattern for tracking who updated an Entity.
+
+## Type Parameters
+
+- `T` - The type for the identifier.
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  UpdatedById
+
+The unique identifier for the User that updated this particular Entity.
+
+#### Syntax
+
+```csharp
+System.Nullable<T> UpdatedById { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<T>`
+

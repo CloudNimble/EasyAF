@@ -1,0 +1,84 @@
+---
+title: EdmxSwapCommand
+description: "Command to switch the Provider in the EDMX file between System.Data.SqlClient and Microsoft.Data.SqlClient."
+icon: file-brackets-curly
+keywords: ['EdmxSwapCommand', 'CloudNimble.EasyAF.Tools.Commands.EdmxSwapCommand', 'CloudNimble.EasyAF.Tools.Commands', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Commands
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Commands.EdmxSwapCommand
+```
+
+## Summary
+
+Command to switch the Provider in the EDMX file between System.Data.SqlClient and Microsoft.Data.SqlClient.
+
+## Remarks
+
+This command locates the EDMX file in the specified directory (or the .Data folder) and swaps the provider string.
+
+## Examples
+
+```csharp
+dotnet easyaf edmx swap --path "C:\MySolution"
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public EdmxSwapCommand()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Root
+
+Gets or sets the working directory for the code compiler. Defaults to current directory.
+
+#### Syntax
+
+```csharp
+public string Root { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnExecuteAsync
+
+Executes the EDMX provider swap command.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<int> OnExecuteAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<int>`
+0 if successful, 1 if an error occurred.
+
+#### Examples
+
+```csharp
+dotnet easyaf edmx swap --path "C:\MySolution"
+```
+
