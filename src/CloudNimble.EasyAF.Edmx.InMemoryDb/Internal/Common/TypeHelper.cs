@@ -60,7 +60,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
 
             var enumerableInterface = GetEnumerableInterfaceTypeDefinition(type);
 
-            if (enumerableInterface == null)
+            if (enumerableInterface is null)
             {
                 return null;
             }

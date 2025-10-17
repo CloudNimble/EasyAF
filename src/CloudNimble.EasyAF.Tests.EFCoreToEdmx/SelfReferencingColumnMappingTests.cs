@@ -1,4 +1,4 @@
-using CloudNimble.EasyAF.EFCoreToEdmx;
+﻿using CloudNimble.EasyAF.EFCoreToEdmx;
 using CloudNimble.EasyAF.EFCoreToEdmx.Models;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -169,10 +169,10 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
 
             // Assert - Verify the PARENT_ID column is preserved
             var properties = storageEntityType.Elements(ssdlNs + "Property").ToList();
-            
+
             properties.Should().Contain(p => p.Attribute("Name") != null && p.Attribute("Name").Value == "PARENT_ID",
                 "PARENT_ID column should be uppercase in SSDL");
-            
+
             // Also check other mapped columns
             properties.Should().Contain(p => p.Attribute("Name") != null && p.Attribute("Name").Value == "INTERNAL_ID");
             properties.Should().Contain(p => p.Attribute("Name") != null && p.Attribute("Name").Value == "DISPLAY_NAME");

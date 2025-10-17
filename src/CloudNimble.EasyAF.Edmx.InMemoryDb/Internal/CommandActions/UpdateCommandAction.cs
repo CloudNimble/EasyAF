@@ -84,7 +84,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.CommandActions
                     }
 
                     // If setter was found, insert it
-                    if (setter != null)
+                    if (setter is not null)
                     {
                         // Type correction
                         setter = ExpressionHelper.CorrectType(setter, property.PropertyType);
@@ -151,7 +151,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.CommandActions
                     }
 
                     // If setter was found, insert it
-                    if (setter != null)
+                    if (setter is not null)
                     {
                         // Type correction
                         setter = ExpressionHelper.CorrectType(setter, property.PropertyType);

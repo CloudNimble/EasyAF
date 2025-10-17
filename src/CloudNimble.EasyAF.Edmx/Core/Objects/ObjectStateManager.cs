@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -3726,7 +3726,7 @@ namespace System.Data.Entity.Core.Objects
                                 }
                                 else
                                 {
-                                    // The relatedEntity may be added, and we only have a permanent key 
+                                    // The relatedEntity may be added, and we only have a permanent key
                                     //  so look at the permanent key of the reference to decide
                                     if (reference is not null
                                         &&

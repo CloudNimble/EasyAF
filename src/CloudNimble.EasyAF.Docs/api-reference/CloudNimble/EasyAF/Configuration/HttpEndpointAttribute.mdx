@@ -2,7 +2,7 @@
 title: HttpEndpointAttribute
 description: "Specifies that a configuration property represents an HTTP endpoint URL for an HttpClient.              Used by the EasyAF configuration system to automatica..."
 icon: file-brackets-curly
-keywords: ['HttpEndpointAttribute', 'CloudNimble.EasyAF.Configuration.HttpEndpointAttribute', 'CloudNimble.EasyAF.Configuration', 'class', 'System.Attribute']
+keywords: ['HttpEndpointAttribute', 'CloudNimble.EasyAF.Configuration.HttpEndpointAttribute', 'CloudNimble.EasyAF.Configuration', 'class', 'System.Attribute', '# Related APIs', '- API 1', '- API 2']
 ---
 
 ## Definition
@@ -24,26 +24,40 @@ CloudNimble.EasyAF.Configuration.HttpEndpointAttribute
 Specifies that a configuration property represents an HTTP endpoint URL for an HttpClient. 
             Used by the EasyAF configuration system to automatically register HttpClients with their base addresses.
 
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Usage
+
+Describe how to use `HttpEndpointAttribute` here.
+
 ## Remarks
 
 This attribute enables automatic HttpClient registration by linking configuration properties
             that contain URLs to the corresponding HttpClient name properties. The configuration system
             uses this information to set up named HttpClient instances with appropriate base addresses.
 
-## Examples
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Examples
+
+Provide examples of using `HttpEndpointAttribute` here.
 
 ```csharp
-public class MyConfiguration : ConfigurationBase
-{
-    public string MyApiClientName { get; set; } = "MyApiClient";
-
-    [HttpEndpoint(nameof(MyApiClientName))]
-    public string MyApiRoot { get; set; } = "https://api.example.com";
-}
-
-// This will automatically register an HttpClient named "MyApiClient"
-// with base address "https://api.example.com"
+// Example code here
 ```
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Best Practices
+
+Document best practices for `HttpEndpointAttribute` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Patterns
+
+Document common patterns for `HttpEndpointAttribute` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Considerations
+
+Document considerations for `HttpEndpointAttribute` here.
 
 ## Constructors
 
@@ -85,4 +99,10 @@ public string ClientNameProperty { get; set; }
 #### Property Value
 
 Type: `string`
+
+## Related APIs
+
+- # Related APIs
+- - API 1
+- - API 2
 

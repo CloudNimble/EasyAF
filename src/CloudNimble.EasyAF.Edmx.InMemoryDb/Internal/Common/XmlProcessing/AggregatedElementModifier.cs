@@ -39,7 +39,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common.XmlProcessing
 
         public void AddModifier(IElementModifier modifier)
         {
-            if (modifier == null)
+            if (modifier is null)
             {
                 throw new ArgumentNullException("modifier");
             }

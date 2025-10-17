@@ -50,7 +50,7 @@ namespace CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration
 
             // Generate base class once
             var firstEntity = EdmxLoader.Entities.FirstOrDefault();
-            if (firstEntity != null)
+            if (firstEntity is not null)
             {
                 using var baseGenerator = new SimpleMessageBusGenerator(
                     extraUsings, 

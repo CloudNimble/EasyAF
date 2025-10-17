@@ -3,7 +3,7 @@ title: EntityManager
 description: "Provides a base class for entity-specific business logic managers with built-in CRUD operations,             audit trail support, and lifecycle event hooks. ..."
 icon: code-branch
 tag: "ABSTRACT"
-keywords: ['EntityManager', 'CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>', 'CloudNimble.EasyAF.Business', 'class', 'CloudNimble.EasyAF.Business.ManagerBase<TContext>']
+keywords: ['EntityManager', 'CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>', 'CloudNimble.EasyAF.Business', 'class', 'CloudNimble.EasyAF.Business.ManagerBase<TContext>', '# Related APIs', '- API 1', '- API 2']
 ---
 
 ## Definition
@@ -26,6 +26,11 @@ Provides a base class for entity-specific business logic managers with built-in 
             audit trail support, and lifecycle event hooks. Handles common entity operations and automatically
             manages audit fields for entities that implement auditing interfaces.
 
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Usage
+
+Describe how to use `EntityManager` here.
+
 ## Remarks
 
 This manager provides comprehensive entity lifecycle management including:
@@ -40,27 +45,29 @@ This manager provides comprehensive entity lifecycle management including:
 - `TContext` - The type of DbContext used for database operations.
 - `TEntity` - The type of entity managed by this manager.
 
-## Examples
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Examples
+
+Provide examples of using `EntityManager` here.
 
 ```csharp
-public class UserManager : EntityManager&lt;MyDbContext, User&gt;
-{
-    public UserManager(MyDbContext context, IMessagePublisher publisher)
-        : base(context, publisher) { }
-
-    public override async Task OnInsertingAsync(User entity)
-    {
-        await base.OnInsertingAsync(entity); // Handles audit fields
-        entity.IsActive = true; // Custom business logic
-    }
-
-    public override async Task&lt;bool&gt; OnInsertedAsync(User entity)
-    {
-        await MessagePublisher.PublishAsync(new UserCreatedEvent { UserId = entity.Id });
-        return await base.OnInsertedAsync(entity);
-    }
-}
+// Example code here
 ```
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Best Practices
+
+Document best practices for `EntityManager` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Patterns
+
+Document common patterns for `EntityManager` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Considerations
+
+Document considerations for `EntityManager` here.
 
 ## Constructors
 
@@ -768,4 +775,10 @@ public System.Threading.Tasks.Task<bool> UpdateAsync(System.Collections.Generic.
 
 Type: `System.Threading.Tasks.Task<bool>`
 True if the entities were successfully updated; otherwise, false.
+
+## Related APIs
+
+- # Related APIs
+- - API 1
+- - API 2
 

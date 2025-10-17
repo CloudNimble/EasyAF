@@ -24,8 +24,8 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders.ObjectDataLoader
 
         public ObjectTableDataLoader(TableDescription description, ObjectDataTable<T> table)
         {
-            if (description == null) throw new ArgumentNullException(nameof(description));
-            if (table == null) throw new ArgumentNullException(nameof(table));
+            if (description is null) throw new ArgumentNullException(nameof(description));
+            if (table is null) throw new ArgumentNullException(nameof(table));
             this.description = description;
             this.table = table;
             formatter = new Lazy<Func<T, object[]>>(CreateFormatter);
@@ -57,7 +57,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders.ObjectDataLoader
 
         private Expression ToExpression(ParameterExpression parameter, PropertyInfo property, ColumnDescription column)
         {
-            if (property == null)
+            if (property is null)
             {
                 if (column.Name == table.DiscriminatorColumn)
                 {
@@ -82,7 +82,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders.ObjectDataLoader
             return false;
 #else
             var columnAttribute = property.GetCustomAttributes(typeof(ColumnAttribute), true).FirstOrDefault();
-            if (columnAttribute == null) return false;
+            if (columnAttribute is null) return false;
             return ((ColumnAttribute)columnAttribute).Name == column.Name;
 #endif
         }

@@ -125,7 +125,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement
             var indexMetadata = prop.MetadataProperties
                 .FirstOrDefault(x => x.Name == "http://schemas.microsoft.com/ado/2013/11/edm/customannotation:Index");
 
-            if (indexMetadata == null)
+            if (indexMetadata is null)
             {
                 yield break;
             }

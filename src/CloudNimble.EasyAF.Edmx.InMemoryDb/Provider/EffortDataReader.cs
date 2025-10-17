@@ -91,7 +91,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
         {
             get
             {
-                if (fields == null)
+                if (fields is null)
                 {
                     throw new InvalidOperationException();
                 }
@@ -365,7 +365,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
         /// </returns>
         public override string GetName(int ordinal)
         {
-            if (fields == null)
+            if (fields is null)
             {
                 throw new InvalidOperationException();
             }
@@ -444,7 +444,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
 
             result = container.TypeConverter.ConvertClrObject(result, resultType);
 
-            if (result == null)
+            if (result is null)
             {
                 result = DBNull.Value;
             }
@@ -499,7 +499,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
         {
             get
             {
-                return enumerator != null;
+                return enumerator is not null;
             }
         }
 
@@ -516,7 +516,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
         /// </returns>
         public override bool IsDBNull(int ordinal)
         {
-            return currentValues[ordinal] == null;
+            return currentValues[ordinal] is null;
         }
 
         /// <summary>
@@ -556,7 +556,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
         {
             var disposeableEnumerator = enumerator as IDisposable;
 
-            if (disposeableEnumerator != null)
+            if (disposeableEnumerator is not null)
             {
                 disposeableEnumerator.Dispose();
             }

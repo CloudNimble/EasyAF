@@ -115,7 +115,7 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
 
             // If we couldn't determine the constructor parameters (e.g., external type not available),
             // skip constructor generation entirely. The user will need to provide their own constructor.
-            if (constructorParams == null)
+            if (constructorParams is null)
             {
                 // Optionally, we could generate a comment explaining why no constructor was generated
                 RegionBegin("Constructors");
@@ -208,7 +208,7 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
 
             // If we can't find the type (common when it's in an external assembly not loaded in the generator context),
             // return null to indicate constructor generation should be skipped
-            if (baseType == null)
+            if (baseType is null)
             {
                 return null;
             }
@@ -219,7 +219,7 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
                 var constructors = baseType.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
                 var constructor = constructors.FirstOrDefault();
 
-                if (constructor == null)
+                if (constructor is null)
                 {
                     // No public constructor found
                     return null;
@@ -332,18 +332,18 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
             {
                 // Try to find the DbContext type with common naming patterns
                 var dbContextType = FindNonGenericType(EntityContainer.Name + "DbContext");
-                if (dbContextType != null) return dbContextType;
+                if (dbContextType is not null) return dbContextType;
 
                 dbContextType = FindNonGenericType(EntityContainer.Name + "Context");
-                if (dbContextType != null) return dbContextType;
+                if (dbContextType is not null) return dbContextType;
 
                 dbContextType = FindNonGenericType(EntityContainer.Name);
-                if (dbContextType != null && IsDbContextType(dbContextType)) return dbContextType;
+                if (dbContextType is not null && IsDbContextType(dbContextType)) return dbContextType;
 
                 // Return a marker type to indicate we need the DbContext
                 // Use DbContext from EF Core if available, otherwise EF6
                 var efCoreDbContextType = Type.GetType("Microsoft.EntityFrameworkCore.DbContext, Microsoft.EntityFrameworkCore");
-                if (efCoreDbContextType != null) return efCoreDbContextType;
+                if (efCoreDbContextType is not null) return efCoreDbContextType;
 
                 return typeof(DbContext);
             }
@@ -359,11 +359,11 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
         /// <returns>True if the type is or derives from DbContext.</returns>
         private bool IsDbContextType(Type type)
         {
-            if (type == null) return false;
+            if (type is null) return false;
 
             // Check for EF Core DbContext
             var efCoreDbContextType = Type.GetType("Microsoft.EntityFrameworkCore.DbContext, Microsoft.EntityFrameworkCore");
-            if (efCoreDbContextType != null && efCoreDbContextType.IsAssignableFrom(type))
+            if (efCoreDbContextType is not null && efCoreDbContextType.IsAssignableFrom(type))
             {
                 return true;
             }
@@ -429,7 +429,7 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
 
             // Find the generic type definition using enhanced loading
             var genericTypeDefinition = FindGenericTypeDefinition(baseTypeName, genericArguments.Count);
-            if (genericTypeDefinition == null)
+            if (genericTypeDefinition is null)
             {
                 return null;
             }
@@ -439,7 +439,7 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
             foreach (var argName in genericArguments)
             {
                 var argType = ResolveGenericArgumentType(argName);
-                if (argType == null)
+                if (argType is null)
                 {
                     // If we can't resolve a generic argument, we can't construct the type
                     return null;
@@ -471,15 +471,15 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
 
             // Strategy 1: Search loaded assemblies
             var type = SearchLoadedAssemblies(genericTypeName);
-            if (type != null) return type;
+            if (type is not null) return type;
 
             // Strategy 2: Try Type.GetType with assembly-qualified names
             type = TryGetTypeWithAssemblyQualifiedName(genericTypeName);
-            if (type != null) return type;
+            if (type is not null) return type;
 
             // Strategy 3: Try to load from common assembly patterns
             type = TryLoadFromCommonAssemblyPatterns(baseTypeName, genericTypeName);
-            if (type != null) return type;
+            if (type is not null) return type;
 
             return null;
         }
@@ -493,15 +493,15 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
         {
             // Strategy 1: Search loaded assemblies (existing logic)
             var type = FindNonGenericType(typeName);
-            if (type != null) return type;
+            if (type is not null) return type;
 
             // Strategy 2: Try Type.GetType with assembly-qualified names
             type = TryGetTypeWithAssemblyQualifiedName(typeName);
-            if (type != null) return type;
+            if (type is not null) return type;
 
             // Strategy 3: Try to load from common assembly patterns
             type = TryLoadFromCommonAssemblyPatterns(typeName, typeName);
-            if (type != null) return type;
+            if (type is not null) return type;
 
             return null;
         }
@@ -548,20 +548,20 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
             {
                 // Try direct Type.GetType (works for types in mscorlib and currently loaded assemblies)
                 var type = Type.GetType(typeName);
-                if (type != null) return type;
+                if (type is not null) return type;
 
                 // Try with using namespaces
                 foreach (var usingStatement in ExtraUsings)
                 {
                     var fullTypeName = $"{usingStatement}.{typeName}";
                     type = Type.GetType(fullTypeName);
-                    if (type != null) return type;
+                    if (type is not null) return type;
 
                     // Try with common assembly names if we have a namespace
                     var assemblyName = usingStatement.Split('.')[0]; // First part of namespace often matches assembly
                     var assemblyQualifiedName = $"{fullTypeName}, {assemblyName}";
                     type = Type.GetType(assemblyQualifiedName);
-                    if (type != null) return type;
+                    if (type is not null) return type;
                 }
             }
             catch
@@ -598,7 +598,7 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
                             // Try to load the assembly by name
                             var assembly = Assembly.LoadFrom($"{assemblyName}.dll");
                             var type = assembly.GetType($"{usingStatement}.{fullTypeName}");
-                            if (type != null) return type;
+                            if (type is not null) return type;
                         }
                         catch
                         {
@@ -610,7 +610,7 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
                             // Try Assembly.Load (for GAC assemblies or already loaded)
                             var assembly = Assembly.Load(assemblyName);
                             var type = assembly.GetType($"{usingStatement}.{fullTypeName}");
-                            if (type != null) return type;
+                            if (type is not null) return type;
                         }
                         catch
                         {

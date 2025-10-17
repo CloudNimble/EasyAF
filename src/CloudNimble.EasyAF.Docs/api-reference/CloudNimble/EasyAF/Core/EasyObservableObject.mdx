@@ -2,7 +2,7 @@
 title: EasyObservableObject
 description: "A base class for objects to implement [INotifyPropertyChanged](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged).         ..."
 icon: file-brackets-curly
-keywords: ['EasyObservableObject', 'CloudNimble.EasyAF.Core.EasyObservableObject', 'CloudNimble.EasyAF.Core', 'class', 'System.Object', 'System.ComponentModel.INotifyPropertyChanged', 'System.IDisposable']
+keywords: ['EasyObservableObject', 'CloudNimble.EasyAF.Core.EasyObservableObject', 'CloudNimble.EasyAF.Core', 'class', 'System.Object', '# Related APIs', '- API 1', '- API 2']
 ---
 
 ## Definition
@@ -24,27 +24,34 @@ CloudNimble.EasyAF.Core.EasyObservableObject
 A base class for objects to implement [INotifyPropertyChanged](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged).
             Provides strongly-typed property change notifications and automatic property setting with change detection.
 
-## Examples
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Usage
+
+Describe how to use `EasyObservableObject` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Examples
+
+Provide examples of using `EasyObservableObject` here.
 
 ```csharp
-public class Person : EasyObservableObject
-{
-    private string _name;
-    private int _age;
-
-    public string Name
-    {
-        get =&gt; _name;
-        set =&gt; Set(nameof(Name), ref _name, value);
-    }
-
-    public int Age
-    {
-        get =&gt; _age;
-        set =&gt; Set(() =&gt; Age, ref _age, value);
-    }
-}
+// Example code here
 ```
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Best Practices
+
+Document best practices for `EasyObservableObject` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Patterns
+
+Document common patterns for `EasyObservableObject` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Considerations
+
+Document considerations for `EasyObservableObject` here.
 
 ## Constructors
 
@@ -109,6 +116,7 @@ public System.ComponentModel.PropertyChangedEventHandler PropertyChanged
 
 ## Related APIs
 
-- System.ComponentModel.INotifyPropertyChanged
-- System.IDisposable
+- # Related APIs
+- - API 1
+- - API 2
 

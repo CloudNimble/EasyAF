@@ -47,7 +47,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders
             {
                 // String handles null values in a separate way
                 // null is null, empty is empty
-                if (val == null)
+                if (val is null)
                 {
                     value = null;
                 }

@@ -59,7 +59,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
         {
             object identity = null;
 
-            if (identityField != null)
+            if (identityField is not null)
             {
                 var p = Expression.Parameter(entityType, "x");
 
@@ -286,7 +286,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
                 Transaction transaction)
                 where TEntity : class
             {
-                if (transaction != null)
+                if (transaction is not null)
                 {
                     table.Insert(entity, transaction);
                 }
@@ -307,7 +307,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
             {
                 Table<TEntity, TPrimaryKey> table = database.Tables.Create<TEntity, TPrimaryKey>(
                     primaryKeyInfo,
-                    identity != null ? new IdentitySpecification<TEntity>(identity) : null,
+                    identity is not null ? new IdentitySpecification<TEntity>(identity) : null,
                     tableInfo);
 
                 foreach (var constraintFactory in
@@ -346,7 +346,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
             {
                 var exTable = table as IExtendedTable<TEntity>;
 
-                if (exTable != null)
+                if (exTable is not null)
                 {
                     exTable.Initialize(entities.Cast<TEntity>());
                 }
@@ -381,7 +381,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
                 Transaction transaction)
                 where TEntity : class
             {
-                if (transaction != null)
+                if (transaction is not null)
                 {
                     return NMemory.Linq.QueryableEx.Update(query, updater, transaction);
                 }
@@ -396,7 +396,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
                 Transaction transaction)
                 where TEntity : class
             {
-                if (transaction != null)
+                if (transaction is not null)
                 {
                     return NMemory.Linq.QueryableEx.Delete(query, transaction);
                 }

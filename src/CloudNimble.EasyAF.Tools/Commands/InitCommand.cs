@@ -421,7 +421,7 @@ namespace CloudNimble.EasyAF.Tools.Commands
                     };
 
                     using var process = Process.Start(processStartInfo);
-                    if (process != null)
+                    if (process is not null)
                     {
                         await process.WaitForExitAsync();
                         if (process.ExitCode == 0)

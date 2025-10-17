@@ -176,7 +176,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
             }
 
             //Type unify
-            if (resultType != null && result.Type != resultType)
+            if (resultType is not null && result.Type != resultType)
             {
                 result = Expression.Convert(result, resultType);
             }

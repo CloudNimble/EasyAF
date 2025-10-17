@@ -65,7 +65,7 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx.PostgreSQL
                 {
                     Console.WriteLine($"PostgreSQL type mapping: Mapping store type '{storeTypeName}' to DateTimeOffset");
                     var dateTimeOffsetMapping = _defaultSource.FindMapping(typeof(DateTimeOffset));
-                    if (dateTimeOffsetMapping != null)
+                    if (dateTimeOffsetMapping is not null)
                     {
                         return dateTimeOffsetMapping;
                     }
@@ -97,7 +97,7 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx.PostgreSQL
                 {
                     Console.WriteLine($"PostgreSQL type mapping: Forcing DateTimeOffset for store type '{storeTypeName}' instead of {type?.Name}");
                     var mapping = _defaultSource.FindMapping(typeof(DateTimeOffset), storeTypeName);
-                    if (mapping != null)
+                    if (mapping is not null)
                     {
                         return mapping;
                     }
@@ -180,7 +180,7 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx.PostgreSQL
             try
             {
                 // Check for null providerType which causes the original null reference exception
-                if (providerType == null)
+                if (providerType is null)
                 {
                     Console.WriteLine($"PostgreSQL collection mapping: providerType is null for modelType '{modelType?.Name}', store type '{info.StoreTypeName}' - skipping collection mapping");
                     return null;

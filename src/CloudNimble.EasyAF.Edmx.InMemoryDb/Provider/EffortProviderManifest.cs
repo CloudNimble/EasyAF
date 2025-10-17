@@ -136,7 +136,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
             var effortAssembly = typeof(EffortProviderManifest).Assembly;
             Stream stream = null;
 #if !EFOLD
-            if (EntityFrameworkEffortManager.CustomManifestPath != null)
+            if (EntityFrameworkEffortManager.CustomManifestPath is not null)
             {
                 stream = File.Open(EntityFrameworkEffortManager.CustomManifestPath, FileMode.Open, FileAccess.Read, FileShare.Read);
             }

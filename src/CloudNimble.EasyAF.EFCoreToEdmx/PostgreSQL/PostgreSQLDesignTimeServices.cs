@@ -33,7 +33,7 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx.PostgreSQL
             {
                 // Find and replace the relational type mapping source
                 var existingDescriptor = services.FirstOrDefault(d => d.ServiceType == typeof(IRelationalTypeMappingSource));
-                if (existingDescriptor != null)
+                if (existingDescriptor is not null)
                 {
                     Console.WriteLine($"Found existing type mapping source: {existingDescriptor.ImplementationType?.Name}");
                     services.Remove(existingDescriptor);
@@ -47,14 +47,14 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx.PostgreSQL
                             var dependencies = provider.GetService<TypeMappingSourceDependencies>();
                             var relationalDependencies = provider.GetService<RelationalTypeMappingSourceDependencies>();
                             
-                            if (dependencies == null)
+                            if (dependencies is null)
                             {
                                 Console.WriteLine("Warning: TypeMappingSourceDependencies not available, falling back to original");
                                 return (IRelationalTypeMappingSource)ActivatorUtilities.CreateInstance(
                                     provider, existingDescriptor.ImplementationType);
                             }
                             
-                            if (relationalDependencies == null)
+                            if (relationalDependencies is null)
                             {
                                 Console.WriteLine("Warning: RelationalTypeMappingSourceDependencies not available, falling back to original");
                                 return (IRelationalTypeMappingSource)ActivatorUtilities.CreateInstance(
@@ -63,10 +63,9 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx.PostgreSQL
                             
                             // Create the original type mapping source using ActivatorUtilities for proper DI
                             var originalSource = (IRelationalTypeMappingSource)
-                                Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance(
-                                    provider, existingDescriptor.ImplementationType);
+                                ActivatorUtilities.CreateInstance(provider, existingDescriptor.ImplementationType);
                             
-                            if (originalSource == null)
+                            if (originalSource is null)
                             {
                                 Console.WriteLine("Error: Failed to create original type mapping source");
                                 throw new InvalidOperationException("Failed to create original PostgreSQL type mapping source");

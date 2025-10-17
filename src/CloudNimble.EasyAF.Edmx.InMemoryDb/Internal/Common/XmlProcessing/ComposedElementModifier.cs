@@ -39,17 +39,17 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common.XmlProcessing
             IElementAttributeSelector attributeSelector,
             IAttributeModifier attributeModifier)
         {
-            if (elementSelector == null)
+            if (elementSelector is null)
             {
                 throw new ArgumentNullException("elementSelector");
             }
 
-            if (attributeSelector == null)
+            if (attributeSelector is null)
             {
                 throw new ArgumentNullException("attributeSelector");
             }
 
-            if (attributeModifier == null)
+            if (attributeModifier is null)
             {
                 throw new ArgumentNullException("attributeModifier");
             }
@@ -63,12 +63,12 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common.XmlProcessing
             IElementSelector elementSelector,
             IElementModifier elementModifier)
         {
-            if (elementSelector == null)
+            if (elementSelector is null)
             {
                 throw new ArgumentNullException("elementSelector");
             }
 
-            if (elementModifier == null)
+            if (elementModifier is null)
             {
                 throw new ArgumentNullException("elementModifier");
             }
@@ -79,24 +79,24 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common.XmlProcessing
 
         public void Modify(XElement element, IModificationContext context)
         {
-            if (element == null)
+            if (element is null)
             {
                 throw new ArgumentNullException("element");
             }
 
             foreach (var selected in elementSelector.SelectElements(element))
             {
-                if (attributeSelector != null && attributeModifier != null)
+                if (attributeSelector is not null && attributeModifier is not null)
                 {
                     var attribute = attributeSelector.SelectAttribute(selected);
 
-                    if (attribute != null)
+                    if (attribute is not null)
                     {
                         attributeModifier.Modify(attribute, context);
                     }
                 }
 
-                if (elementModifier != null)
+                if (elementModifier is not null)
                 {
                     elementModifier.Modify(selected, context);
                 }

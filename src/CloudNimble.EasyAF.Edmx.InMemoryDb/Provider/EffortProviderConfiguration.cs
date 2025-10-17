@@ -117,7 +117,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
                 throw new ArgumentNullException("invariantName");
             }
 
-            if (factoryType == null)
+            if (factoryType is null)
             {
                 throw new ArgumentNullException("factoryType");
             }
@@ -132,7 +132,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
 #else
 			DataSet data = (DataSet)ConfigurationManager.GetSection("system.data");
 
-			if (data != null)
+			if (data is not null)
 			{
 				DataTable providerFactories = data.Tables["DbProviderFactories"];
 

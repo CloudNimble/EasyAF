@@ -36,7 +36,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
 
         public FunctionParameterElementSelector(StorageSchemaContentNameProvider nameProvider)
         {
-            if (nameProvider == null)
+            if (nameProvider is null)
             {
                 throw new ArgumentNullException("nameProvider");
             }

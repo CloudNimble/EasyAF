@@ -342,7 +342,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
             var genericMethod = group[selectorType];
             MethodInfo method = null;
 
-            if (genericMethod == null)
+            if (genericMethod is null)
             {
                 genericMethod = generic.Invoke();
                 method = genericMethod.MakeGenericMethod(sourceType, selectorType);

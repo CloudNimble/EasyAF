@@ -2,7 +2,7 @@
 title: ConfigurationBase
 description: "A base class implementation of the configuration your Blazor app will pull from wwwroot/appsettings.json.             Provides standard HttpClient configurat..."
 icon: file-brackets-curly
-keywords: ['ConfigurationBase', 'CloudNimble.EasyAF.Configuration.ConfigurationBase', 'CloudNimble.EasyAF.Configuration', 'class', 'System.Object']
+keywords: ['ConfigurationBase', 'CloudNimble.EasyAF.Configuration.ConfigurationBase', 'CloudNimble.EasyAF.Configuration', 'class', 'System.Object', '# Related APIs', '- API 1', '- API 2']
 ---
 
 ## Definition
@@ -24,36 +24,40 @@ CloudNimble.EasyAF.Configuration.ConfigurationBase
 A base class implementation of the configuration your Blazor app will pull from wwwroot/appsettings.json.
             Provides standard HttpClient configuration for API and application endpoints.
 
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Usage
+
+Describe how to use `ConfigurationBase` here.
+
 ## Remarks
 
 This configuration class is typically used for customer-facing applications that need to communicate
             with external APIs and handle application-level HTTP requests. For administrative applications,
             consider using [ConfigurationPlusAdminBase](/api-reference/CloudNimble/EasyAF/Configuration/ConfigurationPlusAdminBase) instead.
 
-## Examples
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Examples
+
+Provide examples of using `ConfigurationBase` here.
 
 ```csharp
-// In Program.cs or Startup.cs
-builder.Services.AddConfigurationBase&lt;MyAppConfiguration&gt;(builder.Configuration, "AppSettings");
-
-// Example configuration in appsettings.json
-{
-  "AppSettings": {
-    "ApiRoot": "https://api.mycompany.com",
-    "AppRoot": "https://myapp.mycompany.com",
-    "HttpHandlerMode": "Add"
-  }
-}
-
-// Usage in components
-[Inject] public MyAppConfiguration Config { get; set; }
-
-private async Task CallApi()
-{
-    var httpClient = HttpClientFactory.CreateClient(Config.ApiClientName);
-    var response = await httpClient.GetAsync($"{Config.ApiRoot}/api/data");
-}
+// Example code here
 ```
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Best Practices
+
+Document best practices for `ConfigurationBase` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Patterns
+
+Document common patterns for `ConfigurationBase` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Considerations
+
+Document considerations for `ConfigurationBase` here.
 
 ## Constructors
 
@@ -145,4 +149,10 @@ public CloudNimble.EasyAF.Core.HttpHandlerMode HttpHandlerMode { get; set; }
 #### Property Value
 
 Type: `CloudNimble.EasyAF.Core.HttpHandlerMode`
+
+## Related APIs
+
+- # Related APIs
+- - API 1
+- - API 2
 

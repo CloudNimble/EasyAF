@@ -42,7 +42,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
         {
             get
             {
-                if (value == null)
+                if (value is null)
                 {
                     value = factory.Invoke();
                 }

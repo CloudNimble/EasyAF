@@ -2,7 +2,7 @@
 title: ManagerBase
 description: "Represents the base class for all EasyAF business logic managers. Provides access to a database context             and message publishing capabilities for i..."
 icon: code-branch
-keywords: ['ManagerBase', 'CloudNimble.EasyAF.Business.ManagerBase<TContext>', 'CloudNimble.EasyAF.Business', 'class', 'System.Object']
+keywords: ['ManagerBase', 'CloudNimble.EasyAF.Business.ManagerBase<TContext>', 'CloudNimble.EasyAF.Business', 'class', 'System.Object', '# Related APIs', '- API 1', '- API 2']
 ---
 
 ## Definition
@@ -24,6 +24,11 @@ CloudNimble.EasyAF.Business.ManagerBase<TContext>
 Represents the base class for all EasyAF business logic managers. Provides access to a database context
             and message publishing capabilities for implementing business operations and workflows.
 
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Usage
+
+Describe how to use `ManagerBase` here.
+
 ## Remarks
 
 This base class is designed to encapsulate business logic that requires database access and messaging capabilities.
@@ -34,25 +39,29 @@ This base class is designed to encapsulate business logic that requires database
 
 - `TContext` - The type of the database context (DbContext) used for data operations.
 
-## Examples
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Examples
+
+Provide examples of using `ManagerBase` here.
 
 ```csharp
-public class UserRegistrationManager : ManagerBase&lt;MyDbContext&gt;
-{
-    public UserRegistrationManager(MyDbContext context, IMessagePublisher publisher)
-        : base(context, publisher) { }
-
-    public async Task&lt;User&gt; RegisterUserAsync(string email, string password)
-    {
-        var user = new User { Email = email, Password = HashPassword(password) };
-        DataContext.Users.Add(user);
-        await DataContext.SaveChangesAsync();
-
-        await MessagePublisher.PublishAsync(new UserRegisteredEvent { UserId = user.Id });
-        return user;
-    }
-}
+// Example code here
 ```
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Best Practices
+
+Document best practices for `ManagerBase` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Patterns
+
+Document common patterns for `ManagerBase` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Considerations
+
+Document considerations for `ManagerBase` here.
 
 ## Constructors
 
@@ -104,4 +113,10 @@ public CloudNimble.SimpleMessageBus.Publish.IMessagePublisher MessagePublisher {
 #### Property Value
 
 Type: `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher`
+
+## Related APIs
+
+- # Related APIs
+- - API 1
+- - API 2
 

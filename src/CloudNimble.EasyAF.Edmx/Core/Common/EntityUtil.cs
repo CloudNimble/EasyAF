@@ -563,7 +563,7 @@ namespace System.Data.Entity.Core
                 return true;
             }
             var nullable = (value as INullable);
-            return ((null != nullable) && nullable.IsNull);
+            return ((nullable is not null) && nullable.IsNull);
         }
 
         internal static int SrcCompare(string strA, string strB)

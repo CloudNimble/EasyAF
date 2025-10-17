@@ -34,7 +34,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders.Internal
 
         public FileSystemFileReference(FileInfo file)
         {
-            if (file == null)
+            if (file is null)
             {
                 throw new ArgumentNullException("file");
             }

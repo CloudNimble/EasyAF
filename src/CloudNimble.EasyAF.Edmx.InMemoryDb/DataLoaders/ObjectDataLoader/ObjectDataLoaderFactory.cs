@@ -20,7 +20,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders.ObjectDataLoader
         /// <param name="data">The data.</param>
         public ObjectDataLoaderFactory(ObjectData data)
         {
-            if (data == null) throw new ArgumentNullException(nameof(data));
+            if (data is null) throw new ArgumentNullException(nameof(data));
             this.data = data;
         }
 
@@ -38,7 +38,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders.ObjectDataLoader
         /// </returns>
         public ITableDataLoader CreateTableDataLoader(TableDescription table)
         {
-            if (table == null) throw new ArgumentNullException(nameof(table));
+            if (table is null) throw new ArgumentNullException(nameof(table));
             if (data.HasTable(table.Name))
             {
                 var entityType = data.TableType(table.Name);
@@ -52,7 +52,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders.ObjectDataLoader
             }
 
             var name = data.FindWithEntitySet(table.TableInfo.EntitySet);
-            if (name != null && data.HasTable(name))
+            if (name is not null && data.HasTable(name))
             {
                 var entityType = data.TableType(name);
                 var type = LoaderType.MakeGenericType(entityType);

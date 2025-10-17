@@ -208,7 +208,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static string Concat(string a, string b)
         {
-            if (a == null || b == null)
+            if (a is null || b is null)
             {
                 return null;
             }
@@ -218,7 +218,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static bool? Contains(string a, string b)
         {
-            if (a == null || b == null)
+            if (a is null || b is null)
             {
                 return null;
             }
@@ -229,7 +229,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static string Left(string a, int? count)
         {
-            if (a == null || count == null)
+            if (a is null || count is null)
             {
                 return null;
             }
@@ -240,7 +240,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static string Right(string a, int? count)
         {
-            if (a == null || count == null)
+            if (a is null || count is null)
             {
                 return null;
             }
@@ -251,7 +251,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static string ToUpper(string data)
         {
-            if (data == null)
+            if (data is null)
             {
                 return null;
             }
@@ -262,7 +262,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static string ToLower(string data)
         {
-            if (data == null)
+            if (data is null)
             {
                 return null;
             }
@@ -273,7 +273,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static int? IndexOf(string a, string b)
         {
-            if (a == null || b == null)
+            if (a is null || b is null)
             {
                 return null;
             }
@@ -284,7 +284,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static string ReverseString(string data)
         {
-            if (data == null)
+            if (data is null)
             {
                 return null;
             }
@@ -294,7 +294,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static string Substring(string data, int? begin, int? length)
         {
-            if (data == null || !begin.HasValue || !length.HasValue)
+            if (data is null || !begin.HasValue || !length.HasValue)
             {
                 return null;
             }
@@ -304,7 +304,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static string Trim(string data)
         {
-            if (data == null)
+            if (data is null)
             {
                 return null;
             }
@@ -314,7 +314,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static string LTrim(string data)
         {
-            if (data == null)
+            if (data is null)
             {
                 return null;
             }
@@ -324,7 +324,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static string RTrim(string data)
         {
-            if (data == null)
+            if (data is null)
             {
                 return null;
             }
@@ -334,7 +334,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static int? Length(string data)
         {
-            if (data == null)
+            if (data is null)
             {
                 return null;
             }
@@ -345,7 +345,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
         // need case sensitive ??
         public static string Replace(string data, string oldValue, string newValue)
         {
-            if (data == null || oldValue == null || newValue == null)
+            if (data is null || oldValue is null || newValue is null)
             {
                 return null;
             }
@@ -355,7 +355,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static bool? StartsWith(string a, string b)
         {
-            if (a == null || b == null)
+            if (a is null || b is null)
             {
                 return null;
             }
@@ -366,7 +366,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static bool? EndsWith(string a, string b)
         {
-            if (a == null || b == null)
+            if (a is null || b is null)
             {
                 return null;
             }
@@ -378,12 +378,12 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
         // see "private Expression CreateStringComparison(Expression left, Expression right, DbExpressionKind kind)", for case sensitive.
         internal static int CompareTo(string a, string b)
         {
-            if (a == null && b == null)
+            if (a is null && b is null)
             {
                 return 0;
             }
 
-            if (a == null || b == null)
+            if (a is null || b is null)
             {
                 return -1;
             }
@@ -393,7 +393,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static bool? ContainsCaseInsensitive(string a, string b)
         {
-            if (a == null || b == null)
+            if (a is null || b is null)
             {
                 return null;
             }
@@ -404,7 +404,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static int? IndexOfCaseInsensitive(string a, string b)
         {
-            if (a == null || b == null)
+            if (a is null || b is null)
             {
                 return null;
             }
@@ -415,7 +415,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static bool? StartsWithCaseInsensitive(string a, string b)
         {
-            if (a == null || b == null)
+            if (a is null || b is null)
             {
                 return null;
             }
@@ -426,7 +426,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static bool? EndsWithCaseInsensitive(string a, string b)
         {
-            if (a == null || b == null)
+            if (a is null || b is null)
             {
                 return null;
             }
@@ -1075,12 +1075,12 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         internal static int CompareTo(Guid? a, Guid? b)
         {
-            if (a == null && b == null)
+            if (a is null && b is null)
             {
                 return 0;
             }
 
-            if (a == null || b == null)
+            if (a is null || b is null)
             {
                 return -1;
             }

@@ -53,7 +53,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement.Engine.Servic
                         .OfType<DataRowPropertyAttribute>()
                         .SingleOrDefault()
                 })
-                .Where(x => x.Attribute != null)
+                .Where(x => x.Attribute is not null)
                 .OrderBy(x => x.Attribute.Index)
                 .Select(x => x.Property)
                 .ToArray();
@@ -121,7 +121,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement.Engine.Servic
             bool strict,
             out MemberInfo[] result)
         {
-            if (keySelector == null)
+            if (keySelector is null)
             {
                 throw new ArgumentNullException("keySelector");
             }
@@ -134,7 +134,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement.Engine.Servic
 
             var resultCreator = keySelector as NewExpression;
 
-            if (resultCreator == null)
+            if (resultCreator is null)
             {
                 result = null;
                 return false;
@@ -152,7 +152,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement.Engine.Servic
 
                 var array = resultCreator.Arguments[0] as NewArrayExpression;
 
-                if (array == null)
+                if (array is null)
                 {
                     result = null;
                     return false;
@@ -174,7 +174,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement.Engine.Servic
 
                 var member = expr as MemberExpression;
 
-                if (member == null)
+                if (member is null)
                 {
                     result = null;
                     return false;

@@ -75,7 +75,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders
             {
                 var file = source.GetFile(item);
 
-                if (file != null && file.Exists)
+                if (file is not null && file.Exists)
                 {
                     return new CsvTableDataLoader(file, table);
                 }

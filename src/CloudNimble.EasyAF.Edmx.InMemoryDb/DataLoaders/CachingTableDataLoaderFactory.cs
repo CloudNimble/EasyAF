@@ -122,7 +122,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders
 
             // If the table data cache does not exists, then the data loader configuration
             // should be locked
-            if (latch != null && !dataStore.Contains(key))
+            if (latch is not null && !dataStore.Contains(key))
             {
                 // Wait for the lock, this could take some time
                 latch.Acquire();
@@ -146,7 +146,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders
         public void Dispose()
         {
             // Release the wrapped table loader factory
-            if (wrappedTableDataLoaderFactory != null)
+            if (wrappedTableDataLoaderFactory is not null)
             {
                 wrappedTableDataLoaderFactory.Dispose();
             }

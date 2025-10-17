@@ -32,19 +32,19 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
     {
         public void Modify(XAttribute attribute, IModificationContext context)
         {
-            if (attribute == null)
+            if (attribute is null)
             {
                 throw new ArgumentNullException("attribute");
             }
 
-            if (context == null)
+            if (context is null)
             {
                 throw new ArgumentNullException("context");
             }
 
             var newProvider = context.Get<IProviderInformation>(ModificationContextHelper.NewProvider, null);
 
-            if (newProvider == null)
+            if (newProvider is null)
             {
                 throw new InvalidOperationException();
             }

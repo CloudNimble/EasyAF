@@ -77,7 +77,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
                 return false;
             }
 
-            if (facet.Value == null)
+            if (facet.Value is null)
             {
                 value = default;
                 return false;

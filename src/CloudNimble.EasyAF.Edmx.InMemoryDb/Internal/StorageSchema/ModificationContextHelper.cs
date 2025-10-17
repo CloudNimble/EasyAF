@@ -37,14 +37,14 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
 
         public static StorageTypeConverter GetTypeConverter(IModificationContext context)
         {
-            if (context == null)
+            if (context is null)
             {
                 throw new ArgumentException("context");
             }
 
             var converter = context.Get<StorageTypeConverter>(TypeConverter, null);
 
-            if (converter != null)
+            if (converter is not null)
             {
                 return converter;
             }
@@ -57,12 +57,12 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
             var newProvider =
                 context.Get<IProviderInformation>(NewProvider, null);
 
-            if (originalProvider == null)
+            if (originalProvider is null)
             {
                 throw new ArgumentException("", "context");
             }
 
-            if (newProvider == null)
+            if (newProvider is null)
             {
                 throw new ArgumentException("", "context");
             }

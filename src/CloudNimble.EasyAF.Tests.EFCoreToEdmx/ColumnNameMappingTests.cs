@@ -1,4 +1,4 @@
-using CloudNimble.EasyAF.EFCoreToEdmx;
+﻿using CloudNimble.EasyAF.EFCoreToEdmx;
 using CloudNimble.EasyAF.EFCoreToEdmx.Models;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -221,9 +221,9 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
 
             // Assert - Verify uppercase column names are preserved in SSDL
             var properties = storageEntityType.Elements(ssdlNs + "Property").ToList();
-            
+
             // Check that uppercase columns are preserved
-            properties.Should().Contain(p => p.Attribute("Name") != null && p.Attribute("Name").Value == "NIIN", 
+            properties.Should().Contain(p => p.Attribute("Name") != null && p.Attribute("Name").Value == "NIIN",
                 "NIIN column should be uppercase in SSDL");
             properties.Should().Contain(p => p.Attribute("Name") != null && p.Attribute("Name").Value == "FSC",
                 "FSC column should be uppercase in SSDL");
@@ -264,7 +264,7 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
 
             // Assert - Verify CLR property names are used in CSDL
             var properties = conceptualEntityType.Elements(edmNs + "Property").ToList();
-            
+
             // Check that CLR property names (TitleCase) are used
             properties.Should().Contain(p => p.Attribute("Name") != null && p.Attribute("Name").Value == "Niin",
                 "Niin property should use CLR name in CSDL");

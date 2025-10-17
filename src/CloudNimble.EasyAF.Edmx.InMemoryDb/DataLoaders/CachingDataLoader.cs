@@ -68,7 +68,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders
         /// </param>
         public CachingDataLoader(IDataLoader wrappedDataLoader)
         {
-            if (wrappedDataLoader == null)
+            if (wrappedDataLoader is null)
             {
                 throw new ArgumentNullException("wrappedDataLoader");
             }
@@ -91,7 +91,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders
         /// </param>
         public CachingDataLoader(IDataLoader wrappedDataLoader, bool locking)
         {
-            if (wrappedDataLoader == null)
+            if (wrappedDataLoader is null)
             {
                 throw new ArgumentNullException("wrappedDataLoader");
             }
@@ -126,7 +126,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders
             {
                 var builder = new DbConnectionStringBuilder();
 
-                if (wrappedDataLoader != null)
+                if (wrappedDataLoader is not null)
                 {
                     builder[WrappedType] =
                         wrappedDataLoader.GetType().AssemblyQualifiedName;

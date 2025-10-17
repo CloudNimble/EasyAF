@@ -2,7 +2,7 @@
 title: PercentageInterval
 description: "Represents a percentage rate that occurs at regular time intervals, enabling conversion between different time periods.             This class combines a bas..."
 icon: code-branch
-keywords: ['PercentageInterval', 'CloudNimble.EasyAF.Core.PercentageInterval<T>', 'CloudNimble.EasyAF.Core', 'class', 'CloudNimble.EasyAF.Core.Interval<T>']
+keywords: ['PercentageInterval', 'CloudNimble.EasyAF.Core.PercentageInterval<T>', 'CloudNimble.EasyAF.Core', 'class', 'CloudNimble.EasyAF.Core.Interval<T>', '# Related APIs', '- API 1', '- API 2']
 ---
 
 ## Definition
@@ -24,6 +24,11 @@ CloudNimble.EasyAF.Core.PercentageInterval<T>
 Represents a percentage rate that occurs at regular time intervals, enabling conversion between different time periods.
             This class combines a base time interval (from the `Interval`1` class) with a percentage rate to calculate 
             total percentage amounts across different time periods.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Usage
+
+Describe how to use `PercentageInterval` here.
 
 ## Remarks
 
@@ -50,21 +55,29 @@ Represents a percentage rate that occurs at regular time intervals, enabling con
 
 
 
-## Examples
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Examples
+
+Provide examples of using `PercentageInterval` here.
 
 ```csharp
-// Example: 2.5% interest rate every quarter (3 months)
-var interestInterval = new PercentageInterval&lt;double&gt;(0.025, 3, IntervalType.Months);
-
-// How many quarters are there per year?
-decimal quartersPerYear = interestInterval.PerYear(); // 4 quarters
-
-// What's the total interest rate per year?
-decimal totalInterestPerYear = interestInterval.RatePerYear(); // 0.10 (0.025 × 4)
-
-// Monthly breakdown
-decimal totalInterestPerMonth = interestInterval.RatePerMonth(); // ~0.0083 (0.025 × 0.33)
+// Example code here
 ```
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Best Practices
+
+Document best practices for `PercentageInterval` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Patterns
+
+Document common patterns for `PercentageInterval` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Considerations
+
+Document considerations for `PercentageInterval` here.
 
 ## Constructors
 
@@ -448,4 +461,10 @@ The total rate value per year as a decimal.
 var returns = new PercentageInterval&lt;double&gt;(0.20m, 3, IntervalType.Months);
 decimal returnsPerYear = returns.RatePerYear(100000); // $80,000 per year
 ```
+
+## Related APIs
+
+- # Related APIs
+- - API 1
+- - API 2
 

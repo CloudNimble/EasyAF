@@ -35,7 +35,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
 
         public FunctionElementSelector(StorageSchemaContentNameProvider nameProvider)
         {
-            if (nameProvider == null)
+            if (nameProvider is null)
             {
                 throw new ArgumentNullException("nameProvider");
             }
@@ -45,7 +45,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
 
         public IEnumerable<XElement> SelectElements(XElement root)
         {
-            if (root == null)
+            if (root is null)
             {
                 throw new ArgumentNullException("root");
             }

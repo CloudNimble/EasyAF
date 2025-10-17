@@ -69,7 +69,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders.ObjectDataLoader
         {
             tableName = tableName ?? typeof(T).Name;
             IEnumerable table;
-            if (!tables.TryGetValue(tableName, out table) || table == null)
+            if (!tables.TryGetValue(tableName, out table) || table is null)
             {
                 table = new ObjectDataTable<T>();
                 tables[tableName] = table;
@@ -83,14 +83,14 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders.ObjectDataLoader
 
         internal bool HasTable(string tableName)
         {
-            if (tableName == null) throw new ArgumentNullException(nameof(tableName));
+            if (tableName is null) throw new ArgumentNullException(nameof(tableName));
             if (string.IsNullOrWhiteSpace(tableName)) throw new ArgumentException(nameof(tableName));
             return tables.ContainsKey(tableName);
         }
 
         internal Type TableType(string tableName)
         {
-            if (tableName == null) throw new ArgumentNullException(nameof(tableName));
+            if (tableName is null) throw new ArgumentNullException(nameof(tableName));
             if (string.IsNullOrWhiteSpace(tableName)) throw new ArgumentException(nameof(tableName));
             IEnumerable table;
             if (tables.TryGetValue(tableName, out table))
@@ -102,7 +102,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders.ObjectDataLoader
 
         internal object GetTable(string tableName)
         {
-            if (tableName == null) throw new ArgumentNullException(nameof(tableName));
+            if (tableName is null) throw new ArgumentNullException(nameof(tableName));
             if (string.IsNullOrWhiteSpace(tableName)) throw new ArgumentException(nameof(tableName));
             IEnumerable table;
             tables.TryGetValue(tableName, out table);

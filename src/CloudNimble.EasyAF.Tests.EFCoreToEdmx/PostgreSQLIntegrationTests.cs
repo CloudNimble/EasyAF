@@ -1,4 +1,4 @@
-using CloudNimble.EasyAF.EFCoreToEdmx;
+﻿using CloudNimble.EasyAF.EFCoreToEdmx;
 using CloudNimble.EasyAF.EFCoreToEdmx.Extensions;
 using CloudNimble.EasyAF.EFCoreToEdmx.Models;
 using FluentAssertions;
@@ -167,7 +167,7 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
                     cliException = ex;
                     Console.WriteLine($"CLI conversion failed with exception: {ex.GetType().Name}");
                     Console.WriteLine($"Message: {ex.Message}");
-                    if (ex.InnerException != null)
+                    if (ex.InnerException is not null)
                     {
                         Console.WriteLine($"Inner exception: {ex.InnerException.GetType().Name}: {ex.InnerException.Message}");
                     }
@@ -175,7 +175,7 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
                 }
 
                 // Analyze any errors in detail
-                if (cliException != null)
+                if (cliException is not null)
                 {
                     Console.WriteLine("\n=== DETAILED CLI ERROR ANALYSIS ===");
                     Console.WriteLine($"Exception Type: {cliException.GetType().FullName}");
@@ -183,7 +183,7 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
                     
                     var currentEx = cliException;
                     int depth = 0;
-                    while (currentEx != null && depth < 10)
+                    while (currentEx is not null && depth < 10)
                     {
                         Console.WriteLine($"Exception Depth {depth}: {currentEx.GetType().Name}");
                         Console.WriteLine($"Message: {currentEx.Message}");
@@ -224,7 +224,7 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
                 }
 
                 // If we got here successfully, validate the CLI result
-                if (edmxContent != null)
+                if (edmxContent is not null)
                 {
                     Console.WriteLine("\n=== CLI SUCCESS - VALIDATING EDMX CONTENT ===");
                     
@@ -403,7 +403,7 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
                 }
 
                 // Analyze the specific type of error
-                if (realException != null)
+                if (realException is not null)
                 {
                     Console.WriteLine("\n=== REAL PROJECT ERROR ANALYSIS ===");
                     Console.WriteLine($"Exception Type: {realException.GetType().FullName}");
@@ -428,7 +428,7 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
                 }
 
                 // If we got here successfully, our fix worked!
-                if (edmxContent != null)
+                if (edmxContent is not null)
                 {
                     Console.WriteLine("\n🎉 COMPLETE SUCCESS: Real project scenario worked end-to-end!");
                     

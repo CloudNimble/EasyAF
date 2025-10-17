@@ -48,7 +48,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders
         {
             IEnumerable<object[]> data;
 
-            if (tableDataLoader != null)
+            if (tableDataLoader is not null)
             {
                 data = tableDataLoader.GetData();
             }

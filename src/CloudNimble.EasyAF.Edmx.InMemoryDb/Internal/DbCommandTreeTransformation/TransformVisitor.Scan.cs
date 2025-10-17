@@ -37,7 +37,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
     {
         public override Expression Visit(DbScanExpression expression)
         {
-            if (tableProvider == null)
+            if (tableProvider is null)
             {
                 throw new InvalidOperationException("TableProvider is not set");
             }

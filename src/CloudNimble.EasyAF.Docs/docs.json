@@ -7,6 +7,13 @@
     "pages": [
       "index",
       {
+        "group": "Guides",
+        "pages": [
+          "guides/interval-calculations",
+          "guides/property-name-overrides"
+        ]
+      },
+      {
         "group": "API Reference",
         "icon": "code",
         "pages": [
@@ -157,58 +164,6 @@
                       "api-reference/CloudNimble/EasyAF/Restier/EasyAFEntityFrameworkApi",
                       "api-reference/CloudNimble/EasyAF/Restier/RestierHelpers",
                       "api-reference/CloudNimble/EasyAF/Restier/RestierOperationType"
-                    ]
-                  },
-                  {
-                    "group": "Tools",
-                    "icon": "folder-tree",
-                    "pages": [
-                      {
-                        "group": "Commands",
-                        "icon": "folder-tree",
-                        "pages": [
-                          "api-reference/CloudNimble/EasyAF/Tools/Commands/index",
-                          "api-reference/CloudNimble/EasyAF/Tools/Commands/CleanupCommand",
-                          "api-reference/CloudNimble/EasyAF/Tools/Commands/CodeGenerateCommand",
-                          "api-reference/CloudNimble/EasyAF/Tools/Commands/DatabaseGenerateCommand",
-                          "api-reference/CloudNimble/EasyAF/Tools/Commands/DatabaseInitCommand",
-                          "api-reference/CloudNimble/EasyAF/Tools/Commands/DatabaseRefreshCommand",
-                          "api-reference/CloudNimble/EasyAF/Tools/Commands/EasyAFBaseCommand",
-                          "api-reference/CloudNimble/EasyAF/Tools/Commands/EdmxGenerateCommand",
-                          "api-reference/CloudNimble/EasyAF/Tools/Commands/EdmxRootCommand",
-                          "api-reference/CloudNimble/EasyAF/Tools/Commands/EdmxSwapCommand",
-                          "api-reference/CloudNimble/EasyAF/Tools/Commands/EdmxWatchCommand",
-                          "api-reference/CloudNimble/EasyAF/Tools/Commands/InitCommand",
-                          "api-reference/CloudNimble/EasyAF/Tools/Commands/SetupCommand",
-                          {
-                            "group": "Root",
-                            "icon": "folder-tree",
-                            "pages": [
-                              "api-reference/CloudNimble/EasyAF/Tools/Commands/Root/index",
-                              "api-reference/CloudNimble/EasyAF/Tools/Commands/Root/CodeRootCommand",
-                              "api-reference/CloudNimble/EasyAF/Tools/Commands/Root/DatabaseRootCommand",
-                              "api-reference/CloudNimble/EasyAF/Tools/Commands/Root/EasyAFRootCommand"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "group": "Models",
-                        "icon": "folder-tree",
-                        "pages": [
-                          "api-reference/CloudNimble/EasyAF/Tools/Models/index",
-                          "api-reference/CloudNimble/EasyAF/Tools/Models/CleanupResult"
-                        ]
-                      },
-                      {
-                        "group": "ProjectDiscovery",
-                        "icon": "folder-tree",
-                        "pages": [
-                          "api-reference/CloudNimble/EasyAF/Tools/ProjectDiscovery/index",
-                          "api-reference/CloudNimble/EasyAF/Tools/ProjectDiscovery/ProjectDiscoveryService",
-                          "api-reference/CloudNimble/EasyAF/Tools/ProjectDiscovery/ProjectInfo"
-                        ]
-                      }
                     ]
                   },
                   {

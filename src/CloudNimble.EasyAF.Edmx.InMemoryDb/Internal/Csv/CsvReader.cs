@@ -487,7 +487,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
             ValueTrimmingOptions trimmingOptions, 
             int bufferSize)
         {
-            if (reader == null)
+            if (reader is null)
             {
                 throw new ArgumentNullException("reader");
             }
@@ -549,7 +549,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
         {
             EventHandler<ParseErrorEventArgs> handler = ParseError;
 
-            if (handler != null)
+            if (handler is not null)
                 handler(this, e);
         }
 
@@ -796,7 +796,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
         public string[] GetFieldHeaders()
         {
             EnsureInitialize();
-            Debug.Assert(this.fieldHeaders != null, "Field headers must be non null.");
+            Debug.Assert(this.fieldHeaders is not null, "Field headers must be non null.");
 
             string[] fieldHeaders = new string[this.fieldHeaders.Length];
 
@@ -1030,10 +1030,10 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
                 this.ReadNextRecord(true, false);
             }
 
-            Debug.Assert(this.fieldHeaders != null);
+            Debug.Assert(this.fieldHeaders is not null);
             Debug.Assert(
                 this.fieldHeaders.Length > 0 ||
-                this.fieldHeaders.Length == 0 && this.fieldHeaderIndexes == null);
+                this.fieldHeaders.Length == 0 && this.fieldHeaderIndexes is null);
         }
 
         #endregion
@@ -1058,7 +1058,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
 
             int index;
 
-            if (this.fieldHeaderIndexes != null &&
+            if (this.fieldHeaderIndexes is not null &&
                 this.fieldHeaderIndexes.TryGetValue(header, out index))
             {
                 return index;
@@ -1100,7 +1100,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
         /// </exception>
         public void CopyCurrentRecordTo(string[] array, int index)
         {
-            if (array == null)
+            if (array is null)
             {
                 throw new ArgumentNullException("array");
             }
@@ -1144,7 +1144,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
         /// <returns> The current raw CSV data. </returns>
         public string GetCurrentRawData()
         {
-            if (this.buffer != null && this.bufferLength > 0)
+            if (this.buffer is not null && this.bufferLength > 0)
             {
                 return new string(this.buffer, 0, this.bufferLength);
             }
@@ -1631,7 +1631,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
                             if (!initializing && index != this.fieldCount - 1)
                             {
                                 if (!value.IsMissing && 
-                                    (value.Value == null || value.Value.Length == 0))
+                                    (value.Value is null || value.Value.Length == 0))
                                 {
                                     value = FieldValue.Missing;
                                 }
@@ -2215,7 +2215,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
         /// </exception>
         private void HandleParseError(MalformedCsvException error, ref int pos)
         {
-            if (error == null)
+            if (error is null)
             {
                 throw new ArgumentNullException("error");
             }
@@ -2427,7 +2427,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
 
             string value = this[field];
 
-            if (value == null)
+            if (value is null)
             {
                 value = string.Empty;
             }
@@ -2614,7 +2614,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
 
             string value = this[i];
 
-            return Int32.Parse(value == null ? string.Empty : value, CultureInfo.CurrentCulture);
+            return Int32.Parse(value is null ? string.Empty : value, CultureInfo.CurrentCulture);
         }
 
         object IDataRecord.this[string name]
@@ -2663,7 +2663,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
                 DataReaderValidations.IsInitialized |
                 DataReaderValidations.IsNotClosed);
 
-            return (this[i] == null);
+            return (this[i] is null);
         }
 
         long IDataRecord.GetBytes(
@@ -3029,11 +3029,11 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
                     if (disposing)
                     {
                         // Acquire a lock on the object while disposing.
-                        if (this.reader != null)
+                        if (this.reader is not null)
                         {
                             lock (this.latch)
                             {
-                                if (this.reader != null)
+                                if (this.reader is not null)
                                 {
                                     this.reader.Dispose();
 

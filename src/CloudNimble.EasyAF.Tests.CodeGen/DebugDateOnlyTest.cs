@@ -1,4 +1,4 @@
-using CloudNimble.EasyAF.CodeGen;
+﻿using CloudNimble.EasyAF.CodeGen;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -69,7 +69,7 @@ namespace CloudNimble.EasyAF.Tests.CodeGen.Core
                 Console.WriteLine($"Found {loader.EdmxSchemaErrors.Count} errors:");
                 foreach (var error in loader.EdmxSchemaErrors)
                 {
-                    if (error != null)
+                    if (error is not null)
                     {
                         try
                         {

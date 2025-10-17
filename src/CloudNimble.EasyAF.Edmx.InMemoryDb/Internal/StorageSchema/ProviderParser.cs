@@ -39,7 +39,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
 
         public IProviderInformation VisitElement(XElement element)
         {
-            if (element == null)
+            if (element is null)
             {
                 throw new ArgumentNullException("element");
             }

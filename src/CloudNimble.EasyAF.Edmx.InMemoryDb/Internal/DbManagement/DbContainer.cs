@@ -74,7 +74,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement
             {
                 var db = database;
 
-                if (db == null)
+                if (db is null)
                 {
                     throw new EffortException(ExceptionMessages.DatabaseNotInitialized);
                 }
@@ -130,7 +130,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement
         public bool IsInitialized(StoreItemCollection edmStoreSchema)
         {
             // TODO: Lock
-            if (database == null)
+            if (database is null)
             {
                 return false;
             }
@@ -262,7 +262,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement
 
         private void EnsureInitializedDatabase()
         {
-            if (database == null)
+            if (database is null)
             {
                 IDatabaseComponentFactory componentFactory =
                     new DatabaseComponentFactory(parameters.IsTransient);
@@ -274,7 +274,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement
 
         private ITableDataLoaderFactory CreateDataLoaderFactory()
         {
-            if (parameters.DataLoader == null)
+            if (parameters.DataLoader is null)
             {
                 return new EmptyTableDataLoaderFactory();
             }

@@ -45,7 +45,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement
                 .Where(t => t.EntityType.Name.Equals(cliName))
                 .FirstOrDefault();
 
-            if (table == null)
+            if (table is null)
             {
                 throw new EffortException(
                     string.Format(ExceptionMessages.TableNotFound, name.FullName));

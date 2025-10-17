@@ -259,9 +259,9 @@ namespace System.Data.Entity.Core.Common.Internal.Materialization
                     // construct the type and store the property values.
                     result = Expression.MemberInit(Expression.New(constructor), propertyBindings);
 
-                    // If there's a null sentinel, then everything above is gated upon whether 
+                    // If there's a null sentinel, then everything above is gated upon whether
                     // it's value is DBNull.Value.
-                    if (null != nullSentinelCheck)
+                    if (nullSentinelCheck is not null)
                     {
                         // shaper.Reader.IsDBNull(nullsentinelOridinal) ? (type)null : result
                         result = Expression.Condition(nullSentinelCheck, CodeGenEmitter.Emit_NullConstant(result.Type), result);
@@ -661,7 +661,7 @@ namespace System.Data.Entity.Core.Common.Internal.Materialization
                     }
 
                     // If there is a null sentinel process it accordingly.
-                    if (null != nullSentinelCheck)
+                    if (nullSentinelCheck is not null)
                     {
                         // shaper.Reader.IsDBNull(nullsentinelOridinal) ? (type)null : result
                         result = Expression.Condition(nullSentinelCheck, nullConstant, result);
@@ -741,9 +741,9 @@ namespace System.Data.Entity.Core.Common.Internal.Materialization
                     CodeGenEmitter.Emit_Shaper_GetState(stateSlotNumber, typeof(RecordState)), CodeGenEmitter.RecordState_GatherData,
                     CodeGenEmitter.Shaper_Parameter);
 
-                // If there's a null check, then everything above is gated upon whether 
+                // If there's a null check, then everything above is gated upon whether
                 // it's value is DBNull.Value.
-                if (null != nullCheckExpression)
+                if (nullCheckExpression is not null)
                 {
                     Expression nullResult = Expression.Call(
                         CodeGenEmitter.Emit_Shaper_GetState(stateSlotNumber, typeof(RecordState)), CodeGenEmitter.RecordState_SetNullRecord);

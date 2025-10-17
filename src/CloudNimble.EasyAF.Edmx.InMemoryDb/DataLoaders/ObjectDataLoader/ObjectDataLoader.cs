@@ -26,7 +26,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders.ObjectDataLoader
         /// <param name="data">The data.</param>
         public ObjectDataLoader(ObjectData data)
         {
-            if (data == null) throw new ArgumentNullException(nameof(data));
+            if (data is null) throw new ArgumentNullException(nameof(data));
             Argument = data.Identifier.ToString();
             DataCollection.AddOrUpdate(data.Identifier, data, (key, value) => data);
         }

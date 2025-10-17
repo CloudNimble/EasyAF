@@ -64,7 +64,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
             var oldIdentityFieldDictionary = new Dictionary<IExtendedTable, bool>();
             try
             {
-                if (dbContainer != null)
+                if (dbContainer is not null)
                 {
                     foreach (IExtendedTable table in ((DbContainer)dbContainer).Internal.Tables.GetAllTables())
                     {
@@ -73,7 +73,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
                     }
                 }
 
-                if (OrderedEntities == null)
+                if (OrderedEntities is null)
                 {
                     CreateOrderedEntities();
                     EffortConnection.ClearTables(context);
@@ -132,7 +132,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
                         remainingList.Add(itemToTry);
                     }
 
-                if (listToTryInsert.Count == remainingList.Count && lastError != null)
+                if (listToTryInsert.Count == remainingList.Count && lastError is not null)
                 {
                     throw new Exception("Oops! There is an error when trying to generate the insert order.", lastError);
                 }

@@ -65,7 +65,7 @@ namespace System.Data.Entity.Core.Query.InternalTrees
         internal virtual void Visit(ComplexTypeColumnMap columnMap, TArgType arg)
         {
             ColumnMap nullSentinel = columnMap.NullSentinel;
-            if (null != nullSentinel)
+            if (nullSentinel is not null)
             {
                 nullSentinel.Accept(this, arg);
             }
@@ -130,7 +130,7 @@ namespace System.Data.Entity.Core.Query.InternalTrees
         internal virtual void Visit(RecordColumnMap columnMap, TArgType arg)
         {
             ColumnMap nullSentinel = columnMap.NullSentinel;
-            if (null != nullSentinel)
+            if (nullSentinel is not null)
             {
                 nullSentinel.Accept(this, arg);
             }

@@ -72,7 +72,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement.Schema
             {
                 entityType = value;
 
-                if (entityType != null)
+                if (entityType is not null)
                 {
                     members = entityType
                         .GetProperties()
@@ -99,7 +99,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement.Schema
             {
                 var result = Enumerable.Empty<IKeyInfo>();
 
-                if (PrimaryKey != null)
+                if (PrimaryKey is not null)
                 {
                     result = result.Concat(Enumerable.Repeat(PrimaryKey, 1));
                 }
@@ -160,7 +160,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement.Schema
 
         public PropertyInfo FindMember(string name)
         {
-            if (members == null)
+            if (members is null)
             {
                 return null;
             }

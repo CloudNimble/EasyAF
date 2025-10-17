@@ -64,7 +64,7 @@ namespace System.Data.Entity.Core.Query.PlanCompiler
         {
             get
             {
-                if (allRules == null)
+                if (allRules is null)
                 {
                     allRules =
                     [

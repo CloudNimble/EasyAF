@@ -55,7 +55,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders
 
             var entityConnectionString = entityConnectionString_Fields.GetValue(connectionFactory.Target);
 
-            if (entityConnectionString == null || entityConnectionString.Equals(""))
+            if (entityConnectionString is null || entityConnectionString.Equals(""))
             {
                 this.connectionFactory = () => EntityFrameworkEffortManager.CreateFactoryContext(null).Database.GetEntityConnection();
             }
@@ -78,7 +78,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders
         /// </returns>
         public ITableDataLoader CreateTableDataLoader(TableDescription table)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 connection = connectionFactory.Invoke();
                 connection.Open();
@@ -92,7 +92,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders
         /// </summary>
         public void Dispose()
         {
-            if (connection != null)
+            if (connection is not null)
             {
                 connection.Close();
                 connection.Dispose();

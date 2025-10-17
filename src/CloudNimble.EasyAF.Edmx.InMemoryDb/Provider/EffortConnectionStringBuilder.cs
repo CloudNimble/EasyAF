@@ -145,7 +145,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
 
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     this[DataLoaderTypeKey] = null;
                     return;

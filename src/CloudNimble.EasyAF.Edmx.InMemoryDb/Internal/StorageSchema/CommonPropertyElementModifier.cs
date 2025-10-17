@@ -41,7 +41,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
 
         public CommonPropertyElementModifier(StorageSchemaContentNameProvider nameProvider)
         {
-            if (nameProvider == null)
+            if (nameProvider is null)
             {
                 throw new ArgumentNullException("nameProvider");
             }
@@ -73,12 +73,12 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
 
         public void Modify(XElement element, IModificationContext context)
         {
-            if (element == null)
+            if (element is null)
             {
                 throw new ArgumentNullException("element");
             }
 
-            if (context == null)
+            if (context is null)
             {
                 throw new ArgumentNullException("context");
             }
@@ -102,7 +102,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
 
                 foreach (var commonAttributeName in CommonPropertyAttributeNames)
                 {
-                    if (element.Attribute(commonAttributeName) != null)
+                    if (element.Attribute(commonAttributeName) is not null)
                     {
                         // Element contains the attribute
                         continue;
@@ -111,7 +111,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
                     // Seach for default facet value
                     var facet = facets.FirstOrDefault(f => f.Name == commonAttributeName.LocalName);
 
-                    if (facet != null && facet.Value != null)
+                    if (facet is not null && facet.Value is not null)
                     {
                         element.Add(new XAttribute(commonAttributeName, facet.Value));
                     }

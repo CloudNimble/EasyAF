@@ -66,7 +66,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
                .MetadataProperties
                .FirstOrDefault(p => p.Name == "Schema");
 
-            if (property == null)
+            if (property is null)
             {
                 return string.Empty;
             }
@@ -86,7 +86,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
                .MetadataProperties
                .FirstOrDefault(p => p.Name == "Table");
 
-            if (property != null)
+            if (property is not null)
             {
                 return property.Value as string ?? entitySet.Name;
             }

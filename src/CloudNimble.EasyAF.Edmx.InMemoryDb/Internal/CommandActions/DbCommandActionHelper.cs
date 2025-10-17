@@ -50,7 +50,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.CommandActions
             // Find the returning properties
             var returnExpression = returning as DbNewInstanceExpression;
 
-            if (returnExpression == null)
+            if (returnExpression is null)
             {
                 throw new NotSupportedException(
                     "The type of the Returning properties is not DbNewInstanceExpression");
@@ -98,7 +98,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.CommandActions
             {
                 var property = setClause.Property as DbPropertyExpression;
 
-                if (property == null)
+                if (property is null)
                 {
                     throw new NotSupportedException(
                         setClause.Property.ExpressionKind.ToString() + " is not supported");
@@ -124,7 +124,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.CommandActions
                 visitor.Visit(commandTree.Target.Expression) as ConstantExpression;
 
             // This should be a constant expression
-            if (source == null)
+            if (source is null)
             {
                 throw new InvalidOperationException();
             }

@@ -2,7 +2,7 @@
 title: Interval
 description: "Describes an interval of time to be used in time-based calculations.             Provides methods to calculate rates and frequencies based on the interval va..."
 icon: code-branch
-keywords: ['Interval', 'CloudNimble.EasyAF.Core.Interval<T>', 'CloudNimble.EasyAF.Core', 'class', 'System.Object']
+keywords: ['Interval', 'CloudNimble.EasyAF.Core.Interval<T>', 'CloudNimble.EasyAF.Core', 'class', 'System.Object', '# Related APIs', '- API 1', '- API 2']
 ---
 
 ## Definition
@@ -24,22 +24,38 @@ CloudNimble.EasyAF.Core.Interval<T>
 Describes an interval of time to be used in time-based calculations.
             Provides methods to calculate rates and frequencies based on the interval value and type.
 
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Usage
+
+Describe how to use `Interval` here.
+
 ## Type Parameters
 
 - `T` - The data type for the interval value. Must implement [IComparable`1](https://learn.microsoft.com/dotnet/api/system.icomparable-1) and [IConvertible](https://learn.microsoft.com/dotnet/api/system.iconvertible).
 
-## Examples
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Examples
+
+Provide examples of using `Interval` here.
 
 ```csharp
-// Create an interval representing something that happens every 3 hours
-var interval = new Interval&lt;int&gt;(3, IntervalType.Hours);
-
-// Calculate how many times per day this would occur
-decimal timesPerDay = interval.PerDay(); // Returns 8.0
-
-// Calculate how many minutes between occurrences
-decimal minutesBetween = interval.PerMinute(); // Returns 0.0556 (1/18)
+// Example code here
 ```
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Best Practices
+
+Document best practices for `Interval` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Patterns
+
+Document common patterns for `Interval` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Considerations
+
+Document considerations for `Interval` here.
 
 ## Constructors
 
@@ -453,4 +469,10 @@ public override string ToString()
 #### Returns
 
 Type: `string`
+
+## Related APIs
+
+- # Related APIs
+- - API 1
+- - API 2
 

@@ -54,7 +54,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement
         {
             var table = TryGetTable<TEntity>();
 
-            if (table != null)
+            if (table is not null)
             {
                 table.SetIdentity(seed, increment);
             }
@@ -108,7 +108,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement
 
         internal IExtendedTable TryGetTable<TEntity>()
         {
-            if (container.database == null)
+            if (container.database is null)
             {
                 throw new Exception(ExceptionMessages.DatabaseNotInitialized);
             }
@@ -124,10 +124,10 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement
                     var _TableInfo = tableToFindDbTableInfo.GetType().GetProperty("TableInfo",
                           BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.FlattenHierarchy);
 
-                    if (_TableInfo != null)
+                    if (_TableInfo is not null)
                     {
                         var TableInfo = (DbTableInfo)_TableInfo.GetValue(tableToFindDbTableInfo, BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, null, null);
-                        if (TableInfo != null && TableInfo.EntitySet != null && TableInfo.EntitySet.Name != null)
+                        if (TableInfo is not null && TableInfo.EntitySet is not null && TableInfo.EntitySet.Name is not null)
                         {
                             listDbTableInfo.Add(TableInfo.EntitySet.Name, TableInfo);
                         }

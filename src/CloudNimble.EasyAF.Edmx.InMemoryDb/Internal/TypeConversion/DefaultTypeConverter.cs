@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------
 // <copyright file="DefaultTypeConverter.cs" company="Effort Team">
 //     Copyright (C) Effort Team
 //
@@ -52,7 +52,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.TypeConversion
 
             if (type == typeof(byte[]))
             {
-                if (obj == null)
+                if (obj is null)
                 {
                     return null;
                 }
@@ -88,7 +88,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.TypeConversion
 
             if (type == typeof(byte[]))
             {
-                if (obj == null)
+                if (obj is null)
                 {
                     return null;
                 }
@@ -106,7 +106,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.TypeConversion
                 }
             }
 
-            if (obj == null)
+            if (obj is null)
             {
                 return DBNull.Value;
             }

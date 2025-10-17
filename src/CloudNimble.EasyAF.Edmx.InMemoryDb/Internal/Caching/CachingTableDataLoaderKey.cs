@@ -55,7 +55,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Caching
             DataLoaderConfigurationKey loaderConfiguration,
             string tableName)
         {
-            if (loaderConfiguration == null)
+            if (loaderConfiguration is null)
             {
                 throw new ArgumentNullException("loaderConfiguration");
             }
@@ -82,7 +82,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Caching
         /// </returns>
         public bool Equals(CachingTableDataLoaderKey other)
         {
-            if (other == null)
+            if (other is null)
             {
                 return false;
             }

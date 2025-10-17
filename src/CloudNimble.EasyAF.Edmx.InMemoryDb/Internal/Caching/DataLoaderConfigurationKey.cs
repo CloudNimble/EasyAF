@@ -49,7 +49,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Caching
         /// <param name="loader"> The data loader. </param>
         public DataLoaderConfigurationKey(IDataLoader loader)
         {
-            if (loader == null)
+            if (loader is null)
             {
                 throw new ArgumentNullException("loader");
             }
@@ -71,7 +71,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Caching
         /// </returns>
         public bool Equals(DataLoaderConfigurationKey other)
         {
-            if (other == null)
+            if (other is null)
             {
                 return false;
             }

@@ -143,7 +143,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
                 var name = parameter.ParameterName;
                 var value = parameter.Value;
 
-                if (value != null)
+                if (value is not null)
                 {
                     var originalType = value.GetType();
 
@@ -161,7 +161,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
                 context.Parameters.Add(commandActionParameter);
             }
 
-            if (EffortTransaction != null)
+            if (EffortTransaction is not null)
             {
                 context.Transaction = EffortTransaction.InternalTransaction;
             }

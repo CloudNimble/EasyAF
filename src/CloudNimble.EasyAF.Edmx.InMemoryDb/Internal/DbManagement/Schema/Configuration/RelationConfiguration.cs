@@ -122,7 +122,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement.Schema.Config
         {
             var keyInfo = tableBuilder.FindKey(members, true, unique);
 
-            if (keyInfo == null)
+            if (keyInfo is null)
             {
                 keyInfo = KeyInfoHelper.CreateKeyInfo(tableBuilder.EntityType, members);
                 tableBuilder.AddKey(keyInfo, unique);

@@ -50,7 +50,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders.ObjectDataLoader
         /// <returns>The discriminator value.</returns>
         internal string GetDiscriminator(T item)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            if (item is null) throw new ArgumentNullException(nameof(item));
             var type = item.GetType();
             string discriminator;
             if (!discriminators.TryGetValue(type, out discriminator))

@@ -55,7 +55,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
             EffortConnection connection,
             System.Data.IsolationLevel isolationLevel)
         {
-            if (System.Transactions.Transaction.Current != null)
+            if (System.Transactions.Transaction.Current is not null)
             {
                 throw new InvalidOperationException("Ambient transaction is already set.");
             }

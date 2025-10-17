@@ -273,7 +273,7 @@ namespace CloudNimble.EasyAF.Tools.Commands
                     Console.WriteLine(generatedFileNames.Last());
                 }
 
-                if ((type == "simplemessagebus" || isAll) && simpleMessageBusFolder != null)
+                if ((type == "simplemessagebus" || isAll) && simpleMessageBusFolder is not null)
                 {
                     var simpleMessageBusNamespace = GetNamespaceFromFolder(simpleMessageBusFolder);
                     var extraUsings = new List<string>
@@ -333,7 +333,7 @@ namespace CloudNimble.EasyAF.Tools.Commands
                             Console.WriteLine(generatedFileNames.Last());
                         }
 
-                        if ((type == "simplemessagebus" || isAll) && simpleMessageBusFolder != null)
+                        if ((type == "simplemessagebus" || isAll) && simpleMessageBusFolder is not null)
                         {
                             var simpleMessageBusNamespace = GetNamespaceFromFolder(simpleMessageBusFolder);
                             var extraUsings = new List<string>
@@ -387,7 +387,7 @@ namespace CloudNimble.EasyAF.Tools.Commands
                 CleanOtherFiles(controllerFolder, generatedFileNames, pathToIgnore);
             }
 
-            if ((type == "simplemessagebus" || isAll) && simpleMessageBusFolder != null)
+            if ((type == "simplemessagebus" || isAll) && simpleMessageBusFolder is not null)
             {
                 CleanOtherFiles(simpleMessageBusFolder, generatedFileNames, pathToIgnore);
             }

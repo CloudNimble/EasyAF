@@ -43,7 +43,7 @@ namespace CloudNimble.EasyAF.MSBuild
                     .OrderByDescending(x => x.Version)
                     .FirstOrDefault();
                 
-                if (latestInstance != null)
+                if (latestInstance is not null)
                 {
                     MSBuildLocator.RegisterInstance(latestInstance);
                 }
@@ -300,7 +300,7 @@ namespace CloudNimble.EasyAF.MSBuild
                 // Find existing property
                 var existingProperty = Project.Properties.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
                 
-                if (existingProperty != null)
+                if (existingProperty is not null)
                 {
                     // Update existing property
                     existingProperty.Value = value;
@@ -309,7 +309,7 @@ namespace CloudNimble.EasyAF.MSBuild
                 {
                     // Add new property to the first PropertyGroup, or create one if none exists
                     var propertyGroup = Project.PropertyGroups.FirstOrDefault();
-                    if (propertyGroup == null)
+                    if (propertyGroup is null)
                     {
                         propertyGroup = Project.AddPropertyGroup();
                     }
@@ -345,7 +345,7 @@ namespace CloudNimble.EasyAF.MSBuild
             try
             {
                 var propertyToRemove = Project.Properties.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-                if (propertyToRemove != null)
+                if (propertyToRemove is not null)
                 {
                     propertyToRemove.Parent.RemoveChild(propertyToRemove);
                 }
@@ -404,7 +404,7 @@ namespace CloudNimble.EasyAF.MSBuild
                     ig.Items.Any(item => item.ItemType == "PackageReference") &&
                     (string.IsNullOrEmpty(condition) || ig.Condition == condition));
 
-                if (itemGroup == null)
+                if (itemGroup is null)
                 {
                     itemGroup = Project.AddItemGroup();
                     if (!string.IsNullOrEmpty(condition))
@@ -418,11 +418,11 @@ namespace CloudNimble.EasyAF.MSBuild
                     item.ItemType == "PackageReference" && 
                     item.Include.Equals(packageId, StringComparison.OrdinalIgnoreCase));
 
-                if (existingReference != null)
+                if (existingReference is not null)
                 {
                     // Update existing reference
                     var versionMetadata = existingReference.Metadata.FirstOrDefault(m => m.Name == "Version");
-                    if (versionMetadata != null)
+                    if (versionMetadata is not null)
                     {
                         versionMetadata.Value = version;
                     }

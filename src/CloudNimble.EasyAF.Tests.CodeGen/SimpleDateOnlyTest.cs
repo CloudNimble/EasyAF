@@ -1,4 +1,4 @@
-using CloudNimble.EasyAF.CodeGen;
+﻿using CloudNimble.EasyAF.CodeGen;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -72,7 +72,7 @@ namespace CloudNimble.EasyAF.Tests.CodeGen.Core
                 errorMessages.AppendLine($"Found {loader.EdmxSchemaErrors.Count} errors:");
                 foreach (var error in loader.EdmxSchemaErrors)
                 {
-                    if (error != null)
+                    if (error is not null)
                     {
                         // Safely access properties
                         var errorCode = error.ErrorNumber ?? "UNKNOWN";

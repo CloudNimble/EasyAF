@@ -31,12 +31,12 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
     {
         public static decimal? Sum<TSource>(IEnumerable<TSource> source, Func<TSource, decimal?> selector)
         {
-            if (source == null)
+            if (source is null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            if (selector == null)
+            if (selector is null)
             {
                 throw new ArgumentNullException("selector");
             }
@@ -63,12 +63,12 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static double? Sum<TSource>(IEnumerable<TSource> source, Func<TSource, double?> selector)
         {
-            if (source == null)
+            if (source is null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            if (selector == null)
+            if (selector is null)
             {
                 throw new ArgumentNullException("selector");
             }
@@ -95,12 +95,12 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static float? Sum<TSource>(IEnumerable<TSource> source, Func<TSource, float?> selector)
         {
-            if (source == null)
+            if (source is null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            if (selector == null)
+            if (selector is null)
             {
                 throw new ArgumentNullException("selector");
             }
@@ -127,12 +127,12 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static int? Sum<TSource>(IEnumerable<TSource> source, Func<TSource, int?> selector)
         {
-            if (source == null)
+            if (source is null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            if (selector == null)
+            if (selector is null)
             {
                 throw new ArgumentNullException("selector");
             }
@@ -159,12 +159,12 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
         public static long? Sum<TSource>(IEnumerable<TSource> source, Func<TSource, long?> selector)
         {
-            if (source == null)
+            if (source is null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            if (selector == null)
+            if (selector is null)
             {
                 throw new ArgumentNullException("selector");
             }

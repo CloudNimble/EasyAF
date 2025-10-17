@@ -126,7 +126,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
             set
             {
                 // Clear connection
-                if (value == null)
+                if (value is null)
                 {
                     connection = null;
                     return;
@@ -134,7 +134,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
 
                 var newConnection = value as EffortConnection;
 
-                if (newConnection == null)
+                if (newConnection is null)
                 {
                     throw new ArgumentException(
                         "Provided connection object is incompatible");
@@ -165,7 +165,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
             set
             {
                 // Clear transaction
-                if (value == null)
+                if (value is null)
                 {
                     transaction = null;
                     return;
@@ -173,7 +173,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
 
                 var newTransaction = value as EffortTransaction;
 
-                if (newTransaction == null)
+                if (newTransaction is null)
                 {
                     throw new ArgumentException(
                         "Provided transaction object is incompatible");

@@ -77,7 +77,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.CommandActions
 
             IEnumerable result = null;
 
-            if (context.Transaction != null)
+            if (context.Transaction is not null)
             {
                 result = procedure.Execute(
                     context.DbContainer.Internal,

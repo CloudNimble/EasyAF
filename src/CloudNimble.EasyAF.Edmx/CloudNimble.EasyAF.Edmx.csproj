@@ -20,7 +20,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Portable.System.DateTimeOnly" Version="8.0.1" />
+        <PackageReference Include="Portable.System.DateTimeOnly" Version="9.*" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.*" />
         <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.*" />
         <PackageReference Include="System.Data.SqlClient" Version="4.*" />

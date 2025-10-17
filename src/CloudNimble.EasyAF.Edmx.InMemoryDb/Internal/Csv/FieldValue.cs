@@ -156,7 +156,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
             {
                 return "Missing";
             }
-            else if (value == null)
+            else if (value is null)
             {
                 return "null";
             }
@@ -179,7 +179,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
             {
                 return 0;
             }
-            else if (value == null)
+            else if (value is null)
             {
                 return 1;
             }

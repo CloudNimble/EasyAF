@@ -81,7 +81,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders
                 return;
             }
 
-            if (latch == null)
+            if (latch is null)
             {
                 latch = DataLoaderConfigurationLatchStore.GetLatch(key);
             }

@@ -52,7 +52,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders.Internal
             {
                 var stream = Open();
 
-                if (stream != null)
+                if (stream is not null)
                 {
                     stream.Dispose();
                     return true;

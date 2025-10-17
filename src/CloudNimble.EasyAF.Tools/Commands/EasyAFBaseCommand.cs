@@ -400,7 +400,7 @@ namespace CloudNimble.EasyAF.Tools.Commands
                 
                 // Find the Data project for .edmx file references
                 var dataProject = projectFiles.FirstOrDefault(p => DetermineProjectType(p) == "Data");
-                var dataProjectRelativePath = dataProject != null 
+                var dataProjectRelativePath = dataProject is not null 
                     ? Path.GetRelativePath(Environment.CurrentDirectory, Path.GetDirectoryName(dataProject))
                     : null;
                 

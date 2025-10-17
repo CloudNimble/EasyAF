@@ -70,7 +70,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
             /// </exception>
             public RecordEnumerator(CsvReader reader)
             {
-                if (reader == null)
+                if (reader is null)
                 {
                     throw new ArgumentNullException("reader");
                 }

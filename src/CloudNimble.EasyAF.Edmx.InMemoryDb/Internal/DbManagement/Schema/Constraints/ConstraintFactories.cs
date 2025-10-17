@@ -70,7 +70,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbManagement.Schema.Constr
             var result = Activator.CreateInstance(memberInfoType, member)
                 as IEntityMemberInfo;
 
-            if (result == null)
+            if (result is null)
             {
                 throw new InvalidOperationException("Failed to create member info");
             }

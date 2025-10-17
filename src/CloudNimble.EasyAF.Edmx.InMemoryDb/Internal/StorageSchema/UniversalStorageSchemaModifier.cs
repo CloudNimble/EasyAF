@@ -39,12 +39,12 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
 
         public void Modify(XElement ssdl, IProviderInformation newProvider)
         {
-            if (ssdl == null)
+            if (ssdl is null)
             {
                 throw new ArgumentNullException("root");
             }
 
-            if (newProvider == null)
+            if (newProvider is null)
             {
                 throw new ArgumentNullException("newProvider");
             }
@@ -66,7 +66,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
                 appropriateModifier = SchemaV3Modifier;
             }
 
-            if (appropriateModifier == null)
+            if (appropriateModifier is null)
             {
                 throw new ArgumentException("", "root");
             }
@@ -81,7 +81,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
         {
             get
             {
-                if (schemaV1Modifier == null)
+                if (schemaV1Modifier is null)
                 {
                     schemaV1Modifier = new StorageSchemaV1Modifier();
                 }
@@ -94,7 +94,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
         {
             get
             {
-                if (schemaV2Modifier == null)
+                if (schemaV2Modifier is null)
                 {
                     schemaV2Modifier = new StorageSchemaV2Modifier();
                 }
@@ -107,7 +107,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
         {
             get
             {
-                if (schemaV3Modifier == null)
+                if (schemaV3Modifier is null)
                 {
                     schemaV3Modifier = new StorageSchemaV3Modifier();
                 }

@@ -156,7 +156,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemory
 
             connectionString.InstanceId = instanceId;
 
-            if (dataLoader != null)
+            if (dataLoader is not null)
             {
                 connectionString.DataLoaderType = dataLoader.GetType();
                 connectionString.DataLoaderArgument = dataLoader.Argument;

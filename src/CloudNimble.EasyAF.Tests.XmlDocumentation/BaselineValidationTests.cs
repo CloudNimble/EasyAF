@@ -82,7 +82,7 @@ namespace CloudNimble.EasyAF.Tests.XmlDocumentation
         /// </summary>
         /// <param name="xmlFilePath">Path to the XML file to validate.</param>
         [TestMethod]
-        [DynamicData(nameof(GetBaselineXmlFiles), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetDisplayName))]
+        [DynamicData(nameof(GetBaselineXmlFiles), DynamicDataDisplayName = nameof(GetDisplayName))]
         public void BaselineValidation_ComprehensiveValidation_ShouldSucceed(string xmlFilePath)
         {
             // Handle special cases for missing directories or files

@@ -483,7 +483,7 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
                 {
                     // Check if this is a property configuration that needs HasColumnName
                     bool hasColumnNameAdded = false;
-                    if (entityOverrides != null && line.Contains("entity.Property("))
+                    if (entityOverrides is not null && line.Contains("entity.Property("))
                     {
                         var propertyMatch = PropertyRegex().Match(line);
                         if (propertyMatch.Success)

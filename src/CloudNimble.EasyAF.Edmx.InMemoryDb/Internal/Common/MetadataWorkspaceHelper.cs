@@ -62,7 +62,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
 
             EntityContainer entityContainer = ssdl.OfType<EntityContainer>().FirstOrDefault();
 
-            if (entityContainer == null)
+            if (entityContainer is null)
             {
                 // Invalid SSDL
                 throw new InvalidOperationException("The Storage Schema Definition does not contain any EntityContainer");
@@ -140,7 +140,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
                 {
                     var httpContextType = Type.GetType(httpContextTypeName, true);
                     dynamic context = httpContextType.GetProperty("Current").GetValue(null, null);
-                    if (context == null)
+                    if (context is null)
                     {
                         throw new NotSupportedException("Paths prefixed with '~' are not supported outside of ASP.NET.");
                     }
@@ -199,7 +199,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
 #if !NETSTANDARD
 
             var domainManager = AppDomain.CurrentDomain.DomainManager;
-            if (domainManager != null && domainManager.EntryAssembly != null)
+            if (domainManager is not null && domainManager.EntryAssembly is not null)
             {
                 foreach (AssemblyName asmName in domainManager.EntryAssembly.GetReferencedAssemblies())
                 {
@@ -228,7 +228,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
                 {
                     using (var stream = asm.GetManifestResourceStream(res))
                     {
-                        if (stream == null)
+                        if (stream is null)
                         {
                             continue;
                         }
@@ -278,7 +278,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
             var publicKey = asm.GetName().GetPublicKey();
 
             // ECMA key is special, as it is only 4 bytes long
-            if (publicKey != null && publicKey.Length == 16 && publicKey[8] == 0x4)
+            if (publicKey is not null && publicKey.Length == 16 && publicKey[8] == 0x4)
             {
                 return true;
             }
@@ -292,7 +292,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
         {
             var publicKeyToken = asm.GetName().GetPublicKeyToken();
 
-            if (publicKeyToken != null && publicKeyToken.Length == systemPublicKeyToken.Length)
+            if (publicKeyToken is not null && publicKeyToken.Length == systemPublicKeyToken.Length)
             {
                 for (var i = 0; i < systemPublicKeyToken.Length; ++i)
                 {

@@ -1,4 +1,4 @@
-using CloudNimble.EasyAF.EFCoreToEdmx;
+﻿using CloudNimble.EasyAF.EFCoreToEdmx;
 using CloudNimble.EasyAF.EFCoreToEdmx.Models;
 using McMaster.Extensions.CommandLineUtils;
 using System;
@@ -90,7 +90,7 @@ namespace CloudNimble.EasyAF.Tools.Commands
 
                 // Determine which context to configure
                 var selectedConfig = await SelectContextConfigAsync(configFiles);
-                if (selectedConfig == null)
+                if (selectedConfig is null)
                 {
                     return 1;
                 }
@@ -227,7 +227,7 @@ namespace CloudNimble.EasyAF.Tools.Commands
                 var matchingConfig = configInfos.FirstOrDefault(c => 
                     c.Config.ContextName.Equals(ContextName, StringComparison.OrdinalIgnoreCase));
 
-                if (matchingConfig == null)
+                if (matchingConfig is null)
                 {
                     Console.Error.WriteLine($"Error: No configuration found for context '{ContextName}'.");
                     Console.Error.WriteLine("Available contexts:");

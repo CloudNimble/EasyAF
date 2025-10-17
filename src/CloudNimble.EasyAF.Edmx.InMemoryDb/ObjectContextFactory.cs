@@ -540,7 +540,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemory
         {
             var ecsb = new EffortConnectionStringBuilder();
 
-            if (dataLoader != null)
+            if (dataLoader is not null)
             {
                 ecsb.DataLoaderType = dataLoader.GetType();
                 ecsb.DataLoaderArgument = dataLoader.Argument;
@@ -579,7 +579,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemory
         private static string GetDefaultConnectionString<T>() where T : ObjectContext
         {
             var hasDefaultConstructor =
-                typeof(T).GetConstructor(new Type[] { }) != null;
+                typeof(T).GetConstructor(new Type[] { }) is not null;
 
             if (hasDefaultConstructor)
             {

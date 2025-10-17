@@ -286,7 +286,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemory
                 ConnectionStringSettings setting =
                     ConfigurationManager.ConnectionStrings[connectionStringName];
 
-                if (setting == null)
+                if (setting is null)
                 {
                     throw new ArgumentException(
                         "Connectionstring was not found",

@@ -81,7 +81,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
 
         public void Modify(XElement ssdl, IModificationContext context)
         {
-            if (ssdl == null)
+            if (ssdl is null)
             {
                 throw new ArgumentNullException("ssdl");
             }

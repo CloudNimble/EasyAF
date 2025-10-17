@@ -536,7 +536,7 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
             {
                 // Find the property with this key name to get its store column name
                 var keyProperty = entityType.Properties.FirstOrDefault(p => p.Name == key);
-                var keyColumnName = keyProperty != null && !string.IsNullOrEmpty(keyProperty.StoreColumnName) 
+                var keyColumnName = keyProperty is not null && !string.IsNullOrEmpty(keyProperty.StoreColumnName) 
                     ? keyProperty.StoreColumnName 
                     : key;
                 keyElement.Add(new XElement(_ssdlNs + "PropertyRef", new XAttribute("Name", keyColumnName)));
@@ -715,7 +715,7 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
                 
                 // Find the principal entity type to map property names to store column names
                 var principalEntityType = _model.EntityTypes.FirstOrDefault(e => e.Name == association.End1.Type);
-                if (principalEntityType == null)
+                if (principalEntityType is null)
                 {
                     principalEntityType = _model.EntityTypes.FirstOrDefault(e => e.Name == association.End2.Type);
                 }
@@ -724,7 +724,7 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
                 {
                     // Map property name to store column name
                     var property = principalEntityType?.Properties.FirstOrDefault(p => p.Name == propertyRef);
-                    var columnName = property != null && !string.IsNullOrEmpty(property.StoreColumnName) 
+                    var columnName = property is not null && !string.IsNullOrEmpty(property.StoreColumnName) 
                         ? property.StoreColumnName 
                         : propertyRef;
                     
@@ -749,7 +749,7 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
                 {
                     // Map property name to store column name
                     var property = dependentEntityType?.Properties.FirstOrDefault(p => p.Name == propertyRef);
-                    var columnName = property != null && !string.IsNullOrEmpty(property.StoreColumnName) 
+                    var columnName = property is not null && !string.IsNullOrEmpty(property.StoreColumnName) 
                         ? property.StoreColumnName 
                         : propertyRef;
                     

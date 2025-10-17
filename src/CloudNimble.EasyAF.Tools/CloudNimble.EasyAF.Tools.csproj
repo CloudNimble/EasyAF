@@ -26,8 +26,10 @@
 
     <ItemGroup>
         <PackageReference Include="McMaster.Extensions.Hosting.CommandLine" Version="4.*" />
-        <PackageReference Include="Microsoft.Build" Version="17.*" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build" Version="17.14.28" ExcludeAssets="runtime" />
         <PackageReference Include="Microsoft.Build.Locator" Version="1.*" />
+        <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.28" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.28" ExcludeAssets="runtime" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">

@@ -1,7 +1,7 @@
-// --------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------
 // <copyright file="MalformedCsvException.cs" company="Effort Team">
 //     Copyright (C) Effort Team
-//     Copyright (C) 2006 S�bastien Lorion
+//     Copyright (C) 2006 Sébastien Lorion
 //
 //     Permission is hereby granted, free of charge, to any person obtaining a copy
 //     of this software and associated documentation files (the "Software"), to deal
@@ -99,7 +99,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
         public MalformedCsvException(string message, Exception innerException)
             : base(string.Empty, innerException)
         {
-            this.message = message == null ? string.Empty : message;
+            this.message = message is null ? string.Empty : message;
 
             rawData = string.Empty;
             currentPosition = -1;
@@ -157,7 +157,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Csv
             Exception innerException)
             : base(string.Empty, innerException)
         {
-            this.rawData = rawData == null ? string.Empty : rawData;
+            this.rawData = rawData is null ? string.Empty : rawData;
             this.currentPosition = currentPosition;
             this.currentRecordIndex = currentRecordIndex;
             this.currentFieldIndex = currentFieldIndex;

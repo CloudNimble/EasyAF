@@ -97,7 +97,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.TypeGeneration
             {
                 var key = obj as TypeCacheEntryKey;
 
-                if (key == null)
+                if (key is null)
                 {
                     return false;
                 }
@@ -446,7 +446,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.TypeGeneration
 
             for (var i = 0; i < fields.Length; i++)
             {
-                // if (s[0] == null|false) goto notIdentical
+                // if (s[0] is null|false) goto notIdentical
                 gen.Emit(OpCodes.Brfalse, notIdenticalLabel);
 
                 Type type = fields[i].FieldType;

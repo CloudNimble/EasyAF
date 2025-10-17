@@ -38,7 +38,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders.Internal
 
         public ResourceFileProvider(Uri path)
         {
-            if (path == null)
+            if (path is null)
             {
                 throw new ArgumentNullException("path");
             }
@@ -60,7 +60,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders.Internal
                         asmName,
                         StringComparison.InvariantCultureIgnoreCase));
 
-            if (assembly == null)
+            if (assembly is null)
             {
                 return;
             }

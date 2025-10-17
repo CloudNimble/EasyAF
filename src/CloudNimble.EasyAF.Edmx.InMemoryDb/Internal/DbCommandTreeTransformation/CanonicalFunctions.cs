@@ -323,7 +323,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
                     break;
             }
 
-            if (method == null)
+            if (method is null)
             {
                 throw new NotSupportedException(
                     string.Format(
@@ -347,7 +347,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
         {
             var primitive = param.TypeUsage.EdmType as PrimitiveType;
 
-            if (primitive == null)
+            if (primitive is null)
             {
                 return DoubleFunctions.Abs;
             }
@@ -429,7 +429,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
 
                 var method = methods[i];
 
-                if (method == null)
+                if (method is null)
                 {
                     throw new NotSupportedException(
                         string.Format(
@@ -448,7 +448,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
         {
             var primitive = param.TypeUsage.EdmType as PrimitiveType;
 
-            if (primitive == null)
+            if (primitive is null)
             {
                 return false;
             }

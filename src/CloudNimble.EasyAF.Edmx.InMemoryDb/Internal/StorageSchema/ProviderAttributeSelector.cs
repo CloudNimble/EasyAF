@@ -34,7 +34,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
 
         public ProviderAttributeSelector(StorageSchemaContentNameProvider nameProvider)
         {
-            if (nameProvider == null)
+            if (nameProvider is null)
             {
                 throw new ArgumentNullException("nameProvider");
             }
@@ -44,7 +44,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.StorageSchema
 
         public XAttribute SelectAttribute(XElement element)
         {
-            if (element == null)
+            if (element is null)
             {
                 throw new ArgumentNullException("element");
             }

@@ -67,7 +67,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
         {
             var parameter = value as EffortParameter;
 
-            if (parameter == null)
+            if (parameter is null)
             {
                 throw new ArgumentException("The provided parameter object is incompatible");
             }
@@ -94,7 +94,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
             {
                 var parameter = value as EffortParameter;
 
-                if (parameter == null)
+                if (parameter is null)
                 {
                     throw new ArgumentException(
                         "The provided parameter object is incompatible");
@@ -278,7 +278,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
         {
             var parameter = value as EffortParameter;
 
-            if (parameter == null)
+            if (parameter is null)
             {
                 throw new ArgumentException("The provided parameter object is incompatible");
             }

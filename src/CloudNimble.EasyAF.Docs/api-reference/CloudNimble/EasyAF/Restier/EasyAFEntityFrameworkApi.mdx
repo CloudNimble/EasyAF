@@ -3,7 +3,7 @@ title: EasyAFEntityFrameworkApi
 description: "Provides a base implementation of an Entity Framework API for EasyAF,              integrating SimpleMessageBus event publishing and logging capabilities.   ..."
 icon: code-branch
 tag: "ABSTRACT"
-keywords: ['EasyAFEntityFrameworkApi', 'CloudNimble.EasyAF.Restier.EasyAFEntityFrameworkApi<TContext>', 'CloudNimble.EasyAF.Restier', 'class', 'Microsoft.Restier.EntityFramework.EntityFrameworkApi<TContext>']
+keywords: ['EasyAFEntityFrameworkApi', 'CloudNimble.EasyAF.Restier.EasyAFEntityFrameworkApi<TContext>', 'CloudNimble.EasyAF.Restier', 'class', 'Microsoft.Restier.EntityFramework.EntityFrameworkApi<TContext>', '# Related APIs', '- API 1', '- API 2']
 ---
 
 ## Definition
@@ -33,21 +33,38 @@ Provides a base implementation of an Entity Framework API for EasyAF,
 
 
 
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Usage
+
+Describe how to use `EasyAFEntityFrameworkApi` here.
+
 ## Type Parameters
 
 - `TContext` - The type of the [DbContext](https://learn.microsoft.com/dotnet/api/system.data.entity.dbcontext) used by the API.
 
-## Examples
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Examples
+
+Provide examples of using `EasyAFEntityFrameworkApi` here.
 
 ```csharp
-public class MyApi : EasyAFEntityFrameworkApi&lt;MyDbContext&gt;
-{
-    public MyApi(IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor, IMessagePublisher messagePublisher, ILogger&lt;EasyAFEntityFrameworkApi&lt;MyDbContext&gt;&gt; logger)
-        : base(serviceProvider, httpContextAccessor, messagePublisher, logger)
-    {
-    }
-}
+// Example code here
 ```
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Best Practices
+
+Document best practices for `EasyAFEntityFrameworkApi` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Patterns
+
+Document common patterns for `EasyAFEntityFrameworkApi` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Considerations
+
+Document considerations for `EasyAFEntityFrameworkApi` here.
 
 ## Constructors
 
@@ -120,4 +137,10 @@ public CloudNimble.SimpleMessageBus.Publish.IMessagePublisher MessagePublisher {
 #### Property Value
 
 Type: `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher`
+
+## Related APIs
+
+- # Related APIs
+- - API 1
+- - API 2
 

@@ -54,7 +54,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.CommandActions
                 action = new DeleteCommandAction(commandTree as DbDeleteCommandTree);
             }
 
-            if (action == null)
+            if (action is null)
             {
                 throw new NotSupportedException("Not supported DbCommandTree type");
             }

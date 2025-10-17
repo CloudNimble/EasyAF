@@ -85,7 +85,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders
 
             foreach (var data in loader.GetData())
             {
-                if (entityProperties == null)
+                if (entityProperties is null)
                 {
                     // Initialize at the first element
                     entityProperties = new object[data.Length];
@@ -97,7 +97,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.DataLoaders
 
                     // Use converter if required
                     var converter = converters[i];
-                    if (converter != null)
+                    if (converter is not null)
                     {
                         propertyValue = converter.Invoke(propertyValue);
                     }

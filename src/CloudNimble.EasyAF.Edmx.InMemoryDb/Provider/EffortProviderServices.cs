@@ -255,7 +255,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
         {
             var effortConnection = connection as EffortConnection;
 
-            if (effortConnection == null)
+            if (effortConnection is null)
             {
                 throw new ArgumentException("", "connection");
             }

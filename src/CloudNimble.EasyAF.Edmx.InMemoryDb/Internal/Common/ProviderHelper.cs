@@ -52,7 +52,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
             IServiceProvider serviceProvider = 
                 DbProviderFactories.GetFactory(providerInvariantName) as IServiceProvider;
 
-            if (serviceProvider == null)
+            if (serviceProvider is null)
             {
                 throw new ProviderIncompatibleException();
             }
@@ -60,7 +60,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.Common
             DbProviderServices providerServices = 
                 serviceProvider.GetService(typeof(DbProviderServices)) as DbProviderServices;
 
-            if (providerServices == null)
+            if (providerServices is null)
             {
                 throw new ProviderIncompatibleException();
             }

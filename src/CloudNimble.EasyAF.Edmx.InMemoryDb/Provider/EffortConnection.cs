@@ -130,14 +130,14 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
         {
             DbTableInfo TableInfo = null;
 
-            if (DbContainer != null)
+            if (DbContainer is not null)
             {
                 var table = DbContainer.GetTable(new TableName(schema, name));
 
                 var _TableInfo = table.GetType().GetProperty("TableInfo",
                     BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.FlattenHierarchy);
 
-                if (_TableInfo != null)
+                if (_TableInfo is not null)
                 {
                     TableInfo = (DbTableInfo)_TableInfo.GetValue(table, BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, null, null);
                 }
@@ -163,7 +163,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
         {
             RestorePoint = new EffortRestorePoint(this);
 
-            if (DbContainer != null)
+            if (DbContainer is not null)
             {
                 var actionContext = new ActionContext(DbContainer);
 
@@ -210,7 +210,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
         /// </summary>
         public void RollbackToRestorePoint(DbContext context)
         {
-            if (RestorePoint == null)
+            if (RestorePoint is null)
             {
                 throw new Exception("You must create a restore point first");
             }
@@ -234,7 +234,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
         /// </summary>
         public void ClearTables(DbContext context)
         {
-            if (DbContainer != null)
+            if (DbContainer is not null)
             {
                 var actionContext = new ActionContext(DbContainer);
 
@@ -252,7 +252,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
                     _restoreIdentityFieldMethod?.Invoke(table, new object[0]);
                 }
 
-                if (context != null)
+                if (context is not null)
                 {
                     var changedEntriesCopy = context.ChangeTracker.Entries().ToList();
                     changedEntriesCopy.ForEach(x => x.State = EntityState.Detached);
@@ -552,7 +552,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Provider
             var parameters = new DbContainerParameters();
             var dataLoaderType = connectionString.DataLoaderType;
 
-            if (dataLoaderType != null)
+            if (dataLoaderType is not null)
             {
                 //// TODO: check parameterless constructor
 

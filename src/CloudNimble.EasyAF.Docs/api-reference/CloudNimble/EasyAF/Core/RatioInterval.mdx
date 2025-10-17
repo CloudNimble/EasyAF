@@ -2,7 +2,7 @@
 title: RatioInterval
 description: "Represents a ratio value that occurs at regular time intervals, enabling conversion between different time periods.             This class combines a base ti..."
 icon: code-branch
-keywords: ['RatioInterval', 'CloudNimble.EasyAF.Core.RatioInterval<T>', 'CloudNimble.EasyAF.Core', 'class', 'CloudNimble.EasyAF.Core.Interval<T>']
+keywords: ['RatioInterval', 'CloudNimble.EasyAF.Core.RatioInterval<T>', 'CloudNimble.EasyAF.Core', 'class', 'CloudNimble.EasyAF.Core.Interval<T>', '# Related APIs', '- API 1', '- API 2']
 ---
 
 ## Definition
@@ -24,6 +24,11 @@ CloudNimble.EasyAF.Core.RatioInterval<T>
 Represents a ratio value that occurs at regular time intervals, enabling conversion between different time periods.
             This class combines a base time interval (from the `Interval`1` class) with a ratio value to calculate 
             total ratio amounts across different time periods.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Usage
+
+Describe how to use `RatioInterval` here.
 
 ## Remarks
 
@@ -50,21 +55,29 @@ Represents a ratio value that occurs at regular time intervals, enabling convers
 
 
 
-## Examples
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Examples
+
+Provide examples of using `RatioInterval` here.
 
 ```csharp
-// Example: 70% conversion rate every 2 weeks
-var conversionInterval = new RatioInterval&lt;double&gt;(0.70, 2, IntervalType.Weeks);
-
-// How many 2-week intervals are there per month?
-decimal intervalsPerMonth = conversionInterval.PerMonth(); // ~2.17 intervals
-
-// What's the total conversion ratio per month?
-decimal totalConversionPerMonth = conversionInterval.RatioPerMonth(); // ~1.52 (0.70 × 2.17)
-
-// Daily breakdown
-decimal totalConversionPerDay = conversionInterval.RatioPerDay(); // ~0.05 (0.70 × 0.071)
+// Example code here
 ```
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Best Practices
+
+Document best practices for `RatioInterval` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Patterns
+
+Document common patterns for `RatioInterval` here.
+
+<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
+# Considerations
+
+Document considerations for `RatioInterval` here.
 
 ## Constructors
 
@@ -449,4 +462,10 @@ The total ratio value per year as a decimal.
 var conversion = new RatioInterval&lt;double&gt;(0.90m, 3, IntervalType.Months);
 decimal conversionsPerYear = conversion.RatioPerYear(1000); // 3600 conversions per year
 ```
+
+## Related APIs
+
+- # Related APIs
+- - API 1
+- - API 2
 

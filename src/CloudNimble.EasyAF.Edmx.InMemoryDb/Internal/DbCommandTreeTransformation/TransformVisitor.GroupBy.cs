@@ -60,7 +60,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
                 {
                     DbFunctionAggregate aggregation = expression.Aggregates[i] as DbFunctionAggregate;
 
-                    if (aggregation == null)
+                    if (aggregation is null)
                     {
                         throw new InvalidOperationException(expression.Aggregates[i].GetType().ToString() + "is not supported");
                     }
@@ -142,7 +142,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.DbCommandTreeTransformatio
                 {
                     DbFunctionAggregate aggregate = expression.Aggregates[i] as DbFunctionAggregate;
 
-                    if (aggregate == null)
+                    if (aggregate is null)
                     {
                         throw new InvalidOperationException(expression.Aggregates[i].GetType().ToString() + "is not supported");
                     }

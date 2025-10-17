@@ -60,7 +60,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.TypeConversion
         {
             var collectionType = type.EdmType as CollectionType;
 
-            if (collectionType == null)
+            if (collectionType is null)
             {
                 throw new ArgumentException("type");
             }
@@ -80,7 +80,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.TypeConversion
 
             if (type.Facets.TryGetValue("FixedLength", false, out facet))
             {
-                if (!facet.IsUnbounded && facet.Value != null)
+                if (!facet.IsUnbounded && facet.Value is not null)
                 {
                     facets.FixedLength = (bool)facet.Value == true;
                 }
@@ -105,7 +105,7 @@ namespace CloudNimble.EasyAF.Edmx.InMemoryDb.Internal.TypeConversion
                 {
                     facets.LimitedLength = false;
                 }
-                else if (facet.Value != null)
+                else if (facet.Value is not null)
                 {
                     facets.MaxLength = (int)facet.Value;
                     facets.LimitedLength = true;
