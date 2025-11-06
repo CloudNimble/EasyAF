@@ -27,7 +27,12 @@
       "Bash(mint dev:*)",
       "Bash(npx mint:*)",
       "mcp__github__get_file_contents",
-      "mcp__Mintlify__SearchMintlify"
+      "mcp__Mintlify__SearchMintlify",
+      "WebFetch(domain:dotnetdocs-dev.mintlify.app)",
+      "Bash(git pull:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": []
   }

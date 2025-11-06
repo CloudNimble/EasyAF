@@ -3,8 +3,10 @@ title: Ensure
 description: "Provides methods for ensuring that method arguments meet specific criteria.             This class provides a consistent way to validate arguments and throw ..."
 icon: bolt
 tag: "STATIC"
-keywords: ['Ensure', 'CloudNimble.EasyAF.Core.Ensure', 'CloudNimble.EasyAF.Core', 'class', 'System.Object', '# Related APIs', '- API 1', '- API 2']
+keywords: ['Ensure', 'CloudNimble.EasyAF.Core.Ensure', 'CloudNimble.EasyAF.Core', 'class', 'System.Object']
 ---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
 
 ## Definition
 
@@ -25,34 +27,17 @@ CloudNimble.EasyAF.Core.Ensure
 Provides methods for ensuring that method arguments meet specific criteria.
             This class provides a consistent way to validate arguments and throw appropriate exceptions.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
-
-Describe how to use `Ensure` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Examples
-
-Provide examples of using `Ensure` here.
+## Examples
 
 ```csharp
-// Example code here
+public void ProcessData(string input, List&lt;string&gt; items)
+{
+    Ensure.ArgumentNotNull(input, nameof(input));
+    Ensure.ArgumentNotNull(items, nameof(items));
+
+    // Process the validated arguments
+}
 ```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Best Practices
-
-Document best practices for `Ensure` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Patterns
-
-Document common patterns for `Ensure` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
-
-Document considerations for `Ensure` here.
 
 ## Methods
 
@@ -101,10 +86,4 @@ public static void ArgumentNotNullOrWhiteSpace(string argument, string argumentN
 | Exception | Description |
 |-----------|-------------|
 | `ArgumentException` | Thrown when *argument* is null or whitespace. |
-
-## Related APIs
-
-- # Related APIs
-- - API 1
-- - API 2
 

@@ -1,0 +1,59 @@
+---
+title: IHttpClientBuilder
+description: "Extension methods for IHttpClientBuilder from Microsoft.Extensions.Http"
+icon: file-brackets-curly
+keywords: ['IHttpClientBuilder', 'Microsoft.Extensions.DependencyInjection.IHttpClientBuilder', 'Microsoft.Extensions.DependencyInjection', 'error']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.Extensions.Http.dll
+
+**Namespace:** Microsoft.Extensions.DependencyInjection
+
+## Syntax
+
+```csharp
+Microsoft.Extensions.DependencyInjection.IHttpClientBuilder
+```
+
+## Summary
+
+This type is defined in Microsoft.Extensions.Http.
+
+## Remarks
+
+See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.ihttpclientbuilder) for more information about the rest of the API.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  AddHttpMessageHandler <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `Microsoft.Extensions.DependencyInjection.EasyAF_Http_IHttpClientBuilderExtensions`</Note>
+
+Given the [HttpHandlerMode](/api-reference/CloudNimble/EasyAF/Core/HttpHandlerMode), adds the specified *THandler* to the beginning or end of the pipeline.
+
+#### Syntax
+
+```csharp
+public static Microsoft.Extensions.DependencyInjection.IHttpClientBuilder AddHttpMessageHandler<THandler>(Microsoft.Extensions.DependencyInjection.IHttpClientBuilder builder, CloudNimble.EasyAF.Core.HttpHandlerMode mode) where THandler : System.Net.Http.DelegatingHandler
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `builder` | `Microsoft.Extensions.DependencyInjection.IHttpClientBuilder` | The [IHttpClientBuilder](/api-reference/Microsoft/Extensions/DependencyInjection/IHttpClientBuilder) instance to extend. |
+| `mode` | `CloudNimble.EasyAF.Core.HttpHandlerMode` | A [HttpHandlerMode](/api-reference/CloudNimble/EasyAF/Core/HttpHandlerMode) specifying whether we are making this handler the first one in the pipeline, or the last. |
+
+#### Returns
+
+Type: `Microsoft.Extensions.DependencyInjection.IHttpClientBuilder`
+The IHttpClientBuilder instance for method chaining.
+
+#### Type Parameters
+
+- `THandler` - The [DelegatingHandler](https://learn.microsoft.com/dotnet/api/system.net.http.delegatinghandler) type to pull from the scoped [ServiceProvider](https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.serviceprovider).
+

@@ -2,8 +2,10 @@
 title: ISortable
 description: "An interface that specifies the implementing Entity can be contains an [Int32](https://learn.microsoft.com/dotnet/api/system.int32) that tracks the order ite..."
 icon: plug
-keywords: ['ISortable', 'CloudNimble.EasyAF.Core.ISortable', 'CloudNimble.EasyAF.Core', 'interface', '# Related APIs', '- API 1', '- API 2']
+keywords: ['ISortable', 'CloudNimble.EasyAF.Core.ISortable', 'CloudNimble.EasyAF.Core', 'interface']
 ---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
 
 ## Definition
 
@@ -21,38 +23,9 @@ CloudNimble.EasyAF.Core.ISortable
 
 An interface that specifies the implementing Entity can be contains an [Int32](https://learn.microsoft.com/dotnet/api/system.int32) that tracks the order items should be displayed in a list.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
-
-Describe how to use `ISortable` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Examples
-
-Provide examples of using `ISortable` here.
-
-```csharp
-// Example code here
-```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Best Practices
-
-Document best practices for `ISortable` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Patterns
-
-Document common patterns for `ISortable` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
-
-Document considerations for `ISortable` here.
-
 ## Properties
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SortOrder
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SortOrder <DocsBadge text="Abstract" variant="warning" />
 
 The order this entity should be displayed in a list.
 
@@ -65,10 +38,4 @@ int SortOrder { get; set; }
 #### Property Value
 
 Type: `int`
-
-## Related APIs
-
-- # Related APIs
-- - API 1
-- - API 2
 

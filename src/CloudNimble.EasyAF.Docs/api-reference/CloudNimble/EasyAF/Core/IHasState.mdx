@@ -2,8 +2,10 @@
 title: IHasState
 description: "An interface that specifes an implementing Entity changes State as part of the SimpleStateMachine."
 icon: plug
-keywords: ['IHasState', 'CloudNimble.EasyAF.Core.IHasState<T>', 'CloudNimble.EasyAF.Core', 'interface', '# Related APIs', '- API 1', '- API 2']
+keywords: ['IHasState', 'CloudNimble.EasyAF.Core.IHasState<T>', 'CloudNimble.EasyAF.Core', 'interface', 'CloudNimble.EasyAF.Core.IIdentifiable<System.Guid>']
 ---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
 
 ## Definition
 
@@ -21,42 +23,13 @@ CloudNimble.EasyAF.Core.IHasState<T>
 
 An interface that specifes an implementing Entity changes State as part of the SimpleStateMachine.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
-
-Describe how to use `IHasState` here.
-
 ## Type Parameters
 
 - `T` - The type implementing [IDbStateEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStateEnum) that represents States for this Entity.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Examples
-
-Provide examples of using `IHasState` here.
-
-```csharp
-// Example code here
-```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Best Practices
-
-Document best practices for `IHasState` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Patterns
-
-Document common patterns for `IHasState` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
-
-Document considerations for `IHasState` here.
-
 ## Properties
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  StateType
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  StateType <DocsBadge text="Abstract" variant="warning" />
 
 The populated instance of [IDbStateEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStateEnum).
 
@@ -70,7 +43,7 @@ T StateType { get; set; }
 
 Type: `T`
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  StateTypeId
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  StateTypeId <DocsBadge text="Abstract" variant="warning" />
 
 The unique identifier for the SimpleStateMachine [IDbStateEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStateEnum).
 
@@ -86,7 +59,5 @@ Type: `System.Guid`
 
 ## Related APIs
 
-- # Related APIs
-- - API 1
-- - API 2
+- CloudNimble.EasyAF.Core.IIdentifiable&lt;System.Guid&gt;
 

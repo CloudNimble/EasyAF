@@ -1,0 +1,58 @@
+---
+title: Guid
+description: "Extension methods for Guid from System.Runtime"
+icon: file-brackets-curly
+keywords: ['Guid', 'System.Guid', 'System', 'error']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** System.Runtime.dll
+
+**Namespace:** System
+
+## Syntax
+
+```csharp
+System.Guid
+```
+
+## Summary
+
+This type is defined in System.Runtime.
+
+## Remarks
+
+See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/system.guid) for more information about the rest of the API.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToComparableString <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.EasyAF_GuidExtensions`</Note>
+
+A little syntactical sugar to make sure GUIDs are outputted to a format that ensures accurate string comparisons.
+
+#### Syntax
+
+```csharp
+public static string ToComparableString(System.Guid instance)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `instance` | `System.Guid` | The Guid to convert. |
+
+#### Returns
+
+Type: `string`
+An upper-case string representing the GUID instance to be compared.
+
+#### Remarks
+
+See https://msdn.microsoft.com/en-us/library/bb386042.aspx for more details.
+

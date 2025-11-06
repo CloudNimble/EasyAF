@@ -2,8 +2,10 @@
 title: EasyObservableObject
 description: "A base class for objects to implement [INotifyPropertyChanged](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged).         ..."
 icon: file-brackets-curly
-keywords: ['EasyObservableObject', 'CloudNimble.EasyAF.Core.EasyObservableObject', 'CloudNimble.EasyAF.Core', 'class', 'System.Object', '# Related APIs', '- API 1', '- API 2']
+keywords: ['EasyObservableObject', 'CloudNimble.EasyAF.Core.EasyObservableObject', 'CloudNimble.EasyAF.Core', 'class', 'System.Object', 'System.ComponentModel.INotifyPropertyChanged', 'System.IDisposable']
 ---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
 
 ## Definition
 
@@ -24,34 +26,27 @@ CloudNimble.EasyAF.Core.EasyObservableObject
 A base class for objects to implement [INotifyPropertyChanged](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged).
             Provides strongly-typed property change notifications and automatic property setting with change detection.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
-
-Describe how to use `EasyObservableObject` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Examples
-
-Provide examples of using `EasyObservableObject` here.
+## Examples
 
 ```csharp
-// Example code here
+public class Person : EasyObservableObject
+{
+    private string _name;
+    private int _age;
+
+    public string Name
+    {
+        get =&gt; _name;
+        set =&gt; Set(nameof(Name), ref _name, value);
+    }
+
+    public int Age
+    {
+        get =&gt; _age;
+        set =&gt; Set(() =&gt; Age, ref _age, value);
+    }
+}
 ```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Best Practices
-
-Document best practices for `EasyObservableObject` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Patterns
-
-Document common patterns for `EasyObservableObject` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
-
-Document considerations for `EasyObservableObject` here.
 
 ## Constructors
 
@@ -63,6 +58,16 @@ Initializes a new instance of the [EasyObservableObject](/api-reference/CloudNim
 
 ```csharp
 public EasyObservableObject()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
 ```
 
 ## Methods
@@ -102,6 +107,124 @@ Performs application-defined tasks associated with freeing, releasing, or resett
 public void Dispose()
 ```
 
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
 ## Events
 
 ### <Icon icon="bell" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PropertyChanged
@@ -116,7 +239,6 @@ public System.ComponentModel.PropertyChangedEventHandler PropertyChanged
 
 ## Related APIs
 
-- # Related APIs
-- - API 1
-- - API 2
+- System.ComponentModel.INotifyPropertyChanged
+- System.IDisposable
 

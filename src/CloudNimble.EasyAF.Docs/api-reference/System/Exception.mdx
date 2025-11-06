@@ -1,0 +1,55 @@
+---
+title: Exception
+description: "Extension methods for Exception from System.Runtime"
+icon: file-brackets-curly
+keywords: ['Exception', 'System.Exception', 'System', 'error']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** System.Runtime.dll
+
+**Namespace:** System
+
+## Syntax
+
+```csharp
+System.Exception
+```
+
+## Summary
+
+This type is defined in System.Runtime.
+
+## Remarks
+
+See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/system.exception) for more information about the rest of the API.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  TraceDemystifiedException <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.EasyAF_ExceptionExtensions`</Note>
+
+Demystifies the Exception and writes it to [Object[])](https://learn.microsoft.com/dotnet/api/system.diagnostics.trace.traceerror(system.string,system.object[])).
+
+#### Syntax
+
+```csharp
+public static System.Exception TraceDemystifiedException(System.Exception ex, string logPrefix = "")
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `ex` | `System.Exception` | The exception instance to manipulate. |
+| `logPrefix` | `string` | A string that will be prepended to the log entry. Defaults to the calling function name. |
+
+#### Returns
+
+Type: `System.Exception`
+The Demystified exception.
+

@@ -2,8 +2,10 @@
 title: ManagerBase
 description: "Represents the base class for all EasyAF business logic managers. Provides access to a database context             and message publishing capabilities for i..."
 icon: code-branch
-keywords: ['ManagerBase', 'CloudNimble.EasyAF.Business.ManagerBase<TContext>', 'CloudNimble.EasyAF.Business', 'class', 'System.Object', '# Related APIs', '- API 1', '- API 2']
+keywords: ['ManagerBase', 'CloudNimble.EasyAF.Business.ManagerBase<TContext>', 'CloudNimble.EasyAF.Business', 'class', 'System.Object']
 ---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
 
 ## Definition
 
@@ -24,11 +26,6 @@ CloudNimble.EasyAF.Business.ManagerBase<TContext>
 Represents the base class for all EasyAF business logic managers. Provides access to a database context
             and message publishing capabilities for implementing business operations and workflows.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
-
-Describe how to use `ManagerBase` here.
-
 ## Remarks
 
 This base class is designed to encapsulate business logic that requires database access and messaging capabilities.
@@ -39,29 +36,25 @@ This base class is designed to encapsulate business logic that requires database
 
 - `TContext` - The type of the database context (DbContext) used for data operations.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Examples
-
-Provide examples of using `ManagerBase` here.
+## Examples
 
 ```csharp
-// Example code here
+public class UserRegistrationManager : ManagerBase&lt;MyDbContext&gt;
+{
+    public UserRegistrationManager(MyDbContext context, IMessagePublisher publisher)
+        : base(context, publisher) { }
+
+    public async Task&lt;User&gt; RegisterUserAsync(string email, string password)
+    {
+        var user = new User { Email = email, Password = HashPassword(password) };
+        DataContext.Users.Add(user);
+        await DataContext.SaveChangesAsync();
+
+        await MessagePublisher.PublishAsync(new UserRegisteredEvent { UserId = user.Id });
+        return user;
+    }
+}
 ```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Best Practices
-
-Document best practices for `ManagerBase` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Patterns
-
-Document common patterns for `ManagerBase` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
-
-Document considerations for `ManagerBase` here.
 
 ## Constructors
 
@@ -81,6 +74,16 @@ public ManagerBase(TContext dataContext, CloudNimble.SimpleMessageBus.Publish.IM
 |------|------|-------------|
 | `dataContext` | `TContext` | The database context instance for data operations. Should be injected by the DI container. |
 | `messagePublisher` | `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher` | The message publisher instance for publishing events. Should be injected by the DI container. |
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
 
 ## Properties
 
@@ -114,9 +117,123 @@ public CloudNimble.SimpleMessageBus.Publish.IMessagePublisher MessagePublisher {
 
 Type: `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher`
 
-## Related APIs
+## Methods
 
-- # Related APIs
-- - API 1
-- - API 2
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
 

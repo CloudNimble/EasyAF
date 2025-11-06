@@ -2,8 +2,10 @@
 title: XmlTypeParameterElement
 description: "Represents a type parameter XML documentation element."
 icon: file-brackets-curly
-keywords: ['XmlTypeParameterElement', 'CloudNimble.EasyAF.XmlDocumentation.XmlTypeParameterElement', 'CloudNimble.EasyAF.XmlDocumentation', 'class', 'CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement', '# Related APIs', '- API 1', '- API 2']
+keywords: ['XmlTypeParameterElement', 'CloudNimble.EasyAF.XmlDocumentation.XmlTypeParameterElement', 'CloudNimble.EasyAF.XmlDocumentation', 'class', 'CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement']
 ---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
 
 ## Definition
 
@@ -23,39 +25,10 @@ CloudNimble.EasyAF.XmlDocumentation.XmlTypeParameterElement
 
 Represents a type parameter XML documentation element.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
-
-Describe how to use `XmlTypeParameterElement` here.
-
 ## Remarks
 
 The typeparam element describes a generic type parameter.
             It includes the parameter name and description of its constraints and usage.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Examples
-
-Provide examples of using `XmlTypeParameterElement` here.
-
-```csharp
-// Example code here
-```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Best Practices
-
-Document best practices for `XmlTypeParameterElement` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Patterns
-
-Document common patterns for `XmlTypeParameterElement` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
-
-Document considerations for `XmlTypeParameterElement` here.
 
 ## Constructors
 
@@ -85,7 +58,63 @@ public XmlTypeParameterElement(System.Xml.Linq.XElement element)
 |------|------|-------------|
 | `element` | `System.Xml.Linq.XElement` | The XML element to parse. |
 
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement`</Note>
+
+Initializes a new instance of the XmlDocumentationElement class.
+
+#### Syntax
+
+```csharp
+protected XmlDocumentationElement()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement`</Note>
+
+Initializes a new instance of the XmlDocumentationElement class with XML content.
+
+#### Syntax
+
+```csharp
+protected XmlDocumentationElement(System.Xml.Linq.XElement element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Xml.Linq.XElement` | The XML element to parse. |
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
 ## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  InnerElements <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement`</Note>
+
+Gets or sets the inner XML elements for nested content.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement> InnerElements { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement>`
 
 ### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Name
 
@@ -101,9 +130,186 @@ public string Name { get; set; }
 
 Type: `string`
 
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RawXml <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement`</Note>
+
+Gets or sets the raw XML content of the element.
+
+#### Syntax
+
+```csharp
+public string RawXml { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Text <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement`</Note>
+
+Gets or sets the parsed text content of the element.
+
+#### Syntax
+
+```csharp
+public string Text { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
 ## Methods
 
-### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToMdx
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  CreateDocumentationElement <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement`</Note>
+
+Creates the appropriate documentation element based on the XML element name.
+
+#### Syntax
+
+```csharp
+protected virtual CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement CreateDocumentationElement(System.Xml.Linq.XElement element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Xml.Linq.XElement` | The XML element to convert. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement`
+The appropriate documentation element, or null if not supported.
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ParseInnerElements <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement`</Note>
+
+Parses inner XML elements recursively.
+
+#### Syntax
+
+```csharp
+protected virtual void ParseInnerElements(System.Xml.Linq.XElement element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Xml.Linq.XElement` | The parent XML element to parse. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToMdx <DocsBadge text="Override" variant="info" />
 
 Converts this type parameter element to MDX format.
 
@@ -118,9 +324,34 @@ public override string ToMdx()
 Type: `string`
 The MDX representation of this type parameter.
 
-## Related APIs
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToMdx <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Abstract" variant="warning" />
 
-- # Related APIs
-- - API 1
-- - API 2
+<Note>Inherited from `CloudNimble.EasyAF.XmlDocumentation.XmlDocumentationElement`</Note>
+
+Converts this element to MDX format.
+
+#### Syntax
+
+```csharp
+public abstract string ToMdx()
+```
+
+#### Returns
+
+Type: `string`
+The MDX representation of this element.
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
 

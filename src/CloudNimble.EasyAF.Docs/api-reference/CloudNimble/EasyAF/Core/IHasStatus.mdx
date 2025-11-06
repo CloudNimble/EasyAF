@@ -2,8 +2,10 @@
 title: IHasStatus
 description: "An interface that specifes an implementing Entity contains a child Entity of T that implements [IDbStatusEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStat..."
 icon: plug
-keywords: ['IHasStatus', 'CloudNimble.EasyAF.Core.IHasStatus<T>', 'CloudNimble.EasyAF.Core', 'interface', '# Related APIs', '- API 1', '- API 2']
+keywords: ['IHasStatus', 'CloudNimble.EasyAF.Core.IHasStatus<T>', 'CloudNimble.EasyAF.Core', 'interface', 'CloudNimble.EasyAF.Core.IIdentifiable<System.Guid>']
 ---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
 
 ## Definition
 
@@ -22,42 +24,13 @@ CloudNimble.EasyAF.Core.IHasStatus<T>
 An interface that specifes an implementing Entity contains a child Entity of T that implements [IDbStatusEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStatusEnum) and
             represents the Entity's current status.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
-
-Describe how to use `IHasStatus` here.
-
 ## Type Parameters
 
 - `T` - The type implementing [IDbStatusEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStatusEnum).
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Examples
-
-Provide examples of using `IHasStatus` here.
-
-```csharp
-// Example code here
-```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Best Practices
-
-Document best practices for `IHasStatus` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Patterns
-
-Document common patterns for `IHasStatus` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
-
-Document considerations for `IHasStatus` here.
-
 ## Properties
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  StatusType
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  StatusType <DocsBadge text="Abstract" variant="warning" />
 
 The populated instance of [IDbStatusEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStatusEnum).
 
@@ -71,7 +44,7 @@ T StatusType { get; set; }
 
 Type: `T`
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  StatusTypeId
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  StatusTypeId <DocsBadge text="Abstract" variant="warning" />
 
 The unique identifier for the SimpleStateMachine [IDbStatusEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStatusEnum).
 
@@ -87,7 +60,5 @@ Type: `System.Guid`
 
 ## Related APIs
 
-- # Related APIs
-- - API 1
-- - API 2
+- CloudNimble.EasyAF.Core.IIdentifiable&lt;System.Guid&gt;
 

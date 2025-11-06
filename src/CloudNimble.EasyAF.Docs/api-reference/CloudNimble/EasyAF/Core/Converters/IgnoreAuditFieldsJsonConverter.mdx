@@ -2,8 +2,10 @@
 title: IgnoreAuditFieldsJsonConverter
 description: "A [JsonConverter`1](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonconverter-1) that ignores certain properties on a [DbObservable..."
 icon: code-branch
-keywords: ['IgnoreAuditFieldsJsonConverter', 'CloudNimble.EasyAF.Core.Converters.IgnoreAuditFieldsJsonConverter<T>', 'CloudNimble.EasyAF.Core.Converters', 'class', 'System.Text.Json.Serialization.JsonConverter<T>', '# Related APIs', '- API 1', '- API 2']
+keywords: ['IgnoreAuditFieldsJsonConverter', 'CloudNimble.EasyAF.Core.Converters.IgnoreAuditFieldsJsonConverter<T>', 'CloudNimble.EasyAF.Core.Converters', 'class', 'System.Text.Json.Serialization.JsonConverter<T>']
 ---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
 
 ## Definition
 
@@ -23,38 +25,9 @@ CloudNimble.EasyAF.Core.Converters.IgnoreAuditFieldsJsonConverter<T>
 
 A [JsonConverter`1](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonconverter-1) that ignores certain properties on a [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject).
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
-
-Describe how to use `IgnoreAuditFieldsJsonConverter` here.
-
 ## Remarks
 
 This converter also honors [JsonIgnoreAttribute](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonignoreattribute) decorations on properties.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Examples
-
-Provide examples of using `IgnoreAuditFieldsJsonConverter` here.
-
-```csharp
-// Example code here
-```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Best Practices
-
-Document best practices for `IgnoreAuditFieldsJsonConverter` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Patterns
-
-Document common patterns for `IgnoreAuditFieldsJsonConverter` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
-
-Document considerations for `IgnoreAuditFieldsJsonConverter` here.
 
 ## Constructors
 
@@ -74,7 +47,7 @@ public IgnoreAuditFieldsJsonConverter(System.Text.Json.JsonSerializerOptions opt
 
 ## Properties
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  HandleNull
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  HandleNull <DocsBadge text="Override" variant="info" />
 
 #### Syntax
 
@@ -88,7 +61,7 @@ Type: `bool`
 
 ## Methods
 
-### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Read
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Read <DocsBadge text="Override" variant="info" />
 
 #### Syntax
 
@@ -108,7 +81,7 @@ public override T Read(ref System.Text.Json.Utf8JsonReader reader, System.Type t
 
 Type: `T`
 
-### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Write
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Write <DocsBadge text="Override" variant="info" />
 
 #### Syntax
 
@@ -123,10 +96,4 @@ public override void Write(System.Text.Json.Utf8JsonWriter writer, T value, Syst
 | `writer` | `System.Text.Json.Utf8JsonWriter` | - |
 | `value` | `T` | - |
 | `options` | `System.Text.Json.JsonSerializerOptions` | - |
-
-## Related APIs
-
-- # Related APIs
-- - API 1
-- - API 2
 

@@ -1,0 +1,156 @@
+---
+title: DateTime
+description: "Extension methods for DateTime from System.Runtime"
+icon: file-brackets-curly
+keywords: ['DateTime', 'System.DateTime', 'System', 'error']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** System.Runtime.dll
+
+**Namespace:** System
+
+## Syntax
+
+```csharp
+System.DateTime
+```
+
+## Summary
+
+This type is defined in System.Runtime.
+
+## Remarks
+
+See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/system.datetime) for more information about the rest of the API.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DaysInMonth <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.EasyAF_DateTimeExtensions`</Note>
+
+#### Syntax
+
+```csharp
+public static int DaysInMonth(System.DateTime value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `System.DateTime` | - |
+
+#### Returns
+
+Type: `int`
+
+#### Remarks
+
+https://stackoverflow.com/questions/24245523/getting-the-first-and-last-day-of-a-month-using-a-given-datetime-object
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  FirstDayOfMonth <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.EasyAF_DateTimeExtensions`</Note>
+
+#### Syntax
+
+```csharp
+public static System.DateTime FirstDayOfMonth(System.DateTime value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `System.DateTime` | - |
+
+#### Returns
+
+Type: `System.DateTime`
+
+#### Remarks
+
+https://stackoverflow.com/questions/24245523/getting-the-first-and-last-day-of-a-month-using-a-given-datetime-object
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetQuarter <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.EasyAF_DateTimeExtensions`</Note>
+
+Calculates the quarter for the given [DateTime](/api-reference/System/DateTime), assuming a calendar-based fiscal year.
+
+#### Syntax
+
+```csharp
+public static int GetQuarter(System.DateTime date)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `date` | `System.DateTime` | The [DateTime](/api-reference/System/DateTime) to use in the calculation. |
+
+#### Returns
+
+Type: `int`
+
+#### Remarks
+
+From https://stackoverflow.com/questions/8698303/how-do-i-discover-the-quarter-of-a-given-date
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetQuarter <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.EasyAF_DateTimeExtensions`</Note>
+
+Calculates the quarter for the given [DateTime](/api-reference/System/DateTime), assuming a the provided fiscal year begin date.
+
+#### Syntax
+
+```csharp
+public static int GetQuarter(System.DateTime date, System.DateTime fiscalYearStart)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `date` | `System.DateTime` | The [DateTime](/api-reference/System/DateTime) to use in the calculation. |
+| `fiscalYearStart` | `System.DateTime` | The [DateTime](/api-reference/System/DateTime) representing the start day of the fiscal year to use in calculation. |
+
+#### Returns
+
+Type: `int`
+
+#### Remarks
+
+From https://stackoverflow.com/questions/8698303/how-do-i-discover-the-quarter-of-a-given-date
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  LastDayOfMonth <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.EasyAF_DateTimeExtensions`</Note>
+
+#### Syntax
+
+```csharp
+public static System.DateTime LastDayOfMonth(System.DateTime value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `System.DateTime` | - |
+
+#### Returns
+
+Type: `System.DateTime`
+
+#### Remarks
+
+https://stackoverflow.com/questions/24245523/getting-the-first-and-last-day-of-a-month-using-a-given-datetime-object
+

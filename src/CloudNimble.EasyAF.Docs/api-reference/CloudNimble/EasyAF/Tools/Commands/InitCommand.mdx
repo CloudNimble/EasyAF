@@ -5,6 +5,8 @@ icon: file-brackets-curly
 keywords: ['InitCommand', 'CloudNimble.EasyAF.Tools.Commands.InitCommand', 'CloudNimble.EasyAF.Tools.Commands', 'class', 'CloudNimble.EasyAF.Tools.Commands.EasyAFBaseCommand']
 ---
 
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
 ## Definition
 
 **Assembly:** CloudNimble.EasyAF.Tools.dll
@@ -40,6 +42,26 @@ public InitCommand(CloudNimble.EasyAF.EFCoreToEdmx.EdmxConfigManager configManag
 | Name | Type | Description |
 |------|------|-------------|
 | `configManager` | `CloudNimble.EasyAF.EFCoreToEdmx.EdmxConfigManager` | The configuration manager service. |
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Tools.Commands.EasyAFBaseCommand`</Note>
+
+#### Syntax
+
+```csharp
+protected EasyAFBaseCommand()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
 
 ## Properties
 
@@ -199,6 +221,272 @@ Type: `string[]`
 
 ## Methods
 
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  CheckMSBuildRegistered <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Tools.Commands.EasyAFBaseCommand`</Note>
+
+Ensures MSBuild is registered with the latest available version.
+
+#### Syntax
+
+```csharp
+protected static void CheckMSBuildRegistered()
+```
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ConfigureDirectoryBuildProps <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Tools.Commands.EasyAFBaseCommand`</Note>
+
+Configures Directory.Build.props with EasyAF namespace, UserSecretsId, and analyzer references using MSBuildProjectManager.
+
+#### Syntax
+
+```csharp
+protected static void ConfigureDirectoryBuildProps(string commonNamespace, string userSecretsId, string[] projectFiles)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `commonNamespace` | `string` | The common namespace to set. |
+| `userSecretsId` | `string` | The UserSecretsId to set. |
+| `projectFiles` | `string[]` | Array of project file paths. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ConfigureProjectTypes <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Tools.Commands.EasyAFBaseCommand`</Note>
+
+Discovers and configures project types and namespace for all projects in the current directory and subdirectories.
+
+#### Syntax
+
+```csharp
+protected static void ConfigureProjectTypes(string userSecretsId)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `userSecretsId` | `string` | The UserSecretsId to set in Directory.Build.props. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DetectCommonNamespace <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Tools.Commands.EasyAFBaseCommand`</Note>
+
+Detects the common namespace from existing projects.
+
+#### Syntax
+
+```csharp
+protected static string DetectCommonNamespace(string[] projectFiles)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `projectFiles` | `string[]` | Array of project file paths. |
+
+#### Returns
+
+Type: `string`
+The detected common namespace, or null if none found.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DetermineProjectType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Tools.Commands.EasyAFBaseCommand`</Note>
+
+Determines the EasyAFProjectType based on the project file name and content.
+
+#### Syntax
+
+```csharp
+protected static string DetermineProjectType(string projectFilePath)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `projectFilePath` | `string` | The path to the project file. |
+
+#### Returns
+
+Type: `string`
+The determined project type, or null if no supported type is detected.
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ExtractUserSecretsId <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Tools.Commands.EasyAFBaseCommand`</Note>
+
+Extracts the UserSecretsId from a project file using MSBuild evaluation.
+            This will properly evaluate the project with all imports including Directory.Build.props.
+
+#### Syntax
+
+```csharp
+protected static string ExtractUserSecretsId(string projectFilePath)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `projectFilePath` | `string` | The path to the project file. |
+
+#### Returns
+
+Type: `string`
+The UserSecretsId if found, otherwise null.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ExtractUserSecretsIdFromDataProject <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Tools.Commands.EasyAFBaseCommand`</Note>
+
+Extracts the UserSecretsId from the data project folder.
+
+#### Syntax
+
+```csharp
+protected static string ExtractUserSecretsIdFromDataProject(string dataFolder)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `dataFolder` | `string` | The data project folder path. |
+
+#### Returns
+
+Type: `string`
+The UserSecretsId if found, otherwise null.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ExtractUserSecretsIdFromDirectoryBuildProps <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Tools.Commands.EasyAFBaseCommand`</Note>
+
+Extracts the UserSecretsId from Directory.Build.props in the current directory.
+
+#### Syntax
+
+```csharp
+protected static string ExtractUserSecretsIdFromDirectoryBuildProps()
+```
+
+#### Returns
+
+Type: `string`
+The UserSecretsId if found, otherwise null.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  FindCommonPrefix <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Tools.Commands.EasyAFBaseCommand`</Note>
+
+Finds the common prefix among a list of strings.
+
+#### Syntax
+
+```csharp
+protected static string FindCommonPrefix(System.Collections.Generic.List<string> strings)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `strings` | `System.Collections.Generic.List<string>` | The list of strings to find common prefix for. |
+
+#### Returns
+
+Type: `string`
+The common prefix.
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
 ### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnExecuteAsync
 
 Executes the init command.
@@ -213,4 +501,83 @@ public System.Threading.Tasks.Task<int> OnExecuteAsync()
 
 Type: `System.Threading.Tasks.Task<int>`
 Exit code.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SetProjectType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Tools.Commands.EasyAFBaseCommand`</Note>
+
+Adds or updates the EasyAFProjectType property in a project file using MSBuildProjectManager.
+
+#### Syntax
+
+```csharp
+protected static void SetProjectType(string projectFilePath, string projectType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `projectFilePath` | `string` | The path to the project file. |
+| `projectType` | `string` | The project type to set. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SetUserSecretAsync <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Tools.Commands.EasyAFBaseCommand`</Note>
+
+Sets a user secret value using the official dotnet user-secrets CLI tool.
+
+#### Syntax
+
+```csharp
+protected static System.Threading.Tasks.Task SetUserSecretAsync(string userSecretsId, string key, string value, string projectPath)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `userSecretsId` | `string` | The user secrets ID. |
+| `key` | `string` | The secret key. |
+| `value` | `string` | The secret value. |
+| `projectPath` | `string` | The project directory path. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
 

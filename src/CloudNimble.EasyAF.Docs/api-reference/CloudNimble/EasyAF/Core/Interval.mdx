@@ -2,8 +2,10 @@
 title: Interval
 description: "Describes an interval of time to be used in time-based calculations.             Provides methods to calculate rates and frequencies based on the interval va..."
 icon: code-branch
-keywords: ['Interval', 'CloudNimble.EasyAF.Core.Interval<T>', 'CloudNimble.EasyAF.Core', 'class', 'System.Object', '# Related APIs', '- API 1', '- API 2']
+keywords: ['Interval', 'CloudNimble.EasyAF.Core.Interval<T>', 'CloudNimble.EasyAF.Core', 'class', 'System.Object']
 ---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
 
 ## Definition
 
@@ -24,38 +26,22 @@ CloudNimble.EasyAF.Core.Interval<T>
 Describes an interval of time to be used in time-based calculations.
             Provides methods to calculate rates and frequencies based on the interval value and type.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
-
-Describe how to use `Interval` here.
-
 ## Type Parameters
 
 - `T` - The data type for the interval value. Must implement [IComparable`1](https://learn.microsoft.com/dotnet/api/system.icomparable-1) and [IConvertible](https://learn.microsoft.com/dotnet/api/system.iconvertible).
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Examples
-
-Provide examples of using `Interval` here.
+## Examples
 
 ```csharp
-// Example code here
+// Create an interval representing something that happens every 3 hours
+var interval = new Interval&lt;int&gt;(3, IntervalType.Hours);
+
+// Calculate how many times per day this would occur
+decimal timesPerDay = interval.PerDay(); // Returns 8.0
+
+// Calculate how many minutes between occurrences
+decimal minutesBetween = interval.PerMinute(); // Returns 0.0556 (1/18)
 ```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Best Practices
-
-Document best practices for `Interval` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Patterns
-
-Document common patterns for `Interval` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
-
-Document considerations for `Interval` here.
 
 ## Constructors
 
@@ -85,6 +71,16 @@ public Interval(T value, CloudNimble.EasyAF.Core.IntervalType type)
 |------|------|-------------|
 | `value` | `T` | The duration of the interval. |
 | `type` | `CloudNimble.EasyAF.Core.IntervalType` | The base unit that describes what the quantity of this Interval references. |
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
 
 ## Properties
 
@@ -118,7 +114,90 @@ Type: `T`
 
 ## Methods
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerDay
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerDay <DocsBadge text="Virtual" variant="warning" />
 
 Given this `Interval`1` instance, calculates how many occurrences will happen per day.
 
@@ -139,7 +218,7 @@ The number of occurrences per day as a decimal value.
 |-----------|-------------|
 | `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerDay
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerDay <DocsBadge text="Virtual" variant="warning" />
 
 Given this `Interval`1` instance and a quantity, calculates the total output per day.
 
@@ -174,7 +253,7 @@ var production = new Interval&lt;double&gt;(1.5, IntervalType.Hours);
 decimal totalPerDay = production.PerDay(100); // 1600 widgets per day (16 * 100)
 ```
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerHour
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerHour <DocsBadge text="Virtual" variant="warning" />
 
 Given this `Interval`1` instance, calculates how many occurrences will happen per hour.
 
@@ -195,7 +274,7 @@ The number of occurrences per hour as a decimal value.
 |-----------|-------------|
 | `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerHour
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerHour <DocsBadge text="Virtual" variant="warning" />
 
 Given this `Interval`1` instance and a quantity, calculates the total output per hour.
 
@@ -230,7 +309,7 @@ var production = new Interval&lt;double&gt;(1.5, IntervalType.Hours);
 decimal totalPerHour = production.PerHour(100); // 66.67 widgets per hour (1/1.5 * 100)
 ```
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerMinute
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerMinute <DocsBadge text="Virtual" variant="warning" />
 
 Given this `Interval`1` instance, calculates how many occurrences will happen per minute.
 
@@ -255,7 +334,7 @@ The number of occurrences per minute as a decimal value.
 
 If you need this as a whole number, wrap the result in [Decimal)](https://learn.microsoft.com/dotnet/api/system.math.floor(system.decimal)).
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerMinute
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerMinute <DocsBadge text="Virtual" variant="warning" />
 
 Given this `Interval`1` instance and a quantity, calculates the total output per minute.
 
@@ -290,7 +369,7 @@ var production = new Interval&lt;int&gt;(90, IntervalType.Minutes);
 decimal totalPerMinute = production.PerMinute(100); // 1.11 widgets per minute (1/90 * 100)
 ```
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerMonth
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerMonth <DocsBadge text="Virtual" variant="warning" />
 
 Given this `Interval`1` instance, calculates how many occurrences will happen per month.
 
@@ -311,7 +390,7 @@ The number of occurrences per month as a decimal value.
 |-----------|-------------|
 | `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerMonth
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerMonth <DocsBadge text="Virtual" variant="warning" />
 
 Given this `Interval`1` instance and a quantity, calculates the total output per month.
 
@@ -346,7 +425,7 @@ var production = new Interval&lt;int&gt;(3, IntervalType.Days);
 decimal totalPerMonth = production.PerMonth(200); // 2000 widgets per month (10 * 200)
 ```
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerWeek
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerWeek <DocsBadge text="Virtual" variant="warning" />
 
 Given this `Interval`1` instance, calculates how many occurrences will happen per week.
 
@@ -367,7 +446,7 @@ The number of occurrences per week as a decimal value.
 |-----------|-------------|
 | `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerWeek
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerWeek <DocsBadge text="Virtual" variant="warning" />
 
 Given this `Interval`1` instance and a quantity, calculates the total output per week.
 
@@ -402,7 +481,7 @@ var production = new Interval&lt;int&gt;(2, IntervalType.Days);
 decimal totalPerWeek = production.PerWeek(50); // 175 widgets per week (3.5 * 50)
 ```
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerYear
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerYear <DocsBadge text="Virtual" variant="warning" />
 
 Given this `Interval`1` instance, calculates how many occurrences will happen per year.
 
@@ -423,7 +502,7 @@ The number of occurrences per year as a decimal value.
 |-----------|-------------|
 | `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerYear
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PerYear <DocsBadge text="Virtual" variant="warning" />
 
 Given this `Interval`1` instance and a quantity, calculates the total output per year.
 
@@ -458,7 +537,28 @@ var production = new Interval&lt;int&gt;(1, IntervalType.Weeks);
 decimal totalPerYear = production.PerYear(500); // 26071 widgets per year (52.14 * 500)
 ```
 
-### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToString
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
 
 #### Syntax
 
@@ -470,9 +570,17 @@ public override string ToString()
 
 Type: `string`
 
-## Related APIs
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
-- # Related APIs
-- - API 1
-- - API 2
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
 

@@ -2,8 +2,10 @@
 title: AssemblyXmlDocumentation
 description: "Represents the root XML documentation structure for a .NET assembly."
 icon: file-brackets-curly
-keywords: ['AssemblyXmlDocumentation', 'CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation', 'CloudNimble.EasyAF.XmlDocumentation', 'class', 'System.Object', '# Related APIs', '- API 1', '- API 2']
+keywords: ['AssemblyXmlDocumentation', 'CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation', 'CloudNimble.EasyAF.XmlDocumentation', 'class', 'System.Object']
 ---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
 
 ## Definition
 
@@ -23,40 +25,11 @@ CloudNimble.EasyAF.XmlDocumentation.AssemblyXmlDocumentation
 
 Represents the root XML documentation structure for a .NET assembly.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
-
-Describe how to use `AssemblyXmlDocumentation` here.
-
 ## Remarks
 
 This class parses and contains all the XML documentation for a single assembly,
             including all types, members, and their associated documentation elements.
             It provides methods to access and filter documentation by various criteria.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Examples
-
-Provide examples of using `AssemblyXmlDocumentation` here.
-
-```csharp
-// Example code here
-```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Best Practices
-
-Document best practices for `AssemblyXmlDocumentation` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Patterns
-
-Document common patterns for `AssemblyXmlDocumentation` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
-
-Document considerations for `AssemblyXmlDocumentation` here.
 
 ## Constructors
 
@@ -85,6 +58,16 @@ public AssemblyXmlDocumentation(System.Xml.Linq.XDocument xmlDocument)
 | Name | Type | Description |
 |------|------|-------------|
 | `xmlDocument` | `System.Xml.Linq.XDocument` | The XML documentation to parse. |
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
 
 ## Properties
 
@@ -188,6 +171,61 @@ Type: `System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocum
 
 ## Methods
 
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
 ### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetMembersByType
 
 Gets all members belonging to a specific type.
@@ -224,6 +262,20 @@ public System.Collections.Generic.List<string> GetNamespaces()
 Type: `System.Collections.Generic.List<string>`
 A list of unique namespace names.
 
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
 ### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetTypesByNamespace
 
 Gets all types within a specific namespace.
@@ -245,9 +297,52 @@ public System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocum
 Type: `System.Collections.Generic.Dictionary<string, CloudNimble.EasyAF.XmlDocumentation.XmlMember>`
 A dictionary of types in the specified namespace.
 
-## Related APIs
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
 
-- # Related APIs
-- - API 1
-- - API 2
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
 

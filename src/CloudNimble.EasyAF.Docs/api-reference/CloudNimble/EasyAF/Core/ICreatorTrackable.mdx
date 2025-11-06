@@ -2,8 +2,10 @@
 title: ICreatorTrackable
 description: "An interface that implements the CloudNimble common pattern for tracking who created an Entity."
 icon: plug
-keywords: ['ICreatorTrackable', 'CloudNimble.EasyAF.Core.ICreatorTrackable<T>', 'CloudNimble.EasyAF.Core', 'interface', '# Related APIs', '- API 1', '- API 2']
+keywords: ['ICreatorTrackable', 'CloudNimble.EasyAF.Core.ICreatorTrackable<T>', 'CloudNimble.EasyAF.Core', 'interface']
 ---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
 
 ## Definition
 
@@ -21,42 +23,13 @@ CloudNimble.EasyAF.Core.ICreatorTrackable<T>
 
 An interface that implements the CloudNimble common pattern for tracking who created an Entity.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
-
-Describe how to use `ICreatorTrackable` here.
-
 ## Type Parameters
 
 - `T` - The type for the identifier.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Examples
-
-Provide examples of using `ICreatorTrackable` here.
-
-```csharp
-// Example code here
-```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Best Practices
-
-Document best practices for `ICreatorTrackable` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Patterns
-
-Document common patterns for `ICreatorTrackable` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
-
-Document considerations for `ICreatorTrackable` here.
-
 ## Properties
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  CreatedById
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  CreatedById <DocsBadge text="Abstract" variant="warning" />
 
 The unique identifier for the User that created this particular Entity.
 
@@ -69,10 +42,4 @@ T CreatedById { get; set; }
 #### Property Value
 
 Type: `T`
-
-## Related APIs
-
-- # Related APIs
-- - API 1
-- - API 2
 

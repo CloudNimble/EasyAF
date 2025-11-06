@@ -3,8 +3,10 @@ title: EntityManager
 description: "Provides a base class for entity-specific business logic managers with built-in CRUD operations,             audit trail support, and lifecycle event hooks. ..."
 icon: code-branch
 tag: "ABSTRACT"
-keywords: ['EntityManager', 'CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>', 'CloudNimble.EasyAF.Business', 'class', 'CloudNimble.EasyAF.Business.ManagerBase<TContext>', '# Related APIs', '- API 1', '- API 2']
+keywords: ['EntityManager', 'CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>', 'CloudNimble.EasyAF.Business', 'class', 'CloudNimble.EasyAF.Business.ManagerBase<TContext>']
 ---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
 
 ## Definition
 
@@ -26,11 +28,6 @@ Provides a base class for entity-specific business logic managers with built-in 
             audit trail support, and lifecycle event hooks. Handles common entity operations and automatically
             manages audit fields for entities that implement auditing interfaces.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
-
-Describe how to use `EntityManager` here.
-
 ## Remarks
 
 This manager provides comprehensive entity lifecycle management including:
@@ -45,29 +42,27 @@ This manager provides comprehensive entity lifecycle management including:
 - `TContext` - The type of DbContext used for database operations.
 - `TEntity` - The type of entity managed by this manager.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Examples
-
-Provide examples of using `EntityManager` here.
+## Examples
 
 ```csharp
-// Example code here
+public class UserManager : EntityManager&lt;MyDbContext, User&gt;
+{
+    public UserManager(MyDbContext context, IMessagePublisher publisher)
+        : base(context, publisher) { }
+
+    public override async Task OnInsertingAsync(User entity)
+    {
+        await base.OnInsertingAsync(entity); // Handles audit fields
+        entity.IsActive = true; // Custom business logic
+    }
+
+    public override async Task&lt;bool&gt; OnInsertedAsync(User entity)
+    {
+        await MessagePublisher.PublishAsync(new UserCreatedEvent { UserId = entity.Id });
+        return await base.OnInsertedAsync(entity);
+    }
+}
 ```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Best Practices
-
-Document best practices for `EntityManager` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Patterns
-
-Document common patterns for `EntityManager` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
-
-Document considerations for `EntityManager` here.
 
 ## Constructors
 
@@ -87,6 +82,71 @@ public EntityManager(TContext dataContext, CloudNimble.SimpleMessageBus.Publish.
 |------|------|-------------|
 | `dataContext` | `TContext` | The database context instance for data operations. Should be injected by the DI container. |
 | `messagePublisher` | `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher` | The message publisher instance for publishing events. Should be injected by the DI container. |
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.ManagerBase<TContext>`</Note>
+
+Initializes a new instance of the `ManagerBase`1` class.
+
+#### Syntax
+
+```csharp
+public ManagerBase(TContext dataContext, CloudNimble.SimpleMessageBus.Publish.IMessagePublisher messagePublisher)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `dataContext` | `TContext` | The database context instance for data operations. Should be injected by the DI container. |
+| `messagePublisher` | `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher` | The message publisher instance for publishing events. Should be injected by the DI container. |
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DataContext <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.ManagerBase<TContext>`</Note>
+
+Gets the database context instance used for data operations.
+            This context is injected through the constructor and provides access to the database.
+
+#### Syntax
+
+```csharp
+public TContext DataContext { get; private set; }
+```
+
+#### Property Value
+
+Type: `TContext`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  MessagePublisher <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.ManagerBase<TContext>`</Note>
+
+Gets the message publisher instance used for publishing events and messages to the message bus.
+            This publisher is injected through the constructor and enables event-driven architecture patterns.
+
+#### Syntax
+
+```csharp
+public CloudNimble.SimpleMessageBus.Publish.IMessagePublisher MessagePublisher { get; private set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher`
 
 ## Methods
 
@@ -282,6 +342,75 @@ Type: `System.Threading.Tasks.Task<int>`
 This overload will give you all of the performance of updating a set of data without loading entities in the context but none of
             the extra processing provided by OnUpdating / OnUpdated.
 
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
 ### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  InsertAsync
 
 Inserts a single entity into the database with optional save operation.
@@ -384,7 +513,21 @@ public System.Threading.Tasks.Task<bool> InsertAsync(System.Collections.Generic.
 Type: `System.Threading.Tasks.Task<bool>`
 True if the entities were successfully inserted; otherwise, false.
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnDeletedAsync
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnDeletedAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called after successfully deleting an entity from the database. Use this method for post-deletion
             business logic such as cleanup operations, sending notifications, or triggering external systems.
@@ -406,7 +549,7 @@ public virtual System.Threading.Tasks.Task<bool> OnDeletedAsync(TEntity entity)
 Type: `System.Threading.Tasks.Task<bool>`
 True if post-deletion processing was successful; otherwise, false.
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnDeletedAsync
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnDeletedAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called after successfully deleting a collection of entities from the database.
             Applies OnDeletedAsync logic to each entity in the collection.
@@ -427,7 +570,7 @@ public virtual System.Threading.Tasks.Task OnDeletedAsync(System.Collections.Gen
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnDeletingAsync
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnDeletingAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called before deleting an entity from the database. Override this method to add
             custom business logic or validation before deletion.
@@ -448,7 +591,7 @@ public virtual System.Threading.Tasks.Task OnDeletingAsync(TEntity entity)
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnDeletingAsync
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnDeletingAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called before deleting a collection of entities from the database.
             Applies OnDeletingAsync logic to each entity in the collection.
@@ -469,7 +612,7 @@ public virtual System.Threading.Tasks.Task OnDeletingAsync(System.Collections.Ge
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnInsertedAsync
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnInsertedAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called after successfully inserting an entity into the database. Use this method for post-insertion
             business logic such as sending notifications, publishing events, or triggering external systems.
@@ -491,7 +634,7 @@ public virtual System.Threading.Tasks.Task<bool> OnInsertedAsync(TEntity entity)
 Type: `System.Threading.Tasks.Task<bool>`
 True if post-insertion processing was successful; otherwise, false.
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnInsertedAsync
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnInsertedAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called after successfully inserting a collection of entities into the database.
             Applies OnInsertedAsync logic to each entity in the collection.
@@ -512,7 +655,7 @@ public virtual System.Threading.Tasks.Task OnInsertedAsync(System.Collections.Ge
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnInsertingAsync
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnInsertingAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called before inserting an entity into the database. Automatically handles audit field population
             and user tracking for entities implementing the appropriate interfaces.
@@ -561,7 +704,7 @@ public System.Threading.Tasks.Task OnInsertingAsync(System.Collections.Generic.L
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnUpdatedAsync
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnUpdatedAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called after successfully updating an entity in the database. Use this method for post-update
             business logic such as sending notifications, publishing events, or triggering external systems.
@@ -583,7 +726,7 @@ public virtual System.Threading.Tasks.Task<bool> OnUpdatedAsync(TEntity entity)
 Type: `System.Threading.Tasks.Task<bool>`
 True if post-update processing was successful; otherwise, false.
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnUpdatedAsync
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnUpdatedAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called after successfully updating a collection of entities in the database.
             Applies OnUpdatedAsync logic to each entity in the collection.
@@ -604,7 +747,7 @@ public virtual System.Threading.Tasks.Task OnUpdatedAsync(System.Collections.Gen
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnUpdatingAsync
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnUpdatingAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called before updating an entity in the database. Automatically handles audit field population
             and user tracking for entities implementing the appropriate interfaces.
@@ -632,7 +775,7 @@ This method automatically sets:
             - DateUpdated for entities implementing [IUpdatedAuditable](/api-reference/CloudNimble/EasyAF/Core/IUpdatedAuditable)
             Override this method to add custom business logic before updating.
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnUpdatingAsync
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OnUpdatingAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called before updating a collection of entities in the database.
             Applies OnUpdatingAsync logic to each entity in the collection.
@@ -652,6 +795,27 @@ public virtual System.Threading.Tasks.Task OnUpdatingAsync(System.Collections.Ge
 #### Returns
 
 Type: `System.Threading.Tasks.Task`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
 
 ### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ResetAuditProperties
 
@@ -673,6 +837,20 @@ public void ResetAuditProperties<TDbObservable>(TDbObservable entity) where TDbO
 #### Type Parameters
 
 - `TDbObservable` - Any [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject) in the object model. DOES NOT have to be the entity for this Manager.
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
 
 ### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  UpdateAsync
 
@@ -775,10 +953,4 @@ public System.Threading.Tasks.Task<bool> UpdateAsync(System.Collections.Generic.
 
 Type: `System.Threading.Tasks.Task<bool>`
 True if the entities were successfully updated; otherwise, false.
-
-## Related APIs
-
-- # Related APIs
-- - API 1
-- - API 2
 

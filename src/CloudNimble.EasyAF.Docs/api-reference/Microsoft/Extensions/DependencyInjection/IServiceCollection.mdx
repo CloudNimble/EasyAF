@@ -1,0 +1,147 @@
+---
+title: IServiceCollection
+description: "Extension methods for IServiceCollection from Microsoft.Extensions.DependencyInjection.Abstractions"
+icon: file-brackets-curly
+keywords: ['IServiceCollection', 'Microsoft.Extensions.DependencyInjection.IServiceCollection', 'Microsoft.Extensions.DependencyInjection', 'error']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.Extensions.DependencyInjection.Abstractions.dll
+
+**Namespace:** Microsoft.Extensions.DependencyInjection
+
+## Syntax
+
+```csharp
+Microsoft.Extensions.DependencyInjection.IServiceCollection
+```
+
+## Summary
+
+This type is defined in Microsoft.Extensions.DependencyInjection.Abstractions.
+
+## Remarks
+
+See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.iservicecollection) for more information about the rest of the API.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  AddConfigurationBase <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `Microsoft.Extensions.DependencyInjection.EasyAF_Configuration_IServiceCollectionExtensions`</Note>
+
+Adds a configuration class that inherits from [ConfigurationBase](/api-reference/CloudNimble/EasyAF/Configuration/ConfigurationBase) to the service collection.
+            The configuration is bound from the specified configuration section and registered as both the specific
+            type and the base [ConfigurationBase](/api-reference/CloudNimble/EasyAF/Configuration/ConfigurationBase) type for dependency injection.
+
+#### Syntax
+
+```csharp
+public static TConfiguration AddConfigurationBase<TConfiguration>(Microsoft.Extensions.DependencyInjection.IServiceCollection services, Microsoft.Extensions.Configuration.IConfiguration configuration, string configSectionName) where TConfiguration : CloudNimble.EasyAF.Configuration.ConfigurationBase
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The service collection to add the configuration to. |
+| `configuration` | `Microsoft.Extensions.Configuration.IConfiguration` | The configuration instance to bind from. |
+| `configSectionName` | `string` | The name of the configuration section to bind from. |
+
+#### Returns
+
+Type: `TConfiguration`
+The bound configuration instance for immediate use or further configuration.
+
+#### Type Parameters
+
+- `TConfiguration` - The type of configuration class that inherits from [ConfigurationBase](/api-reference/CloudNimble/EasyAF/Configuration/ConfigurationBase).
+
+#### Examples
+
+```csharp
+// In Program.cs or Startup.cs
+var myConfig = builder.Services.AddConfigurationBase&lt;MyAppConfiguration&gt;(
+    builder.Configuration,
+    "AppSettings"
+);
+
+// The configuration can now be injected as either type:
+// [Inject] public MyAppConfiguration Config { get; set; }
+// [Inject] public ConfigurationBase BaseConfig { get; set; }
+```
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  AddHttpClients <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `Microsoft.Extensions.DependencyInjection.EasyAF_Http_IServiceCollectionExtensions`</Note>
+
+Adds HTTP clients to the service collection based on configuration properties marked with [HttpEndpointAttribute](/api-reference/CloudNimble/EasyAF/Configuration/HttpEndpointAttribute).
+            Uses the default HttpHandlerMode from the configuration.
+
+#### Syntax
+
+```csharp
+public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddHttpClients<TConfig, TMessageHandler>(Microsoft.Extensions.DependencyInjection.IServiceCollection services, TConfig config) where TConfig : CloudNimble.EasyAF.Configuration.ConfigurationBase where TMessageHandler : System.Net.Http.DelegatingHandler
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The service collection to add HTTP clients to. |
+| `config` | `TConfig` | The configuration instance containing endpoint definitions. |
+
+#### Returns
+
+Type: `Microsoft.Extensions.DependencyInjection.IServiceCollection`
+The service collection for method chaining.
+
+#### Type Parameters
+
+- `TConfig` - The configuration type that contains HTTP endpoint definitions.
+- `TMessageHandler` - The type of message handler to add to the HTTP clients.
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  AddHttpClients <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `Microsoft.Extensions.DependencyInjection.EasyAF_Http_IServiceCollectionExtensions`</Note>
+
+Adds HTTP clients to the service collection based on configuration properties marked with [HttpEndpointAttribute](/api-reference/CloudNimble/EasyAF/Configuration/HttpEndpointAttribute).
+            Allows explicit specification of the HttpHandlerMode for message handler configuration.
+
+#### Syntax
+
+```csharp
+public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddHttpClients<TConfig, TMessageHandler>(Microsoft.Extensions.DependencyInjection.IServiceCollection services, TConfig config, CloudNimble.EasyAF.Core.HttpHandlerMode httpHandlerMode) where TConfig : CloudNimble.EasyAF.Configuration.ConfigurationBase where TMessageHandler : System.Net.Http.DelegatingHandler
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The service collection to add HTTP clients to. |
+| `config` | `TConfig` | The configuration instance containing endpoint definitions. |
+| `httpHandlerMode` | `CloudNimble.EasyAF.Core.HttpHandlerMode` | Specifies how message handlers should be configured for the HTTP clients. |
+
+#### Returns
+
+Type: `Microsoft.Extensions.DependencyInjection.IServiceCollection`
+The service collection for method chaining.
+
+#### Type Parameters
+
+- `TConfig` - The configuration type that contains HTTP endpoint definitions.
+- `TMessageHandler` - The type of message handler to add to the HTTP clients.
+
+#### Examples
+
+```csharp
+// Register HTTP clients with custom message handler
+services.AddHttpClients&lt;MyConfiguration, MyAuthHandler&gt;(config, HttpHandlerMode.Add);
+
+// This will automatically register HttpClient instances for all properties
+// in MyConfiguration that are marked with [HttpEndpoint]
+```
+

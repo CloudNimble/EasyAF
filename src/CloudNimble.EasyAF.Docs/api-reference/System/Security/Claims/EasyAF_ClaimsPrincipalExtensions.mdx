@@ -3,8 +3,10 @@ title: EasyAF_ClaimsPrincipalExtensions
 icon: bolt
 sidebarTitle: EasyAF_ClaimsPrincipalExtensions
 tag: "STATIC"
-keywords: ['EasyAF_ClaimsPrincipalExtensions', 'System.Security.Claims.EasyAF_ClaimsPrincipalExtensions', 'System.Security.Claims', 'class', 'System.Object', '# Related APIs', '- API 1', '- API 2']
+keywords: ['EasyAF_ClaimsPrincipalExtensions', 'System.Security.Claims.EasyAF_ClaimsPrincipalExtensions', 'System.Security.Claims', 'class', 'System.Object']
 ---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
 
 ## Definition
 
@@ -19,35 +21,6 @@ keywords: ['EasyAF_ClaimsPrincipalExtensions', 'System.Security.Claims.EasyAF_Cl
 ```csharp
 System.Security.Claims.EasyAF_ClaimsPrincipalExtensions
 ```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
-
-Describe how to use `EasyAF_ClaimsPrincipalExtensions` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Examples
-
-Provide examples of using `EasyAF_ClaimsPrincipalExtensions` here.
-
-```csharp
-// Example code here
-```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Best Practices
-
-Document best practices for `EasyAF_ClaimsPrincipalExtensions` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Patterns
-
-Document common patterns for `EasyAF_ClaimsPrincipalExtensions` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
-
-Document considerations for `EasyAF_ClaimsPrincipalExtensions` here.
 
 ## Properties
 
@@ -76,89 +49,6 @@ public static string RoleClaimType { get; }
 Type: `string`
 
 ## Methods
-
-### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetAllClaims
-
-#### Syntax
-
-```csharp
-public static System.Collections.Generic.IEnumerable<System.Security.Claims.Claim> GetAllClaims(System.Security.Claims.ClaimsPrincipal claimsPrincipal, string claimType)
-```
-
-#### Parameters
-
-| Name | Type | Description |
-|------|------|-------------|
-| `claimsPrincipal` | `System.Security.Claims.ClaimsPrincipal` | The ClaimsPrincipal instance to check for Claims. Should be [Current](https://learn.microsoft.com/dotnet/api/system.security.claims.claimsprincipal.current), except in unit testing. |
-| `claimType` | `string` | - |
-
-#### Returns
-
-Type: `System.Collections.Generic.IEnumerable<System.Security.Claims.Claim>`
-
-### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetClaimGuid
-
-#### Syntax
-
-```csharp
-public static System.Guid GetClaimGuid(System.Security.Claims.ClaimsPrincipal claimsPrincipal, string claimType)
-```
-
-#### Parameters
-
-| Name | Type | Description |
-|------|------|-------------|
-| `claimsPrincipal` | `System.Security.Claims.ClaimsPrincipal` | - |
-| `claimType` | `string` | - |
-
-#### Returns
-
-Type: `System.Guid`
-
-#### Exceptions
-
-| Exception | Description |
-|-----------|-------------|
-| `FormatException` | If the *claimType* is not formatted like a Guid (32 characters with 4 dashes), this exception will be thrown. |
-
-### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetClaimValue
-
-#### Syntax
-
-```csharp
-public static string GetClaimValue(System.Security.Claims.ClaimsPrincipal claimsPrincipal, string claimType)
-```
-
-#### Parameters
-
-| Name | Type | Description |
-|------|------|-------------|
-| `claimsPrincipal` | `System.Security.Claims.ClaimsPrincipal` | The ClaimsPrincipal instance to check for Claims. Should be [Current](https://learn.microsoft.com/dotnet/api/system.security.claims.claimsprincipal.current), except in unit testing. |
-| `claimType` | `string` | - |
-
-#### Returns
-
-Type: `string`
-
-### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetIdClaim
-
-A shortcut for returning the AppUserProfileId for the current User.
-
-#### Syntax
-
-```csharp
-public static System.Guid GetIdClaim(System.Security.Claims.ClaimsPrincipal principal)
-```
-
-#### Parameters
-
-| Name | Type | Description |
-|------|------|-------------|
-| `principal` | `System.Security.Claims.ClaimsPrincipal` | The ClaimsPrincipal instance we're extending. |
-
-#### Returns
-
-Type: `System.Guid`
 
 ### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Initialize
 
@@ -212,10 +102,4 @@ public static void SetSchemaUri(string schemaUri)
 | Name | Type | Description |
 |------|------|-------------|
 | `schemaUri` | `string` | - |
-
-## Related APIs
-
-- # Related APIs
-- - API 1
-- - API 2
 

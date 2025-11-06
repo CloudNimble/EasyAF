@@ -2,8 +2,10 @@
 title: IUpdatedAuditable
 description: "An interface that implements the CloudNimble common pattern for tracking who created an Entity."
 icon: plug
-keywords: ['IUpdatedAuditable', 'CloudNimble.EasyAF.Core.IUpdatedAuditable', 'CloudNimble.EasyAF.Core', 'interface', '# Related APIs', '- API 1', '- API 2']
+keywords: ['IUpdatedAuditable', 'CloudNimble.EasyAF.Core.IUpdatedAuditable', 'CloudNimble.EasyAF.Core', 'interface']
 ---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
 
 ## Definition
 
@@ -21,38 +23,9 @@ CloudNimble.EasyAF.Core.IUpdatedAuditable
 
 An interface that implements the CloudNimble common pattern for tracking who created an Entity.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
-
-Describe how to use `IUpdatedAuditable` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Examples
-
-Provide examples of using `IUpdatedAuditable` here.
-
-```csharp
-// Example code here
-```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Best Practices
-
-Document best practices for `IUpdatedAuditable` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Patterns
-
-Document common patterns for `IUpdatedAuditable` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
-
-Document considerations for `IUpdatedAuditable` here.
-
 ## Properties
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DateUpdated
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  DateUpdated <DocsBadge text="Abstract" variant="warning" />
 
 The unique identifier for the User that created this particular Entity.
 
@@ -65,10 +38,4 @@ System.Nullable<System.DateTimeOffset> DateUpdated { get; set; }
 #### Property Value
 
 Type: `System.Nullable<System.DateTimeOffset>`
-
-## Related APIs
-
-- # Related APIs
-- - API 1
-- - API 2
 

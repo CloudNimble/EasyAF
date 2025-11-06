@@ -1,0 +1,122 @@
+---
+title: ClaimsPrincipal
+description: "Extension methods for ClaimsPrincipal from System.Security.Claims"
+icon: file-brackets-curly
+keywords: ['ClaimsPrincipal', 'System.Security.Claims.ClaimsPrincipal', 'System.Security.Claims', 'error']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** System.Security.Claims.dll
+
+**Namespace:** System.Security.Claims
+
+## Syntax
+
+```csharp
+System.Security.Claims.ClaimsPrincipal
+```
+
+## Summary
+
+This type is defined in System.Security.Claims.
+
+## Remarks
+
+See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/system.security.claims.claimsprincipal) for more information about the rest of the API.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetAllClaims <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.Security.Claims.EasyAF_ClaimsPrincipalExtensions`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IEnumerable<System.Security.Claims.Claim> GetAllClaims(System.Security.Claims.ClaimsPrincipal claimsPrincipal, string claimType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `claimsPrincipal` | `System.Security.Claims.ClaimsPrincipal` | The ClaimsPrincipal instance to check for Claims. Should be [Current](https://learn.microsoft.com/dotnet/api/system.security.claims.claimsprincipal.current), except in unit testing. |
+| `claimType` | `string` | - |
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<System.Security.Claims.Claim>`
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetClaimGuid <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.Security.Claims.EasyAF_ClaimsPrincipalExtensions`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Guid GetClaimGuid(System.Security.Claims.ClaimsPrincipal claimsPrincipal, string claimType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `claimsPrincipal` | `System.Security.Claims.ClaimsPrincipal` | - |
+| `claimType` | `string` | - |
+
+#### Returns
+
+Type: `System.Guid`
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `FormatException` | If the *claimType* is not formatted like a Guid (32 characters with 4 dashes), this exception will be thrown. |
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetClaimValue <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.Security.Claims.EasyAF_ClaimsPrincipalExtensions`</Note>
+
+#### Syntax
+
+```csharp
+public static string GetClaimValue(System.Security.Claims.ClaimsPrincipal claimsPrincipal, string claimType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `claimsPrincipal` | `System.Security.Claims.ClaimsPrincipal` | The ClaimsPrincipal instance to check for Claims. Should be [Current](https://learn.microsoft.com/dotnet/api/system.security.claims.claimsprincipal.current), except in unit testing. |
+| `claimType` | `string` | - |
+
+#### Returns
+
+Type: `string`
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetIdClaim <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.Security.Claims.EasyAF_ClaimsPrincipalExtensions`</Note>
+
+A shortcut for returning the AppUserProfileId for the current User.
+
+#### Syntax
+
+```csharp
+public static System.Guid GetIdClaim(System.Security.Claims.ClaimsPrincipal principal)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The ClaimsPrincipal instance we're extending. |
+
+#### Returns
+
+Type: `System.Guid`
+

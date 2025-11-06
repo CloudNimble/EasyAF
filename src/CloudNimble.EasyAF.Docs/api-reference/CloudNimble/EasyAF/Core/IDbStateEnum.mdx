@@ -2,8 +2,10 @@
 title: IDbStateEnum
 description: "An interface that identifies this Entity as being the enumeration details for the SimpleStateMachine."
 icon: plug
-keywords: ['IDbStateEnum', 'CloudNimble.EasyAF.Core.IDbStateEnum', 'CloudNimble.EasyAF.Core', 'interface', '# Related APIs', '- API 1', '- API 2']
+keywords: ['IDbStateEnum', 'CloudNimble.EasyAF.Core.IDbStateEnum', 'CloudNimble.EasyAF.Core', 'interface', 'CloudNimble.EasyAF.Core.IDbEnum', 'CloudNimble.EasyAF.Core.IIdentifiable<System.Guid>', 'CloudNimble.EasyAF.Core.IActiveTrackable', 'CloudNimble.EasyAF.Core.IHumanReadable', 'CloudNimble.EasyAF.Core.ISortable']
 ---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
 
 ## Definition
 
@@ -21,38 +23,9 @@ CloudNimble.EasyAF.Core.IDbStateEnum
 
 An interface that identifies this Entity as being the enumeration details for the SimpleStateMachine.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
-
-Describe how to use `IDbStateEnum` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Examples
-
-Provide examples of using `IDbStateEnum` here.
-
-```csharp
-// Example code here
-```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Best Practices
-
-Document best practices for `IDbStateEnum` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Patterns
-
-Document common patterns for `IDbStateEnum` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
-
-Document considerations for `IDbStateEnum` here.
-
 ## Properties
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  InstructionText
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  InstructionText <DocsBadge text="Abstract" variant="warning" />
 
 Text to display to the user regarding the current state, and what needs to happen next.
 
@@ -66,7 +39,7 @@ string InstructionText { get; set; }
 
 Type: `string`
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PrimaryTargetDisplayText
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PrimaryTargetDisplayText <DocsBadge text="Abstract" variant="warning" />
 
 A string that describes the next action in the SimpleStateMachine, usually displayed on a button or link.
 
@@ -80,7 +53,7 @@ string PrimaryTargetDisplayText { get; set; }
 
 Type: `string`
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PrimaryTargetSortOrder
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PrimaryTargetSortOrder <DocsBadge text="Abstract" variant="warning" />
 
 An integer that represents the State the Entity should be moved to once this action completes successfully.
 
@@ -94,7 +67,7 @@ int PrimaryTargetSortOrder { get; set; }
 
 Type: `int`
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SecondaryTargetDisplayText
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SecondaryTargetDisplayText <DocsBadge text="Abstract" variant="warning" />
 
 A string that describes an alternate action in the SimpleStateMachine. This action could skip States moving forward, or return the Entity to a previous State. This text is usually displayed on a button or link.
 
@@ -108,7 +81,7 @@ string SecondaryTargetDisplayText { get; set; }
 
 Type: `string`
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SecondaryTargetSortOrder
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SecondaryTargetSortOrder <DocsBadge text="Abstract" variant="warning" />
 
 An integer that represents an alternate State the Entity should be moved to once this action is finished.
 
@@ -124,7 +97,9 @@ Type: `int`
 
 ## Related APIs
 
-- # Related APIs
-- - API 1
-- - API 2
+- CloudNimble.EasyAF.Core.IDbEnum
+- CloudNimble.EasyAF.Core.IIdentifiable&lt;System.Guid&gt;
+- CloudNimble.EasyAF.Core.IActiveTrackable
+- CloudNimble.EasyAF.Core.IHumanReadable
+- CloudNimble.EasyAF.Core.ISortable
 

@@ -2,8 +2,10 @@
 title: MSBuildProjectManager
 description: "Manages MSBuild project files (.csproj, Directory.Build.props, etc.) with formatting preservation capabilities."
 icon: file-brackets-curly
-keywords: ['MSBuildProjectManager', 'CloudNimble.EasyAF.MSBuild.MSBuildProjectManager', 'CloudNimble.EasyAF.MSBuild', 'class', 'System.Object', '# Related APIs', '- API 1', '- API 2']
+keywords: ['MSBuildProjectManager', 'CloudNimble.EasyAF.MSBuild.MSBuildProjectManager', 'CloudNimble.EasyAF.MSBuild', 'class', 'System.Object']
 ---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
 
 ## Definition
 
@@ -23,40 +25,11 @@ CloudNimble.EasyAF.MSBuild.MSBuildProjectManager
 
 Manages MSBuild project files (.csproj, Directory.Build.props, etc.) with formatting preservation capabilities.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
-
-Describe how to use `MSBuildProjectManager` here.
-
 ## Remarks
 
 This class provides comprehensive support for loading, validating, and modifying MSBuild
             project files while preserving the original formatting (indentation, line breaks).
             It follows the same pattern as DocsJsonManager for consistency.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Examples
-
-Provide examples of using `MSBuildProjectManager` here.
-
-```csharp
-// Example code here
-```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Best Practices
-
-Document best practices for `MSBuildProjectManager` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Patterns
-
-Document common patterns for `MSBuildProjectManager` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
-
-Document considerations for `MSBuildProjectManager` here.
 
 ## Constructors
 
@@ -91,6 +64,16 @@ public MSBuildProjectManager(string filePath)
 | Exception | Description |
 |-----------|-------------|
 | `ArgumentException` | Thrown when filePath is null or whitespace. |
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
 
 ## Properties
 
@@ -272,6 +255,61 @@ This method should be called before any MSBuild operations to ensure the correct
             version of MSBuild is loaded. It prioritizes MSBuild 17.0 or later for compatibility
             with modern .NET projects.
 
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
 ### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetPropertyValue
 
 Gets the value of a property from the project.
@@ -299,6 +337,20 @@ The property value, or null if the property does not exist.
 |-----------|-------------|
 | `ArgumentException` | Thrown when name is null or whitespace. |
 | `InvalidOperationException` | Thrown when no project is loaded. |
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
 
 ### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Load
 
@@ -354,6 +406,41 @@ The current instance for method chaining.
 | Exception | Description |
 |-----------|-------------|
 | `ArgumentException` | Thrown when filePath is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
 
 ### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RemoveProperty
 
@@ -451,9 +538,17 @@ The current instance for method chaining.
 | `ArgumentException` | Thrown when name or value is null or whitespace. |
 | `InvalidOperationException` | Thrown when no project is loaded. |
 
-## Related APIs
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
-- # Related APIs
-- - API 1
-- - API 2
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
 

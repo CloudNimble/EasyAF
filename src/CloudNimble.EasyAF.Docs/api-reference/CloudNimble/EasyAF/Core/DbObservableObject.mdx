@@ -2,8 +2,10 @@
 title: DbObservableObject
 description: "A base class for Entity Framework objects to implement [INotifyPropertyChanged](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertyc..."
 icon: file-brackets-curly
-keywords: ['DbObservableObject', 'CloudNimble.EasyAF.Core.DbObservableObject', 'CloudNimble.EasyAF.Core', 'class', 'CloudNimble.EasyAF.Core.EasyObservableObject', '# Related APIs', '- API 1', '- API 2']
+keywords: ['DbObservableObject', 'CloudNimble.EasyAF.Core.DbObservableObject', 'CloudNimble.EasyAF.Core', 'class', 'CloudNimble.EasyAF.Core.EasyObservableObject', 'System.ComponentModel.INotifyPropertyChanged', 'System.IDisposable', 'System.ComponentModel.IChangeTracking', 'System.ComponentModel.IRevertibleChangeTracking']
 ---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
 
 ## Definition
 
@@ -24,38 +26,9 @@ CloudNimble.EasyAF.Core.DbObservableObject
 A base class for Entity Framework objects to implement [INotifyPropertyChanged](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged), [IChangeTracking](https://learn.microsoft.com/dotnet/api/system.componentmodel.ichangetracking), 
             and [IRevertibleChangeTracking](https://learn.microsoft.com/dotnet/api/system.componentmodel.irevertiblechangetracking) in front-end development.
 
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
-
-Describe how to use `DbObservableObject` here.
-
 ## Remarks
 
 https://stackoverflow.com/questions/2363801/what-would-be-the-best-way-to-implement-change-tracking-on-an-object
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Examples
-
-Provide examples of using `DbObservableObject` here.
-
-```csharp
-// Example code here
-```
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Best Practices
-
-Document best practices for `DbObservableObject` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Patterns
-
-Document common patterns for `DbObservableObject` here.
-
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
-
-Document considerations for `DbObservableObject` here.
 
 ## Constructors
 
@@ -65,6 +38,28 @@ Document considerations for `DbObservableObject` here.
 
 ```csharp
 public DbObservableObject()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
+
+Initializes a new instance of the [EasyObservableObject](/api-reference/CloudNimble/EasyAF/Core/EasyObservableObject) class.
+
+#### Syntax
+
+```csharp
+public EasyObservableObject()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
 ```
 
 ## Properties
@@ -110,6 +105,22 @@ public System.Collections.Generic.Dictionary<string, object> OriginalValues { ge
 #### Property Value
 
 Type: `System.Collections.Generic.Dictionary<string, object>`
+
+### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PropertyChangedHandler <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
+
+Provides access to the PropertyChanged event handler to derived classes.
+
+#### Syntax
+
+```csharp
+protected internal System.ComponentModel.PropertyChangedEventHandler PropertyChangedHandler { get; }
+```
+
+#### Property Value
+
+Type: `System.ComponentModel.PropertyChangedEventHandler`
 
 ### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ShouldTrackChanges
 
@@ -171,6 +182,118 @@ public void ClearRelationships()
 
 This is typically used to clean an entity before it is POSTed or PUT over an OData API.
 
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Clone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
+
+Creates a deep copy of the current object using JSON serialization.
+
+#### Syntax
+
+```csharp
+public T Clone<T>() where T : CloudNimble.EasyAF.Core.EasyObservableObject
+```
+
+#### Returns
+
+Type: `T`
+A new instance of type *T* that is a deep copy of the current object.
+
+#### Type Parameters
+
+- `T` - The type of object to clone. Must inherit from [EasyObservableObject](/api-reference/CloudNimble/EasyAF/Core/EasyObservableObject).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `JsonException` | Thrown when the object cannot be serialized or deserialized. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Dispose <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
+
+Releases the unmanaged resources used by the [EasyObservableObject](/api-reference/CloudNimble/EasyAF/Core/EasyObservableObject) and optionally releases the managed resources.
+
+#### Syntax
+
+```csharp
+protected internal virtual void Dispose(bool disposing)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `disposing` | `bool` | true to release both managed and unmanaged resources; false to release only unmanaged resources. |
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Dispose <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
+
+Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+
+#### Syntax
+
+```csharp
+public void Dispose()
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
 ### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetRelatedEntityCollectionProperties
 
 #### Syntax
@@ -194,6 +317,99 @@ public System.Collections.Generic.IEnumerable<System.Reflection.PropertyInfo> Ge
 #### Returns
 
 Type: `System.Collections.Generic.IEnumerable<System.Reflection.PropertyInfo>`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RaisePropertyChanged <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
+
+Raises the PropertyChanged event if needed.
+
+#### Syntax
+
+```csharp
+protected internal virtual void RaisePropertyChanged(string propertyName = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `propertyName` | `string` | The name of the property that changed. |
+
+#### Remarks
+
+If the propertyName parameter does not correspond to an existing property on the current class, an exception is thrown in DEBUG configuration only.
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RaisePropertyChanged <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
+
+Raises the PropertyChanged event if needed.
+
+#### Syntax
+
+```csharp
+protected internal virtual void RaisePropertyChanged<T>(System.Linq.Expressions.Expression<System.Func<T>> propertyExpression)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `propertyExpression` | `System.Linq.Expressions.Expression<System.Func<T>>` | An expression identifying the property that changed. |
+
+#### Type Parameters
+
+- `T` - The type of the property that changed.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
 
 ### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RejectChanges
 
@@ -220,6 +436,54 @@ public void RejectChanges(bool goDeep)
 |------|------|-------------|
 | `goDeep` | `bool` | - |
 
+### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Set <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
+
+Assigns a new value to the property. Then, raises the PropertyChanged event if needed.
+
+#### Syntax
+
+```csharp
+protected internal void Set<T>(System.Linq.Expressions.Expression<System.Func<T>> propertyExpression, ref T field, T newValue)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `propertyExpression` | `System.Linq.Expressions.Expression<System.Func<T>>` | An expression identifying the property that changed. |
+| `field` | `T` | The field storing the property's value. |
+| `newValue` | `T` | The property's value after the change occurred. |
+
+#### Type Parameters
+
+- `T` - The type of the property that changed.
+
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Set <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
+
+Assigns a new value to the property. Then, raises the PropertyChanged event if needed.
+
+#### Syntax
+
+```csharp
+protected internal virtual void Set<T>(string propertyName, ref T field, T newValue)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `propertyName` | `string` | The name of the property that changed. |
+| `field` | `T` | The field storing the property's value. |
+| `newValue` | `T` | The property's value after the change occurred. |
+
+#### Type Parameters
+
+- `T` - The type of the property that changed.
+
 ### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToDeltaPayload
 
 Loops through the keys in the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#originalvalues) list and returns an [ExpandoObject](https://learn.microsoft.com/dotnet/api/system.dynamic.expandoobject) containing JUST the new values for the properties that changed.
@@ -245,6 +509,20 @@ An [ExpandoObject](https://learn.microsoft.com/dotnet/api/system.dynamic.expando
 
 If the object implements `IIdentifiable`1`, then the payload will always include the ID.
 
+### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
 ### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  TrackChanges
 
 Starts tracking property value changes for every property, optionally activating this behavior for the entire object graph.
@@ -262,9 +540,24 @@ public void TrackChanges(bool deepTracking = false)
 | `deepTracking` | `bool` | When [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool), loops recursively through the object graph and calls `Boolean)` on every object that 
             inherits from [EasyObservableObject](/api-reference/CloudNimble/EasyAF/Core/EasyObservableObject). |
 
+## Events
+
+### <Icon icon="bell" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PropertyChanged <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
+
+Occurs when a property value changes.
+
+#### Syntax
+
+```csharp
+public System.ComponentModel.PropertyChangedEventHandler PropertyChanged
+```
+
 ## Related APIs
 
-- # Related APIs
-- - API 1
-- - API 2
+- System.ComponentModel.INotifyPropertyChanged
+- System.IDisposable
+- System.ComponentModel.IChangeTracking
+- System.ComponentModel.IRevertibleChangeTracking
 

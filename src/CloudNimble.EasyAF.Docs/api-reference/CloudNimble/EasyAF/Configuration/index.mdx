@@ -1,5 +1,6 @@
 ---
 title: Overview
+description: "Summary of the CloudNimble.EasyAF.Configuration Namespace"
 icon: folder-tree
 mode: wide
 keywords: ['CloudNimble.EasyAF.Configuration', 'namespace', 'ConfigurationBase', 'ConfigurationPlusAdminBase', 'HttpEndpointAttribute']
@@ -7,9 +8,11 @@ keywords: ['CloudNimble.EasyAF.Configuration', 'namespace', 'ConfigurationBase',
 
 ## Types
 
-### Classes
+### <Icon icon="file-brackets-curly" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} /> Classes
 
-- [ConfigurationBase](ConfigurationBase.mdx)
-- [ConfigurationPlusAdminBase](ConfigurationPlusAdminBase.mdx)
-- [HttpEndpointAttribute](HttpEndpointAttribute.mdx)
+| Name | Summary |
+| ---- | ------- |
+| [ConfigurationBase](/api-reference/CloudNimble/EasyAF/Configuration/ConfigurationBase) | A base class implementation of the configuration your Blazor app will pull from wwwroot/appsettings.json.              Provides standard HttpClient configuration for API and application endpoints. |
+| [ConfigurationPlusAdminBase](/api-reference/CloudNimble/EasyAF/Configuration/ConfigurationPlusAdminBase) | An extended configuration class that includes both public and administrative endpoint configuration.              Inherits from [ConfigurationBase](/api-reference/CloudNimble/EasyAF/Configuration/ConfigurationBase) and adds support for administrative APIs and applications. |
+| [HttpEndpointAttribute](/api-reference/CloudNimble/EasyAF/Configuration/HttpEndpointAttribute) | Specifies that a configuration property represents an HTTP endpoint URL for an HttpClient.               Used by the EasyAF configuration system to automatically register HttpClients with their base addresses. |
 

@@ -1,0 +1,79 @@
+---
+title: IConfiguration
+description: "Extension methods for IConfiguration from Microsoft.Extensions.Configuration.Abstractions"
+icon: file-brackets-curly
+keywords: ['IConfiguration', 'Microsoft.Extensions.Configuration.IConfiguration', 'Microsoft.Extensions.Configuration', 'error']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.Extensions.Configuration.Abstractions.dll
+
+**Namespace:** Microsoft.Extensions.Configuration
+
+## Syntax
+
+```csharp
+Microsoft.Extensions.Configuration.IConfiguration
+```
+
+## Summary
+
+This type is defined in Microsoft.Extensions.Configuration.Abstractions.
+
+## Remarks
+
+See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/microsoft.extensions.configuration.iconfiguration) for more information about the rest of the API.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  BindWithJsonNames <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `Microsoft.Extensions.Configuration.IConfigurationExtensions`</Note>
+
+Binds the configuration values to the specified instance using JSON property names for key mapping.
+            This method respects [JsonPropertyNameAttribute](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonpropertynameattribute) when determining configuration keys,
+            allowing for JSON-style configuration binding with different property naming conventions.
+
+#### Syntax
+
+```csharp
+public static void BindWithJsonNames<T>(Microsoft.Extensions.Configuration.IConfiguration configuration, T instance)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `configuration` | `Microsoft.Extensions.Configuration.IConfiguration` | The configuration instance to bind from. |
+| `instance` | `T` | The instance to bind the configuration values to. |
+
+#### Type Parameters
+
+- `T` - The type of the instance to bind the configuration values to.
+
+#### Examples
+
+```csharp
+public class MyConfig
+{
+    [JsonPropertyName("api_endpoint")]
+    public string ApiEndpoint { get; set; }
+
+    public int Port { get; set; }
+}
+
+var config = new MyConfig();
+configuration.BindWithJsonNames(config);
+// Looks for "api_endpoint" and "Port" in configuration
+```
+
+#### Remarks
+
+This method supports automatic type conversion for common types including DateTime, DateTimeOffset,
+            and all types supported by [Type)](https://learn.microsoft.com/dotnet/api/system.convert.changetype(system.object,system.type)). If a property has a
+            [JsonPropertyNameAttribute](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonpropertynameattribute), the attribute's Name value is used as the configuration key;
+            otherwise, the property name is used directly.
+
