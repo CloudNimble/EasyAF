@@ -1,0 +1,677 @@
+---
+title: CachingConfiguration
+description: "Configuration for metadata and tool caching behavior."
+icon: lock
+tag: "SEALED"
+keywords: ['CachingConfiguration', 'Microsoft.OData.Mcp.Core.Configuration.CachingConfiguration', 'Microsoft.OData.Mcp.Core.Configuration', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Configuration
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Configuration.CachingConfiguration
+```
+
+## Summary
+
+Configuration for metadata and tool caching behavior.
+
+## Remarks
+
+Caching configuration controls how long metadata and generated tools are cached
+            to improve performance and reduce load on the underlying OData service.
+            This class provides comprehensive caching options including provider selection,
+            TTL settings, size limits, and advanced features like compression and warming.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [CachingConfiguration](/api-reference/Microsoft/OData/Mcp/Core/Configuration/CachingConfiguration) class.
+
+#### Syntax
+
+```csharp
+public CachingConfiguration()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Compression
+
+Gets or sets the compression configuration for cached data.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.CacheCompressionConfiguration Compression { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.CacheCompressionConfiguration`
+Configuration for compressing cached data to save memory/storage.
+
+#### Remarks
+
+Cache compression can significantly reduce memory usage for large
+            cached objects at the cost of additional CPU overhead.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CustomProperties
+
+Gets or sets custom caching properties.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> CustomProperties { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of custom caching configuration values.
+
+#### Remarks
+
+Custom properties allow extending the configuration with cache provider-specific
+            settings that don't fit into the standard configuration properties.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DistributedCache
+
+Gets or sets the distributed cache configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.DistributedCacheConfiguration DistributedCache { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.DistributedCacheConfiguration`
+Configuration for distributed caching across multiple server instances.
+
+#### Remarks
+
+Distributed caching enables cache sharing between multiple MCP server
+            instances for improved consistency and performance.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Enabled
+
+Gets or sets a value indicating whether caching is enabled.
+
+#### Syntax
+
+```csharp
+public bool Enabled { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable caching; otherwise, `false`.
+
+#### Remarks
+
+When caching is disabled, metadata and tools will be regenerated for every request,
+            which can impact performance but ensures the latest data is always used.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableStatistics
+
+Gets or sets a value indicating whether to enable cache statistics collection.
+
+#### Syntax
+
+```csharp
+public bool EnableStatistics { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to collect cache statistics; otherwise, `false`.
+
+#### Remarks
+
+Cache statistics provide insights into cache hit rates, evictions,
+            and performance metrics for monitoring and optimization.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableWarming
+
+Gets or sets a value indicating whether to enable cache warming.
+
+#### Syntax
+
+```csharp
+public bool EnableWarming { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to pre-populate the cache on startup; otherwise, `false`.
+
+#### Remarks
+
+Cache warming pre-populates frequently accessed data to improve
+            initial response times after server startup.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EvictionPolicy
+
+Gets or sets the cache eviction policy.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.CacheEvictionPolicy EvictionPolicy { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.CacheEvictionPolicy`
+The policy used to determine which entries to evict when cache limits are reached.
+
+#### Remarks
+
+Different eviction policies optimize for different access patterns
+            and performance characteristics.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  KeyPrefix
+
+Gets or sets the cache key prefix.
+
+#### Syntax
+
+```csharp
+public string KeyPrefix { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+A prefix added to all cache keys to avoid collisions.
+
+#### Remarks
+
+Key prefixes are useful when multiple MCP server instances share
+            the same cache infrastructure.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxEntries
+
+Gets or sets the maximum number of cache entries.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> MaxEntries { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>`
+The maximum number of entries in the cache, or null for no limit.
+
+#### Remarks
+
+Entry count limits provide an alternative way to control cache size
+            when individual entry sizes vary significantly.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxSizeMb
+
+Gets or sets the maximum size of the cache in megabytes.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> MaxSizeMb { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>`
+The maximum cache size in MB, or null for no limit.
+
+#### Remarks
+
+Cache size limits prevent excessive memory usage. When the limit is reached,
+            older entries will be evicted using the configured eviction policy.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MetadataTtl
+
+Gets or sets the Time-To-Live (TTL) for metadata cache entries.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan MetadataTtl { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The duration to cache metadata before it expires.
+
+#### Remarks
+
+Metadata is typically stable and can be cached for longer periods.
+            A shorter TTL ensures faster detection of schema changes.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ProviderType
+
+Gets or sets the cache provider type.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.CacheProviderType ProviderType { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.CacheProviderType`
+The type of cache provider to use.
+
+#### Remarks
+
+Different cache providers offer different characteristics in terms of
+            persistence, performance, and distributed caching capabilities.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  QueryResultsTtl
+
+Gets or sets the Time-To-Live (TTL) for query result cache entries.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan QueryResultsTtl { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The duration to cache query results before they expire.
+
+#### Remarks
+
+Query results represent actual data and should typically have shorter
+            TTL values to ensure data freshness.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToolsTtl
+
+Gets or sets the Time-To-Live (TTL) for generated tools cache entries.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan ToolsTtl { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The duration to cache generated tools before they expire.
+
+#### Remarks
+
+Generated tools are derived from metadata and can be cached separately
+            with different TTL values for performance optimization.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  WarmingDelay
+
+Gets or sets the cache warming delay after startup.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan WarmingDelay { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The delay before starting cache warming operations.
+
+#### Remarks
+
+A startup delay allows the server to fully initialize before
+            beginning resource-intensive cache warming operations.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a copy of this configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.CachingConfiguration Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.CachingConfiguration`
+A new instance with the same settings.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Disabled
+
+Creates a configuration with caching disabled.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.CachingConfiguration Disabled()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.CachingConfiguration`
+A caching configuration with all caching disabled.
+
+#### Remarks
+
+Disabled caching ensures the freshest data is always retrieved
+            at the cost of performance. Useful for debugging or when
+            data consistency is more important than performance.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ForDevelopment
+
+Creates a configuration optimized for development environments.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.CachingConfiguration ForDevelopment()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.CachingConfiguration`
+A caching configuration suitable for development.
+
+#### Remarks
+
+Development configurations use shorter TTLs and smaller cache sizes
+            to ensure faster detection of changes during development cycles.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ForProduction
+
+Creates a configuration optimized for production environments.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.CachingConfiguration ForProduction()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.CachingConfiguration`
+A caching configuration suitable for production.
+
+#### Remarks
+
+Production configurations use longer TTLs, larger cache sizes,
+            and enable advanced features like compression and warming for
+            optimal performance.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetMetadataKey
+
+Gets the cache key for a metadata entry.
+
+#### Syntax
+
+```csharp
+public string GetMetadataKey(string serviceUrl)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `serviceUrl` | `string` | The OData service URL. |
+
+#### Returns
+
+Type: `string`
+The cache key for the metadata.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *serviceUrl* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetQueryResultKey
+
+Gets the cache key for a query result entry.
+
+#### Syntax
+
+```csharp
+public string GetQueryResultKey(string serviceUrl, string queryHash, string userContext = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `serviceUrl` | `string` | The OData service URL. |
+| `queryHash` | `string` | The hash of the query parameters. |
+| `userContext` | `string?` | Optional user context for user-specific caching. |
+
+#### Returns
+
+Type: `string`
+The cache key for the query result.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *serviceUrl* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetToolsKey
+
+Gets the cache key for a tools entry.
+
+#### Syntax
+
+```csharp
+public string GetToolsKey(string serviceUrl, string optionsHash)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `serviceUrl` | `string` | The OData service URL. |
+| `optionsHash` | `string` | The hash of the tool generation options. |
+
+#### Returns
+
+Type: `string`
+The cache key for the tools.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *serviceUrl* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MergeWith
+
+Merges another configuration into this one, with the other configuration taking precedence.
+
+#### Syntax
+
+```csharp
+public void MergeWith(Microsoft.OData.Mcp.Core.Configuration.CachingConfiguration other)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `other` | `Microsoft.OData.Mcp.Core.Configuration.CachingConfiguration` | The configuration to merge into this one. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *other* is null. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the caching configuration.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or empty if the configuration is valid.
+

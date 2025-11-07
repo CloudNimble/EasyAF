@@ -1,0 +1,501 @@
+---
+title: McpToolFactory
+description: "Factory for creating MCP tools dynamically from OData metadata."
+icon: lock
+tag: "SEALED"
+keywords: ['McpToolFactory', 'Microsoft.OData.Mcp.Core.Tools.McpToolFactory', 'Microsoft.OData.Mcp.Core.Tools', 'class', 'System.Object', 'Microsoft.OData.Mcp.Core.Tools.IMcpToolFactory']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Tools
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Tools.McpToolFactory
+```
+
+## Summary
+
+Factory for creating MCP tools dynamically from OData metadata.
+
+## Remarks
+
+This factory generates MCP tools based on the parsed OData model, creating tools for
+            CRUD operations, queries, and navigation between entities. The tools are generated
+            dynamically to match the structure and capabilities of the OData service.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [McpToolFactory](/api-reference/Microsoft/OData/Mcp/Core/Tools/McpToolFactory) class.
+
+#### Syntax
+
+```csharp
+public McpToolFactory(Microsoft.Extensions.Logging.ILogger<Microsoft.OData.Mcp.Core.Tools.McpToolFactory> logger, System.Net.Http.IHttpClientFactory httpClientFactory)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `logger` | `Microsoft.Extensions.Logging.ILogger<Microsoft.OData.Mcp.Core.Tools.McpToolFactory>` | The logger instance. |
+| `httpClientFactory` | `System.Net.Http.IHttpClientFactory` | The HTTP client factory for OData requests. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *logger* or *httpClientFactory* is null. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Methods
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  BuildDefaultSelectForEntityType
+
+Builds a default $select statement for an entity type, excluding binary and stream fields.
+
+#### Syntax
+
+```csharp
+public static string BuildDefaultSelectForEntityType(Microsoft.OData.Mcp.Core.Models.EdmEntityType entityType, Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityType` | `Microsoft.OData.Mcp.Core.Models.EdmEntityType` | The entity type to build the select for. |
+| `options` | `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions?` | The generation options. |
+
+#### Returns
+
+Type: `string?`
+A comma-separated list of property names to select, or null if all properties should be included.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  FilterToolsForUser
+
+Filters tools based on user authorization context.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition> FilterToolsForUser(System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition> tools, System.Collections.Generic.IEnumerable<string> userScopes, System.Collections.Generic.IEnumerable<string> userRoles, Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `tools` | `System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>` | The tools to filter. |
+| `userScopes` | `System.Collections.Generic.IEnumerable<string>` | The user's OAuth2 scopes. |
+| `userRoles` | `System.Collections.Generic.IEnumerable<string>` | The user's roles. |
+| `options` | `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions?` | Options for authorization filtering. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>`
+A collection of tools the user is authorized to access.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *tools* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateCrudToolsAsync
+
+Generates CRUD operation tools for a specific entity type.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>> GenerateCrudToolsAsync(Microsoft.OData.Mcp.Core.Models.EdmEntityType entityType, Microsoft.OData.Mcp.Core.Models.EdmModel model, Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityType` | `Microsoft.OData.Mcp.Core.Models.EdmEntityType` | The entity type to generate CRUD tools for. |
+| `model` | `Microsoft.OData.Mcp.Core.Models.EdmModel` | The complete OData model for context. |
+| `options` | `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions?` | Options for tool generation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>>`
+A collection of CRUD tool definitions.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *entityType* or *model* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateEntitySetToolsAsync
+
+Generates tools for entity set operations (collection-level operations).
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>> GenerateEntitySetToolsAsync(Microsoft.OData.Mcp.Core.Models.EdmEntitySet entitySet, Microsoft.OData.Mcp.Core.Models.EdmModel model, Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySet` | `Microsoft.OData.Mcp.Core.Models.EdmEntitySet` | The entity set to generate tools for. |
+| `model` | `Microsoft.OData.Mcp.Core.Models.EdmModel` | The complete OData model for context. |
+| `options` | `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions?` | Options for tool generation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>>`
+A collection of entity set tool definitions.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *entitySet* or *model* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateEntityToolsAsync
+
+Generates MCP tools for a specific entity type.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>> GenerateEntityToolsAsync(Microsoft.OData.Mcp.Core.Models.EdmEntityType entityType, Microsoft.OData.Mcp.Core.Models.EdmModel model, Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityType` | `Microsoft.OData.Mcp.Core.Models.EdmEntityType` | The entity type to generate tools for. |
+| `model` | `Microsoft.OData.Mcp.Core.Models.EdmModel` | The complete OData model for context. |
+| `options` | `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions?` | Options for tool generation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>>`
+A collection of generated MCP tool definitions for the entity type.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *entityType* or *model* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateNavigationToolsAsync
+
+Generates navigation tools for entity relationships.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>> GenerateNavigationToolsAsync(Microsoft.OData.Mcp.Core.Models.EdmEntityType entityType, Microsoft.OData.Mcp.Core.Models.EdmModel model, Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityType` | `Microsoft.OData.Mcp.Core.Models.EdmEntityType` | The entity type to generate navigation tools for. |
+| `model` | `Microsoft.OData.Mcp.Core.Models.EdmModel` | The complete OData model for context. |
+| `options` | `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions?` | Options for tool generation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>>`
+A collection of navigation tool definitions.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *entityType* or *model* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateQueryToolsAsync
+
+Generates query tools for the OData model.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>> GenerateQueryToolsAsync(Microsoft.OData.Mcp.Core.Models.EdmModel model, Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `model` | `Microsoft.OData.Mcp.Core.Models.EdmModel` | The OData model to generate query tools for. |
+| `options` | `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions?` | Options for tool generation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>>`
+A collection of query tool definitions.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *model* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateToolsAsync
+
+Generates all MCP tools for the specified OData model.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>> GenerateToolsAsync(Microsoft.OData.Mcp.Core.Models.EdmModel model, Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `model` | `Microsoft.OData.Mcp.Core.Models.EdmModel` | The OData model to generate tools for. |
+| `options` | `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions?` | Options for tool generation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>>`
+A collection of generated MCP tool definitions.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *model* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetAvailableToolNames
+
+Gets all available tool names.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> GetAvailableToolNames()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of all tool names that have been generated.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetTool
+
+Gets the tool definition by name.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Tools.McpToolDefinition GetTool(string toolName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `toolName` | `string` | The name of the tool to retrieve. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolDefinition?`
+The tool definition if found; otherwise, null.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsBinaryOrStreamField
+
+Determines if a property is a binary or stream field that should be excluded by default.
+
+#### Syntax
+
+```csharp
+public static bool IsBinaryOrStreamField(Microsoft.OData.Mcp.Core.Models.EdmProperty property)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `property` | `Microsoft.OData.Mcp.Core.Models.EdmProperty` | The property to check. |
+
+#### Returns
+
+Type: `bool`
+True if the property is a binary or stream field; otherwise, false.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ValidateTools
+
+Validates that the generated tools are compatible with the MCP specification.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> ValidateTools(System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition> tools)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `tools` | `System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>` | The tools to validate. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or empty if all tools are valid.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *tools* is null. |
+
+## Related APIs
+
+- Microsoft.OData.Mcp.Core.Tools.IMcpToolFactory
+

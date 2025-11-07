@@ -1,0 +1,103 @@
+---
+title: IRouteBuilder
+description: "Extension methods for IRouteBuilder from Microsoft.AspNetCore.Routing"
+icon: file-brackets-curly
+keywords: ['IRouteBuilder', 'Microsoft.AspNetCore.Routing.IRouteBuilder', 'Microsoft.AspNetCore.Routing', 'error']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.AspNetCore.Routing.dll
+
+**Namespace:** Microsoft.AspNetCore.Routing
+
+## Syntax
+
+```csharp
+Microsoft.AspNetCore.Routing.IRouteBuilder
+```
+
+## Summary
+
+This type is defined in Microsoft.AspNetCore.Routing.
+
+## Remarks
+
+See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.routing.iroutebuilder) for more information about the rest of the API.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddMcp <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `Microsoft.AspNetCore.Routing.ODataMcp_AspNetCore_RouteBuilderExtensions`</Note>
+
+Adds MCP endpoints to an OData route using the default path.
+
+#### Syntax
+
+```csharp
+public static Microsoft.AspNetCore.Routing.IRouteBuilder AddMcp(Microsoft.AspNetCore.Routing.IRouteBuilder routeBuilder)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `routeBuilder` | `Microsoft.AspNetCore.Routing.IRouteBuilder` | The route builder. |
+
+#### Returns
+
+Type: `Microsoft.AspNetCore.Routing.IRouteBuilder`
+The route builder for chaining.
+
+#### Examples
+
+```csharp
+endpoints.MapODataRoute("odata", "api/v1", GetEdmModel())
+    .AddMcp();
+```
+
+#### Remarks
+
+This method adds MCP endpoints as siblings to the OData $metadata endpoint.
+            For example, if the OData route is "api/v1", the MCP endpoints will be at "api/v1/mcp".
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddMcp <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `Microsoft.AspNetCore.Routing.ODataMcp_AspNetCore_RouteBuilderExtensions`</Note>
+
+Adds MCP endpoints to an OData route using a custom path.
+
+#### Syntax
+
+```csharp
+public static Microsoft.AspNetCore.Routing.IRouteBuilder AddMcp(Microsoft.AspNetCore.Routing.IRouteBuilder routeBuilder, string customPath)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `routeBuilder` | `Microsoft.AspNetCore.Routing.IRouteBuilder` | The route builder. |
+| `customPath` | `string?` | The custom MCP path, or null to use the default. |
+
+#### Returns
+
+Type: `Microsoft.AspNetCore.Routing.IRouteBuilder`
+The route builder for chaining.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *routeBuilder* is null. |
+
+#### Examples
+
+```csharp
+endpoints.MapODataRoute("odata", "api/v1", GetEdmModel())
+    .AddMcp("/custom/mcp/path");
+```
+

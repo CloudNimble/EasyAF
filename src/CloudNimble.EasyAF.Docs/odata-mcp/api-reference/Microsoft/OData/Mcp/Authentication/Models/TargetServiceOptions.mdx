@@ -1,0 +1,545 @@
+---
+title: TargetServiceOptions
+description: "Configuration options for a specific target service in token delegation."
+icon: lock
+tag: "SEALED"
+keywords: ['TargetServiceOptions', 'Microsoft.OData.Mcp.Authentication.Models.TargetServiceOptions', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.TargetServiceOptions
+```
+
+## Summary
+
+Configuration options for a specific target service in token delegation.
+
+## Remarks
+
+These options define how tokens should be handled when making requests to a specific
+            downstream service. Each service can have its own delegation strategy, scopes,
+            and authentication requirements.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [TargetServiceOptions](/api-reference/Microsoft/OData/Mcp/Authentication/Models/TargetServiceOptions) class.
+
+#### Syntax
+
+```csharp
+public TargetServiceOptions()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [TargetServiceOptions](/api-reference/Microsoft/OData/Mcp/Authentication/Models/TargetServiceOptions) class with the specified service ID and base URL.
+
+#### Syntax
+
+```csharp
+public TargetServiceOptions(string serviceId, string baseUrl)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `serviceId` | `string` | The unique identifier for the target service. |
+| `baseUrl` | `string` | The base URL of the target service. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *serviceId* or *baseUrl* is null or whitespace. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AdditionalHeaders
+
+Gets or sets additional headers to include in requests to this service.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, string> AdditionalHeaders { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, string>`
+A dictionary of header names and values to include in requests.
+
+#### Remarks
+
+These headers are added to all requests made to this service, in addition
+            to the authentication token. They can be used for service-specific
+            requirements like API versions or custom authentication schemes.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  BaseUrl
+
+Gets or sets the base URL of the target service.
+
+#### Syntax
+
+```csharp
+public required string BaseUrl { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The base URL where the service can be accessed.
+
+#### Remarks
+
+This URL is used to determine which requests should use this service's
+            delegation configuration. Requests to URLs starting with this base URL
+            will use these settings.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ClientCredentials
+
+Gets or sets the client credentials for service-to-service authentication.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.ClientCredentials ClientCredentials { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.ClientCredentials?`
+Credentials used when the service requires client authentication.
+
+#### Remarks
+
+These credentials are used for OAuth2 flows that require client authentication,
+            such as on-behalf-of or token exchange. They identify the MCP server to the
+            authorization server.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Scopes
+
+Gets or sets the scopes to request for this service.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> Scopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of OAuth2 scopes to request when obtaining tokens for this service.
+
+#### Remarks
+
+These scopes define the level of access requested for the target service.
+            They should be the minimum scopes required for the MCP server to perform
+            its operations on behalf of the user.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ServiceId
+
+Gets or sets the unique identifier for the target service.
+
+#### Syntax
+
+```csharp
+public required string ServiceId { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+A unique string that identifies this service configuration.
+
+#### Remarks
+
+This identifier is used to look up the appropriate delegation configuration
+            when making requests to downstream services. It should be unique within
+            the MCP server's configuration.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Strategy
+
+Gets or sets the token forwarding strategy for this service.
+
+#### Syntax
+
+```csharp
+public System.Nullable<Microsoft.OData.Mcp.Authentication.Models.TokenForwardingStrategy> Strategy { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<Microsoft.OData.Mcp.Authentication.Models.TokenForwardingStrategy>`
+The strategy to use when forwarding tokens to this service.
+
+#### Remarks
+
+If not specified, the global token delegation strategy will be used.
+            Service-specific strategies allow for fine-grained control over how
+            different services receive authentication tokens.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TargetAudience
+
+Gets or sets the target audience for token exchange operations.
+
+#### Syntax
+
+```csharp
+public string TargetAudience { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The audience claim to request when exchanging tokens for this service.
+
+#### Remarks
+
+When using token exchange or on-behalf-of flows, this audience identifies
+            the target service for the new token. It's typically the service's API
+            identifier or base URL.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Timeout
+
+Gets or sets the timeout for requests to this service.
+
+#### Syntax
+
+```csharp
+public System.Nullable<System.TimeSpan> Timeout { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<System.TimeSpan>`
+The timeout duration for requests to this service.
+
+#### Remarks
+
+If not specified, the global delegation timeout will be used. Service-specific
+            timeouts allow for different performance expectations for different services.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TokenEndpoint
+
+Gets or sets the token endpoint URL for this service.
+
+#### Syntax
+
+```csharp
+public string TokenEndpoint { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The URL of the token endpoint for OAuth2 operations.
+
+#### Remarks
+
+If not specified, the token endpoint will be discovered from the authorization
+            server's metadata. Specifying this directly can improve performance and
+            provide more control over token operations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ValidateBeforeForwarding
+
+Gets or sets a value indicating whether to validate tokens before sending to this service.
+
+#### Syntax
+
+```csharp
+public System.Nullable<bool> ValidateBeforeForwarding { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<bool>`
+`true` if tokens should be validated before forwarding; `null` to use global setting.
+
+#### Remarks
+
+This setting overrides the global token validation setting for this specific
+            service. Some services may have different validation requirements or
+            performance characteristics.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetEffectiveStrategy
+
+Gets the effective token forwarding strategy for this service.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.TokenForwardingStrategy GetEffectiveStrategy(Microsoft.OData.Mcp.Authentication.Models.TokenForwardingStrategy globalStrategy)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `globalStrategy` | `Microsoft.OData.Mcp.Authentication.Models.TokenForwardingStrategy` | The global token forwarding strategy. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.TokenForwardingStrategy`
+The strategy to use for this service.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetEffectiveTimeout
+
+Gets the effective timeout for this service.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan GetEffectiveTimeout(System.TimeSpan globalTimeout)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `globalTimeout` | `System.TimeSpan` | The global timeout setting. |
+
+#### Returns
+
+Type: `System.TimeSpan`
+The timeout to use for this service.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetEffectiveValidation
+
+Gets the effective validation setting for this service.
+
+#### Syntax
+
+```csharp
+public bool GetEffectiveValidation(bool globalValidation)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `globalValidation` | `bool` | The global validation setting. |
+
+#### Returns
+
+Type: `bool`
+The validation setting to use for this service.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MatchesUrl
+
+Determines whether a URL matches this target service configuration.
+
+#### Syntax
+
+```csharp
+public bool MatchesUrl(string url)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `url` | `string` | The URL to check. |
+
+#### Returns
+
+Type: `bool`
+`true` if the URL matches this service; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MatchesUrl
+
+Determines whether a URI matches this target service configuration.
+
+#### Syntax
+
+```csharp
+public bool MatchesUrl(System.Uri uri)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `uri` | `System.Uri` | The URI to check. |
+
+#### Returns
+
+Type: `bool`
+`true` if the URI matches this service; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the target service options.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A summary of the target service configuration.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the target service options for consistency and completeness.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or an empty collection if the options are valid.
+

@@ -32,37 +32,6 @@
             ]
           },
           {
-            "group": "Breakdance",
-            "pages": [
-              "breakdance/index",
-              "breakdance/quickstart"
-            ]
-          },
-          {
-            "group": "Simplemessagebus",
-            "pages": [
-              "simplemessagebus/index",
-              "simplemessagebus/installation",
-              "simplemessagebus/quickstart",
-              {
-                "group": "Guides",
-                "pages": [
-                  "simplemessagebus/guides/configuration",
-                  "simplemessagebus/guides/overview",
-                  "simplemessagebus/guides/testing"
-                ]
-              },
-              {
-                "group": "Providers",
-                "pages": [
-                  "simplemessagebus/providers/amazon-sqs",
-                  "simplemessagebus/providers/azure-storage-queue",
-                  "simplemessagebus/providers/overview"
-                ]
-              }
-            ]
-          },
-          {
             "group": "API Reference",
             "icon": "code",
             "pages": [
@@ -422,6 +391,630 @@
                           "api-reference/System/Security/Claims/ClaimsIdentity",
                           "api-reference/System/Security/Claims/ClaimsPrincipal",
                           "api-reference/System/Security/Claims/EasyAF_ClaimsPrincipalExtensions"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "REST APIs",
+        "href": "restier",
+        "pages": [
+          "restier/index",
+          {
+            "group": "Getting Started",
+            "pages": [
+              "restier/index"
+            ]
+          },
+          {
+            "group": "API Reference",
+            "icon": "code",
+            "pages": [
+              {
+                "group": "Microsoft",
+                "icon": "folder-tree",
+                "pages": [
+                  {
+                    "group": "AspNetCore",
+                    "icon": "folder-tree",
+                    "pages": [
+                      {
+                        "group": "Builder",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "restier/api-reference/Microsoft/AspNetCore/Builder/index",
+                          "restier/api-reference/Microsoft/AspNetCore/Builder/IApplicationBuilder"
+                        ]
+                      },
+                      {
+                        "group": "Http",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "restier/api-reference/Microsoft/AspNetCore/Http/index",
+                          "restier/api-reference/Microsoft/AspNetCore/Http/HttpRequest"
+                        ]
+                      },
+                      {
+                        "group": "Routing",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "restier/api-reference/Microsoft/AspNetCore/Routing/index",
+                          "restier/api-reference/Microsoft/AspNetCore/Routing/IEndpointRouteBuilder",
+                          "restier/api-reference/Microsoft/AspNetCore/Routing/IRouteBuilder",
+                          "restier/api-reference/Microsoft/AspNetCore/Routing/RouteValueDictionary"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "EntityFrameworkCore",
+                    "icon": "folder-tree",
+                    "pages": [
+                      "restier/api-reference/Microsoft/EntityFrameworkCore/index",
+                      "restier/api-reference/Microsoft/EntityFrameworkCore/DbContext"
+                    ]
+                  },
+                  {
+                    "group": "Extensions",
+                    "icon": "folder-tree",
+                    "pages": [
+                      {
+                        "group": "DependencyInjection",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "restier/api-reference/Microsoft/Extensions/DependencyInjection/index",
+                          "restier/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "OData",
+                    "icon": "folder-tree",
+                    "pages": [
+                      {
+                        "group": "Edm",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "restier/api-reference/Microsoft/OData/Edm/index",
+                          "restier/api-reference/Microsoft/OData/Edm/IEdmModel",
+                          "restier/api-reference/Microsoft/OData/Edm/IEdmType"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Restier",
+                    "icon": "folder-tree",
+                    "pages": [
+                      {
+                        "group": "AspNet",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "restier/api-reference/Microsoft/Restier/AspNet/index",
+                          "restier/api-reference/Microsoft/Restier/AspNet/RestierController",
+                          "restier/api-reference/Microsoft/Restier/AspNet/RestierPayloadValueConverter",
+                          {
+                            "group": "Batch",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "restier/api-reference/Microsoft/Restier/AspNet/Batch/index",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Batch/RestierBatchChangeSetRequestItem",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Batch/RestierBatchHandler"
+                            ]
+                          },
+                          {
+                            "group": "Formatter",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "restier/api-reference/Microsoft/Restier/AspNet/Formatter/index",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Formatter/DefaultRestierDeserializerProvider",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Formatter/DefaultRestierSerializerProvider",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Formatter/RestierCollectionSerializer",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Formatter/RestierEnumSerializer",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Formatter/RestierPrimitiveSerializer",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Formatter/RestierRawSerializer",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Formatter/RestierResourceSerializer",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Formatter/RestierResourceSetSerializer"
+                            ]
+                          },
+                          {
+                            "group": "Model",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "restier/api-reference/Microsoft/Restier/AspNet/Model/index",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Model/BoundOperationAttribute",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Model/OperationAttribute",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Model/OperationType",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Model/ResourceAttribute",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Model/RestierWebApiModelMapper",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Model/UnboundOperationAttribute"
+                            ]
+                          },
+                          {
+                            "group": "Operation",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "restier/api-reference/Microsoft/Restier/AspNet/Operation/index",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Operation/RestierOperationContext",
+                              "restier/api-reference/Microsoft/Restier/AspNet/Operation/RestierOperationExecutor"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "group": "AspNetCore",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "restier/api-reference/Microsoft/Restier/AspNetCore/index",
+                          "restier/api-reference/Microsoft/Restier/AspNetCore/RestierController",
+                          "restier/api-reference/Microsoft/Restier/AspNetCore/RestierPayloadValueConverter",
+                          {
+                            "group": "Batch",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Batch/index",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Batch/RestierBatchChangeSetRequestItem",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Batch/RestierBatchHandler"
+                            ]
+                          },
+                          {
+                            "group": "Formatter",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Formatter/index",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Formatter/DefaultRestierDeserializerProvider",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Formatter/DefaultRestierSerializerProvider",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Formatter/RestierCollectionSerializer",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Formatter/RestierEnumSerializer",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Formatter/RestierPrimitiveSerializer",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Formatter/RestierRawSerializer",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Formatter/RestierResourceSerializer",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Formatter/RestierResourceSetSerializer"
+                            ]
+                          },
+                          {
+                            "group": "Middleware",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Middleware/index",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Middleware/ODataBatchHttpContextFixerMiddleware",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Middleware/RestierClaimsPrincipalMiddleware"
+                            ]
+                          },
+                          {
+                            "group": "Model",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Model/index",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Model/BoundOperationAttribute",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Model/OperationAttribute",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Model/OperationType",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Model/ResourceAttribute",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Model/RestierWebApiModelMapper",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Model/UnboundOperationAttribute"
+                            ]
+                          },
+                          {
+                            "group": "Operation",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Operation/index",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Operation/RestierOperationContext",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Operation/RestierOperationExecutor"
+                            ]
+                          },
+                          {
+                            "group": "Swagger",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Swagger/index",
+                              "restier/api-reference/Microsoft/Restier/AspNetCore/Swagger/RestierSwaggerProvider"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "group": "Breakdance",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "restier/api-reference/Microsoft/Restier/Breakdance/index",
+                          "restier/api-reference/Microsoft/Restier/Breakdance/RestierConventionDefinition",
+                          "restier/api-reference/Microsoft/Restier/Breakdance/RestierConventionEntitySetDefinition",
+                          "restier/api-reference/Microsoft/Restier/Breakdance/RestierConventionMethodDefinition",
+                          "restier/api-reference/Microsoft/Restier/Breakdance/RestierTestHelpers"
+                        ]
+                      },
+                      {
+                        "group": "Core",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "restier/api-reference/Microsoft/Restier/Core/index",
+                          "restier/api-reference/Microsoft/Restier/Core/ApiBase",
+                          "restier/api-reference/Microsoft/Restier/Core/ChangeSetValidationException",
+                          "restier/api-reference/Microsoft/Restier/Core/ConventionBasedChangeSetItemAuthorizer",
+                          "restier/api-reference/Microsoft/Restier/Core/ConventionBasedChangeSetItemFilter",
+                          "restier/api-reference/Microsoft/Restier/Core/ConventionBasedChangeSetItemValidator",
+                          "restier/api-reference/Microsoft/Restier/Core/ConventionBasedMethodNameFactory",
+                          "restier/api-reference/Microsoft/Restier/Core/ConventionBasedOperationAuthorizer",
+                          "restier/api-reference/Microsoft/Restier/Core/ConventionBasedOperationFilter",
+                          "restier/api-reference/Microsoft/Restier/Core/ConventionBasedQueryExpressionProcessor",
+                          "restier/api-reference/Microsoft/Restier/Core/ConventionInvocationException",
+                          "restier/api-reference/Microsoft/Restier/Core/DataSourceStub",
+                          "restier/api-reference/Microsoft/Restier/Core/EdmModelValidationException",
+                          "restier/api-reference/Microsoft/Restier/Core/InvocationContext",
+                          "restier/api-reference/Microsoft/Restier/Core/RestierApiBuilder",
+                          "restier/api-reference/Microsoft/Restier/Core/RestierContainerBuilder",
+                          "restier/api-reference/Microsoft/Restier/Core/RestierEntitySetOperation",
+                          "restier/api-reference/Microsoft/Restier/Core/RestierOperationMethod",
+                          "restier/api-reference/Microsoft/Restier/Core/RestierPipelineState",
+                          "restier/api-reference/Microsoft/Restier/Core/RestierRouteBuilder",
+                          "restier/api-reference/Microsoft/Restier/Core/StatusCodeException",
+                          {
+                            "group": "Authorization",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "restier/api-reference/Microsoft/Restier/Core/Authorization/index",
+                              "restier/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry",
+                              "restier/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationFactory"
+                            ]
+                          },
+                          {
+                            "group": "Model",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "restier/api-reference/Microsoft/Restier/Core/Model/index",
+                              "restier/api-reference/Microsoft/Restier/Core/Model/IModelBuilder",
+                              "restier/api-reference/Microsoft/Restier/Core/Model/IModelMapper",
+                              "restier/api-reference/Microsoft/Restier/Core/Model/ModelContext"
+                            ]
+                          },
+                          {
+                            "group": "Operation",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "restier/api-reference/Microsoft/Restier/Core/Operation/index",
+                              "restier/api-reference/Microsoft/Restier/Core/Operation/IOperationAuthorizer",
+                              "restier/api-reference/Microsoft/Restier/Core/Operation/IOperationExecutor",
+                              "restier/api-reference/Microsoft/Restier/Core/Operation/IOperationFilter",
+                              "restier/api-reference/Microsoft/Restier/Core/Operation/OperationContext"
+                            ]
+                          },
+                          {
+                            "group": "Query",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "restier/api-reference/Microsoft/Restier/Core/Query/index",
+                              "restier/api-reference/Microsoft/Restier/Core/Query/DataSourceStubModelReference",
+                              "restier/api-reference/Microsoft/Restier/Core/Query/IQueryExecutor",
+                              "restier/api-reference/Microsoft/Restier/Core/Query/IQueryExpressionAuthorizer",
+                              "restier/api-reference/Microsoft/Restier/Core/Query/IQueryExpressionExpander",
+                              "restier/api-reference/Microsoft/Restier/Core/Query/IQueryExpressionProcessor",
+                              "restier/api-reference/Microsoft/Restier/Core/Query/IQueryExpressionSourcer",
+                              "restier/api-reference/Microsoft/Restier/Core/Query/ParameterModelReference",
+                              "restier/api-reference/Microsoft/Restier/Core/Query/PropertyModelReference",
+                              "restier/api-reference/Microsoft/Restier/Core/Query/QueryContext",
+                              "restier/api-reference/Microsoft/Restier/Core/Query/QueryExpressionContext",
+                              "restier/api-reference/Microsoft/Restier/Core/Query/QueryModelReference",
+                              "restier/api-reference/Microsoft/Restier/Core/Query/QueryRequest",
+                              "restier/api-reference/Microsoft/Restier/Core/Query/QueryResult"
+                            ]
+                          },
+                          {
+                            "group": "Submit",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "restier/api-reference/Microsoft/Restier/Core/Submit/index",
+                              "restier/api-reference/Microsoft/Restier/Core/Submit/ChangeSet",
+                              "restier/api-reference/Microsoft/Restier/Core/Submit/ChangeSetItem",
+                              "restier/api-reference/Microsoft/Restier/Core/Submit/ChangeSetItemValidationResult",
+                              "restier/api-reference/Microsoft/Restier/Core/Submit/DataModificationItem",
+                              "restier/api-reference/Microsoft/Restier/Core/Submit/DataModificationItem",
+                              "restier/api-reference/Microsoft/Restier/Core/Submit/DefaultChangeSetInitializer",
+                              "restier/api-reference/Microsoft/Restier/Core/Submit/DefaultSubmitExecutor",
+                              "restier/api-reference/Microsoft/Restier/Core/Submit/IChangeSetInitializer",
+                              "restier/api-reference/Microsoft/Restier/Core/Submit/IChangeSetItemAuthorizer",
+                              "restier/api-reference/Microsoft/Restier/Core/Submit/IChangeSetItemFilter",
+                              "restier/api-reference/Microsoft/Restier/Core/Submit/IChangeSetItemValidator",
+                              "restier/api-reference/Microsoft/Restier/Core/Submit/ISubmitExecutor",
+                              "restier/api-reference/Microsoft/Restier/Core/Submit/SubmitContext",
+                              "restier/api-reference/Microsoft/Restier/Core/Submit/SubmitResult"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "group": "EntityFramework",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "restier/api-reference/Microsoft/Restier/EntityFramework/index",
+                          "restier/api-reference/Microsoft/Restier/EntityFramework/EFChangeSetInitializer",
+                          "restier/api-reference/Microsoft/Restier/EntityFramework/EntityFrameworkApi",
+                          "restier/api-reference/Microsoft/Restier/EntityFramework/IEntityFrameworkApi"
+                        ]
+                      },
+                      {
+                        "group": "EntityFrameworkCore",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "restier/api-reference/Microsoft/Restier/EntityFrameworkCore/index",
+                          "restier/api-reference/Microsoft/Restier/EntityFrameworkCore/EFChangeSetInitializer",
+                          "restier/api-reference/Microsoft/Restier/EntityFrameworkCore/EntityFrameworkApi",
+                          "restier/api-reference/Microsoft/Restier/EntityFrameworkCore/IEntityFrameworkApi"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Spatial",
+                    "icon": "folder-tree",
+                    "pages": [
+                      "restier/api-reference/Microsoft/Spatial/index",
+                      "restier/api-reference/Microsoft/Spatial/GeographyLineString",
+                      "restier/api-reference/Microsoft/Spatial/GeographyPoint"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "System",
+                "icon": "folder-tree",
+                "pages": [
+                  "restier/api-reference/System/index",
+                  "restier/api-reference/System/IServiceProvider",
+                  "restier/api-reference/System/Type",
+                  {
+                    "group": "Data",
+                    "icon": "folder-tree",
+                    "pages": [
+                      {
+                        "group": "Entity",
+                        "icon": "folder-tree",
+                        "pages": [
+                          {
+                            "group": "Spatial",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "restier/api-reference/System/Data/Entity/Spatial/index",
+                              "restier/api-reference/System/Data/Entity/Spatial/DbGeography"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Web",
+                    "icon": "folder-tree",
+                    "pages": [
+                      {
+                        "group": "Http",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "restier/api-reference/System/Web/Http/index",
+                          "restier/api-reference/System/Web/Http/HttpConfiguration"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Blazor UI",
+        "href": "blazoressentials",
+        "pages": [
+          {
+            "group": "Getting Started",
+            "icon": "stars",
+            "pages": [
+              "blazoressentials/index"
+            ]
+          },
+          {
+            "group": "Guides",
+            "icon": "dog-leashed",
+            "pages": [
+              "blazoressentials/guides/index",
+              "blazoressentials/guides/pipeline",
+              "blazoressentials/guides/conceptual-docs",
+              "blazoressentials/guides/deployment"
+            ]
+          },
+          {
+            "group": "API Reference",
+            "icon": "code",
+            "pages": [
+              {
+                "group": "CloudNimble",
+                "icon": "folder-tree",
+                "pages": [
+                  {
+                    "group": "BlazorEssentials",
+                    "icon": "folder-tree",
+                    "pages": [
+                      "blazoressentials/api-reference/CloudNimble/BlazorEssentials/index",
+                      "blazoressentials/api-reference/CloudNimble/BlazorEssentials/_Imports",
+                      "blazoressentials/api-reference/CloudNimble/BlazorEssentials/AppStateBase",
+                      "blazoressentials/api-reference/CloudNimble/BlazorEssentials/BlazorObservable",
+                      "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Html",
+                      "blazoressentials/api-reference/CloudNimble/BlazorEssentials/InterfaceElement",
+                      "blazoressentials/api-reference/CloudNimble/BlazorEssentials/JsModule",
+                      "blazoressentials/api-reference/CloudNimble/BlazorEssentials/LoadingStatus",
+                      "blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedConfig",
+                      "blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedDebugMode",
+                      "blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedDelayMode",
+                      "blazoressentials/api-reference/CloudNimble/BlazorEssentials/ViewModelBase",
+                      {
+                        "group": "Authentication",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Authentication/index",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Authentication/BlazorEssentialsAuthorizationMessageHandler"
+                        ]
+                      },
+                      {
+                        "group": "Breakdance",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Breakdance/index",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Breakdance/BlazorEssentialsTestBase",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Breakdance/TestableAuthenticationStateProvider",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Breakdance/TestableWebAssemblyHostEnvironment",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Breakdance/ViewModelTestHelpers"
+                        ]
+                      },
+                      {
+                        "group": "Controls",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Controls/index",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Controls/LoadingContainer"
+                        ]
+                      },
+                      {
+                        "group": "IndexedDb",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/index",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexAttribute",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexedDbDatabase",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexedDbException",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexedDbIndex",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexedDbNotFoundException",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexedDbObjectStore",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/KeyRange",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/ObjectStoreAttribute",
+                          {
+                            "group": "Schema",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/Schema/index",
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/Schema/IndexedDbDatabaseDefinition",
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/Schema/IndexedDbIndexDefinition",
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/Schema/IndexedDbObjectStoreDefinition"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "group": "Merlin",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Merlin/index",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Merlin/Operation",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Merlin/OperationStatus",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Merlin/OperationStatusDisplay",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Merlin/OperationStep",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Merlin/OperationStepStatus",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Merlin/Wizard",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Merlin/WizardPane",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Merlin/WizardPaneStatus",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Merlin/WizardPaneType"
+                        ]
+                      },
+                      {
+                        "group": "Navigation",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/index",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/ActionButton",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/ActionButton",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/ActionButtonBase",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationHistory",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/ScrollRestorationType"
+                        ]
+                      },
+                      {
+                        "group": "Threading",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Threading/index",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Threading/DelayDispatcher"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Microsoft",
+                "icon": "folder-tree",
+                "pages": [
+                  {
+                    "group": "AspNetCore",
+                    "icon": "folder-tree",
+                    "pages": [
+                      {
+                        "group": "Components",
+                        "icon": "folder-tree",
+                        "pages": [
+                          {
+                            "group": "Forms",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "blazoressentials/api-reference/Microsoft/AspNetCore/Components/Forms/index",
+                              "blazoressentials/api-reference/Microsoft/AspNetCore/Components/Forms/EditContext"
+                            ]
+                          },
+                          {
+                            "group": "WebAssembly",
+                            "icon": "folder-tree",
+                            "pages": [
+                              {
+                                "group": "Hosting",
+                                "icon": "folder-tree",
+                                "pages": [
+                                  "blazoressentials/api-reference/Microsoft/AspNetCore/Components/WebAssembly/Hosting/index",
+                                  "blazoressentials/api-reference/Microsoft/AspNetCore/Components/WebAssembly/Hosting/WebAssemblyHostBuilder"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Extensions",
+                    "icon": "folder-tree",
+                    "pages": [
+                      {
+                        "group": "Hosting",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "blazoressentials/api-reference/Microsoft/Extensions/Hosting/index",
+                          "blazoressentials/api-reference/Microsoft/Extensions/Hosting/IHostBuilder"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "System",
+                "icon": "folder-tree",
+                "pages": [
+                  {
+                    "group": "Collections",
+                    "icon": "folder-tree",
+                    "pages": [
+                      {
+                        "group": "Generic",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "blazoressentials/api-reference/System/Collections/Generic/index",
+                          "blazoressentials/api-reference/System/Collections/Generic/IEnumerable"
                         ]
                       }
                     ]

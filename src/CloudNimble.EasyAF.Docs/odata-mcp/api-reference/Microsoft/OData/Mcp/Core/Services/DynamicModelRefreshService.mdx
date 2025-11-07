@@ -1,0 +1,47 @@
+---
+title: DynamicModelRefreshService
+description: "Background service that refreshes OData models when dynamic models are enabled."
+icon: file-brackets-curly
+keywords: ['DynamicModelRefreshService', 'Microsoft.OData.Mcp.Core.Services.DynamicModelRefreshService', 'Microsoft.OData.Mcp.Core.Services', 'class', 'Microsoft.Extensions.Hosting.BackgroundService']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Services
+
+**Inheritance:** Microsoft.Extensions.Hosting.BackgroundService
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Services.DynamicModelRefreshService
+```
+
+## Summary
+
+Background service that refreshes OData models when dynamic models are enabled.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [DynamicModelRefreshService](/api-reference/Microsoft/OData/Mcp/Core/Services/DynamicModelRefreshService) class.
+
+#### Syntax
+
+```csharp
+public DynamicModelRefreshService(System.IServiceProvider serviceProvider, Microsoft.Extensions.Logging.ILogger<Microsoft.OData.Mcp.Core.Services.DynamicModelRefreshService> logger, Microsoft.OData.Mcp.Core.ODataMcpOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `serviceProvider` | `System.IServiceProvider` | The service provider. |
+| `logger` | `Microsoft.Extensions.Logging.ILogger<Microsoft.OData.Mcp.Core.Services.DynamicModelRefreshService>` | The logger. |
+| `options` | `Microsoft.OData.Mcp.Core.ODataMcpOptions` | The MCP options. |
+

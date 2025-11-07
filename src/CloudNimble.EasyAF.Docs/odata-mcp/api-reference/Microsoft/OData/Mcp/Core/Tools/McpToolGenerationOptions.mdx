@@ -1,0 +1,863 @@
+---
+title: McpToolGenerationOptions
+description: "Configuration options for MCP tool generation."
+icon: lock
+tag: "SEALED"
+keywords: ['McpToolGenerationOptions', 'Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions', 'Microsoft.OData.Mcp.Core.Tools', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Tools
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions
+```
+
+## Summary
+
+Configuration options for MCP tool generation.
+
+## Remarks
+
+These options control how tools are generated from OData metadata,
+            including which operations to include, authorization requirements,
+            and performance optimizations.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [McpToolGenerationOptions](/api-reference/Microsoft/OData/Mcp/Core/Tools/McpToolGenerationOptions) class.
+
+#### Syntax
+
+```csharp
+public McpToolGenerationOptions()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AlwaysExcludePropertyTypes
+
+Gets or sets the list of property types that should always be excluded from default selections.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> AlwaysExcludePropertyTypes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A list of EDM type names to exclude.
+
+#### Remarks
+
+This list allows customization of which property types are automatically excluded
+            from default $select statements. Common values include "Edm.Binary", "Edm.Stream",
+            and potentially large geographic data types.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CustomMetadata
+
+Gets or sets custom metadata to include in all generated tools.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> CustomMetadata { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of custom metadata key-value pairs.
+
+#### Remarks
+
+This metadata will be added to all generated tools and can be used
+            for custom processing or filtering logic.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DefaultRequiredRoles
+
+Gets or sets the default required roles for generated tools.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> DefaultRequiredRoles { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of roles required by default for all tools.
+
+#### Remarks
+
+These roles will be added to all generated tools unless overridden
+            by entity-specific or operation-specific role configurations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DefaultRequiredScopes
+
+Gets or sets the default required scopes for generated tools.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> DefaultRequiredScopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of OAuth2 scopes required by default for all tools.
+
+#### Remarks
+
+These scopes will be added to all generated tools unless overridden
+            by entity-specific or operation-specific scope configurations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EntityScopes
+
+Gets or sets entity-specific scope requirements.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>> EntityScopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>>`
+A dictionary mapping entity type names to their required scopes.
+
+#### Remarks
+
+This allows configuring different authorization requirements for different
+            entity types. Entity type names should be fully qualified.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExcludeBinaryFieldsByDefault
+
+Gets or sets a value indicating whether to exclude binary and stream fields from default $select statements.
+
+#### Syntax
+
+```csharp
+public bool ExcludeBinaryFieldsByDefault { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to exclude binary fields by default; otherwise, `false`.
+
+#### Remarks
+
+When enabled, properties of type Edm.Binary and Edm.Stream will be automatically excluded
+            from list operations unless explicitly included in the $select parameter. This helps prevent
+            large binary data from overwhelming the response and improves performance.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExcludeEntityTypes
+
+Gets or sets the entity types to exclude from tool generation.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.HashSet<string> ExcludeEntityTypes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.HashSet<string>`
+A collection of entity type names to exclude.
+
+#### Remarks
+
+Entity types listed here will be excluded from tool generation
+            even if they would otherwise be included. This takes precedence
+            over the IncludeEntityTypes setting.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExcludeOperations
+
+Gets or sets the operations to exclude for each entity type.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.HashSet<Microsoft.OData.Mcp.Core.Tools.McpToolOperationType> ExcludeOperations { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.HashSet<Microsoft.OData.Mcp.Core.Tools.McpToolOperationType>`
+A collection of operation types to exclude.
+
+#### Remarks
+
+Operations listed here will be excluded from tool generation.
+            This takes precedence over the IncludeOperations setting.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateBatchTools
+
+Gets or sets a value indicating whether to generate batch operation tools.
+
+#### Syntax
+
+```csharp
+public bool GenerateBatchTools { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to generate batch tools; otherwise, `false`.
+
+#### Remarks
+
+Batch tools allow processing multiple operations in a single request,
+            improving performance for bulk operations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateCrudTools
+
+Gets or sets a value indicating whether to generate CRUD tools for entity types.
+
+#### Syntax
+
+```csharp
+public bool GenerateCrudTools { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to generate CRUD tools; otherwise, `false`.
+
+#### Remarks
+
+CRUD tools provide basic Create, Read, Update, and Delete operations
+            for each entity type in the OData model.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateEntitySetTools
+
+Gets or sets a value indicating whether to generate tools for entity sets.
+
+#### Syntax
+
+```csharp
+public bool GenerateEntitySetTools { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to generate entity set tools; otherwise, `false`.
+
+#### Remarks
+
+Entity set tools operate on collections of entities and may have
+            different permissions or behaviors than individual entity tools.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateNavigationTools
+
+Gets or sets a value indicating whether to generate navigation tools.
+
+#### Syntax
+
+```csharp
+public bool GenerateNavigationTools { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to generate navigation tools; otherwise, `false`.
+
+#### Remarks
+
+Navigation tools allow traversing relationships between entities,
+            following navigation properties defined in the OData model.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateQueryTools
+
+Gets or sets a value indicating whether to generate query tools.
+
+#### Syntax
+
+```csharp
+public bool GenerateQueryTools { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to generate query tools; otherwise, `false`.
+
+#### Remarks
+
+Query tools provide advanced search and filtering capabilities
+            using OData query syntax like $filter, $orderby, $select, and $expand.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IncludeDetailedSchemas
+
+Gets or sets a value indicating whether to include detailed property schemas.
+
+#### Syntax
+
+```csharp
+public bool IncludeDetailedSchemas { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to include detailed schemas; otherwise, `false`.
+
+#### Remarks
+
+Detailed schemas provide full type information and validation rules
+            but result in larger tool definitions and longer generation times.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IncludeEntityTypes
+
+Gets or sets the entity types to include in tool generation.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.HashSet<string> IncludeEntityTypes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.HashSet<string>`
+A collection of entity type names to include, or empty to include all.
+
+#### Remarks
+
+When specified, only tools for the listed entity types will be generated.
+            If empty, tools will be generated for all entity types in the model.
+            Entity type names should be fully qualified (e.g., "MyNamespace.Customer").
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IncludeExamples
+
+Gets or sets a value indicating whether to include examples in generated tools.
+
+#### Syntax
+
+```csharp
+public bool IncludeExamples { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to include examples; otherwise, `false`.
+
+#### Remarks
+
+Examples help AI models understand how to use the tools effectively
+            but increase the size of the tool definitions.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IncludeOperations
+
+Gets or sets the operations to include for each entity type.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.HashSet<Microsoft.OData.Mcp.Core.Tools.McpToolOperationType> IncludeOperations { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.HashSet<Microsoft.OData.Mcp.Core.Tools.McpToolOperationType>`
+A collection of operation types to include.
+
+#### Remarks
+
+This allows fine-grained control over which operations are available
+            for each entity type. If empty, all supported operations will be included.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxNavigationDepth
+
+Gets or sets the maximum depth for navigation property traversal.
+
+#### Syntax
+
+```csharp
+public int MaxNavigationDepth { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum depth for following navigation properties.
+
+#### Remarks
+
+This prevents infinite recursion when generating navigation tools
+            for models with circular references.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxToolCount
+
+Gets or sets the maximum number of tools to generate.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> MaxToolCount { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>`
+The maximum number of tools to generate, or null for no limit.
+
+#### Remarks
+
+This setting can be used to prevent generation of too many tools
+            from very large OData models, which could impact performance.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  OperationScopes
+
+Gets or sets operation-specific scope requirements.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<Microsoft.OData.Mcp.Core.Tools.McpToolOperationType, System.Collections.Generic.List<string>> OperationScopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<Microsoft.OData.Mcp.Core.Tools.McpToolOperationType, System.Collections.Generic.List<string>>`
+A dictionary mapping operation types to their required scopes.
+
+#### Remarks
+
+This allows configuring different authorization requirements for different
+            operation types (e.g., read vs. write operations).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  OptimizeForPerformance
+
+Gets or sets a value indicating whether to optimize for performance.
+
+#### Syntax
+
+```csharp
+public bool OptimizeForPerformance { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to optimize for performance; otherwise, `false`.
+
+#### Remarks
+
+Performance optimization may reduce the number of generated tools
+            or simplify their schemas to improve runtime performance.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToolNamePrefix
+
+Gets or sets the tool name prefix.
+
+#### Syntax
+
+```csharp
+public string ToolNamePrefix { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+A prefix to add to all generated tool names.
+
+#### Remarks
+
+The prefix helps avoid naming conflicts when multiple OData services
+            are exposed through the same MCP server.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToolNameSuffix
+
+Gets or sets the tool name suffix.
+
+#### Syntax
+
+```csharp
+public string ToolNameSuffix { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+A suffix to add to all generated tool names.
+
+#### Remarks
+
+The suffix can be used for versioning or other organizational purposes.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToolVersion
+
+Gets or sets the tool version for generated tools.
+
+#### Syntax
+
+```csharp
+public string ToolVersion { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The version string to assign to generated tools.
+
+#### Remarks
+
+This version is used for tool identification and compatibility checking.
+            It should follow semantic versioning principles.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a copy of these options.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions`
+A new instance with the same settings as this instance.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Default
+
+Creates default options for tool generation.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions Default()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions`
+A new instance with default settings.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  FormatToolName
+
+Formats a tool name with the configured prefix and suffix.
+
+#### Syntax
+
+```csharp
+public string FormatToolName(string baseName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `baseName` | `string` | The base name of the tool. |
+
+#### Returns
+
+Type: `string`
+The formatted tool name.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetCombinedScopes
+
+Gets the required scopes for a specific entity type and operation combination.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> GetCombinedScopes(string entityTypeName, Microsoft.OData.Mcp.Core.Tools.McpToolOperationType operationType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityTypeName` | `string` | The entity type name. |
+| `operationType` | `Microsoft.OData.Mcp.Core.Tools.McpToolOperationType` | The operation type. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+The combined required scopes.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetEntityScopes
+
+Gets the required scopes for the specified entity type.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> GetEntityScopes(string entityTypeName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityTypeName` | `string` | The entity type name. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+The required scopes for the entity type.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetOperationScopes
+
+Gets the required scopes for the specified operation type.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> GetOperationScopes(Microsoft.OData.Mcp.Core.Tools.McpToolOperationType operationType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `operationType` | `Microsoft.OData.Mcp.Core.Tools.McpToolOperationType` | The operation type. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+The required scopes for the operation type.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Performance
+
+Creates options optimized for performance.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions Performance()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions`
+A new instance with performance-optimized settings.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReadOnly
+
+Creates options for read-only access.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions ReadOnly()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions`
+A new instance configured for read-only operations.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ShouldIncludeEntityType
+
+Determines whether the specified entity type should be included.
+
+#### Syntax
+
+```csharp
+public bool ShouldIncludeEntityType(string entityTypeName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityTypeName` | `string` | The entity type name to check. |
+
+#### Returns
+
+Type: `bool`
+`true` if the entity type should be included; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ShouldIncludeOperation
+
+Determines whether the specified operation should be included.
+
+#### Syntax
+
+```csharp
+public bool ShouldIncludeOperation(Microsoft.OData.Mcp.Core.Tools.McpToolOperationType operationType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `operationType` | `Microsoft.OData.Mcp.Core.Tools.McpToolOperationType` | The operation type to check. |
+
+#### Returns
+
+Type: `bool`
+`true` if the operation should be included; otherwise, `false`.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the options for consistency and completeness.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or empty if the options are valid.
+

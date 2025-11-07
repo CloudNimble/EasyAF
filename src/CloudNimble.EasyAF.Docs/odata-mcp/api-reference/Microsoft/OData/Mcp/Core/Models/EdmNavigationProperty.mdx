@@ -1,0 +1,467 @@
+---
+title: EdmNavigationProperty
+description: "Represents a navigation property in an OData entity type."
+icon: lock
+tag: "SEALED"
+keywords: ['EdmNavigationProperty', 'Microsoft.OData.Mcp.Core.Models.EdmNavigationProperty', 'Microsoft.OData.Mcp.Core.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Models.EdmNavigationProperty
+```
+
+## Summary
+
+Represents a navigation property in an OData entity type.
+
+## Remarks
+
+Navigation properties define relationships between entity types, allowing traversal
+            from one entity to related entities. They can represent both single-valued and
+            collection-valued relationships.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmNavigationProperty](/api-reference/Microsoft/OData/Mcp/Core/Models/EdmNavigationProperty) class.
+
+#### Syntax
+
+```csharp
+public EdmNavigationProperty()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmNavigationProperty](/api-reference/Microsoft/OData/Mcp/Core/Models/EdmNavigationProperty) class with the specified name and type.
+
+#### Syntax
+
+```csharp
+public EdmNavigationProperty(string name, string type)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The name of the navigation property. |
+| `type` | `string` | The type of the navigation property. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *name* or *type* is null or whitespace. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ContainsTarget
+
+Gets or sets a value indicating whether the navigation property contains dependent entities.
+
+#### Syntax
+
+```csharp
+public bool ContainsTarget { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if this navigation property contains dependent entities; otherwise, `false`.
+
+#### Remarks
+
+When true, this indicates that the target entities depend on the source entity for their existence.
+            Deleting the source entity should cascade to delete the dependent entities.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsCollection
+
+Gets a value indicating whether this navigation property represents a collection.
+
+#### Syntax
+
+```csharp
+public bool IsCollection { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the navigation property is collection-valued; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsRequired
+
+Gets a value indicating whether the navigation property is required (non-nullable).
+
+#### Syntax
+
+```csharp
+public bool IsRequired { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the navigation property is required; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Multiplicity
+
+Gets the multiplicity of this navigation property.
+
+#### Syntax
+
+```csharp
+public string Multiplicity { get; }
+```
+
+#### Property Value
+
+Type: `string`
+A string indicating the relationship multiplicity.
+
+#### Remarks
+
+Returns "Many" for collection-valued properties, "One" for non-nullable single-valued properties,
+            and "ZeroOrOne" for nullable single-valued properties.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Name
+
+Gets or sets the name of the navigation property.
+
+#### Syntax
+
+```csharp
+public required string Name { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The navigation property name as defined in the CSDL metadata.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Nullable
+
+Gets or sets a value indicating whether the navigation property can contain null values.
+
+#### Syntax
+
+```csharp
+public bool Nullable { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the navigation property is nullable; otherwise, `false`.
+
+#### Remarks
+
+This property is typically relevant for to-one relationships. Collection-valued
+            navigation properties are generally non-nullable (the collection itself, not its elements).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  OnDelete
+
+Gets or sets the on-delete action for this navigation property.
+
+#### Syntax
+
+```csharp
+public string OnDelete { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The action to take when the target entity is deleted, or `null` if not specified.
+
+#### Remarks
+
+Common values include "Cascade" for cascading deletes and "SetNull" for setting the
+            foreign key to null. The specific behavior depends on the underlying data store.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Partner
+
+Gets or sets the name of the partner navigation property.
+
+#### Syntax
+
+```csharp
+public string Partner { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The name of the corresponding navigation property on the target entity type, or `null` if not specified.
+
+#### Remarks
+
+The partner property represents the inverse side of a bidirectional relationship.
+            For example, if Customer has Orders navigation property, Order might have a Customer partner property.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferentialConstraints
+
+Gets or sets the referential constraints for this navigation property.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmReferentialConstraint> ReferentialConstraints { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmReferentialConstraint>`
+A collection of referential constraints that define the foreign key relationships.
+
+#### Remarks
+
+Referential constraints specify how the navigation property relates to properties
+            in the source and target entity types, effectively defining foreign key relationships.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TargetType
+
+Gets the target entity type name.
+
+#### Syntax
+
+```csharp
+public string TargetType { get; }
+```
+
+#### Property Value
+
+Type: `string`
+The fully qualified name of the target entity type.
+
+#### Remarks
+
+For collection-valued navigation properties, this returns the element type within the Collection().
+            For single-valued properties, this returns the type directly.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TargetTypeName
+
+Gets the target type name of the navigation property.
+
+#### Syntax
+
+```csharp
+public string TargetTypeName { get; }
+```
+
+#### Property Value
+
+Type: `string`
+The target entity type name without Collection() wrapper.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Type
+
+Gets or sets the type of the navigation property.
+
+#### Syntax
+
+```csharp
+public required string Type { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The target entity type, optionally wrapped in Collection() for to-many relationships.
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Override" variant="info" />
+
+Determines whether the specified object is equal to the current navigation property.
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | The object to compare with the current navigation property. |
+
+#### Returns
+
+Type: `bool`
+`true` if the specified object is equal to the current navigation property; otherwise, `false`.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Override" variant="info" />
+
+Returns a hash code for the current navigation property.
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+A hash code for the current navigation property.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the navigation property.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A string containing the navigation property name and type.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

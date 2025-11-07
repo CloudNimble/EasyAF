@@ -1,0 +1,343 @@
+---
+title: TokenValidationService
+description: "Provides services for validating JWT tokens and extracting user context."
+icon: lock
+tag: "SEALED"
+keywords: ['TokenValidationService', 'Microsoft.OData.Mcp.Authentication.Services.TokenValidationService', 'Microsoft.OData.Mcp.Authentication.Services', 'class', 'System.Object', 'Microsoft.OData.Mcp.Authentication.Services.ITokenValidationService']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Services
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Services.TokenValidationService
+```
+
+## Summary
+
+Provides services for validating JWT tokens and extracting user context.
+
+## Remarks
+
+This service handles JWT token validation using Microsoft's IdentityModel libraries,
+            including automatic discovery of validation keys and comprehensive claim extraction.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [TokenValidationService](/api-reference/Microsoft/OData/Mcp/Authentication/Services/TokenValidationService) class.
+
+#### Syntax
+
+```csharp
+public TokenValidationService(Microsoft.Extensions.Options.IOptions<Microsoft.OData.Mcp.Authentication.Models.McpAuthenticationOptions> options, Microsoft.Extensions.Logging.ILogger<Microsoft.OData.Mcp.Authentication.Services.TokenValidationService> logger)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options` | `Microsoft.Extensions.Options.IOptions<Microsoft.OData.Mcp.Authentication.Models.McpAuthenticationOptions>` | The authentication options. |
+| `logger` | `Microsoft.Extensions.Logging.ILogger<Microsoft.OData.Mcp.Authentication.Services.TokenValidationService>` | The logger instance. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *options* or *logger* is null. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExtractUserContext
+
+Extracts the user context from a validated claims principal.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.UserContext ExtractUserContext(System.Security.Claims.ClaimsPrincipal principal)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The claims principal from a validated token. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.UserContext`
+The user context containing identity and authorization information.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetAuthorizationMetadataAsync
+
+Gets the authorization metadata from the JWT token for downstream services.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.AuthorizationMetadata> GetAuthorizationMetadataAsync(string token)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `token` | `string` | The JWT token to extract metadata from. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.AuthorizationMetadata>`
+A task that represents the asynchronous operation. The task result contains the authorization metadata.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetTokenLifetime
+
+Gets the remaining lifetime of a token.
+
+#### Syntax
+
+```csharp
+public System.Nullable<System.TimeSpan> GetTokenLifetime(System.Security.Claims.ClaimsPrincipal principal)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The claims principal from a validated token. |
+
+#### Returns
+
+Type: `System.Nullable<System.TimeSpan>`
+The remaining time before the token expires, or null if the token has no expiration.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasRequiredScopes
+
+Checks if a user has the required scopes for a specific operation.
+
+#### Syntax
+
+```csharp
+public bool HasRequiredScopes(Microsoft.OData.Mcp.Authentication.Models.UserContext userContext, System.Collections.Generic.IEnumerable<string> requiredScopes)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `userContext` | `Microsoft.OData.Mcp.Authentication.Models.UserContext` | The user context to check. |
+| `requiredScopes` | `System.Collections.Generic.IEnumerable<string>` | The scopes required for the operation. |
+
+#### Returns
+
+Type: `bool`
+`true` if the user has at least one of the required scopes; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsTokenExpired
+
+Determines if a token is expired based on its claims.
+
+#### Syntax
+
+```csharp
+public bool IsTokenExpired(System.Security.Claims.ClaimsPrincipal principal)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The claims principal from a validated token. |
+
+#### Returns
+
+Type: `bool`
+`true` if the token is expired; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ValidateTokenAsync
+
+Validates a JWT token and returns the principal if valid.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<System.Security.Claims.ClaimsPrincipal> ValidateTokenAsync(string token, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `token` | `string` | The JWT token to validate. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A cancellation token to cancel the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Security.Claims.ClaimsPrincipal?>`
+A task that represents the asynchronous validation operation. The task result contains the claims principal if the token is valid, or null if invalid.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ValidateTokenAsync
+
+Validates a JWT token with additional validation parameters.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.TokenValidationResult> ValidateTokenAsync(string token, System.Collections.Generic.Dictionary<string, object> validationParameters, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `token` | `string` | The JWT token to validate. |
+| `validationParameters` | `System.Collections.Generic.Dictionary<string, object>` | Additional validation parameters to apply. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A cancellation token to cancel the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.TokenValidationResult>`
+A task that represents the asynchronous validation operation. The task result contains the validation result.
+
+## Related APIs
+
+- Microsoft.OData.Mcp.Authentication.Services.ITokenValidationService
+

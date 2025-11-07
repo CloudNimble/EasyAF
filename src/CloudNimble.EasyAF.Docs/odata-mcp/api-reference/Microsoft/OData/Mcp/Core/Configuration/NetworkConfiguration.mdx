@@ -1,0 +1,570 @@
+---
+title: NetworkConfiguration
+description: "Configuration for network endpoints, ports, and transport protocols."
+icon: lock
+tag: "SEALED"
+keywords: ['NetworkConfiguration', 'Microsoft.OData.Mcp.Core.Configuration.NetworkConfiguration', 'Microsoft.OData.Mcp.Core.Configuration', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Configuration
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Configuration.NetworkConfiguration
+```
+
+## Summary
+
+Configuration for network endpoints, ports, and transport protocols.
+
+## Remarks
+
+Network configuration specifies how the MCP server exposes its endpoints
+            and communicates with clients. The configuration varies based on deployment mode.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [NetworkConfiguration](/api-reference/Microsoft/OData/Mcp/Core/Configuration/NetworkConfiguration) class.
+
+#### Syntax
+
+```csharp
+public NetworkConfiguration()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  BasePath
+
+Gets or sets the base path for MCP endpoints.
+
+#### Syntax
+
+```csharp
+public string BasePath { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The base path prefix for all MCP endpoints (e.g., "/mcp", "/api/mcp").
+
+#### Remarks
+
+All MCP endpoints will be prefixed with this path. This allows hosting
+            MCP endpoints alongside other application endpoints.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Compression
+
+Gets or sets the compression configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.CompressionConfiguration Compression { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.CompressionConfiguration`
+Configuration for HTTP response compression.
+
+#### Remarks
+
+Compression can reduce bandwidth usage for large responses.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ConnectionTimeout
+
+Gets or sets the connection timeout.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan ConnectionTimeout { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The maximum time to wait for new connections to be established.
+
+#### Remarks
+
+Connections that take longer than this timeout will be rejected.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Cors
+
+Gets or sets the CORS configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.CorsConfiguration Cors { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.CorsConfiguration`
+Configuration for Cross-Origin Resource Sharing.
+
+#### Remarks
+
+CORS configuration allows web applications from different domains
+            to access the MCP server endpoints.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CustomProperties
+
+Gets or sets custom network properties.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> CustomProperties { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of custom network configuration values.
+
+#### Remarks
+
+Custom properties allow extending the configuration with deployment-specific
+            network settings.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableHttps
+
+Gets or sets a value indicating whether to enable HTTPS.
+
+#### Syntax
+
+```csharp
+public bool EnableHttps { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable HTTPS; otherwise, `false`.
+
+#### Remarks
+
+For production deployments, HTTPS should be enabled for security.
+            Development environments may disable HTTPS for simplicity.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Host
+
+Gets or sets the host address to bind to.
+
+#### Syntax
+
+```csharp
+public string Host { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The host address or hostname (e.g., "localhost", "0.0.0.0", "example.com").
+
+#### Remarks
+
+For sidecar deployments, this determines the network interface to bind to.
+            For middleware deployments, this is typically inherited from the host application.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HttpsPort
+
+Gets or sets the HTTPS port when HTTPS is enabled.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> HttpsPort { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>`
+The HTTPS port number, or null to use default (443).
+
+#### Remarks
+
+This is only used when EnableHttps is true and in sidecar deployment mode.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  KeepAliveTimeout
+
+Gets or sets the keep-alive timeout.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan KeepAliveTimeout { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The maximum time to keep idle connections alive.
+
+#### Remarks
+
+Idle connections will be closed after this timeout to free resources.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxConcurrentConnections
+
+Gets or sets the maximum number of concurrent connections.
+
+#### Syntax
+
+```csharp
+public int MaxConcurrentConnections { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum number of concurrent client connections.
+
+#### Remarks
+
+This helps prevent resource exhaustion from too many simultaneous connections.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxRequestBodySize
+
+Gets or sets the maximum request body size.
+
+#### Syntax
+
+```csharp
+public long MaxRequestBodySize { get; set; }
+```
+
+#### Property Value
+
+Type: `long`
+The maximum size in bytes for HTTP request bodies.
+
+#### Remarks
+
+Requests larger than this size will be rejected to prevent memory exhaustion.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Port
+
+Gets or sets the port number to listen on.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> Port { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>`
+The TCP port number, or null to use the host application's port.
+
+#### Remarks
+
+For sidecar deployments, this is the port the MCP server will listen on.
+            For middleware deployments, this should typically be null to inherit from the host.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RequestTimeout
+
+Gets or sets the request timeout.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan RequestTimeout { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The maximum time to wait for request processing.
+
+#### Remarks
+
+Requests that take longer than this timeout will be cancelled.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Ssl
+
+Gets or sets the SSL certificate configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.SslConfiguration Ssl { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.SslConfiguration`
+Configuration for SSL/TLS certificates.
+
+#### Remarks
+
+This configuration is used when HTTPS is enabled in sidecar deployment mode.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  UseHostConfiguration
+
+Gets or sets a value indicating whether to use the host application's network configuration.
+
+#### Syntax
+
+```csharp
+public bool UseHostConfiguration { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to inherit host configuration; otherwise, `false`.
+
+#### Remarks
+
+For middleware deployments, this should typically be true to inherit
+            the host application's network settings.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a copy of this configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.NetworkConfiguration Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.NetworkConfiguration`
+A new instance with the same settings.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetBaseUrl
+
+Gets the base URL for the MCP server.
+
+#### Syntax
+
+```csharp
+public string GetBaseUrl(string scheme = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `scheme` | `string?` | The URL scheme to use (http or https). |
+
+#### Returns
+
+Type: `string`
+The base URL for the MCP server.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetEndpointUrl
+
+Gets the full URL for an MCP endpoint.
+
+#### Syntax
+
+```csharp
+public string GetEndpointUrl(string endpoint, string scheme = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `endpoint` | `string` | The endpoint path (e.g., "tools", "metadata"). |
+| `scheme` | `string?` | The URL scheme to use (http or https). |
+
+#### Returns
+
+Type: `string`
+The complete URL for the endpoint.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MergeWith
+
+Merges another configuration into this one, with the other configuration taking precedence.
+
+#### Syntax
+
+```csharp
+public void MergeWith(Microsoft.OData.Mcp.Core.Configuration.NetworkConfiguration other)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `other` | `Microsoft.OData.Mcp.Core.Configuration.NetworkConfiguration` | The configuration to merge into this one. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *other* is null. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the network configuration.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate(Microsoft.OData.Mcp.Core.Configuration.McpDeploymentMode deploymentMode)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `deploymentMode` | `Microsoft.OData.Mcp.Core.Configuration.McpDeploymentMode` | The deployment mode for context-specific validation. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or empty if the configuration is valid.
+

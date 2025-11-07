@@ -1,0 +1,493 @@
+---
+title: EntityScopeRequirements
+description: "Defines scope requirements for operations on a specific entity type."
+icon: lock
+tag: "SEALED"
+keywords: ['EntityScopeRequirements', 'Microsoft.OData.Mcp.Authentication.Models.EntityScopeRequirements', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.EntityScopeRequirements
+```
+
+## Summary
+
+Defines scope requirements for operations on a specific entity type.
+
+## Remarks
+
+Entity scope requirements allow fine-grained authorization control at the
+            entity level, enabling different access policies for different types of
+            data within the same OData service.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EntityScopeRequirements](/api-reference/Microsoft/OData/Mcp/Authentication/Models/EntityScopeRequirements) class.
+
+#### Syntax
+
+```csharp
+public EntityScopeRequirements()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EntityScopeRequirements](/api-reference/Microsoft/OData/Mcp/Authentication/Models/EntityScopeRequirements) class with the same scopes for all operations.
+
+#### Syntax
+
+```csharp
+public EntityScopeRequirements(System.Collections.Generic.IEnumerable<string> allOperationsScopes)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `allOperationsScopes` | `System.Collections.Generic.IEnumerable<string>` | The scopes required for all operations on this entity. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *allOperationsScopes* is null. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EntityScopeRequirements](/api-reference/Microsoft/OData/Mcp/Authentication/Models/EntityScopeRequirements) class with separate read and write scopes.
+
+#### Syntax
+
+```csharp
+public EntityScopeRequirements(System.Collections.Generic.IEnumerable<string> readScopes, System.Collections.Generic.IEnumerable<string> writeScopes)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `readScopes` | `System.Collections.Generic.IEnumerable<string>` | The scopes required for read operations. |
+| `writeScopes` | `System.Collections.Generic.IEnumerable<string>` | The scopes required for write operations. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *readScopes* or *writeScopes* is null. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CreateScopes
+
+Gets or sets the scopes required for creating entities of this type.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> CreateScopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of scopes that allow create access to the entity.
+
+#### Remarks
+
+Users must have at least one of these scopes to create new instances
+            of this entity type.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CustomOperationScopes
+
+Gets or sets custom scope requirements for specific operations.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>> CustomOperationScopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>>`
+A mapping of custom operation names to their required scopes.
+
+#### Remarks
+
+This allows defining scope requirements for custom operations beyond
+            the standard CRUD operations. The operation names should match those
+            used in the MCP tool definitions.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DeleteScopes
+
+Gets or sets the scopes required for deleting entities of this type.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> DeleteScopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of scopes that allow delete access to the entity.
+
+#### Remarks
+
+Users must have at least one of these scopes to delete instances
+            of this entity type.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  NavigateScopes
+
+Gets or sets the scopes required for navigating to related entities.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> NavigateScopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of scopes that allow navigation to related entities.
+
+#### Remarks
+
+Users must have at least one of these scopes to follow navigation
+            properties from this entity type to related entities.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  QueryScopes
+
+Gets or sets the scopes required for querying entities of this type.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> QueryScopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of scopes that allow query access to the entity.
+
+#### Remarks
+
+Users must have at least one of these scopes to perform complex
+            queries, filtering, and sorting on this entity type.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReadScopes
+
+Gets or sets the scopes required for reading entities of this type.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> ReadScopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of scopes that allow read access to the entity.
+
+#### Remarks
+
+Users must have at least one of these scopes to query, retrieve, or
+            navigate to entities of this type.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  UpdateScopes
+
+Gets or sets the scopes required for updating entities of this type.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> UpdateScopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of scopes that allow update access to the entity.
+
+#### Remarks
+
+Users must have at least one of these scopes to modify existing
+            instances of this entity type.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddCustomOperation
+
+Adds a custom operation with its required scopes.
+
+#### Syntax
+
+```csharp
+public void AddCustomOperation(string operationName, System.Collections.Generic.IEnumerable<string> scopes)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `operationName` | `string` | The name of the custom operation. |
+| `scopes` | `System.Collections.Generic.IEnumerable<string>` | The required scopes for the operation. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *operationName* is null or whitespace. |
+| `ArgumentNullException` | Thrown when *scopes* is null. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetAllScopes
+
+Gets all unique scopes defined for this entity across all operations.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> GetAllScopes()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of all unique scopes defined for this entity.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetScopesForOperation
+
+Gets the required scopes for a specific operation.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> GetScopesForOperation(string operation)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `operation` | `string` | The operation name (e.g., "read", "create", "update", "delete", "query", "navigate"). |
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+The required scopes for the operation, or an empty collection if no specific requirement exists.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasAnyScopes
+
+Determines whether any scopes are defined for this entity.
+
+#### Syntax
+
+```csharp
+public bool HasAnyScopes()
+```
+
+#### Returns
+
+Type: `bool`
+`true` if any scopes are defined; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SetScopesForOperation
+
+Sets the required scopes for a specific operation.
+
+#### Syntax
+
+```csharp
+public void SetScopesForOperation(string operation, System.Collections.Generic.IEnumerable<string> scopes)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `operation` | `string` | The operation name. |
+| `scopes` | `System.Collections.Generic.IEnumerable<string>` | The required scopes for the operation. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *operation* is null or whitespace. |
+| `ArgumentNullException` | Thrown when *scopes* is null. |
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the entity scope requirements.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A summary of the scope requirements for this entity.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the entity scope requirements for consistency and completeness.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or an empty collection if the requirements are valid.
+

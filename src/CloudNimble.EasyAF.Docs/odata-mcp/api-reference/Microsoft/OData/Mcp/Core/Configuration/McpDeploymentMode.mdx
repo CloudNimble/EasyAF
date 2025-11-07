@@ -1,0 +1,36 @@
+---
+title: McpDeploymentMode
+description: "Defines the deployment modes for MCP servers."
+icon: list-ol
+tag: "ENUM"
+keywords: ['McpDeploymentMode', 'Microsoft.OData.Mcp.Core.Configuration.McpDeploymentMode', 'Microsoft.OData.Mcp.Core.Configuration', 'class', 'System.Enum']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Configuration
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Configuration.McpDeploymentMode
+```
+
+## Summary
+
+Defines the deployment modes for MCP servers.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Sidecar` | 0 | Sidecar deployment runs as a separate service alongside the OData service. |
+| `Middleware` | 1 | Middleware deployment integrates directly into the host ASP.NET Core application. |
+| `Hybrid` | 2 | Hybrid deployment combines aspects of both sidecar and middleware modes. |
+

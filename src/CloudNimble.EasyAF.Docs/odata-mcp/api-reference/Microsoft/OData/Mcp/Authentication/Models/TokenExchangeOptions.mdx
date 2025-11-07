@@ -1,0 +1,392 @@
+---
+title: TokenExchangeOptions
+description: "Configuration options for OAuth2 token exchange operations."
+icon: lock
+tag: "SEALED"
+keywords: ['TokenExchangeOptions', 'Microsoft.OData.Mcp.Authentication.Models.TokenExchangeOptions', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.TokenExchangeOptions
+```
+
+## Summary
+
+Configuration options for OAuth2 token exchange operations.
+
+## Remarks
+
+Token exchange allows the MCP server to exchange user tokens for new tokens
+            with different scopes or audiences, enabling secure delegation to downstream
+            services while maintaining the user's identity.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [TokenExchangeOptions](/api-reference/Microsoft/OData/Mcp/Authentication/Models/TokenExchangeOptions) class.
+
+#### Syntax
+
+```csharp
+public TokenExchangeOptions()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AdditionalParameters
+
+Gets or sets additional parameters to include in token exchange requests.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, string> AdditionalParameters { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, string>`
+A dictionary of parameter names and values to include in exchange requests.
+
+#### Remarks
+
+These parameters can be used to pass additional context or configuration
+            to the authorization server during token exchange operations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ClientCredentials
+
+Gets or sets the client credentials used for token exchange.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.ClientCredentials ClientCredentials { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.ClientCredentials?`
+The credentials that identify the MCP server to the authorization server.
+
+#### Remarks
+
+These credentials are required for token exchange operations as they
+            authenticate the MCP server's right to exchange tokens on behalf of users.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DefaultScopes
+
+Gets or sets the default scopes to request during token exchange.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> DefaultScopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of OAuth2 scopes to request for exchanged tokens.
+
+#### Remarks
+
+These scopes define the permissions requested for the new token.
+            The actual scopes granted may be a subset based on the original
+            token's scopes and the authorization server's policies.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxRetryAttempts
+
+Gets or sets the maximum number of retry attempts for failed token exchange operations.
+
+#### Syntax
+
+```csharp
+public int MaxRetryAttempts { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The number of times to retry failed token exchange operations.
+
+#### Remarks
+
+Retries help handle transient network issues or temporary service
+            unavailability. The retry policy includes exponential backoff
+            to avoid overwhelming the authorization server.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RequestedTokenType
+
+Gets or sets the requested token type for token exchange.
+
+#### Syntax
+
+```csharp
+public string RequestedTokenType { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The token type of the output token being requested.
+
+#### Remarks
+
+This specifies what type of token should be returned from the exchange.
+            Common values include access tokens and refresh tokens.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RetryDelay
+
+Gets or sets the base delay between retry attempts.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan RetryDelay { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The initial delay before the first retry attempt.
+
+#### Remarks
+
+The actual delay uses exponential backoff, so subsequent retries
+            will have progressively longer delays to reduce load on the
+            authorization server.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SubjectTokenType
+
+Gets or sets the default subject token type for token exchange.
+
+#### Syntax
+
+```csharp
+public string SubjectTokenType { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The token type of the input token being exchanged.
+
+#### Remarks
+
+Common values include "urn:ietf:params:oauth:token-type:access_token" for
+            access tokens and "urn:ietf:params:oauth:token-type:jwt" for JWT tokens.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Timeout
+
+Gets or sets the timeout for token exchange operations.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan Timeout { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The maximum time to wait for token exchange operations to complete.
+
+#### Remarks
+
+Token exchange operations that exceed this timeout will be cancelled.
+            This helps prevent hanging requests from impacting system performance.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TokenEndpoint
+
+Gets or sets the token endpoint URL for token exchange operations.
+
+#### Syntax
+
+```csharp
+public string TokenEndpoint { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The URL of the OAuth2 token endpoint that supports token exchange.
+
+#### Remarks
+
+This endpoint must support the RFC 8693 OAuth 2.0 Token Exchange specification.
+            If not specified, the endpoint will be discovered from the authorization
+            server's metadata.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the token exchange options.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A summary of the token exchange configuration.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the token exchange options for consistency and completeness.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or an empty collection if the options are valid.
+

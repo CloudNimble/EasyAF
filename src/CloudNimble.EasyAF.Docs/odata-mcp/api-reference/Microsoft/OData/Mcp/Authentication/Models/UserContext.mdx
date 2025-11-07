@@ -1,0 +1,655 @@
+---
+title: UserContext
+description: "Represents the user context extracted from an authenticated request."
+icon: lock
+tag: "SEALED"
+keywords: ['UserContext', 'Microsoft.OData.Mcp.Authentication.Models.UserContext', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.UserContext
+```
+
+## Summary
+
+Represents the user context extracted from an authenticated request.
+
+## Remarks
+
+This class encapsulates the user's identity, authorization information, and
+            other context data needed for processing MCP requests on behalf of the user.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [UserContext](/api-reference/Microsoft/OData/Mcp/Authentication/Models/UserContext) class.
+
+#### Syntax
+
+```csharp
+public UserContext()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [UserContext](/api-reference/Microsoft/OData/Mcp/Authentication/Models/UserContext) class with the specified user ID.
+
+#### Syntax
+
+```csharp
+public UserContext(string userId)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `userId` | `string` | The user's unique identifier. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *userId* is null or whitespace. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AdditionalClaims
+
+Gets or sets additional user claims.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, string> AdditionalClaims { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, string>`
+A dictionary of additional claims extracted from the token.
+
+#### Remarks
+
+This contains any custom claims that are not covered by the standard
+            properties but may be needed for authorization or business logic.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Audience
+
+Gets or sets the audience for which the token was issued.
+
+#### Syntax
+
+```csharp
+public string Audience { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The audience identifier from the JWT token.
+
+#### Remarks
+
+This identifies the intended recipient of the token, which should
+            match the MCP server's configuration.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AuthenticatedAt
+
+Gets or sets the time when the user was authenticated.
+
+#### Syntax
+
+```csharp
+public System.DateTime AuthenticatedAt { get; set; }
+```
+
+#### Property Value
+
+Type: `System.DateTime?`
+The UTC date and time when authentication occurred.
+
+#### Remarks
+
+This timestamp is used for session management, auditing, and
+            security analysis.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AuthenticationMethod
+
+Gets or sets the authentication method used.
+
+#### Syntax
+
+```csharp
+public string AuthenticationMethod { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The method used to authenticate the user (e.g., "Bearer", "JWT").
+
+#### Remarks
+
+This indicates how the user was authenticated, which can be useful
+            for security auditing and compliance reporting.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ClientId
+
+Gets or sets the client application identifier.
+
+#### Syntax
+
+```csharp
+public string ClientId { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The identifier of the client application that initiated the request.
+
+#### Remarks
+
+This identifies which application the user is accessing the MCP server
+            through, which can be useful for auditing and access control.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DisplayName
+
+Gets or sets the user's display name.
+
+#### Syntax
+
+```csharp
+public string DisplayName { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The display name or username of the authenticated user.
+
+#### Remarks
+
+This is typically extracted from claims like 'name', 'preferred_username',
+            or 'upn' and is used for display purposes in logs and audit trails.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Email
+
+Gets or sets the user's email address.
+
+#### Syntax
+
+```csharp
+public string Email { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The email address of the authenticated user.
+
+#### Remarks
+
+This is typically extracted from the 'email' claim and can be used
+            for notifications or audit purposes.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Issuer
+
+Gets or sets the issuer of the authentication token.
+
+#### Syntax
+
+```csharp
+public string Issuer { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The issuer identifier from the JWT token.
+
+#### Remarks
+
+This identifies which authorization server issued the token, which is
+            important for multi-provider scenarios and security auditing.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Roles
+
+Gets or sets the user's roles.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> Roles { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of roles assigned to the user.
+
+#### Remarks
+
+Roles provide a higher-level grouping of permissions and are typically
+            extracted from 'roles' or similar claims in the token.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Scopes
+
+Gets or sets the OAuth2 scopes granted to the user.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> Scopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of OAuth2 scopes that define the user's permissions.
+
+#### Remarks
+
+These scopes are extracted from the token and determine what operations
+            the user is authorized to perform through the MCP server.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TenantId
+
+Gets or sets the tenant identifier for multi-tenant scenarios.
+
+#### Syntax
+
+```csharp
+public string TenantId { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The identifier of the tenant the user belongs to.
+
+#### Remarks
+
+This is used in multi-tenant deployments to isolate data and operations
+            between different organizational units or customers.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Token
+
+Gets or sets the original JWT token.
+
+#### Syntax
+
+```csharp
+public string Token { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The raw JWT token that was used for authentication.
+
+#### Remarks
+
+This token can be forwarded to downstream services for delegation
+            scenarios while maintaining the user's identity.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TokenExpiresAt
+
+Gets or sets the token expiration time.
+
+#### Syntax
+
+```csharp
+public System.Nullable<System.DateTime> TokenExpiresAt { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<System.DateTime?>?`
+The UTC date and time when the token expires.
+
+#### Remarks
+
+This is used to determine when the user's session will expire and
+            when token refresh might be needed.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  UserId
+
+Gets or sets the user's unique identifier.
+
+#### Syntax
+
+```csharp
+public required string UserId { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The unique identifier for the authenticated user.
+
+#### Remarks
+
+This is typically extracted from the 'sub' (subject) claim in the JWT token
+            and uniquely identifies the user across the system.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  FromClaimsPrincipal
+
+Creates a user context from a claims principal.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Authentication.Models.UserContext FromClaimsPrincipal(System.Security.Claims.ClaimsPrincipal principal, string token = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The claims principal to extract user context from. |
+| `token` | `string?` | The original JWT token (optional). |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.UserContext`
+A user context populated with information from the claims principal.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *principal* is null. |
+| `InvalidOperationException` | Thrown when the principal does not contain a subject claim. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetAdditionalClaim
+
+Gets an additional claim value by type.
+
+#### Syntax
+
+```csharp
+public string GetAdditionalClaim(string claimType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `claimType` | `string` | The claim type to retrieve. |
+
+#### Returns
+
+Type: `string?`
+The claim value if found; otherwise, null.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetRemainingTokenLifetime
+
+Gets the remaining time before the token expires.
+
+#### Syntax
+
+```csharp
+public System.Nullable<System.TimeSpan> GetRemainingTokenLifetime()
+```
+
+#### Returns
+
+Type: `System.Nullable<System.TimeSpan?>?`
+The remaining time before token expiration, or null if no expiration is set.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasAllScopes
+
+Determines whether the user has all of the specified scopes.
+
+#### Syntax
+
+```csharp
+public bool HasAllScopes(System.Collections.Generic.IEnumerable<string> requiredScopes)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `requiredScopes` | `System.Collections.Generic.IEnumerable<string>` | The scopes to check for. |
+
+#### Returns
+
+Type: `bool`
+`true` if the user has all of the required scopes; otherwise, `false`.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *requiredScopes* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasAnyRole
+
+Determines whether the user has any of the specified roles.
+
+#### Syntax
+
+```csharp
+public bool HasAnyRole(System.Collections.Generic.IEnumerable<string> requiredRoles)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `requiredRoles` | `System.Collections.Generic.IEnumerable<string>` | The roles to check for. |
+
+#### Returns
+
+Type: `bool`
+`true` if the user has at least one of the required roles; otherwise, `false`.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *requiredRoles* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasAnyScope
+
+Determines whether the user has any of the specified scopes.
+
+#### Syntax
+
+```csharp
+public bool HasAnyScope(System.Collections.Generic.IEnumerable<string> requiredScopes)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `requiredScopes` | `System.Collections.Generic.IEnumerable<string>` | The scopes to check for. |
+
+#### Returns
+
+Type: `bool`
+`true` if the user has at least one of the required scopes; otherwise, `false`.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *requiredScopes* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsTokenExpired
+
+Determines whether the user's token is expired.
+
+#### Syntax
+
+```csharp
+public bool IsTokenExpired()
+```
+
+#### Returns
+
+Type: `bool`
+`true` if the token is expired; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the user context.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A summary of the user context.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

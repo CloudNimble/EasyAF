@@ -1,0 +1,490 @@
+---
+title: EdmSingleton
+description: "Represents a singleton in an OData entity container."
+icon: lock
+tag: "SEALED"
+keywords: ['EdmSingleton', 'Microsoft.OData.Mcp.Core.Models.EdmSingleton', 'Microsoft.OData.Mcp.Core.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Models.EdmSingleton
+```
+
+## Summary
+
+Represents a singleton in an OData entity container.
+
+## Remarks
+
+Singletons represent individual entity instances that are addressable as single resources
+            rather than collections. They are useful for representing unique entities like service
+            configuration, user profiles, or system settings that exist as single instances.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmSingleton](/api-reference/Microsoft/OData/Mcp/Core/Models/EdmSingleton) class.
+
+#### Syntax
+
+```csharp
+public EdmSingleton()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmSingleton](/api-reference/Microsoft/OData/Mcp/Core/Models/EdmSingleton) class with the specified name and type.
+
+#### Syntax
+
+```csharp
+public EdmSingleton(string name, string type)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The name of the singleton. |
+| `type` | `string` | The entity type of the singleton. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *name* or *type* is null or whitespace. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Annotations
+
+Gets or sets the annotations for this singleton.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> Annotations { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of annotations that provide additional metadata about the singleton.
+
+#### Remarks
+
+Annotations can be used to specify additional behaviors, constraints, or metadata
+            that are not captured by the standard OData model elements.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasNavigationPropertyBindings
+
+Gets a value indicating whether this singleton has any navigation property bindings.
+
+#### Syntax
+
+```csharp
+public bool HasNavigationPropertyBindings { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the singleton has navigation property bindings; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Name
+
+Gets or sets the name of the singleton.
+
+#### Syntax
+
+```csharp
+public required string Name { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The name used to address this singleton in OData URLs.
+
+#### Remarks
+
+The singleton name appears in the URL path when accessing the individual entity.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  NavigationPropertyBindings
+
+Gets or sets the navigation property bindings for this singleton.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmNavigationPropertyBinding> NavigationPropertyBindings { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmNavigationPropertyBinding>`
+A collection of navigation property bindings that establish relationships with other entity sets or singletons.
+
+#### Remarks
+
+Navigation property bindings specify which entity set or singleton should be used when following
+            a navigation property from this singleton. They establish the connections between related
+            resources in the model.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Type
+
+Gets or sets the entity type of the singleton.
+
+#### Syntax
+
+```csharp
+public required string Type { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The fully qualified name of the entity type for this singleton.
+
+#### Remarks
+
+The singleton instance must be of this entity type or one of its derived types.
+            This determines the structure and properties available for the singleton.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TypeName
+
+Gets the short name of the entity type (without namespace).
+
+#### Syntax
+
+```csharp
+public string TypeName { get; }
+```
+
+#### Property Value
+
+Type: `string`
+The entity type name without the namespace prefix.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TypeNamespace
+
+Gets the namespace of the entity type.
+
+#### Syntax
+
+```csharp
+public string TypeNamespace { get; }
+```
+
+#### Property Value
+
+Type: `string`
+The namespace portion of the entity type, or an empty string if no namespace.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddAnnotation
+
+Adds an annotation to this singleton.
+
+#### Syntax
+
+```csharp
+public void AddAnnotation(string term, object value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `term` | `string` | The annotation term. |
+| `value` | `object` | The annotation value. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *term* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddNavigationPropertyBinding
+
+Adds a navigation property binding to this singleton.
+
+#### Syntax
+
+```csharp
+public void AddNavigationPropertyBinding(string navigationPropertyPath, string target)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `navigationPropertyPath` | `string` | The path of the navigation property. |
+| `target` | `string` | The target entity set or singleton name. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *navigationPropertyPath* or *target* is null or whitespace. |
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Override" variant="info" />
+
+Determines whether the specified object is equal to the current singleton.
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | The object to compare with the current singleton. |
+
+#### Returns
+
+Type: `bool`
+`true` if the specified object is equal to the current singleton; otherwise, `false`.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetAnnotation
+
+Gets an annotation value by term.
+
+#### Syntax
+
+```csharp
+public T GetAnnotation<T>(string term)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `term` | `string` | The annotation term. |
+
+#### Returns
+
+Type: `T?`
+The annotation value, or the default value of *T* if not found.
+
+#### Type Parameters
+
+- `T` - The type of the annotation value.
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Override" variant="info" />
+
+Returns a hash code for the current singleton.
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+A hash code for the current singleton.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetNavigationPropertyBinding
+
+Gets a navigation property binding by navigation property path.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Models.EdmNavigationPropertyBinding GetNavigationPropertyBinding(string navigationPropertyPath)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `navigationPropertyPath` | `string` | The path of the navigation property. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Models.EdmNavigationPropertyBinding?`
+The navigation property binding with the specified path, or `null` if not found.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RemoveNavigationPropertyBinding
+
+Removes a navigation property binding from this singleton.
+
+#### Syntax
+
+```csharp
+public bool RemoveNavigationPropertyBinding(string navigationPropertyPath)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `navigationPropertyPath` | `string` | The path of the navigation property to remove. |
+
+#### Returns
+
+Type: `bool`
+`true` if the binding was removed; otherwise, `false`.
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the singleton.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A string containing the singleton name and type.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

@@ -1,0 +1,40 @@
+---
+title: ClientAuthenticationMethod
+description: "Defines the client authentication methods supported by OAuth2."
+icon: list-ol
+tag: "ENUM"
+keywords: ['ClientAuthenticationMethod', 'Microsoft.OData.Mcp.Authentication.Models.ClientAuthenticationMethod', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Enum']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.ClientAuthenticationMethod
+```
+
+## Summary
+
+Defines the client authentication methods supported by OAuth2.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `None` | 0 | No client authentication (public client). |
+| `ClientSecret` | 1 | Client secret sent in the Authorization header using HTTP Basic authentication. |
+| `ClientSecretPost` | 2 | Client secret sent in the request body as a form parameter. |
+| `TlsClientAuth` | 3 | Client authentication using TLS client certificates. |
+| `SelfSignedTlsClientAuth` | 4 | Client authentication using self-signed TLS client certificates. |
+| `PrivateKeyJwt` | 5 | Client authentication using JWT signed with the client's internal key. |
+| `ClientSecretJwt` | 6 | Client authentication using JWT signed with the client secret. |
+

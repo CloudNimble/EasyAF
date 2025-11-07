@@ -1,0 +1,635 @@
+---
+title: McpToolContext
+description: "Provides execution context for MCP tool operations."
+icon: lock
+tag: "SEALED"
+keywords: ['McpToolContext', 'Microsoft.OData.Mcp.Core.Tools.McpToolContext', 'Microsoft.OData.Mcp.Core.Tools', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Tools
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Tools.McpToolContext
+```
+
+## Summary
+
+Provides execution context for MCP tool operations.
+
+## Remarks
+
+This class encapsulates the runtime context needed for tool execution,
+            including user identity, request metadata, and service dependencies.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [McpToolContext](/api-reference/Microsoft/OData/Mcp/Core/Tools/McpToolContext) class.
+
+#### Syntax
+
+```csharp
+public McpToolContext()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [McpToolContext](/api-reference/Microsoft/OData/Mcp/Core/Tools/McpToolContext) class with the specified model.
+
+#### Syntax
+
+```csharp
+public McpToolContext(Microsoft.OData.Mcp.Core.Models.EdmModel model)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `model` | `Microsoft.OData.Mcp.Core.Models.EdmModel` | The OData model for this context. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *model* is null. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AuthToken
+
+Gets or sets the authentication token to forward to the OData service.
+
+#### Syntax
+
+```csharp
+public string AuthToken { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The bearer token to include in OData service requests.
+
+#### Remarks
+
+This token is forwarded to the OData service when the tool performs
+            operations that require authentication. The token delegation strategy
+            determines how this token is processed.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CancellationToken
+
+Gets or sets the cancellation token for this request.
+
+#### Syntax
+
+```csharp
+public System.Threading.CancellationToken CancellationToken { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Threading.CancellationToken?`
+Token for cancelling long-running operations.
+
+#### Remarks
+
+Tools should respect this token and cancel operations appropriately
+            when cancellation is requested.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CorrelationId
+
+Gets or sets the correlation ID for this request.
+
+#### Syntax
+
+```csharp
+public string CorrelationId { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+A unique identifier for tracking this request across systems.
+
+#### Remarks
+
+The correlation ID is used for logging, tracing, and debugging purposes.
+            It should be propagated to downstream services for end-to-end tracking.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HttpClientFactory
+
+Gets or sets the HTTP client factory for making service requests.
+
+#### Syntax
+
+```csharp
+public System.Net.Http.IHttpClientFactory HttpClientFactory { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Net.Http.IHttpClientFactory?`
+Factory for creating HTTP clients with proper configuration.
+
+#### Remarks
+
+Used to create HTTP clients for communicating with the OData service
+            when authentication token delegation is required.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxExecutionTime
+
+Gets or sets the maximum allowed execution time for the tool.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan MaxExecutionTime { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan?`
+The maximum time the tool is allowed to execute.
+
+#### Remarks
+
+This provides a safety mechanism to prevent tools from running indefinitely.
+            Tools should monitor their execution time and stop gracefully when approaching this limit.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Model
+
+Gets or sets the OData model for this execution context.
+
+#### Syntax
+
+```csharp
+public required Microsoft.OData.Mcp.Core.Models.EdmModel Model { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Models.EdmModel`
+The complete OData model providing metadata context.
+
+#### Remarks
+
+The model contains all entity types, properties, relationships, and
+            other metadata needed for tool execution and validation.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Properties
+
+Gets or sets custom properties for tool execution.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> Properties { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of custom key-value pairs for tool-specific data.
+
+#### Remarks
+
+This allows tools to store and retrieve custom context information
+            that may be needed during execution.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RequestTimestamp
+
+Gets or sets the request timestamp.
+
+#### Syntax
+
+```csharp
+public System.DateTime RequestTimestamp { get; set; }
+```
+
+#### Property Value
+
+Type: `System.DateTime?`
+The UTC timestamp when the tool request was initiated.
+
+#### Remarks
+
+Used for auditing, performance tracking, and timeout calculations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ServiceBaseUrl
+
+Gets or sets the base URL of the OData service.
+
+#### Syntax
+
+```csharp
+public string ServiceBaseUrl { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The base URL used for constructing OData requests.
+
+#### Remarks
+
+This URL is used when the tool needs to make HTTP requests to the
+            underlying OData service for CRUD operations and queries.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  User
+
+Gets or sets the user identity making the request.
+
+#### Syntax
+
+```csharp
+public System.Security.Claims.ClaimsPrincipal User { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Security.Claims.ClaimsPrincipal?`
+The claims principal representing the authenticated user, or null for anonymous requests.
+
+#### Remarks
+
+This contains all claims and identity information from the JWT token,
+            including user ID, scopes, roles, and other custom claims.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CreateServiceHttpClient
+
+Creates an HTTP client for making requests to the OData service.
+
+#### Syntax
+
+```csharp
+public System.Net.Http.HttpClient CreateServiceHttpClient()
+```
+
+#### Returns
+
+Type: `System.Net.Http.HttpClient?`
+An HTTP client configured for OData service requests, or null if no factory is available.
+
+#### Remarks
+
+The returned client will include the authentication token if available.
+            Callers are responsible for disposing the client.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetProperty
+
+Gets a custom property value.
+
+#### Syntax
+
+```csharp
+public T GetProperty<T>(string key)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `key` | `string` | The property key. |
+
+#### Returns
+
+Type: `T?`
+The property value if found and of the correct type; otherwise, the default value.
+
+#### Type Parameters
+
+- `T` - The type of the property value.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetRemainingExecutionTime
+
+Gets the remaining execution time.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan GetRemainingExecutionTime()
+```
+
+#### Returns
+
+Type: `System.TimeSpan?`
+The remaining time before the execution limit is reached.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetUserEmail
+
+Gets the user's email from the claims.
+
+#### Syntax
+
+```csharp
+public string GetUserEmail()
+```
+
+#### Returns
+
+Type: `string?`
+The user's email address, or null if not available.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetUserId
+
+Gets the user identifier from the claims.
+
+#### Syntax
+
+```csharp
+public string GetUserId()
+```
+
+#### Returns
+
+Type: `string?`
+The user identifier, or null if not available.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetUserName
+
+Gets the user's display name from the claims.
+
+#### Syntax
+
+```csharp
+public string GetUserName()
+```
+
+#### Returns
+
+Type: `string?`
+The user's display name, or null if not available.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetUserRoles
+
+Gets the user's roles from the claims.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> GetUserRoles()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of user roles, or empty if no roles are available.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetUserScopes
+
+Gets the user's OAuth2 scopes from the claims.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> GetUserScopes()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of OAuth2 scopes, or empty if no scopes are available.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasAnyScope
+
+Determines whether the user has any of the specified scopes.
+
+#### Syntax
+
+```csharp
+public bool HasAnyScope(System.Collections.Generic.IEnumerable<string> scopes)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `scopes` | `System.Collections.Generic.IEnumerable<string>` | The scopes to check for. |
+
+#### Returns
+
+Type: `bool`
+`true` if the user has any of the specified scopes; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasRole
+
+Determines whether the user has the specified role.
+
+#### Syntax
+
+```csharp
+public bool HasRole(string role)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `role` | `string` | The role to check for. |
+
+#### Returns
+
+Type: `bool`
+`true` if the user has the specified role; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasScope
+
+Determines whether the user has the specified scope.
+
+#### Syntax
+
+```csharp
+public bool HasScope(string scope)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `scope` | `string` | The scope to check for. |
+
+#### Returns
+
+Type: `bool`
+`true` if the user has the specified scope; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsExecutionTimeLimitExceeded
+
+Checks if the execution time limit has been exceeded.
+
+#### Syntax
+
+```csharp
+public bool IsExecutionTimeLimitExceeded()
+```
+
+#### Returns
+
+Type: `bool`
+`true` if the execution time limit has been exceeded; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SetProperty
+
+Sets a custom property value.
+
+#### Syntax
+
+```csharp
+public void SetProperty(string key, object value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `key` | `string` | The property key. |
+| `value` | `object` | The property value. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *key* is null or whitespace. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

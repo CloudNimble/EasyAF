@@ -1,0 +1,209 @@
+---
+title: ODataMcpRouteConvention
+description: "Automatically adds MCP endpoints to OData routes during registration."
+icon: file-brackets-curly
+keywords: ['ODataMcpRouteConvention', 'Microsoft.OData.Mcp.AspNetCore.Routing.ODataMcpRouteConvention', 'Microsoft.OData.Mcp.AspNetCore.Routing', 'class', 'System.Object', 'Microsoft.OData.Mcp.AspNetCore.Routing.IMcpRouteConvention']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.AspNetCore.dll
+
+**Namespace:** Microsoft.OData.Mcp.AspNetCore.Routing
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.AspNetCore.Routing.ODataMcpRouteConvention
+```
+
+## Summary
+
+Automatically adds MCP endpoints to OData routes during registration.
+
+## Remarks
+
+This convention ensures that for each OData route registered, corresponding
+            MCP endpoints are automatically created as siblings to the $metadata endpoint.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [ODataMcpRouteConvention](/api-reference/Microsoft/OData/Mcp/AspNetCore/Routing/ODataMcpRouteConvention) class.
+
+#### Syntax
+
+```csharp
+public ODataMcpRouteConvention(Microsoft.Extensions.Options.IOptions<Microsoft.OData.Mcp.Core.ODataMcpOptions> options, Microsoft.OData.Mcp.Core.Routing.IMcpEndpointRegistry endpointRegistry)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options` | `Microsoft.Extensions.Options.IOptions<Microsoft.OData.Mcp.Core.ODataMcpOptions>` | The MCP options. |
+| `endpointRegistry` | `Microsoft.OData.Mcp.Core.Routing.IMcpEndpointRegistry` | The MCP endpoint registry. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when required parameters are null. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ApplyConvention
+
+Applies MCP conventions to the endpoint route builder.
+
+#### Syntax
+
+```csharp
+public void ApplyConvention(Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpointRouteBuilder, string routePrefix, string routeName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `endpointRouteBuilder` | `Microsoft.AspNetCore.Routing.IEndpointRouteBuilder` | The endpoint route builder. |
+| `routePrefix` | `string` | The OData route prefix. |
+| `routeName` | `string` | The OData route name. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- Microsoft.OData.Mcp.AspNetCore.Routing.IMcpRouteConvention
+

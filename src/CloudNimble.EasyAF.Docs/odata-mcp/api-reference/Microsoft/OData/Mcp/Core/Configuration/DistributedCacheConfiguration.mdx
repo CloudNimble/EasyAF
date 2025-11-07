@@ -1,0 +1,363 @@
+---
+title: DistributedCacheConfiguration
+description: "Configuration for distributed caching."
+icon: lock
+tag: "SEALED"
+keywords: ['DistributedCacheConfiguration', 'Microsoft.OData.Mcp.Core.Configuration.DistributedCacheConfiguration', 'Microsoft.OData.Mcp.Core.Configuration', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Configuration
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Configuration.DistributedCacheConfiguration
+```
+
+## Summary
+
+Configuration for distributed caching.
+
+## Remarks
+
+Distributed cache configuration specifies how the MCP server
+            connects to and uses distributed caching services like Redis
+            or SQL Server for sharing cache data across multiple instances.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [DistributedCacheConfiguration](/api-reference/Microsoft/OData/Mcp/Core/Configuration/DistributedCacheConfiguration) class.
+
+#### Syntax
+
+```csharp
+public DistributedCacheConfiguration()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ConnectionString
+
+Gets or sets the connection string for the distributed cache.
+
+#### Syntax
+
+```csharp
+public string ConnectionString { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The connection string used to connect to the distributed cache service.
+
+#### Examples
+
+For Redis: "localhost:6379"
+For SQL Server: "Server=(localdb)\\mssqllocaldb;Database=DistCache;Trusted_Connection=true;"
+
+#### Remarks
+
+The format of the connection string depends on the cache provider type.
+            For Redis, this would be a Redis connection string. For SQL Server,
+            this would be a SQL Server connection string.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DefaultAbsoluteExpiration
+
+Gets or sets the default absolute expiration for distributed cache entries.
+
+#### Syntax
+
+```csharp
+public System.Nullable<System.TimeSpan> DefaultAbsoluteExpiration { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<System.TimeSpan?>?`
+The maximum time span that cache entries remain valid regardless of access.
+
+#### Remarks
+
+Absolute expiration ensures that entries are removed from the cache
+            after a fixed period, regardless of how frequently they are accessed.
+            This is useful for ensuring data freshness.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DefaultSlidingExpiration
+
+Gets or sets the default sliding expiration for distributed cache entries.
+
+#### Syntax
+
+```csharp
+public System.Nullable<System.TimeSpan> DefaultSlidingExpiration { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<System.TimeSpan?>?`
+The time span that cache entries remain valid after their last access.
+
+#### Remarks
+
+Sliding expiration resets the expiration time each time an entry is accessed,
+            keeping frequently used items in the cache longer. If not specified,
+            entries will use absolute expiration only.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  InstanceName
+
+Gets or sets the instance name for the distributed cache.
+
+#### Syntax
+
+```csharp
+public string InstanceName { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+A unique name identifying this cache instance.
+
+#### Remarks
+
+The instance name is used to create unique cache keys and separate
+            cache data between different applications or environments sharing
+            the same distributed cache infrastructure.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a copy of this configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.DistributedCacheConfiguration Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.DistributedCacheConfiguration`
+A new instance with the same settings.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ForRedis
+
+Creates a configuration for Redis distributed caching.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.DistributedCacheConfiguration ForRedis(string connectionString, string instanceName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `connectionString` | `string` | The Redis connection string. |
+| `instanceName` | `string` | The cache instance name. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.DistributedCacheConfiguration`
+A distributed cache configuration for Redis.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ForSqlServer
+
+Creates a configuration for SQL Server distributed caching.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.DistributedCacheConfiguration ForSqlServer(string connectionString, string instanceName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `connectionString` | `string` | The SQL Server connection string. |
+| `instanceName` | `string` | The cache instance name. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.DistributedCacheConfiguration`
+A distributed cache configuration for SQL Server.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MergeWith
+
+Merges another configuration into this one, with the other configuration taking precedence.
+
+#### Syntax
+
+```csharp
+public void MergeWith(Microsoft.OData.Mcp.Core.Configuration.DistributedCacheConfiguration other)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `other` | `Microsoft.OData.Mcp.Core.Configuration.DistributedCacheConfiguration` | The configuration to merge into this one. |
+
+#### Remarks
+
+Only non-null and non-empty values from the other configuration will
+            override values in this configuration. This allows for partial updates
+            without losing existing settings.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the distributed cache configuration.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or empty if the configuration is valid.
+

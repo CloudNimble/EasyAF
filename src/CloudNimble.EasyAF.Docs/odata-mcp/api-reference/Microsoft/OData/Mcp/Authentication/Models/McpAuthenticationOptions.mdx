@@ -1,0 +1,370 @@
+---
+title: McpAuthenticationOptions
+description: "Configuration options for MCP server authentication."
+icon: lock
+tag: "SEALED"
+keywords: ['McpAuthenticationOptions', 'Microsoft.OData.Mcp.Authentication.Models.McpAuthenticationOptions', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.McpAuthenticationOptions
+```
+
+## Summary
+
+Configuration options for MCP server authentication.
+
+## Remarks
+
+These options control how the MCP server validates and delegates authentication tokens.
+            The server acts as an OAuth2 resource server, validating tokens issued by external
+            authorization servers and optionally forwarding them to downstream OData services.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [McpAuthenticationOptions](/api-reference/Microsoft/OData/Mcp/Authentication/Models/McpAuthenticationOptions) class.
+
+#### Syntax
+
+```csharp
+public McpAuthenticationOptions()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Enabled
+
+Gets or sets a value indicating whether authentication is enabled.
+
+#### Syntax
+
+```csharp
+public bool Enabled { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if authentication is enabled; otherwise, `false`.
+
+#### Remarks
+
+When disabled, the MCP server will allow all requests without authentication.
+            This is useful for development scenarios or internal deployments where authentication
+            is handled at a different layer.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  JwtBearer
+
+Gets or sets the JWT bearer token options.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.JwtBearerOptions JwtBearer { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.JwtBearerOptions`
+Configuration for JWT token validation.
+
+#### Remarks
+
+These options control how JWT tokens are validated, including issuer validation,
+            audience validation, and token lifetime checks.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MetadataCacheDuration
+
+Gets or sets the cache duration for authentication metadata.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan MetadataCacheDuration { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The duration to cache authentication metadata like JWKS keys.
+
+#### Remarks
+
+Caching authentication metadata improves performance by avoiding repeated
+            requests to authorization servers. The cache is automatically refreshed
+            when metadata expires.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RequireHttps
+
+Gets or sets a value indicating whether to require HTTPS for authentication.
+
+#### Syntax
+
+```csharp
+public bool RequireHttps { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if HTTPS is required for authentication; otherwise, `false`.
+
+#### Remarks
+
+When true, the server will reject authentication attempts over insecure connections.
+            This should be enabled in production environments to protect authentication tokens.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Scheme
+
+Gets or sets the authentication scheme to use.
+
+#### Syntax
+
+```csharp
+public string Scheme { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The authentication scheme name (e.g., "Bearer", "JWT").
+
+#### Remarks
+
+This determines which authentication handler will be used to validate incoming requests.
+            The default is "Bearer" for JWT bearer token authentication.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ScopeAuthorization
+
+Gets or sets the scope-based authorization options.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.ScopeAuthorizationOptions ScopeAuthorization { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.ScopeAuthorizationOptions`
+Configuration for OAuth2 scope-based access control.
+
+#### Remarks
+
+These options define which OAuth2 scopes are required for different MCP operations
+            and how scope-based authorization is enforced.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Timeout
+
+Gets or sets the timeout for authentication operations.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan Timeout { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The timeout duration for authentication operations.
+
+#### Remarks
+
+This timeout applies to operations like token validation, metadata discovery,
+            and communication with authorization servers.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TokenDelegation
+
+Gets or sets the token delegation options.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.TokenDelegationOptions TokenDelegation { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.TokenDelegationOptions`
+Configuration for token delegation to downstream services.
+
+#### Remarks
+
+These options control how tokens are forwarded to OData services and other
+            downstream dependencies that require authentication.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the authentication options.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A summary of the authentication configuration.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the authentication options for consistency and completeness.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or an empty collection if the options are valid.
+

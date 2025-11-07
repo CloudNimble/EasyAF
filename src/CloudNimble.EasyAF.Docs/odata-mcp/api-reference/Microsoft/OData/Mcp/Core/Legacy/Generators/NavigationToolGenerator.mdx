@@ -1,0 +1,281 @@
+---
+title: NavigationToolGenerator
+description: "Generates navigation MCP tools from OData entity relationships."
+icon: lock
+tag: "SEALED"
+keywords: ['NavigationToolGenerator', 'Microsoft.OData.Mcp.Core.Legacy.Generators.NavigationToolGenerator', 'Microsoft.OData.Mcp.Core.Legacy.Generators', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Legacy.Generators
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Legacy.Generators.NavigationToolGenerator
+```
+
+## Summary
+
+Generates navigation MCP tools from OData entity relationships.
+
+## Remarks
+
+This generator creates MCP tools that allow AI models to traverse entity relationships
+            and work with related entities. It supports getting related entities, adding relationships,
+            and removing relationships for both collection and single navigation properties.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [NavigationToolGenerator](/api-reference/Microsoft/OData/Mcp/Core/Legacy/Generators/NavigationToolGenerator) class.
+
+#### Syntax
+
+```csharp
+public NavigationToolGenerator(Microsoft.Extensions.Logging.ILogger<Microsoft.OData.Mcp.Core.Legacy.Generators.NavigationToolGenerator> logger)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `logger` | `Microsoft.Extensions.Logging.ILogger<Microsoft.OData.Mcp.Core.Legacy.Generators.NavigationToolGenerator>` | The logger instance. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateAddRelationshipToolAsync
+
+Generates a tool for adding relationships between entities.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Legacy.McpTool> GenerateAddRelationshipToolAsync(Microsoft.OData.Mcp.Core.Models.EdmEntitySet entitySet, Microsoft.OData.Mcp.Core.Models.EdmEntityType entityType, Microsoft.OData.Mcp.Core.Models.EdmNavigationProperty navigationProperty, Microsoft.OData.Mcp.Core.Legacy.Generators.NavigationToolGenerationOptions options, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySet` | `Microsoft.OData.Mcp.Core.Models.EdmEntitySet` | The source entity set. |
+| `entityType` | `Microsoft.OData.Mcp.Core.Models.EdmEntityType` | The source entity type. |
+| `navigationProperty` | `Microsoft.OData.Mcp.Core.Models.EdmNavigationProperty` | The navigation property for the relationship. |
+| `options` | `Microsoft.OData.Mcp.Core.Legacy.Generators.NavigationToolGenerationOptions` | Options controlling tool generation behavior. |
+| `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token for the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Legacy.McpTool>`
+A navigation MCP tool for adding relationships.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateAllNavigationToolsAsync
+
+Generates all navigation tools for the specified entity set and its relationships.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Legacy.McpTool>> GenerateAllNavigationToolsAsync(Microsoft.OData.Mcp.Core.Models.EdmEntitySet entitySet, Microsoft.OData.Mcp.Core.Models.EdmEntityType entityType, Microsoft.OData.Mcp.Core.Legacy.Generators.NavigationToolGenerationOptions options, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySet` | `Microsoft.OData.Mcp.Core.Models.EdmEntitySet` | The entity set to generate tools for. |
+| `entityType` | `Microsoft.OData.Mcp.Core.Models.EdmEntityType` | The entity type definition. |
+| `options` | `Microsoft.OData.Mcp.Core.Legacy.Generators.NavigationToolGenerationOptions` | Options controlling tool generation behavior. |
+| `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token for the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Legacy.McpTool>>`
+A collection of generated MCP tools for navigation operations.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateGetRelatedToolAsync
+
+Generates a tool for getting related entities via navigation properties.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Legacy.McpTool> GenerateGetRelatedToolAsync(Microsoft.OData.Mcp.Core.Models.EdmEntitySet entitySet, Microsoft.OData.Mcp.Core.Models.EdmEntityType entityType, Microsoft.OData.Mcp.Core.Models.EdmNavigationProperty navigationProperty, Microsoft.OData.Mcp.Core.Legacy.Generators.NavigationToolGenerationOptions options, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySet` | `Microsoft.OData.Mcp.Core.Models.EdmEntitySet` | The source entity set. |
+| `entityType` | `Microsoft.OData.Mcp.Core.Models.EdmEntityType` | The source entity type. |
+| `navigationProperty` | `Microsoft.OData.Mcp.Core.Models.EdmNavigationProperty` | The navigation property to traverse. |
+| `options` | `Microsoft.OData.Mcp.Core.Legacy.Generators.NavigationToolGenerationOptions` | Options controlling tool generation behavior. |
+| `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token for the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Legacy.McpTool>`
+A navigation MCP tool for getting related entities.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateRemoveRelationshipToolAsync
+
+Generates a tool for removing relationships between entities.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Legacy.McpTool> GenerateRemoveRelationshipToolAsync(Microsoft.OData.Mcp.Core.Models.EdmEntitySet entitySet, Microsoft.OData.Mcp.Core.Models.EdmEntityType entityType, Microsoft.OData.Mcp.Core.Models.EdmNavigationProperty navigationProperty, Microsoft.OData.Mcp.Core.Legacy.Generators.NavigationToolGenerationOptions options, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySet` | `Microsoft.OData.Mcp.Core.Models.EdmEntitySet` | The source entity set. |
+| `entityType` | `Microsoft.OData.Mcp.Core.Models.EdmEntityType` | The source entity type. |
+| `navigationProperty` | `Microsoft.OData.Mcp.Core.Models.EdmNavigationProperty` | The navigation property for the relationship. |
+| `options` | `Microsoft.OData.Mcp.Core.Legacy.Generators.NavigationToolGenerationOptions` | Options controlling tool generation behavior. |
+| `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token for the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Legacy.McpTool>`
+A navigation MCP tool for removing relationships.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

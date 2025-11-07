@@ -1,0 +1,788 @@
+---
+title: EdmModel
+description: "Represents a complete OData Entity Data Model (EDM)."
+icon: lock
+tag: "SEALED"
+keywords: ['EdmModel', 'Microsoft.OData.Mcp.Core.Models.EdmModel', 'Microsoft.OData.Mcp.Core.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Models.EdmModel
+```
+
+## Summary
+
+Represents a complete OData Entity Data Model (EDM).
+
+## Remarks
+
+The EDM defines the structure of data exposed by an OData service, including entity types,
+            complex types, entity containers, and their relationships. This class serves as the root
+            model that contains all metadata necessary to understand and interact with an OData service.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmModel](/api-reference/Microsoft/OData/Mcp/Core/Models/EdmModel) class.
+
+#### Syntax
+
+```csharp
+public EdmModel()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmModel](/api-reference/Microsoft/OData/Mcp/Core/Models/EdmModel) class with the specified version.
+
+#### Syntax
+
+```csharp
+public EdmModel(string version)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `version` | `string` | The version of the EDM. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *version* is null or whitespace. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Actions
+
+Gets or sets the actions defined in this model.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmAction> Actions { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmAction>`
+A collection of actions that can be invoked on the service.
+
+#### Remarks
+
+Actions are operations that may have side effects and are used to modify
+            data or perform operations that cannot be expressed through standard CRUD operations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AllEntitySets
+
+Gets all entity sets from all entity containers.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Models.EdmEntitySet> AllEntitySets { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Models.EdmEntitySet>`
+A flattened collection of all entity sets in the model.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AllSingletons
+
+Gets all singletons from all entity containers.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Models.EdmSingleton> AllSingletons { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Models.EdmSingleton>`
+A flattened collection of all singletons in the model.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Annotations
+
+Gets or sets the annotations for this model.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> Annotations { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of annotations that provide additional metadata about the model.
+
+#### Remarks
+
+Annotations can be used to specify additional behaviors, constraints, or metadata
+            that are not captured by the standard OData model elements.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ComplexTypes
+
+Gets or sets the complex types defined in this model.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmComplexType> ComplexTypes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmComplexType>`
+A collection of complex types that define reusable structured data elements.
+
+#### Remarks
+
+Complex types are structured types without keys that can be used as property types
+            in entity types or other complex types.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EntityContainer
+
+Gets the primary entity container for this model (alias for PrimaryContainer).
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Models.EdmEntityContainer EntityContainer { get; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Models.EdmEntityContainer?`
+The first entity container, or `null` if no containers are defined.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EntityContainers
+
+Gets or sets the entity containers defined in this model.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmEntityContainer> EntityContainers { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmEntityContainer>`
+A collection of entity containers that define the service interface.
+
+#### Remarks
+
+Entity containers define the addressable resources in the OData service.
+            Typically, there is one primary entity container per service.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EntityTypes
+
+Gets or sets the entity types defined in this model.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmEntityType> EntityTypes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmEntityType>`
+A collection of entity types that define the structure of entities in the service.
+
+#### Remarks
+
+Entity types are the primary structural elements in the EDM, defining the properties
+            and relationships that make up the data model.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Functions
+
+Gets or sets the functions defined in this model.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmFunction> Functions { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmFunction>`
+A collection of functions that can be called on the service.
+
+#### Remarks
+
+Functions are operations that can be called to retrieve data or perform calculations.
+            They are side-effect free and can be composed with other query operations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasComplexTypes
+
+Gets a value indicating whether this model has any complex types.
+
+#### Syntax
+
+```csharp
+public bool HasComplexTypes { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the model has complex types; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasEntityContainers
+
+Gets a value indicating whether this model has any entity containers.
+
+#### Syntax
+
+```csharp
+public bool HasEntityContainers { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the model has entity containers; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasEntityTypes
+
+Gets a value indicating whether this model has any entity types.
+
+#### Syntax
+
+```csharp
+public bool HasEntityTypes { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the model has entity types; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Namespaces
+
+Gets or sets the namespaces used in this model.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> Namespaces { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of namespace strings that organize the types in the model.
+
+#### Remarks
+
+Namespaces provide organizational structure and help avoid naming conflicts
+            between types from different sources.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  PrimaryContainer
+
+Gets the primary entity container for this model.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Models.EdmEntityContainer PrimaryContainer { get; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Models.EdmEntityContainer?`
+The first entity container, or `null` if no containers are defined.
+
+#### Remarks
+
+Most OData services have a single entity container that serves as the primary
+            interface. This property provides convenient access to that container.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Version
+
+Gets or sets the version of the EDM.
+
+#### Syntax
+
+```csharp
+public string Version { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The version string (e.g., "4.0", "4.01").
+
+#### Remarks
+
+This indicates which version of the OData standard the model conforms to.
+            Different versions have different capabilities and syntax.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddAnnotation
+
+Adds an annotation to this model.
+
+#### Syntax
+
+```csharp
+public void AddAnnotation(string term, object value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `term` | `string` | The annotation term. |
+| `value` | `object` | The annotation value. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *term* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddComplexType
+
+Adds a complex type to the model.
+
+#### Syntax
+
+```csharp
+public void AddComplexType(Microsoft.OData.Mcp.Core.Models.EdmComplexType complexType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `complexType` | `Microsoft.OData.Mcp.Core.Models.EdmComplexType` | The complex type to add. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *complexType* is null. |
+| `InvalidOperationException` | Thrown when a complex type with the same full name already exists. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddEntityContainer
+
+Adds an entity container to the model.
+
+#### Syntax
+
+```csharp
+public void AddEntityContainer(Microsoft.OData.Mcp.Core.Models.EdmEntityContainer entityContainer)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityContainer` | `Microsoft.OData.Mcp.Core.Models.EdmEntityContainer` | The entity container to add. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *entityContainer* is null. |
+| `InvalidOperationException` | Thrown when an entity container with the same full name already exists. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddEntityType
+
+Adds an entity type to the model.
+
+#### Syntax
+
+```csharp
+public void AddEntityType(Microsoft.OData.Mcp.Core.Models.EdmEntityType entityType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityType` | `Microsoft.OData.Mcp.Core.Models.EdmEntityType` | The entity type to add. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *entityType* is null. |
+| `InvalidOperationException` | Thrown when an entity type with the same full name already exists. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetAnnotation
+
+Gets an annotation value by term.
+
+#### Syntax
+
+```csharp
+public T GetAnnotation<T>(string term)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `term` | `string` | The annotation term. |
+
+#### Returns
+
+Type: `T?`
+The annotation value, or the default value of *T* if not found.
+
+#### Type Parameters
+
+- `T` - The type of the annotation value.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetComplexType
+
+Gets a complex type by its fully qualified name.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Models.EdmComplexType GetComplexType(string fullName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `fullName` | `string` | The fully qualified name of the complex type (namespace.name). |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Models.EdmComplexType?`
+The complex type with the specified name, or `null` if not found.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetComplexType
+
+Gets a complex type by name and namespace.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Models.EdmComplexType GetComplexType(string name, string namespace)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The name of the complex type. |
+| `namespace` | `string` | The namespace of the complex type. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Models.EdmComplexType?`
+The complex type with the specified name and namespace, or `null` if not found.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetEntityContainer
+
+Gets an entity container by its fully qualified name.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Models.EdmEntityContainer GetEntityContainer(string fullName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `fullName` | `string` | The fully qualified name of the entity container (namespace.name). |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Models.EdmEntityContainer?`
+The entity container with the specified name, or `null` if not found.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetEntityContainer
+
+Gets an entity container by name and namespace.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Models.EdmEntityContainer GetEntityContainer(string name, string namespace)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The name of the entity container. |
+| `namespace` | `string` | The namespace of the entity container. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Models.EdmEntityContainer?`
+The entity container with the specified name and namespace, or `null` if not found.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetEntitySet
+
+Gets an entity set by name from any entity container.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Models.EdmEntitySet GetEntitySet(string entitySetName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySetName` | `string` | The name of the entity set. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Models.EdmEntitySet?`
+The entity set with the specified name, or `null` if not found.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetEntityType
+
+Gets an entity type by its fully qualified name.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Models.EdmEntityType GetEntityType(string fullName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `fullName` | `string` | The fully qualified name of the entity type (namespace.name). |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Models.EdmEntityType?`
+The entity type with the specified name, or `null` if not found.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetEntityType
+
+Gets an entity type by name and namespace.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Models.EdmEntityType GetEntityType(string name, string namespace)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The name of the entity type. |
+| `namespace` | `string` | The namespace of the entity type. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Models.EdmEntityType?`
+The entity type with the specified name and namespace, or `null` if not found.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetSingleton
+
+Gets a singleton by name from any entity container.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Models.EdmSingleton GetSingleton(string singletonName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `singletonName` | `string` | The name of the singleton. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Models.EdmSingleton?`
+The singleton with the specified name, or `null` if not found.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the model.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A summary of the model contents.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the model for consistency and completeness.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or an empty collection if the model is valid.
+

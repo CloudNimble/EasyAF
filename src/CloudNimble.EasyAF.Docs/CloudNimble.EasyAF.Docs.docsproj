@@ -1,4 +1,4 @@
-﻿<Project Sdk="DotNetDocs.Sdk/1.1.0-preview.9">
+﻿<Project Sdk="DotNetDocs.Sdk/1.1.0-preview.10">
 
     <PropertyGroup>
         <DocumentationType>Mintlify</DocumentationType>
@@ -38,8 +38,6 @@
                     </Groups>
                 </Pages>
                 <Tabs>
-                    <Tab Name="REST APIs">
-                    </Tab>
                     <Tab Name="MCP Servers">
                     </Tab>
                     <Tab Name="FrontEnds">
@@ -53,6 +51,21 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <DocumentationReference Include="..\..\external\restier\src\Microsoft.Restier.Docs\Microsoft.Restier.Docs.docsproj"
+                                DestinationPath="restier"
+                                IntegrationType="Tabs"
+                                Name="REST APIs" />
+
+        <DocumentationReference Include="..\..\external\odata-mcp\src\Microsoft.OData.Mcp.Docs\Microsoft.OData.Mcp.Docs.docsproj"
+                                DestinationPath="odata-mcp"
+                                IntegrationType="Tabs"
+                                Name="Enabling AI" />
+
+        <DocumentationReference Include="..\..\external\BlazorEssentials\src\CloudNimble.BlazorEssentials.Docs\CloudNimble.BlazorEssentials.Docs.docsproj"
+                                DestinationPath="blazoressentials"
+                                IntegrationType="Tabs"
+                                Name="Blazor UI" />
+
         <DocumentationReference Include="..\..\external\SimpleMessageBus\src\SimpleMessageBus.Docs\SimpleMessageBus.Docs.docsproj"
                                 DestinationPath="simplemessagebus"
                                 IntegrationType="Tabs"

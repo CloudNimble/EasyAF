@@ -1,0 +1,69 @@
+---
+title: IMcpServerBuilder
+description: "Extension methods for IMcpServerBuilder from ModelContextProtocol"
+icon: file-brackets-curly
+keywords: ['IMcpServerBuilder', 'Microsoft.Extensions.DependencyInjection.IMcpServerBuilder', 'Microsoft.Extensions.DependencyInjection', 'error']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** ModelContextProtocol.dll
+
+**Namespace:** Microsoft.Extensions.DependencyInjection
+
+## Syntax
+
+```csharp
+Microsoft.Extensions.DependencyInjection.IMcpServerBuilder
+```
+
+## Summary
+
+This type is defined in ModelContextProtocol.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  WithODataTools <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `Microsoft.Extensions.DependencyInjection.ODataMcp_Core_ServiceCollectionExtensions`</Note>
+
+Configures the OData MCP Server to use the official MCP SDK.
+
+#### Syntax
+
+```csharp
+public static Microsoft.Extensions.DependencyInjection.IMcpServerBuilder WithODataTools(Microsoft.Extensions.DependencyInjection.IMcpServerBuilder builder)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `builder` | `Microsoft.Extensions.DependencyInjection.IMcpServerBuilder` | The MCP server builder. |
+
+#### Returns
+
+Type: `Microsoft.Extensions.DependencyInjection.IMcpServerBuilder`
+The MCP server builder for chaining.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *builder* is null. |
+
+#### Examples
+
+```csharp
+services.AddMcpServer()
+    .WithODataTools()
+    .WithStdioTransport();
+```
+
+#### Remarks
+
+Registers all OData tools from the Core assembly with the MCP server builder.
+            This method is used when integrating with the official ModelContextProtocol SDK.
+

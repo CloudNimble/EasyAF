@@ -1,0 +1,652 @@
+---
+title: AuthorizationMetadata
+description: "Represents authorization metadata extracted from a JWT token for use in downstream services."
+icon: lock
+tag: "SEALED"
+keywords: ['AuthorizationMetadata', 'Microsoft.OData.Mcp.Authentication.Models.AuthorizationMetadata', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.AuthorizationMetadata
+```
+
+## Summary
+
+Represents authorization metadata extracted from a JWT token for use in downstream services.
+
+## Remarks
+
+This class contains the authorization information needed to make decisions about
+            what operations a user can perform and what data they can access. It's designed
+            to be lightweight and serializable for caching and delegation scenarios.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [AuthorizationMetadata](/api-reference/Microsoft/OData/Mcp/Authentication/Models/AuthorizationMetadata) class.
+
+#### Syntax
+
+```csharp
+public AuthorizationMetadata()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [AuthorizationMetadata](/api-reference/Microsoft/OData/Mcp/Authentication/Models/AuthorizationMetadata) class with the specified subject.
+
+#### Syntax
+
+```csharp
+public AuthorizationMetadata(string subject)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `subject` | `string` | The user's subject identifier. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *subject* is null or whitespace. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Audience
+
+Gets or sets the token audience.
+
+#### Syntax
+
+```csharp
+public string Audience { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The audience identifier from the JWT token.
+
+#### Remarks
+
+This identifies the intended recipient of the token and should match
+            the service's expected audience value.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ClientId
+
+Gets or sets the client application identifier.
+
+#### Syntax
+
+```csharp
+public string ClientId { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The identifier of the client application.
+
+#### Remarks
+
+This identifies which application the user is accessing the system
+            through, which can affect authorization decisions and audit trails.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ContextId
+
+Gets or sets the authorization context identifier.
+
+#### Syntax
+
+```csharp
+public string ContextId { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+A unique identifier for this authorization context.
+
+#### Remarks
+
+This can be used to correlate authorization decisions across
+            multiple services and audit logs.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CustomAttributes
+
+Gets or sets custom authorization attributes.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, string> CustomAttributes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, string>`
+A dictionary of custom attributes that affect authorization decisions.
+
+#### Remarks
+
+These attributes can contain business-specific authorization data
+            such as department, cost center, or data classification levels.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExpiresAt
+
+Gets or sets the token expiration time.
+
+#### Syntax
+
+```csharp
+public System.Nullable<System.DateTime> ExpiresAt { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<System.DateTime>`
+The UTC date and time when the token expires.
+
+#### Remarks
+
+This is used to determine if the authorization is still valid and
+            when refresh might be needed.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IssuedAt
+
+Gets or sets the token issued time.
+
+#### Syntax
+
+```csharp
+public System.Nullable<System.DateTime> IssuedAt { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<System.DateTime>`
+The UTC date and time when the token was issued.
+
+#### Remarks
+
+This timestamp can be used for auditing and determining the age
+            of the authorization grant.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Issuer
+
+Gets or sets the token issuer.
+
+#### Syntax
+
+```csharp
+public string Issuer { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The issuer identifier from the JWT token.
+
+#### Remarks
+
+This identifies which authorization server issued the token, which
+            is important for trust and validation decisions.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Roles
+
+Gets or sets the user's roles.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> Roles { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of roles assigned to the user.
+
+#### Remarks
+
+Roles provide a higher-level abstraction over permissions and can be
+            used for role-based access control (RBAC) scenarios.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Scopes
+
+Gets or sets the OAuth2 scopes granted to the user.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> Scopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of scopes that define the user's permissions.
+
+#### Remarks
+
+These scopes determine what operations the user is authorized to perform.
+            They are used for fine-grained authorization decisions throughout the system.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SessionId
+
+Gets or sets the session identifier.
+
+#### Syntax
+
+```csharp
+public string SessionId { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The identifier of the user's authentication session.
+
+#### Remarks
+
+This links the authorization to a specific user session and can
+            be used for session management and security monitoring.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Subject
+
+Gets or sets the user's unique identifier.
+
+#### Syntax
+
+```csharp
+public required string Subject { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The subject identifier from the JWT token.
+
+#### Remarks
+
+This uniquely identifies the user across all systems and is used for
+            auditing, logging, and data access control.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TenantId
+
+Gets or sets the tenant identifier for multi-tenant scenarios.
+
+#### Syntax
+
+```csharp
+public string TenantId { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The identifier of the tenant the user belongs to.
+
+#### Remarks
+
+This is used to isolate data and operations between different
+            organizational units or customers in multi-tenant deployments.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a copy of the authorization metadata.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.AuthorizationMetadata Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.AuthorizationMetadata`
+A new instance with the same values as the current instance.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  FromUserContext
+
+Creates authorization metadata from a user context.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Authentication.Models.AuthorizationMetadata FromUserContext(Microsoft.OData.Mcp.Authentication.Models.UserContext userContext)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `userContext` | `Microsoft.OData.Mcp.Authentication.Models.UserContext` | The user context to extract metadata from. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.AuthorizationMetadata`
+Authorization metadata populated with information from the user context.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *userContext* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetCustomAttribute
+
+Gets a custom attribute value by key.
+
+#### Syntax
+
+```csharp
+public string GetCustomAttribute(string key)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `key` | `string` | The attribute key. |
+
+#### Returns
+
+Type: `string?`
+The attribute value if found; otherwise, null.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetRemainingLifetime
+
+Gets the remaining time before the authorization expires.
+
+#### Syntax
+
+```csharp
+public System.Nullable<System.TimeSpan> GetRemainingLifetime()
+```
+
+#### Returns
+
+Type: `System.Nullable<System.TimeSpan>`
+The remaining time before expiration, or null if no expiration is set.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasAllScopes
+
+Determines whether the authorization has all of the specified scopes.
+
+#### Syntax
+
+```csharp
+public bool HasAllScopes(System.Collections.Generic.IEnumerable<string> requiredScopes)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `requiredScopes` | `System.Collections.Generic.IEnumerable<string>` | The scopes to check for. |
+
+#### Returns
+
+Type: `bool`
+`true` if all required scopes are present; otherwise, `false`.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *requiredScopes* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasAnyRole
+
+Determines whether the authorization has any of the specified roles.
+
+#### Syntax
+
+```csharp
+public bool HasAnyRole(System.Collections.Generic.IEnumerable<string> requiredRoles)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `requiredRoles` | `System.Collections.Generic.IEnumerable<string>` | The roles to check for. |
+
+#### Returns
+
+Type: `bool`
+`true` if any of the required roles are present; otherwise, `false`.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *requiredRoles* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasAnyScope
+
+Determines whether the authorization has any of the specified scopes.
+
+#### Syntax
+
+```csharp
+public bool HasAnyScope(System.Collections.Generic.IEnumerable<string> requiredScopes)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `requiredScopes` | `System.Collections.Generic.IEnumerable<string>` | The scopes to check for. |
+
+#### Returns
+
+Type: `bool`
+`true` if any of the required scopes are present; otherwise, `false`.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *requiredScopes* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsExpired
+
+Determines whether the authorization is expired.
+
+#### Syntax
+
+```csharp
+public bool IsExpired()
+```
+
+#### Returns
+
+Type: `bool`
+`true` if the authorization is expired; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SetCustomAttribute
+
+Adds or updates a custom attribute.
+
+#### Syntax
+
+```csharp
+public void SetCustomAttribute(string key, string value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `key` | `string` | The attribute key. |
+| `value` | `string` | The attribute value. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *key* is null or whitespace. |
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the authorization metadata.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A summary of the authorization metadata.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

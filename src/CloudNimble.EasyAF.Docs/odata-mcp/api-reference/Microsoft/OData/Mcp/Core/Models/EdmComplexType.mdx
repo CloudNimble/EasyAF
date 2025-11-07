@@ -1,0 +1,532 @@
+---
+title: EdmComplexType
+description: "Represents a complex type in an OData model."
+icon: lock
+tag: "SEALED"
+keywords: ['EdmComplexType', 'Microsoft.OData.Mcp.Core.Models.EdmComplexType', 'Microsoft.OData.Mcp.Core.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Models.EdmComplexType
+```
+
+## Summary
+
+Represents a complex type in an OData model.
+
+## Remarks
+
+Complex types are structured types that consist of a set of properties but do not have a key.
+            They are used to define reusable data structures that can be used as property types in
+            entity types or other complex types. Complex types cannot exist independently; they must
+            be contained within an entity or another complex type.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmComplexType](/api-reference/Microsoft/OData/Mcp/Core/Models/EdmComplexType) class.
+
+#### Syntax
+
+```csharp
+public EdmComplexType()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmComplexType](/api-reference/Microsoft/OData/Mcp/Core/Models/EdmComplexType) class with the specified name and namespace.
+
+#### Syntax
+
+```csharp
+public EdmComplexType(string name, string namespace)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The name of the complex type. |
+| `namespace` | `string` | The namespace of the complex type. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *name* or *namespace* is null or whitespace. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Abstract
+
+Gets or sets a value indicating whether this complex type is abstract.
+
+#### Syntax
+
+```csharp
+public bool Abstract { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the complex type is abstract; otherwise, `false`.
+
+#### Remarks
+
+Abstract complex types cannot be instantiated directly but can serve as base types
+            for other complex types. They are useful for defining common properties and behaviors.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  BaseType
+
+Gets or sets the base type of the complex type.
+
+#### Syntax
+
+```csharp
+public string BaseType { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The fully qualified name of the base complex type, or `null` if this type has no base type.
+
+#### Remarks
+
+When specified, this complex type inherits all properties from the base type.
+            The inheritance hierarchy must be consistent within the model.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  FullName
+
+Gets the fully qualified name of the complex type.
+
+#### Syntax
+
+```csharp
+public string FullName { get; }
+```
+
+#### Property Value
+
+Type: `string`
+The namespace and name combined with a dot separator.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasBaseType
+
+Gets a value indicating whether this complex type inherits from another complex type.
+
+#### Syntax
+
+```csharp
+public bool HasBaseType { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the complex type has a base type; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasNavigationProperties
+
+Gets a value indicating whether this complex type has any navigation properties.
+
+#### Syntax
+
+```csharp
+public bool HasNavigationProperties { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the complex type has navigation properties; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsAbstract
+
+Gets a value indicating whether this complex type is abstract.
+
+#### Syntax
+
+```csharp
+public bool IsAbstract { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the complex type is abstract; otherwise, `false`.
+
+#### Remarks
+
+This is an alias for the [EdmComplexType.Abstract](/api-reference/Microsoft/OData/Mcp/Core/Models/EdmComplexType#abstract) property for compatibility.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Name
+
+Gets or sets the name of the complex type.
+
+#### Syntax
+
+```csharp
+public required string Name { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The local name of the complex type within its namespace.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Namespace
+
+Gets or sets the namespace of the complex type.
+
+#### Syntax
+
+```csharp
+public required string Namespace { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The namespace that contains this complex type.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  NavigationProperties
+
+Gets or sets the navigation properties of the complex type.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmNavigationProperty> NavigationProperties { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmNavigationProperty>`
+A collection of navigation properties that define relationships to entities.
+
+#### Remarks
+
+Navigation properties in complex types enable navigation from the complex type
+            to related entities, but the complex type itself cannot be the target of navigation.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  OpenType
+
+Gets or sets a value indicating whether this complex type is open.
+
+#### Syntax
+
+```csharp
+public bool OpenType { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the complex type is open; otherwise, `false`.
+
+#### Remarks
+
+Open complex types allow additional properties beyond those explicitly defined
+            in the metadata. This provides flexibility for dynamic scenarios where the
+            complete structure may not be known at design time.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Properties
+
+Gets or sets the properties of the complex type.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmProperty> Properties { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmProperty>`
+A collection of structural properties that define the data elements of the complex type.
+
+#### Remarks
+
+These properties represent the data that can be stored and retrieved for instances
+            of this complex type. Unlike entity types, complex types do not have key properties.
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Override" variant="info" />
+
+Determines whether the specified object is equal to the current complex type.
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | The object to compare with the current complex type. |
+
+#### Returns
+
+Type: `bool`
+`true` if the specified object is equal to the current complex type; otherwise, `false`.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Override" variant="info" />
+
+Returns a hash code for the current complex type.
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+A hash code for the current complex type.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetNavigationProperty
+
+Gets a navigation property by name.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Models.EdmNavigationProperty GetNavigationProperty(string propertyName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `propertyName` | `string` | The name of the navigation property to retrieve. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Models.EdmNavigationProperty?`
+The navigation property with the specified name, or `null` if not found.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetProperty
+
+Gets a property by name.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Models.EdmProperty GetProperty(string propertyName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `propertyName` | `string` | The name of the property to retrieve. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Models.EdmProperty?`
+The property with the specified name, or `null` if not found.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasNavigationProperty
+
+Determines whether the complex type has a navigation property with the specified name.
+
+#### Syntax
+
+```csharp
+public bool HasNavigationProperty(string propertyName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `propertyName` | `string` | The name of the navigation property to check. |
+
+#### Returns
+
+Type: `bool`
+`true` if the complex type has the navigation property; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasProperty
+
+Determines whether the complex type has a property with the specified name.
+
+#### Syntax
+
+```csharp
+public bool HasProperty(string propertyName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `propertyName` | `string` | The name of the property to check. |
+
+#### Returns
+
+Type: `bool`
+`true` if the complex type has the property; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the complex type.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+The fully qualified name of the complex type.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

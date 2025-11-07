@@ -1,0 +1,402 @@
+---
+title: EdmFunctionImport
+description: "Represents a function import in an OData entity container."
+icon: lock
+tag: "SEALED"
+keywords: ['EdmFunctionImport', 'Microsoft.OData.Mcp.Core.Models.EdmFunctionImport', 'Microsoft.OData.Mcp.Core.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Models.EdmFunctionImport
+```
+
+## Summary
+
+Represents a function import in an OData entity container.
+
+## Remarks
+
+Function imports expose functions as addressable resources in the OData service.
+            They allow functions to be called through the service interface, providing custom
+            operations that don't fit the standard CRUD pattern. Functions are side-effect free
+            and can be invoked using GET requests.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmFunctionImport](/api-reference/Microsoft/OData/Mcp/Core/Models/EdmFunctionImport) class.
+
+#### Syntax
+
+```csharp
+public EdmFunctionImport()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmFunctionImport](/api-reference/Microsoft/OData/Mcp/Core/Models/EdmFunctionImport) class with the specified name and function.
+
+#### Syntax
+
+```csharp
+public EdmFunctionImport(string name, string function)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The name of the function import. |
+| `function` | `string` | The fully qualified name of the function being imported. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *name* or *function* is null or whitespace. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Annotations
+
+Gets or sets the annotations for this function import.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> Annotations { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of annotations that provide additional metadata about the function import.
+
+#### Remarks
+
+Annotations can be used to specify additional behaviors, constraints, or metadata
+            that are not captured by the standard OData model elements.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EntitySet
+
+Gets or sets the entity set associated with this function import.
+
+#### Syntax
+
+```csharp
+public string EntitySet { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The name of the entity set, or `null` if the function doesn't return entities from a specific set.
+
+#### Remarks
+
+When the function returns entities, this property specifies which entity set
+            those entities belong to. This is important for establishing the correct context
+            for navigation properties and other operations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Function
+
+Gets or sets the fully qualified name of the function being imported.
+
+#### Syntax
+
+```csharp
+public required string Function { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The namespace and name of the function that this import exposes.
+
+#### Remarks
+
+This references a function defined elsewhere in the model. The function import
+            makes the function accessible as part of the entity container's interface.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IncludeInServiceDocument
+
+Gets or sets a value indicating whether this function import is included in the service document.
+
+#### Syntax
+
+```csharp
+public bool IncludeInServiceDocument { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the function import should be included in the service document; otherwise, `false`.
+
+#### Remarks
+
+When true, the function import will be listed in the service document, making it
+            discoverable by clients. When false, clients must know the function import name
+            in advance to use it.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Name
+
+Gets or sets the name of the function import.
+
+#### Syntax
+
+```csharp
+public required string Name { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The name used to address this function import in OData URLs.
+
+#### Remarks
+
+The function import name appears in the URL path when invoking the function.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddAnnotation
+
+Adds an annotation to this function import.
+
+#### Syntax
+
+```csharp
+public void AddAnnotation(string term, object value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `term` | `string` | The annotation term. |
+| `value` | `object` | The annotation value. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *term* is null or whitespace. |
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Override" variant="info" />
+
+Determines whether the specified object is equal to the current function import.
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | The object to compare with the current function import. |
+
+#### Returns
+
+Type: `bool`
+`true` if the specified object is equal to the current function import; otherwise, `false`.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetAnnotation
+
+Gets an annotation value by term.
+
+#### Syntax
+
+```csharp
+public T GetAnnotation<T>(string term)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `term` | `string` | The annotation term. |
+
+#### Returns
+
+Type: `T?`
+The annotation value, or the default value of *T* if not found.
+
+#### Type Parameters
+
+- `T` - The type of the annotation value.
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Override" variant="info" />
+
+Returns a hash code for the current function import.
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+A hash code for the current function import.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the function import.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A string containing the function import name and function.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

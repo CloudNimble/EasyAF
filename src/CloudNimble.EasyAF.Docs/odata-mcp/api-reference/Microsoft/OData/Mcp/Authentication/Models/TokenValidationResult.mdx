@@ -1,0 +1,562 @@
+---
+title: TokenValidationResult
+description: "Represents the result of a token validation operation."
+icon: lock
+tag: "SEALED"
+keywords: ['TokenValidationResult', 'Microsoft.OData.Mcp.Authentication.Models.TokenValidationResult', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.TokenValidationResult
+```
+
+## Summary
+
+Represents the result of a token validation operation.
+
+## Remarks
+
+This class encapsulates the outcome of token validation, including success/failure status,
+            the validated principal, and any validation errors that occurred during the process.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [TokenValidationResult](/api-reference/Microsoft/OData/Mcp/Authentication/Models/TokenValidationResult) class.
+
+#### Syntax
+
+```csharp
+public TokenValidationResult()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [TokenValidationResult](/api-reference/Microsoft/OData/Mcp/Authentication/Models/TokenValidationResult) class for a successful validation.
+
+#### Syntax
+
+```csharp
+public TokenValidationResult(System.Security.Claims.ClaimsPrincipal principal)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The validated claims principal. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *principal* is null. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [TokenValidationResult](/api-reference/Microsoft/OData/Mcp/Authentication/Models/TokenValidationResult) class for a failed validation.
+
+#### Syntax
+
+```csharp
+public TokenValidationResult(string error, string errorDescription = null, System.Exception exception = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `error` | `string` | The validation error. |
+| `errorDescription` | `string?` | The detailed error description. |
+| `exception` | `System.Exception?` | The exception that caused the failure. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *error* is null or whitespace. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Error
+
+Gets or sets the validation error that occurred during token validation.
+
+#### Syntax
+
+```csharp
+public string Error { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The validation error if validation failed; otherwise, `null`.
+
+#### Remarks
+
+This provides detailed information about why token validation failed,
+            which can be useful for debugging and security auditing.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ErrorDescription
+
+Gets or sets the detailed error description.
+
+#### Syntax
+
+```csharp
+public string ErrorDescription { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+A detailed description of the validation error; otherwise, `null`.
+
+#### Remarks
+
+This provides additional context about the validation failure, such as
+            specific claims that were invalid or missing.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Exception
+
+Gets or sets the exception that caused the validation failure.
+
+#### Syntax
+
+```csharp
+public System.Exception Exception { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Exception?`
+The exception that occurred during validation; otherwise, `null`.
+
+#### Remarks
+
+This is typically used for logging and debugging purposes to understand
+            the root cause of validation failures.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExpiresAt
+
+Gets or sets the token expiration time.
+
+#### Syntax
+
+```csharp
+public System.Nullable<System.DateTime> ExpiresAt { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<System.DateTime?>?`
+The UTC date and time when the token expires; otherwise, `null`.
+
+#### Remarks
+
+This is extracted from the token's 'exp' claim and represents when the
+            token will no longer be valid for authentication.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IssuedAt
+
+Gets or sets the token issued time.
+
+#### Syntax
+
+```csharp
+public System.Nullable<System.DateTime> IssuedAt { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<System.DateTime?>?`
+The UTC date and time when the token was issued; otherwise, `null`.
+
+#### Remarks
+
+This is extracted from the token's 'iat' claim and represents when the
+            token was originally created by the authorization server.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsValid
+
+Gets or sets a value indicating whether the token validation was successful.
+
+#### Syntax
+
+```csharp
+public bool IsValid { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the token is valid; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Metadata
+
+Gets or sets additional validation metadata.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> Metadata { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of additional information about the validation process.
+
+#### Remarks
+
+This can include information such as the validation time, token issuer,
+            audience, or other metadata that might be useful for auditing or debugging.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  NotBefore
+
+Gets or sets the token not-before time.
+
+#### Syntax
+
+```csharp
+public System.Nullable<System.DateTime> NotBefore { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<System.DateTime?>?`
+The UTC date and time before which the token is not valid; otherwise, `null`.
+
+#### Remarks
+
+This is extracted from the token's 'nbf' claim and represents the earliest
+            time the token can be used for authentication.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Principal
+
+Gets or sets the claims principal from the validated token.
+
+#### Syntax
+
+```csharp
+public System.Security.Claims.ClaimsPrincipal Principal { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Security.Claims.ClaimsPrincipal?`
+The claims principal if validation was successful; otherwise, `null`.
+
+#### Remarks
+
+This principal contains all the claims extracted from the JWT token and can be
+            used for authorization decisions and user context extraction.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddMetadata
+
+Adds metadata to the validation result.
+
+#### Syntax
+
+```csharp
+public void AddMetadata(string key, object value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `key` | `string` | The metadata key. |
+| `value` | `object` | The metadata value. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *key* is null or whitespace. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Failure
+
+Creates a failed validation result.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Authentication.Models.TokenValidationResult Failure(string error, string errorDescription = null, System.Exception exception = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `error` | `string` | The validation error. |
+| `errorDescription` | `string?` | The detailed error description. |
+| `exception` | `System.Exception?` | The exception that caused the failure. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.TokenValidationResult`
+A failed token validation result.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *error* is null or whitespace. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetMetadata
+
+Gets metadata value by key.
+
+#### Syntax
+
+```csharp
+public T GetMetadata<T>(string key)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `key` | `string` | The metadata key. |
+
+#### Returns
+
+Type: `T?`
+The metadata value if found and of the correct type; otherwise, the default value.
+
+#### Type Parameters
+
+- `T` - The type of the metadata value.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetRemainingLifetime
+
+Gets the remaining lifetime of the token.
+
+#### Syntax
+
+```csharp
+public System.Nullable<System.TimeSpan> GetRemainingLifetime()
+```
+
+#### Returns
+
+Type: `System.Nullable<System.TimeSpan?>?`
+The remaining time before the token expires, or null if no expiration is set.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsExpired
+
+Determines whether the token is currently expired.
+
+#### Syntax
+
+```csharp
+public bool IsExpired()
+```
+
+#### Returns
+
+Type: `bool`
+`true` if the token is expired; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsNotYetValid
+
+Determines whether the token is not yet valid.
+
+#### Syntax
+
+```csharp
+public bool IsNotYetValid()
+```
+
+#### Returns
+
+Type: `bool`
+`true` if the token is not yet valid; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Success
+
+Creates a successful validation result.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Authentication.Models.TokenValidationResult Success(System.Security.Claims.ClaimsPrincipal principal)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The validated claims principal. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.TokenValidationResult`
+A successful token validation result.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *principal* is null. |
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the token validation result.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A summary of the validation result.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

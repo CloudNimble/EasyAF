@@ -1,0 +1,281 @@
+---
+title: McpEndpointRegistry
+description: "Default implementation of the MCP endpoint registry."
+icon: file-brackets-curly
+keywords: ['McpEndpointRegistry', 'Microsoft.OData.Mcp.Core.Routing.McpEndpointRegistry', 'Microsoft.OData.Mcp.Core.Routing', 'class', 'System.Object', 'Microsoft.OData.Mcp.Core.Routing.IMcpEndpointRegistry']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Routing
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Routing.McpEndpointRegistry
+```
+
+## Summary
+
+Default implementation of the MCP endpoint registry.
+
+## Remarks
+
+This implementation is thread-safe and optimized for concurrent access during
+            application startup when multiple OData routes may be registered simultaneously.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [McpEndpointRegistry](/api-reference/Microsoft/OData/Mcp/Core/Routing/McpEndpointRegistry) class.
+
+#### Syntax
+
+```csharp
+public McpEndpointRegistry()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetAllEndpoints
+
+Gets all registered endpoints.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Routing.McpRouteEntry> GetAllEndpoints()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Routing.McpRouteEntry>`
+A collection of all registered endpoints.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetMcpUrl
+
+Gets the MCP URL for a given OData route.
+
+#### Syntax
+
+```csharp
+public string GetMcpUrl(string routeName, System.Nullable<Microsoft.OData.Mcp.Core.Routing.McpCommand> command = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `routeName` | `string` | The OData route name. |
+| `command` | `System.Nullable<Microsoft.OData.Mcp.Core.Routing.McpCommand>` | The MCP command (optional). |
+
+#### Returns
+
+Type: `string?`
+The MCP URL, or null if not found.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasEndpoint
+
+Checks if a route has an MCP endpoint registered.
+
+#### Syntax
+
+```csharp
+public bool HasEndpoint(string routeName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `routeName` | `string` | The OData route name. |
+
+#### Returns
+
+Type: `bool`
+True if the route has an MCP endpoint; otherwise, false.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Register
+
+Registers an MCP endpoint.
+
+#### Syntax
+
+```csharp
+public void Register(Microsoft.OData.Mcp.Core.Routing.McpRouteEntry route)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `route` | `Microsoft.OData.Mcp.Core.Routing.McpRouteEntry` | The route entry to register. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *route* is null. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TryGetEndpoint
+
+Attempts to get an endpoint by path.
+
+#### Syntax
+
+```csharp
+public bool TryGetEndpoint(string path, out Microsoft.OData.Mcp.Core.Routing.McpRouteEntry route, out Microsoft.OData.Mcp.Core.Routing.McpCommand command)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `path` | `string` | The request path. |
+| `route` | `Microsoft.OData.Mcp.Core.Routing.McpRouteEntry?` | The matched route entry. |
+| `command` | `Microsoft.OData.Mcp.Core.Routing.McpCommand` | The MCP command. |
+
+#### Returns
+
+Type: `bool`
+True if an endpoint was found; otherwise, false.
+
+## Related APIs
+
+- Microsoft.OData.Mcp.Core.Routing.IMcpEndpointRegistry
+

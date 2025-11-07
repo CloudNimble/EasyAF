@@ -1,0 +1,153 @@
+---
+title: SpanRouteParser
+description: "High-performance route parser using ReadOnlySpan for zero-allocation parsing."
+icon: lock
+tag: "SEALED"
+keywords: ['SpanRouteParser', 'Microsoft.OData.Mcp.Core.Routing.SpanRouteParser', 'Microsoft.OData.Mcp.Core.Routing', 'class', 'System.ValueType']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Routing
+
+**Inheritance:** System.ValueType
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Routing.SpanRouteParser
+```
+
+## Summary
+
+High-performance route parser using ReadOnlySpan for zero-allocation parsing.
+
+## Remarks
+
+This parser handles MCP routes in the format: /{odataRoute}/mcp/{command}
+            where {odataRoute} can be empty, and {command} is optional.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [SpanRouteParser](/api-reference/Microsoft/OData/Mcp/Core/Routing/SpanRouteParser) struct.
+
+#### Syntax
+
+```csharp
+public SpanRouteParser(System.ReadOnlySpan<char> path)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `path` | `System.ReadOnlySpan<char>` | The path to parse. |
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsMcpRoute
+
+Checks if the path is an MCP route without parsing details.
+
+#### Syntax
+
+```csharp
+public bool IsMcpRoute()
+```
+
+#### Returns
+
+Type: `bool`
+True if this is an MCP route; otherwise, false.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TryGetMcpCommand
+
+Gets the MCP command from the path.
+
+#### Syntax
+
+```csharp
+public bool TryGetMcpCommand(out Microsoft.OData.Mcp.Core.Routing.McpCommand command)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `command` | `Microsoft.OData.Mcp.Core.Routing.McpCommand` | The MCP command. |
+
+#### Returns
+
+Type: `bool`
+True if a command was found; otherwise, false.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TryGetODataRoute
+
+Extracts just the OData route portion from an MCP path.
+
+#### Syntax
+
+```csharp
+public bool TryGetODataRoute(out System.ReadOnlySpan<char> odataRoute)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `odataRoute` | `System.ReadOnlySpan<char>` | The OData route prefix. |
+
+#### Returns
+
+Type: `bool`
+True if an OData route was found; otherwise, false.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TryGetToolName
+
+Extracts the tool name from a tool info request path.
+
+#### Syntax
+
+```csharp
+public bool TryGetToolName(out System.ReadOnlySpan<char> toolName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `toolName` | `System.ReadOnlySpan<char>` | The tool name. |
+
+#### Returns
+
+Type: `bool`
+True if a tool name was found; otherwise, false.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TryParseMcpRoute
+
+Attempts to parse an MCP route from the path.
+
+#### Syntax
+
+```csharp
+public bool TryParseMcpRoute(out System.ReadOnlySpan<char> odataRoute, out System.ReadOnlySpan<char> mcpCommand)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `odataRoute` | `System.ReadOnlySpan<char>` | The OData route prefix, if found. |
+| `mcpCommand` | `System.ReadOnlySpan<char>` | The MCP command, if specified. |
+
+#### Returns
+
+Type: `bool`
+True if this is an MCP route; otherwise, false.
+

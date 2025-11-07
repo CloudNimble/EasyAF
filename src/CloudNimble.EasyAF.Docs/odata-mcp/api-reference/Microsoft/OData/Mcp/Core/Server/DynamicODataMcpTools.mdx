@@ -1,0 +1,262 @@
+---
+title: DynamicODataMcpTools
+description: "Dynamic OData MCP tools that generate methods based on discovered OData metadata."
+icon: file-brackets-curly
+keywords: ['DynamicODataMcpTools', 'Microsoft.OData.Mcp.Core.Server.DynamicODataMcpTools', 'Microsoft.OData.Mcp.Core.Server', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Server
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Server.DynamicODataMcpTools
+```
+
+## Summary
+
+Dynamic OData MCP tools that generate methods based on discovered OData metadata.
+
+## Remarks
+
+This class provides dynamically generated MCP tools based on the structure of OData services.
+            It discovers entity sets, operations, and schemas to create contextual tools for AI models.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [DynamicODataMcpTools](/api-reference/Microsoft/OData/Mcp/Core/Server/DynamicODataMcpTools) class.
+
+#### Syntax
+
+```csharp
+public DynamicODataMcpTools(System.Net.Http.IHttpClientFactory httpClientFactory, Microsoft.Extensions.Options.IOptions<Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration> configuration, Microsoft.OData.Mcp.Core.Parsing.ICsdlMetadataParser metadataParser, Microsoft.Extensions.Logging.ILogger<Microsoft.OData.Mcp.Core.Server.DynamicODataMcpTools> logger)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `httpClientFactory` | `System.Net.Http.IHttpClientFactory` | The HTTP client factory. |
+| `configuration` | `Microsoft.Extensions.Options.IOptions<Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration>` | The server configuration. |
+| `metadataParser` | `Microsoft.OData.Mcp.Core.Parsing.ICsdlMetadataParser` | The CSDL metadata parser. |
+| `logger` | `Microsoft.Extensions.Logging.ILogger<Microsoft.OData.Mcp.Core.Server.DynamicODataMcpTools>` | The logger instance. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DescribeEntityType
+
+Gets detailed schema information for a specific entity type.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<string> DescribeEntityType(string entityTypeName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityTypeName` | `string` | The name of the entity type to describe. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<string>`
+Detailed schema information including properties, keys, and navigation properties.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DiscoverEntitySets
+
+Discovers and lists all available entity sets in the OData service.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<string> DiscoverEntitySets()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<string>`
+A JSON array of entity set information including names and types.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateQueryExamples
+
+Generates sample OData query URLs for a specific entity set.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<string> GenerateQueryExamples(string entitySetName, bool includeAdvanced = false)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySetName` | `string` | The name of the entity set. |
+| `includeAdvanced` | `bool` | Whether to include advanced query examples. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<string>`
+A collection of sample OData query URLs with explanations.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ValidateQuery
+
+Validates an OData query URL against the service metadata.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<string> ValidateQuery(string queryUrl)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `queryUrl` | `string` | The OData query URL to validate. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<string>`
+Validation results including any errors or warnings.
+

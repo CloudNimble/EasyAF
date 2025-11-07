@@ -1,0 +1,460 @@
+---
+title: JwtBearerOptions
+description: "Configuration options for JWT bearer token validation."
+icon: lock
+tag: "SEALED"
+keywords: ['JwtBearerOptions', 'Microsoft.OData.Mcp.Authentication.Models.JwtBearerOptions', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.JwtBearerOptions
+```
+
+## Summary
+
+Configuration options for JWT bearer token validation.
+
+## Remarks
+
+These options control how JWT tokens are validated by the MCP server when acting
+            as an OAuth2 resource server. They define the trust relationship with authorization
+            servers and specify validation requirements.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [JwtBearerOptions](/api-reference/Microsoft/OData/Mcp/Authentication/Models/JwtBearerOptions) class.
+
+#### Syntax
+
+```csharp
+public JwtBearerOptions()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AdditionalValidationParameters
+
+Gets or sets additional token validation parameters.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> AdditionalValidationParameters { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of custom validation parameters and their values.
+
+#### Remarks
+
+These parameters allow for custom token validation logic beyond the
+            standard JWT validation. They can be used to enforce additional
+            security requirements specific to the deployment environment.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Audience
+
+Gets or sets the expected audience for JWT tokens.
+
+#### Syntax
+
+```csharp
+public string Audience { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The audience claim value that must be present in valid tokens.
+
+#### Remarks
+
+The audience identifies this MCP server as a valid recipient for the token.
+            Tokens without the correct audience claim will be rejected. This is typically
+            the API identifier or base URL of the MCP server.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Authority
+
+Gets or sets the authority URL of the OAuth2 authorization server.
+
+#### Syntax
+
+```csharp
+public string Authority { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The base URL of the authorization server (e.g., "https://login.microsoftonline.com/tenant-id").
+
+#### Remarks
+
+This URL is used to discover the authorization server's metadata, including
+            the JWKS endpoint for token validation keys. The authority must support
+            OpenID Connect discovery.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ClockSkew
+
+Gets or sets the clock skew tolerance for token validation.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan ClockSkew { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan?`
+The maximum allowed time difference between token and server clocks.
+
+#### Remarks
+
+Clock skew tolerance accounts for small time differences between the
+            authorization server and MCP server clocks. This prevents valid tokens
+            from being rejected due to minor time synchronization issues.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Issuer
+
+Gets or sets the expected issuer for JWT tokens.
+
+#### Syntax
+
+```csharp
+public string Issuer { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The issuer claim value that must be present in valid tokens.
+
+#### Remarks
+
+The issuer identifies the authorization server that issued the token.
+            When specified, tokens from other issuers will be rejected. If not specified,
+            the issuer will be derived from the Authority during metadata discovery.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MetadataAddress
+
+Gets or sets the URL of the JWKS (JSON Web Key Set) endpoint.
+
+#### Syntax
+
+```csharp
+public string MetadataAddress { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The URL where JWT signing keys can be retrieved.
+
+#### Remarks
+
+If not specified, the JWKS URL will be discovered from the authorization
+            server's metadata. Manually specifying this can improve startup performance
+            and provide more control over key retrieval.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RequiredScopes
+
+Gets or sets the required OAuth2 scopes for accessing the MCP server.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> RequiredScopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of scope names that must be present in valid tokens.
+
+#### Remarks
+
+When specified, tokens must contain at least one of these scopes to be
+            considered valid. Scopes provide fine-grained authorization control
+            beyond basic authentication.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RequireHttpsMetadata
+
+Gets or sets a value indicating whether to require HTTPS for metadata retrieval.
+
+#### Syntax
+
+```csharp
+public bool RequireHttpsMetadata { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if HTTPS is required for metadata retrieval; otherwise, `false`.
+
+#### Remarks
+
+Requiring HTTPS for metadata retrieval ensures the integrity and confidentiality
+            of validation keys and other security-critical information. This should be
+            enabled in production environments.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ValidateAudience
+
+Gets or sets a value indicating whether to validate the token audience.
+
+#### Syntax
+
+```csharp
+public bool ValidateAudience { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the audience should be validated; otherwise, `false`.
+
+#### Remarks
+
+Audience validation ensures tokens are intended for this service.
+            Disabling this validation allows tokens intended for other services,
+            which may be a security risk.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ValidateIssuer
+
+Gets or sets a value indicating whether to validate the token issuer.
+
+#### Syntax
+
+```csharp
+public bool ValidateIssuer { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the issuer should be validated; otherwise, `false`.
+
+#### Remarks
+
+Issuer validation ensures tokens come from trusted authorization servers.
+            Disabling this validation reduces security and should only be done in
+            development scenarios.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ValidateIssuerSigningKey
+
+Gets or sets a value indicating whether to validate the token signature.
+
+#### Syntax
+
+```csharp
+public bool ValidateIssuerSigningKey { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the token signature should be validated; otherwise, `false`.
+
+#### Remarks
+
+Signature validation ensures tokens haven't been tampered with and come
+            from trusted sources. Disabling this validation should never be done
+            in production as it completely undermines token security.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ValidateLifetime
+
+Gets or sets a value indicating whether to validate the token lifetime.
+
+#### Syntax
+
+```csharp
+public bool ValidateLifetime { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the token lifetime should be validated; otherwise, `false`.
+
+#### Remarks
+
+Lifetime validation ensures tokens are not expired or used before their
+            valid time period. Disabling this validation allows expired tokens,
+            which is a significant security risk.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the JWT bearer options.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A summary of the JWT bearer configuration.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the JWT bearer options for consistency and completeness.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or an empty collection if the options are valid.
+

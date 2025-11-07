@@ -1,0 +1,542 @@
+---
+title: EdmProperty
+description: "Represents a property in an OData entity type or complex type."
+icon: lock
+tag: "SEALED"
+keywords: ['EdmProperty', 'Microsoft.OData.Mcp.Core.Models.EdmProperty', 'Microsoft.OData.Mcp.Core.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Models.EdmProperty
+```
+
+## Summary
+
+Represents a property in an OData entity type or complex type.
+
+## Remarks
+
+Properties define the structure and data characteristics of entity types and complex types.
+            They specify the name, type, and various constraints of the data elements.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmProperty](/api-reference/Microsoft/OData/Mcp/Core/Models/EdmProperty) class.
+
+#### Syntax
+
+```csharp
+public EdmProperty()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmProperty](/api-reference/Microsoft/OData/Mcp/Core/Models/EdmProperty) class with the specified name and type.
+
+#### Syntax
+
+```csharp
+public EdmProperty(string name, string type)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The name of the property. |
+| `type` | `string` | The type of the property. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *name* or *type* is null or whitespace. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DefaultValue
+
+Gets or sets the default value of the property.
+
+#### Syntax
+
+```csharp
+public string DefaultValue { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The default value as a string, or `null` if not specified.
+
+#### Remarks
+
+The default value is represented as it appears in the CSDL metadata.
+            Type-specific parsing is required when using this value.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Description
+
+Gets or sets the description of the property.
+
+#### Syntax
+
+```csharp
+public string Description { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+A human-readable description of the property's purpose.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ElementType
+
+Gets the element type for collection properties.
+
+#### Syntax
+
+```csharp
+public string ElementType { get; }
+```
+
+#### Property Value
+
+Type: `string`
+The element type of the collection, or the type itself if not a collection.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasDefaultValue
+
+Gets a value indicating whether the property has a default value.
+
+#### Syntax
+
+```csharp
+public bool HasDefaultValue { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the property has a default value; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsCollection
+
+Gets a value indicating whether this property represents a collection type.
+
+#### Syntax
+
+```csharp
+public bool IsCollection { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the property type is a collection; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsKey
+
+Gets or sets a value indicating whether this property is part of the entity key.
+
+#### Syntax
+
+```csharp
+public bool IsKey { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the property is a key property; otherwise, `false`.
+
+#### Remarks
+
+Key properties uniquely identify an entity instance and are typically non-nullable.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsNullable
+
+Gets a value indicating whether the property is nullable (alias for Nullable property).
+
+#### Syntax
+
+```csharp
+public bool IsNullable { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the property is nullable; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsPrimitive
+
+Gets a value indicating whether this property represents a primitive type.
+
+#### Syntax
+
+```csharp
+public bool IsPrimitive { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the property type is an EDM primitive type; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxLength
+
+Gets or sets the maximum length of the property value.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> MaxLength { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>`
+The maximum length, or `null` if not specified.
+
+#### Remarks
+
+This constraint applies primarily to string and binary properties.
+            A value of "Max" in the metadata is represented as `null` here.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Name
+
+Gets or sets the name of the property.
+
+#### Syntax
+
+```csharp
+public required string Name { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The property name as defined in the CSDL metadata.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Nullable
+
+Gets or sets a value indicating whether the property can contain null values.
+
+#### Syntax
+
+```csharp
+public bool Nullable { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the property is nullable; otherwise, `false`.
+
+#### Remarks
+
+When not specified in the metadata, this property defaults to `true` for most types,
+            except for key properties which are typically non-nullable.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Precision
+
+Gets or sets the precision of the property value.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> Precision { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>`
+The precision, or `null` if not specified.
+
+#### Remarks
+
+Precision applies to decimal and temporal types, indicating the total number of digits.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Scale
+
+Gets or sets the scale of the property value.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> Scale { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>`
+The scale, or `null` if not specified.
+
+#### Remarks
+
+Scale applies to decimal types, indicating the number of digits after the decimal point.
+            A value of "Variable" in the metadata is represented as `null` here.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SRID
+
+Gets or sets the SRID (Spatial Reference System Identifier) for spatial properties.
+
+#### Syntax
+
+```csharp
+public string SRID { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The SRID value, or `null` if not applicable or not specified.
+
+#### Remarks
+
+This property is relevant only for geography and geometry types.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Type
+
+Gets or sets the type of the property.
+
+#### Syntax
+
+```csharp
+public required string Type { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The fully qualified type name (e.g., "Edm.String", "Namespace.EntityType").
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TypeName
+
+Gets the type name of the property (alias for Type property).
+
+#### Syntax
+
+```csharp
+public string TypeName { get; }
+```
+
+#### Property Value
+
+Type: `string`
+The fully qualified type name (e.g., "Edm.String", "Namespace.EntityType").
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Unicode
+
+Gets or sets a value indicating whether the property uses Unicode encoding.
+
+#### Syntax
+
+```csharp
+public System.Nullable<bool> Unicode { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<bool>`
+`true` if Unicode is enabled; `false` if disabled; `null` if not specified.
+
+#### Remarks
+
+This property applies to string properties and affects how the data is stored and transmitted.
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Override" variant="info" />
+
+Determines whether the specified object is equal to the current property.
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | The object to compare with the current property. |
+
+#### Returns
+
+Type: `bool`
+`true` if the specified object is equal to the current property; otherwise, `false`.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Override" variant="info" />
+
+Returns a hash code for the current property.
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+A hash code for the current property.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the property.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A string containing the property name and type.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

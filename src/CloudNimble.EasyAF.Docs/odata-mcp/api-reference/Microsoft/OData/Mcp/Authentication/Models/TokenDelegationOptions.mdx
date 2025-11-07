@@ -1,0 +1,439 @@
+---
+title: TokenDelegationOptions
+description: "Configuration options for token delegation to downstream services."
+icon: lock
+tag: "SEALED"
+keywords: ['TokenDelegationOptions', 'Microsoft.OData.Mcp.Authentication.Models.TokenDelegationOptions', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.TokenDelegationOptions
+```
+
+## Summary
+
+Configuration options for token delegation to downstream services.
+
+## Remarks
+
+These options control how authentication tokens are forwarded from the MCP server
+            to downstream OData services and other dependencies. Token delegation preserves
+            the user's identity throughout the request chain.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [TokenDelegationOptions](/api-reference/Microsoft/OData/Mcp/Authentication/Models/TokenDelegationOptions) class.
+
+#### Syntax
+
+```csharp
+public TokenDelegationOptions()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CacheDuration
+
+Gets or sets the cache duration for delegated tokens.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan CacheDuration { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The duration to cache delegated tokens.
+
+#### Remarks
+
+This duration should be shorter than the token's actual lifetime to ensure
+            cached tokens don't expire unexpectedly. The cache automatically handles
+            token refresh when possible.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CacheTokens
+
+Gets or sets a value indicating whether to cache delegated tokens.
+
+#### Syntax
+
+```csharp
+public bool CacheTokens { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if delegated tokens should be cached; otherwise, `false`.
+
+#### Remarks
+
+Caching delegated tokens can improve performance by avoiding repeated
+            token exchange operations. Cached tokens are automatically refreshed
+            before expiration.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Enabled
+
+Gets or sets a value indicating whether token delegation is enabled.
+
+#### Syntax
+
+```csharp
+public bool Enabled { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if token delegation is enabled; otherwise, `false`.
+
+#### Remarks
+
+When enabled, the MCP server will forward authentication tokens to downstream
+            services. When disabled, the server may use alternative authentication methods
+            for downstream calls, such as service-to-service authentication.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RetryPolicy
+
+Gets or sets the retry policy for failed token delegation operations.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.RetryPolicyOptions RetryPolicy { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.RetryPolicyOptions`
+Configuration for retrying failed token operations.
+
+#### Remarks
+
+Retry policies help handle transient failures in token delegation, such as
+            network issues or temporary service unavailability. They should be configured
+            carefully to avoid overwhelming downstream services.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Strategy
+
+Gets or sets the token forwarding strategy.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.TokenForwardingStrategy Strategy { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.TokenForwardingStrategy`
+The strategy for forwarding tokens to downstream services.
+
+#### Remarks
+
+Different strategies provide different levels of security and functionality:
+            - PassThrough: Forward the original token as-is
+            - Exchange: Exchange the token for a new one scoped to the downstream service
+            - OnBehalfOf: Use OAuth2 on-behalf-of flow for token delegation
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TargetServices
+
+Gets or sets the target services for token delegation.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<Microsoft.OData.Mcp.Authentication.Models.TargetServiceOptions> TargetServices { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<Microsoft.OData.Mcp.Authentication.Models.TargetServiceOptions>`
+A collection of service configurations for token forwarding.
+
+#### Remarks
+
+Each target service can have its own delegation configuration, including
+            different forwarding strategies, scopes, and authentication parameters.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Timeout
+
+Gets or sets the timeout for token delegation operations.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan Timeout { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The timeout duration for token delegation operations.
+
+#### Remarks
+
+This timeout applies to operations like token exchange, on-behalf-of flows,
+            and communication with token endpoints. Operations that exceed this timeout
+            will be cancelled.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TokenExchange
+
+Gets or sets the token exchange options for services that support token exchange.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.TokenExchangeOptions TokenExchange { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.TokenExchangeOptions`
+Configuration for OAuth2 token exchange flows.
+
+#### Remarks
+
+Token exchange allows the MCP server to obtain tokens with different scopes
+            or audiences for downstream services while maintaining the user's identity.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ValidateBeforeForwarding
+
+Gets or sets a value indicating whether to validate delegated tokens before forwarding.
+
+#### Syntax
+
+```csharp
+public bool ValidateBeforeForwarding { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if delegated tokens should be validated; otherwise, `false`.
+
+#### Remarks
+
+Validating delegated tokens ensures they are properly formatted and not expired
+            before forwarding them to downstream services. This can prevent downstream
+            authentication failures but adds processing overhead.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddOrUpdateTargetService
+
+Adds or updates target service options.
+
+#### Syntax
+
+```csharp
+public void AddOrUpdateTargetService(Microsoft.OData.Mcp.Authentication.Models.TargetServiceOptions targetService)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `targetService` | `Microsoft.OData.Mcp.Authentication.Models.TargetServiceOptions` | The target service options to add or update. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *targetService* is null. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetTargetService
+
+Gets the target service options for a specific service identifier.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.TargetServiceOptions GetTargetService(string serviceId)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `serviceId` | `string` | The identifier of the target service. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.TargetServiceOptions?`
+The target service options, or `null` if not found.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the token delegation options.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A summary of the token delegation configuration.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the token delegation options for consistency and completeness.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or an empty collection if the options are valid.
+

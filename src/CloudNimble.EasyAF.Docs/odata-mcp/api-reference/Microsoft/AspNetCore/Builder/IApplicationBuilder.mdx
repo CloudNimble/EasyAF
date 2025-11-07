@@ -1,0 +1,74 @@
+---
+title: IApplicationBuilder
+description: "Extension methods for IApplicationBuilder from Microsoft.AspNetCore.Http.Abstractions"
+icon: file-brackets-curly
+keywords: ['IApplicationBuilder', 'Microsoft.AspNetCore.Builder.IApplicationBuilder', 'Microsoft.AspNetCore.Builder', 'error']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.AspNetCore.Http.Abstractions.dll
+
+**Namespace:** Microsoft.AspNetCore.Builder
+
+## Syntax
+
+```csharp
+Microsoft.AspNetCore.Builder.IApplicationBuilder
+```
+
+## Summary
+
+This type is defined in Microsoft.AspNetCore.Http.Abstractions.
+
+## Remarks
+
+See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.builder.iapplicationbuilder) for more information about the rest of the API.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  UseODataMcp <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `Microsoft.AspNetCore.Builder.ODataMcp_AspNetCore_ApplicationBuilderExtensions`</Note>
+
+Adds OData MCP middleware to automatically discover and register MCP endpoints.
+
+#### Syntax
+
+```csharp
+public static Microsoft.AspNetCore.Builder.IApplicationBuilder UseODataMcp(Microsoft.AspNetCore.Builder.IApplicationBuilder app)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `app` | `Microsoft.AspNetCore.Builder.IApplicationBuilder` | The application builder. |
+
+#### Returns
+
+Type: `Microsoft.AspNetCore.Builder.IApplicationBuilder`
+The application builder for chaining.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *app* is null. |
+
+#### Examples
+
+```csharp
+var app = builder.Build();
+app.UseRouting();
+app.UseODataMcp(); // Automatic MCP endpoint registration
+app.MapControllers();
+```
+
+#### Remarks
+
+This method must be called after UseRouting() but before UseEndpoints() or MapControllers().
+            It automatically discovers all registered OData routes and adds corresponding MCP endpoints.
+

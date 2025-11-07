@@ -1,0 +1,420 @@
+---
+title: McpTool
+description: "Represents an MCP (Model Context Protocol) tool that can be executed by AI models."
+icon: lock
+tag: "SEALED"
+keywords: ['McpTool', 'Microsoft.OData.Mcp.Core.Legacy.McpTool', 'Microsoft.OData.Mcp.Core.Legacy', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Legacy
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Legacy.McpTool
+```
+
+## Summary
+
+Represents an MCP (Model Context Protocol) tool that can be executed by AI models.
+
+## Remarks
+
+MCP tools define the interface between AI models and external systems, providing
+            structured input/output schemas and execution logic for specific operations.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public McpTool()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Categories
+
+Gets or sets the categories or tags associated with the tool.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.HashSet<string> Categories { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.HashSet<string>`
+A collection of category names or tags.
+
+#### Remarks
+
+Categories help organize tools and make them easier to discover. Common
+            categories might include "data", "utility", "integration", etc.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Description
+
+Gets or sets the human-readable description of what the tool does.
+
+#### Syntax
+
+```csharp
+public string Description { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+A detailed description of the tool's purpose and functionality.
+
+#### Remarks
+
+This description helps AI models understand when and how to use the tool.
+            It should clearly explain the tool's purpose, expected inputs, and outcomes.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EstimatedExecutionTimeMs
+
+Gets or sets the estimated execution time for the tool in milliseconds.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> EstimatedExecutionTimeMs { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>`
+The estimated execution time, or null if unknown.
+
+#### Remarks
+
+This hint helps AI models make informed decisions about tool selection
+            based on performance requirements and timeout constraints.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Examples
+
+Gets or sets examples of how to use the tool.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Tools.McpToolExample> Examples { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Tools.McpToolExample>`
+A collection of usage examples for the tool.
+
+#### Remarks
+
+Examples help AI models understand the proper usage patterns and expected
+            input/output formats for the tool.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  InputSchema
+
+Gets or sets the JSON schema that defines the structure of the tool's input parameters.
+
+#### Syntax
+
+```csharp
+public object InputSchema { get; set; }
+```
+
+#### Property Value
+
+Type: `object?`
+A JSON schema object describing the expected input format.
+
+#### Remarks
+
+The input schema defines the parameters that must be provided when invoking the tool.
+            It includes type information, validation rules, descriptions, and examples.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsEnabled
+
+Gets or sets a value indicating whether the tool is currently enabled and available for use.
+
+#### Syntax
+
+```csharp
+public bool IsEnabled { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the tool is enabled; otherwise, `false`.
+
+#### Remarks
+
+Disabled tools are not presented to AI models for execution. This can be useful
+            for temporarily disabling problematic tools or implementing feature flags.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxConcurrentExecutions
+
+Gets or sets the maximum number of concurrent executions allowed for this tool.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> MaxConcurrentExecutions { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>`
+The maximum concurrency limit, or null for no limit.
+
+#### Remarks
+
+Concurrency limits help protect backend resources and ensure system stability
+            when multiple AI models are using the same tools simultaneously.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Metadata
+
+Gets or sets additional metadata about the tool.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> Metadata { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of custom metadata properties.
+
+#### Remarks
+
+Metadata can include information about the tool's capabilities, limitations,
+            performance characteristics, or other implementation-specific details.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Name
+
+Gets or sets the unique name of the tool.
+
+#### Syntax
+
+```csharp
+public string Name { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The tool name, which must be unique within the MCP server context.
+
+#### Remarks
+
+Tool names should be descriptive and follow consistent naming conventions.
+            They are used by AI models to identify and invoke specific operations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Version
+
+Gets or sets the version of the tool.
+
+#### Syntax
+
+```csharp
+public string Version { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The version string for the tool.
+
+#### Remarks
+
+Tool versions help track changes and compatibility. They can be used to
+            implement versioning strategies for tool evolution.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a deep copy of the MCP tool.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Legacy.McpTool Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Legacy.McpTool`
+A new [McpTool](/api-reference/Microsoft/OData/Mcp/Core/Legacy/McpTool) instance with copied values.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the tool.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A string containing the tool's name and description.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the tool definition for completeness and correctness.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation error messages, or empty if valid.
+

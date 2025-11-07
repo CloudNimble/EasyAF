@@ -1,0 +1,124 @@
+---
+title: IMcpEndpointRegistry
+description: "Manages the registration and discovery of MCP endpoints."
+icon: plug
+keywords: ['IMcpEndpointRegistry', 'Microsoft.OData.Mcp.Core.Routing.IMcpEndpointRegistry', 'Microsoft.OData.Mcp.Core.Routing', 'interface']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Routing
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Routing.IMcpEndpointRegistry
+```
+
+## Summary
+
+Manages the registration and discovery of MCP endpoints.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetAllEndpoints <DocsBadge text="Abstract" variant="warning" />
+
+Gets all registered endpoints.
+
+#### Syntax
+
+```csharp
+System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Routing.McpRouteEntry> GetAllEndpoints()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Routing.McpRouteEntry>`
+A collection of all registered endpoints.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetMcpUrl <DocsBadge text="Abstract" variant="warning" />
+
+Gets the MCP URL for a given OData route.
+
+#### Syntax
+
+```csharp
+string GetMcpUrl(string routeName, System.Nullable<Microsoft.OData.Mcp.Core.Routing.McpCommand> command = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `routeName` | `string` | The OData route name. |
+| `command` | `System.Nullable<Microsoft.OData.Mcp.Core.Routing.McpCommand>` | The MCP command (optional). |
+
+#### Returns
+
+Type: `string?`
+The MCP URL, or null if not found.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasEndpoint <DocsBadge text="Abstract" variant="warning" />
+
+Checks if a route has an MCP endpoint registered.
+
+#### Syntax
+
+```csharp
+bool HasEndpoint(string routeName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `routeName` | `string` | The OData route name. |
+
+#### Returns
+
+Type: `bool`
+True if the route has an MCP endpoint; otherwise, false.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Register <DocsBadge text="Abstract" variant="warning" />
+
+Registers an MCP endpoint.
+
+#### Syntax
+
+```csharp
+void Register(Microsoft.OData.Mcp.Core.Routing.McpRouteEntry route)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `route` | `Microsoft.OData.Mcp.Core.Routing.McpRouteEntry` | The route entry to register. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TryGetEndpoint <DocsBadge text="Abstract" variant="warning" />
+
+Attempts to get an endpoint by path.
+
+#### Syntax
+
+```csharp
+bool TryGetEndpoint(string path, out Microsoft.OData.Mcp.Core.Routing.McpRouteEntry route, out Microsoft.OData.Mcp.Core.Routing.McpCommand command)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `path` | `string` | The request path. |
+| `route` | `Microsoft.OData.Mcp.Core.Routing.McpRouteEntry?` | The matched route entry. |
+| `command` | `Microsoft.OData.Mcp.Core.Routing.McpCommand` | The MCP command. |
+
+#### Returns
+
+Type: `bool`
+True if an endpoint was found; otherwise, false.
+

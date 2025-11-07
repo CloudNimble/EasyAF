@@ -1,0 +1,630 @@
+---
+title: CrudToolGenerationOptions
+description: "Options for controlling CRUD tool generation behavior."
+icon: lock
+tag: "SEALED"
+keywords: ['CrudToolGenerationOptions', 'Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions', 'Microsoft.OData.Mcp.Core.Legacy.Generators', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Legacy.Generators
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions
+```
+
+## Summary
+
+Options for controlling CRUD tool generation behavior.
+
+## Remarks
+
+These options allow fine-grained control over which tools are generated
+            and how they behave, including validation, error handling, and feature enablement.
+            CRUD tool generation can be customized to match specific API patterns,
+            security requirements, and performance considerations.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [CrudToolGenerationOptions](/api-reference/Microsoft/OData/Mcp/Core/Legacy/Generators/CrudToolGenerationOptions) class.
+
+#### Syntax
+
+```csharp
+public CrudToolGenerationOptions()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CustomProperties
+
+Gets or sets custom properties that can be used by specific generators.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> CustomProperties { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of custom properties for generator-specific configuration.
+
+#### Remarks
+
+Custom properties allow extending the configuration with generator-specific
+            settings that don't fit into the standard options. Different generators
+            may use these properties for specialized behavior.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExcludedEntityTypes
+
+Gets or sets the list of entity types to exclude from tool generation.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.HashSet<string> ExcludedEntityTypes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.HashSet<string>`
+A collection of entity type names to exclude.
+
+#### Remarks
+
+Use this to exclude specific entity types from CRUD tool generation,
+            such as system entities, audit tables, or entities that should only
+            be accessed through specialized tools.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExcludedProperties
+
+Gets or sets the list of properties to exclude from tool generation.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<string>> ExcludedProperties { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<string>>`
+A dictionary mapping entity type names to lists of excluded properties.
+
+#### Remarks
+
+Use this to exclude specific properties from tool generation, such as
+            system fields, computed properties, or sensitive information that
+            should not be exposed through MCP tools.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateCreateTools
+
+Gets or sets a value indicating whether to generate CREATE tools.
+
+#### Syntax
+
+```csharp
+public bool GenerateCreateTools { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to generate CREATE tools; otherwise, `false`.
+
+#### Remarks
+
+CREATE tools allow AI models to insert new entities into the OData service.
+            Disable this if the service is read-only or create operations should not
+            be exposed through the MCP interface.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateDeleteTools
+
+Gets or sets a value indicating whether to generate DELETE tools.
+
+#### Syntax
+
+```csharp
+public bool GenerateDeleteTools { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to generate DELETE tools; otherwise, `false`.
+
+#### Remarks
+
+DELETE tools allow AI models to remove entities from the OData service.
+            This is often disabled in production scenarios due to the irreversible
+            nature of delete operations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateDetailedDescriptions
+
+Gets or sets a value indicating whether to generate detailed descriptions for tools.
+
+#### Syntax
+
+```csharp
+public bool GenerateDetailedDescriptions { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to generate detailed descriptions; otherwise, `false`.
+
+#### Remarks
+
+Detailed descriptions help AI models understand what each tool does and
+            how to use it effectively. This improves the quality of AI interactions
+            but increases the size of tool definitions.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateReadTools
+
+Gets or sets a value indicating whether to generate READ tools.
+
+#### Syntax
+
+```csharp
+public bool GenerateReadTools { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to generate READ tools; otherwise, `false`.
+
+#### Remarks
+
+READ tools allow AI models to retrieve entities from the OData service.
+            This is typically enabled unless the service contains sensitive data
+            that should not be accessible through MCP.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateUpdateTools
+
+Gets or sets a value indicating whether to generate UPDATE tools.
+
+#### Syntax
+
+```csharp
+public bool GenerateUpdateTools { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to generate UPDATE tools; otherwise, `false`.
+
+#### Remarks
+
+UPDATE tools allow AI models to modify existing entities in the OData service.
+            Disable this for services where data modification should be restricted
+            or controlled through other mechanisms.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IncludeComplexTypes
+
+Gets or sets a value indicating whether to include complex type properties in tools.
+
+#### Syntax
+
+```csharp
+public bool IncludeComplexTypes { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to include complex types; otherwise, `false`.
+
+#### Remarks
+
+Complex types represent structured data within entities. Including them
+            in tools allows for complete entity manipulation but may increase tool
+            complexity. Consider the trade-off between functionality and usability.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IncludeExamples
+
+Gets or sets a value indicating whether to include examples in tool descriptions.
+
+#### Syntax
+
+```csharp
+public bool IncludeExamples { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to include examples; otherwise, `false`.
+
+#### Remarks
+
+Examples demonstrate how to use tools effectively and can significantly
+            improve AI model performance. However, they increase tool definition size
+            and may expose sensitive data patterns.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IncludeNavigationProperties
+
+Gets or sets a value indicating whether to include navigation properties in tools.
+
+#### Syntax
+
+```csharp
+public bool IncludeNavigationProperties { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to include navigation properties; otherwise, `false`.
+
+#### Remarks
+
+Navigation properties represent relationships between entities. Including them
+            can create very complex tools. It's often better to handle relationships
+            through separate navigation tools rather than CRUD tools.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IncludeValidation
+
+Gets or sets a value indicating whether to include validation in generated tools.
+
+#### Syntax
+
+```csharp
+public bool IncludeValidation { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to include validation; otherwise, `false`.
+
+#### Remarks
+
+Validation helps ensure that AI models provide valid input parameters
+            and can provide helpful error messages when validation fails. This
+            improves reliability but may impact performance.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxPropertiesPerTool
+
+Gets or sets the maximum number of properties to include in a single tool.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> MaxPropertiesPerTool { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>`
+The maximum property count, or null for no limit.
+
+#### Remarks
+
+Large entity types can result in tools with too many parameters, making them
+            difficult for AI models to use effectively. This setting helps limit complexity
+            by splitting large entities into multiple tools or omitting less important properties.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  NamingConvention
+
+Gets or sets the naming convention to use for generated tool names.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Legacy.Generators.ToolNamingConvention NamingConvention { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Legacy.Generators.ToolNamingConvention`
+The naming convention for tool names.
+
+#### Remarks
+
+Consistent naming conventions help AI models understand and predict
+            tool names. Choose a convention that matches your organization's
+            standards and is familiar to the AI models you're working with.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  UseSchemaDescriptions
+
+Gets or sets a value indicating whether to use schema descriptions for tool documentation.
+
+#### Syntax
+
+```csharp
+public bool UseSchemaDescriptions { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to use schema descriptions; otherwise, `false`.
+
+#### Remarks
+
+OData schemas may include descriptions and annotations that can be used
+            to generate better tool documentation. Enable this to leverage existing
+            schema documentation in your tool descriptions.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a copy of this configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions`
+A new instance with the same settings.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Development
+
+Creates options optimized for development and testing scenarios.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions Development()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions`
+CRUD tool generation options with all features enabled for development.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExcludeEntityType
+
+Adds an entity type to the exclusion list.
+
+#### Syntax
+
+```csharp
+public void ExcludeEntityType(string entityTypeName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityTypeName` | `string` | The name of the entity type to exclude. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExcludeProperty
+
+Adds a property to the exclusion list for a specific entity type.
+
+#### Syntax
+
+```csharp
+public void ExcludeProperty(string entityTypeName, string propertyName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityTypeName` | `string` | The name of the entity type. |
+| `propertyName` | `string` | The name of the property to exclude. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HighSecurity
+
+Creates options optimized for high-security scenarios.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions HighSecurity()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions`
+CRUD tool generation options with restricted access and enhanced validation.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReadOnly
+
+Creates options optimized for read-only scenarios.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions ReadOnly()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions`
+CRUD tool generation options with only read operations enabled.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ShouldIncludeEntityType
+
+Determines whether the specified entity type should be included in tool generation.
+
+#### Syntax
+
+```csharp
+public bool ShouldIncludeEntityType(string entityTypeName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityTypeName` | `string` | The name of the entity type to check. |
+
+#### Returns
+
+Type: `bool`
+`true` if the entity type should be included; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ShouldIncludeProperty
+
+Determines whether the specified property should be included in tool generation.
+
+#### Syntax
+
+```csharp
+public bool ShouldIncludeProperty(string entityTypeName, string propertyName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityTypeName` | `string` | The name of the entity type containing the property. |
+| `propertyName` | `string` | The name of the property to check. |
+
+#### Returns
+
+Type: `bool`
+`true` if the property should be included; otherwise, `false`.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

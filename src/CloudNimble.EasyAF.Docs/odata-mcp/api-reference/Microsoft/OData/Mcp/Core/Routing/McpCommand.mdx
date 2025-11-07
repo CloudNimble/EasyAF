@@ -1,0 +1,38 @@
+---
+title: McpCommand
+description: "Represents the type of MCP command."
+icon: list-ol
+tag: "ENUM"
+keywords: ['McpCommand', 'Microsoft.OData.Mcp.Core.Routing.McpCommand', 'Microsoft.OData.Mcp.Core.Routing', 'class', 'System.Enum']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Routing
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Routing.McpCommand
+```
+
+## Summary
+
+Represents the type of MCP command.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Unknown` | 0 | Unknown or invalid command. |
+| `Info` | 1 | Server information request (/mcp/info or /mcp). |
+| `Tools` | 2 | List all tools (/mcp/tools). |
+| `ToolsExecute` | 3 | Execute a tool (/mcp/tools/execute). |
+| `ToolInfo` | 4 | Get information about a specific tool (/mcp/tools/{toolName}). |
+

@@ -1,0 +1,679 @@
+---
+title: DelegatedToken
+description: "Represents a token that has been delegated for use with a downstream service."
+icon: lock
+tag: "SEALED"
+keywords: ['DelegatedToken', 'Microsoft.OData.Mcp.Authentication.Models.DelegatedToken', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.DelegatedToken
+```
+
+## Summary
+
+Represents a token that has been delegated for use with a downstream service.
+
+## Remarks
+
+This class encapsulates the result of token delegation operations, including
+            the delegated token itself, its metadata, and information about how it was obtained.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [DelegatedToken](/api-reference/Microsoft/OData/Mcp/Authentication/Models/DelegatedToken) class.
+
+#### Syntax
+
+```csharp
+public DelegatedToken()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [DelegatedToken](/api-reference/Microsoft/OData/Mcp/Authentication/Models/DelegatedToken) class with the specified access token and target service.
+
+#### Syntax
+
+```csharp
+public DelegatedToken(string accessToken, string targetServiceId)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `accessToken` | `string` | The delegated access token. |
+| `targetServiceId` | `string` | The target service identifier. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *accessToken* or *targetServiceId* is null or whitespace. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AccessToken
+
+Gets or sets the delegated access token.
+
+#### Syntax
+
+```csharp
+public required string AccessToken { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The access token that can be used to authenticate with the target service.
+
+#### Remarks
+
+This token should be included in the Authorization header when making requests
+            to the target service. The format is typically "Bearer {AccessToken}".
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CanRefresh
+
+Gets or sets a value indicating whether this token can be refreshed.
+
+#### Syntax
+
+```csharp
+public bool CanRefresh { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the token can be refreshed; otherwise, `false`.
+
+#### Remarks
+
+This is determined by whether a refresh token is available and the
+            delegation strategy supports refresh operations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DelegationStrategy
+
+Gets or sets the delegation strategy used to obtain this token.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.TokenForwardingStrategy DelegationStrategy { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.TokenForwardingStrategy`
+The strategy that was used for token delegation.
+
+#### Remarks
+
+This information can be useful for debugging, auditing, and determining
+            what operations are possible with the token (e.g., refresh capabilities).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExpiresAt
+
+Gets or sets the token expiration time.
+
+#### Syntax
+
+```csharp
+public System.Nullable<System.DateTime> ExpiresAt { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<System.DateTime>`
+The UTC date and time when the token expires.
+
+#### Remarks
+
+After this time, the token will no longer be valid for authentication.
+            If a refresh token is available, it can be used to obtain a new access token.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsExpired
+
+Gets a value indicating whether this token is expired.
+
+#### Syntax
+
+```csharp
+public bool IsExpired { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the token is expired; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IssuedAt
+
+Gets or sets the time when the token was issued.
+
+#### Syntax
+
+```csharp
+public System.DateTime IssuedAt { get; set; }
+```
+
+#### Property Value
+
+Type: `System.DateTime`
+The UTC date and time when the token was issued.
+
+#### Remarks
+
+This timestamp indicates when the token delegation operation completed
+            successfully and the token became available for use.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Metadata
+
+Gets or sets additional metadata about the token delegation.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> Metadata { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of metadata key-value pairs.
+
+#### Remarks
+
+This can include information such as the delegation endpoint used,
+            client credentials applied, or other context that might be useful
+            for debugging or auditing.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  OriginalToken
+
+Gets or sets the original token that was used for delegation.
+
+#### Syntax
+
+```csharp
+public string OriginalToken { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The user's original token that was delegated.
+
+#### Remarks
+
+This is stored for auditing purposes and potential token refresh operations.
+            It should be handled securely and not logged or exposed unnecessarily.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RefreshToken
+
+Gets or sets the refresh token, if available.
+
+#### Syntax
+
+```csharp
+public string RefreshToken { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The refresh token that can be used to obtain new access tokens.
+
+#### Remarks
+
+Refresh tokens allow obtaining new access tokens without requiring user
+            re-authentication. Not all delegation scenarios provide refresh tokens.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RemainingLifetime
+
+Gets the remaining lifetime of the token.
+
+#### Syntax
+
+```csharp
+public System.Nullable<System.TimeSpan> RemainingLifetime { get; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<System.TimeSpan>`
+The time remaining before the token expires, or null if no expiration is set.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Scopes
+
+Gets or sets the scopes granted for this token.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> Scopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of OAuth2 scopes that define what the token can access.
+
+#### Remarks
+
+These scopes may be a subset of the originally requested scopes, depending
+            on what the authorization server granted for the target service.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TargetAudience
+
+Gets or sets the target audience for the token.
+
+#### Syntax
+
+```csharp
+public string TargetAudience { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The audience claim for which the token was issued.
+
+#### Remarks
+
+This is the intended recipient of the token and should match the
+            target service's expected audience value.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TargetServiceId
+
+Gets or sets the target service identifier.
+
+#### Syntax
+
+```csharp
+public required string TargetServiceId { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The identifier of the service this token is intended for.
+
+#### Remarks
+
+This identifies which service configuration was used to obtain the token
+            and can be used for routing and caching decisions.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TokenType
+
+Gets or sets the type of the token.
+
+#### Syntax
+
+```csharp
+public string TokenType { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The token type (e.g., "Bearer", "JWT").
+
+#### Remarks
+
+This indicates how the token should be used in HTTP requests. Most OAuth2
+            implementations use "Bearer" tokens.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddMetadata
+
+Adds metadata to the delegated token.
+
+#### Syntax
+
+```csharp
+public void AddMetadata(string key, object value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `key` | `string` | The metadata key. |
+| `value` | `object` | The metadata value. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *key* is null or whitespace. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CreateFromExchange
+
+Creates a delegated token from a token exchange result.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Authentication.Models.DelegatedToken CreateFromExchange(string exchangedToken, string targetServiceId, string originalToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `exchangedToken` | `string` | The token received from the exchange. |
+| `targetServiceId` | `string` | The target service identifier. |
+| `originalToken` | `string?` | The original token that was exchanged. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.DelegatedToken`
+A delegated token configured for token exchange.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *exchangedToken* or *targetServiceId* is null or whitespace. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CreateFromOnBehalfOf
+
+Creates a delegated token from an on-behalf-of flow result.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Authentication.Models.DelegatedToken CreateFromOnBehalfOf(string onBehalfOfToken, string targetServiceId, string originalToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `onBehalfOfToken` | `string` | The token received from the on-behalf-of flow. |
+| `targetServiceId` | `string` | The target service identifier. |
+| `originalToken` | `string?` | The original token used for the on-behalf-of flow. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.DelegatedToken`
+A delegated token configured for on-behalf-of flow.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *onBehalfOfToken* or *targetServiceId* is null or whitespace. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CreatePassThrough
+
+Creates a delegated token for pass-through scenarios.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Authentication.Models.DelegatedToken CreatePassThrough(string originalToken, string targetServiceId)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `originalToken` | `string` | The original token to pass through. |
+| `targetServiceId` | `string` | The target service identifier. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.DelegatedToken`
+A delegated token configured for pass-through.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *originalToken* or *targetServiceId* is null or whitespace. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetAuthorizationHeaderValue
+
+Gets the authorization header value for HTTP requests.
+
+#### Syntax
+
+```csharp
+public string GetAuthorizationHeaderValue()
+```
+
+#### Returns
+
+Type: `string`
+The complete authorization header value (e.g., "Bearer {token}").
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetMetadata
+
+Gets metadata value by key.
+
+#### Syntax
+
+```csharp
+public T GetMetadata<T>(string key)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `key` | `string` | The metadata key. |
+
+#### Returns
+
+Type: `T?`
+The metadata value if found and of the correct type; otherwise, the default value.
+
+#### Type Parameters
+
+- `T` - The type of the metadata value.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ShouldRefresh
+
+Determines whether the token should be refreshed based on its expiration time.
+
+#### Syntax
+
+```csharp
+public bool ShouldRefresh(System.TimeSpan refreshThreshold)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `refreshThreshold` | `System.TimeSpan` | The time before expiration when refresh should be considered. |
+
+#### Returns
+
+Type: `bool`
+`true` if the token should be refreshed; otherwise, `false`.
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the delegated token.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A summary of the delegated token.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  WithUpdatedToken
+
+Creates a copy of the delegated token with updated values.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.DelegatedToken WithUpdatedToken(string newAccessToken, System.Nullable<System.DateTime> newExpiresAt = null, string newRefreshToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `newAccessToken` | `string` | The new access token value. |
+| `newExpiresAt` | `System.Nullable<System.DateTime>` | The new expiration time. |
+| `newRefreshToken` | `string?` | The new refresh token. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.DelegatedToken`
+A new delegated token instance with updated values.
+

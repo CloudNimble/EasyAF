@@ -1,0 +1,366 @@
+---
+title: CacheCompressionConfiguration
+description: "Configuration for cache compression."
+icon: lock
+tag: "SEALED"
+keywords: ['CacheCompressionConfiguration', 'Microsoft.OData.Mcp.Core.Configuration.CacheCompressionConfiguration', 'Microsoft.OData.Mcp.Core.Configuration', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Configuration
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Configuration.CacheCompressionConfiguration
+```
+
+## Summary
+
+Configuration for cache compression.
+
+## Remarks
+
+Cache compression configuration controls how cached data is compressed
+            to reduce memory usage and storage requirements. Compression can
+            significantly reduce cache size at the cost of additional CPU overhead
+            during cache operations.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [CacheCompressionConfiguration](/api-reference/Microsoft/OData/Mcp/Core/Configuration/CacheCompressionConfiguration) class.
+
+#### Syntax
+
+```csharp
+public CacheCompressionConfiguration()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Algorithm
+
+Gets or sets the compression algorithm to use.
+
+#### Syntax
+
+```csharp
+public string Algorithm { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The name of the compression algorithm.
+
+#### Examples
+
+Common values:
+- "gzip": Good balance of compression and speed
+- "deflate": Similar to gzip but with less overhead
+- "brotli": Better compression ratio but slower
+
+#### Remarks
+
+Supported algorithms typically include "gzip", "deflate", and "brotli".
+            Different algorithms offer different trade-offs between compression
+            ratio, speed, and CPU usage.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CompressionLevel
+
+Gets or sets the compression level.
+
+#### Syntax
+
+```csharp
+public int CompressionLevel { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The compression level from 0 (no compression) to 9 (maximum compression).
+
+#### Remarks
+
+Higher compression levels provide better compression ratios but
+            require more CPU time. Level 6 typically provides a good balance
+            between compression ratio and performance.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Enabled
+
+Gets or sets a value indicating whether cache compression is enabled.
+
+#### Syntax
+
+```csharp
+public bool Enabled { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable compression; otherwise, `false`.
+
+#### Remarks
+
+When compression is enabled, cached data will be compressed before
+            storage and decompressed when retrieved. This can significantly
+            reduce memory usage for large cached objects.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MinimumSize
+
+Gets or sets the minimum size in bytes before compression is applied.
+
+#### Syntax
+
+```csharp
+public int MinimumSize { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The minimum size threshold for compression.
+
+#### Remarks
+
+Small objects may not benefit from compression due to the overhead
+            of the compression algorithm. Objects smaller than this threshold
+            will be stored uncompressed.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a copy of this configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.CacheCompressionConfiguration Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.CacheCompressionConfiguration`
+A new instance with the same settings.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Disabled
+
+Creates a configuration with compression disabled.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.CacheCompressionConfiguration Disabled()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.CacheCompressionConfiguration`
+A compression configuration with compression disabled.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  FastCompression
+
+Creates a configuration optimized for fast compression.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.CacheCompressionConfiguration FastCompression()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.CacheCompressionConfiguration`
+A compression configuration optimized for speed.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaximumCompression
+
+Creates a configuration optimized for maximum compression.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.CacheCompressionConfiguration MaximumCompression()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.CacheCompressionConfiguration`
+A compression configuration optimized for compression ratio.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MergeWith
+
+Merges another configuration into this one, with the other configuration taking precedence.
+
+#### Syntax
+
+```csharp
+public void MergeWith(Microsoft.OData.Mcp.Core.Configuration.CacheCompressionConfiguration other)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `other` | `Microsoft.OData.Mcp.Core.Configuration.CacheCompressionConfiguration` | The configuration to merge into this one. |
+
+#### Remarks
+
+All values from the other configuration will override values in this
+            configuration. This allows for complete updates of compression settings.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the compression configuration.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or empty if the configuration is valid.
+

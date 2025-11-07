@@ -1,0 +1,295 @@
+---
+title: ITokenDelegationService
+description: "Provides services for delegating authentication tokens to downstream services."
+icon: plug
+keywords: ['ITokenDelegationService', 'Microsoft.OData.Mcp.Authentication.Services.ITokenDelegationService', 'Microsoft.OData.Mcp.Authentication.Services', 'interface']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Services
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Services.ITokenDelegationService
+```
+
+## Summary
+
+Provides services for delegating authentication tokens to downstream services.
+
+## Remarks
+
+This service handles the complexities of token delegation, including token forwarding,
+            exchange, and on-behalf-of flows. It ensures that user identity is preserved while
+            enabling secure communication with downstream OData services.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ClearCachedTokensAsync <DocsBadge text="Abstract" variant="warning" />
+
+Clears all cached tokens for a specific user.
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task ClearCachedTokensAsync(string userId, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `userId` | `string` | The user identifier. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A cancellation token to cancel the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that represents the asynchronous operation.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *userId* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExchangeTokenAsync <DocsBadge text="Abstract" variant="warning" />
+
+Exchanges a token for a new token with different scopes or audience.
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.DelegatedToken> ExchangeTokenAsync(string originalToken, string targetAudience, System.Collections.Generic.IEnumerable<string> requestedScopes = null, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `originalToken` | `string` | The original token to exchange. |
+| `targetAudience` | `string` | The audience for the new token. |
+| `requestedScopes` | `System.Collections.Generic.IEnumerable<string>?` | The scopes to request for the new token. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A cancellation token to cancel the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.DelegatedToken>`
+A task that represents the asynchronous operation. The task result contains the exchanged token.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *originalToken* or *targetAudience* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetCachedTokenAsync <DocsBadge text="Abstract" variant="warning" />
+
+Gets the cached token for a specific service and user, if available.
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.DelegatedToken> GetCachedTokenAsync(string userId, string targetServiceId, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `userId` | `string` | The user identifier. |
+| `targetServiceId` | `string` | The target service identifier. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A cancellation token to cancel the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.DelegatedToken?>`
+A task that represents the asynchronous operation. The task result contains the cached token, or null if not found.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *userId* or *targetServiceId* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetOnBehalfOfTokenAsync <DocsBadge text="Abstract" variant="warning" />
+
+Performs an OAuth2 on-behalf-of flow to get a token for a downstream service.
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.DelegatedToken> GetOnBehalfOfTokenAsync(string originalToken, string targetAudience, Microsoft.OData.Mcp.Authentication.Models.ClientCredentials clientCredentials, System.Collections.Generic.IEnumerable<string> requestedScopes = null, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `originalToken` | `string` | The original user token. |
+| `targetAudience` | `string` | The audience for the new token. |
+| `clientCredentials` | `Microsoft.OData.Mcp.Authentication.Models.ClientCredentials` | The client credentials for the on-behalf-of flow. |
+| `requestedScopes` | `System.Collections.Generic.IEnumerable<string>?` | The scopes to request for the new token. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A cancellation token to cancel the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.DelegatedToken>`
+A task that represents the asynchronous operation. The task result contains the on-behalf-of token.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *originalToken* or *targetAudience* is null or whitespace. |
+| `ArgumentNullException` | Thrown when *clientCredentials* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetTokenForServiceAsync <DocsBadge text="Abstract" variant="warning" />
+
+Gets an authentication token for making requests to a specific target service.
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.DelegatedToken> GetTokenForServiceAsync(string originalToken, string targetServiceId, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `originalToken` | `string` | The original user token. |
+| `targetServiceId` | `string` | The identifier of the target service. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A cancellation token to cancel the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.DelegatedToken>`
+A task that represents the asynchronous operation. The task result contains the delegated token.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *originalToken* or *targetServiceId* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetTokenForUrlAsync <DocsBadge text="Abstract" variant="warning" />
+
+Gets an authentication token for making requests to a target URL.
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.DelegatedToken> GetTokenForUrlAsync(string originalToken, string targetUrl, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `originalToken` | `string` | The original user token. |
+| `targetUrl` | `string` | The URL of the target service. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A cancellation token to cancel the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.DelegatedToken>`
+A task that represents the asynchronous operation. The task result contains the delegated token.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *originalToken* or *targetUrl* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RefreshTokenAsync <DocsBadge text="Abstract" variant="warning" />
+
+Refreshes a delegated token if it supports refresh operations.
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.DelegatedToken> RefreshTokenAsync(Microsoft.OData.Mcp.Authentication.Models.DelegatedToken delegatedToken, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `delegatedToken` | `Microsoft.OData.Mcp.Authentication.Models.DelegatedToken` | The delegated token to refresh. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A cancellation token to cancel the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.DelegatedToken>`
+A task that represents the asynchronous operation. The task result contains the refreshed token.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *delegatedToken* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RevokeTokenAsync <DocsBadge text="Abstract" variant="warning" />
+
+Revokes a delegated token if the target service supports token revocation.
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task RevokeTokenAsync(Microsoft.OData.Mcp.Authentication.Models.DelegatedToken delegatedToken, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `delegatedToken` | `Microsoft.OData.Mcp.Authentication.Models.DelegatedToken` | The delegated token to revoke. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A cancellation token to cancel the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that represents the asynchronous operation.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *delegatedToken* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ValidateTokenForDelegationAsync <DocsBadge text="Abstract" variant="warning" />
+
+Validates that a token is suitable for delegation to a specific service.
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task<bool> ValidateTokenForDelegationAsync(string token, string targetServiceId, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `token` | `string` | The token to validate for delegation. |
+| `targetServiceId` | `string` | The identifier of the target service. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A cancellation token to cancel the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+A task that represents the asynchronous operation. The task result indicates whether the token is valid for delegation.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *token* or *targetServiceId* is null or whitespace. |
+

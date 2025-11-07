@@ -1,0 +1,652 @@
+---
+title: McpServerInfo
+description: "Basic information about an MCP server instance."
+icon: lock
+tag: "SEALED"
+keywords: ['McpServerInfo', 'Microsoft.OData.Mcp.Core.Configuration.McpServerInfo', 'Microsoft.OData.Mcp.Core.Configuration', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Configuration
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Configuration.McpServerInfo
+```
+
+## Summary
+
+Basic information about an MCP server instance.
+
+## Remarks
+
+This information is used for identification, documentation, and client discovery.
+            It's exposed through the server info endpoint and helps clients understand
+            the capabilities and characteristics of the MCP server.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [McpServerInfo](/api-reference/Microsoft/OData/Mcp/Core/Configuration/McpServerInfo) class.
+
+#### Syntax
+
+```csharp
+public McpServerInfo()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  BuildInfo
+
+Gets or sets the build information for the server.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.BuildInfo BuildInfo { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.BuildInfo?`
+Information about the build that created this server instance.
+
+#### Remarks
+
+Build information helps with troubleshooting and ensures the correct
+            version is deployed in different environments.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Capabilities
+
+Gets or sets the server capabilities.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> Capabilities { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A list of capabilities supported by the server.
+
+#### Remarks
+
+Capabilities help clients understand what features are available
+            and how they can interact with the server.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Contact
+
+Gets or sets the contact information for support.
+
+#### Syntax
+
+```csharp
+public string Contact { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+Contact information such as email, URL, or phone number.
+
+#### Remarks
+
+Contact information provides users with a way to get help or
+            report issues with the MCP server.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Description
+
+Gets or sets the description of the MCP server.
+
+#### Syntax
+
+```csharp
+public string Description { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+A detailed description of the server's purpose and capabilities.
+
+#### Remarks
+
+The description helps users understand what the server provides and
+            how it can be used in their applications.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DocumentationUrl
+
+Gets or sets the URL to the server's documentation.
+
+#### Syntax
+
+```csharp
+public string DocumentationUrl { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+A URL pointing to comprehensive documentation.
+
+#### Remarks
+
+Documentation URL provides users with detailed information about
+            how to use and configure the MCP server.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  InstanceId
+
+Gets or sets the server instance identifier.
+
+#### Syntax
+
+```csharp
+public string InstanceId { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+A unique identifier for this server instance.
+
+#### Remarks
+
+Instance ID helps distinguish between multiple instances of the same
+            server type and is useful for monitoring and debugging.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  License
+
+Gets or sets the license under which the server is distributed.
+
+#### Syntax
+
+```csharp
+public string License { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The license identifier or description.
+
+#### Remarks
+
+License information helps users understand the terms under which
+            they can use the MCP server.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  McpProtocolVersion
+
+Gets or sets the supported MCP protocol version.
+
+#### Syntax
+
+```csharp
+public string McpProtocolVersion { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The version of the MCP protocol supported by this server.
+
+#### Remarks
+
+Protocol version information helps clients determine if they are
+            compatible with the server's implementation.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Metadata
+
+Gets or sets additional metadata about the server.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> Metadata { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of custom metadata key-value pairs.
+
+#### Remarks
+
+Custom metadata allows extending the server information with
+            application-specific details that don't fit into standard properties.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Name
+
+Gets or sets the display name of the MCP server.
+
+#### Syntax
+
+```csharp
+public string Name { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+A human-readable name for the server.
+
+#### Remarks
+
+This name is displayed in client interfaces and should clearly identify
+            the purpose or domain of the MCP server.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RepositoryUrl
+
+Gets or sets the URL to the server's source code repository.
+
+#### Syntax
+
+```csharp
+public string RepositoryUrl { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+A URL pointing to the source code repository.
+
+#### Remarks
+
+Repository URL allows users to examine the source code, report issues,
+            or contribute to the development of the MCP server.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  StartedAt
+
+Gets or sets the timestamp when the server was started.
+
+#### Syntax
+
+```csharp
+public System.DateTime StartedAt { get; set; }
+```
+
+#### Property Value
+
+Type: `System.DateTime`
+The UTC timestamp when the server instance was created.
+
+#### Remarks
+
+Start time provides information about server uptime and can be
+            useful for monitoring and diagnostics.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Vendor
+
+Gets or sets the vendor or organization that created the server.
+
+#### Syntax
+
+```csharp
+public string Vendor { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The name of the vendor or organization.
+
+#### Remarks
+
+Vendor information helps with support and identification of the
+            server implementation.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Version
+
+Gets or sets the version of the MCP server.
+
+#### Syntax
+
+```csharp
+public string Version { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The semantic version of the server instance.
+
+#### Remarks
+
+Version information helps clients determine compatibility and
+            should follow semantic versioning principles.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddCapability
+
+Adds a capability to the server.
+
+#### Syntax
+
+```csharp
+public void AddCapability(string capability)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `capability` | `string` | The capability to add. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *capability* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddMetadata
+
+Adds metadata to the server information.
+
+#### Syntax
+
+```csharp
+public void AddMetadata(string key, object value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `key` | `string` | The metadata key. |
+| `value` | `object` | The metadata value. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *key* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a copy of this server information.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.McpServerInfo Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.McpServerInfo`
+A new instance with the same settings.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetMetadata
+
+Gets metadata value by key.
+
+#### Syntax
+
+```csharp
+public T GetMetadata<T>(string key)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `key` | `string` | The metadata key. |
+
+#### Returns
+
+Type: `T?`
+The metadata value if found and of the correct type; otherwise, the default value.
+
+#### Type Parameters
+
+- `T` - The type of the metadata value.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetUptime
+
+Gets the server uptime.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan GetUptime()
+```
+
+#### Returns
+
+Type: `System.TimeSpan`
+The time elapsed since the server was started.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasCapability
+
+Determines whether the server has the specified capability.
+
+#### Syntax
+
+```csharp
+public bool HasCapability(string capability)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `capability` | `string` | The capability to check for. |
+
+#### Returns
+
+Type: `bool`
+`true` if the server has the capability; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MergeWith
+
+Merges another server info into this one, with the other taking precedence.
+
+#### Syntax
+
+```csharp
+public void MergeWith(Microsoft.OData.Mcp.Core.Configuration.McpServerInfo other)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `other` | `Microsoft.OData.Mcp.Core.Configuration.McpServerInfo` | The server info to merge into this one. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *other* is null. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RemoveCapability
+
+Removes a capability from the server.
+
+#### Syntax
+
+```csharp
+public bool RemoveCapability(string capability)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `capability` | `string` | The capability to remove. |
+
+#### Returns
+
+Type: `bool`
+`true` if the capability was removed; otherwise, `false`.
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the server information.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A summary of the server information.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the server information for completeness and correctness.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or empty if the information is valid.
+

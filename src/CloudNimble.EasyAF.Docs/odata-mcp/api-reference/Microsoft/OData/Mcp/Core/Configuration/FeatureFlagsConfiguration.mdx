@@ -1,0 +1,702 @@
+---
+title: FeatureFlagsConfiguration
+description: "Configuration for enabling/disabling specific features."
+icon: lock
+tag: "SEALED"
+keywords: ['FeatureFlagsConfiguration', 'Microsoft.OData.Mcp.Core.Configuration.FeatureFlagsConfiguration', 'Microsoft.OData.Mcp.Core.Configuration', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Configuration
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Configuration.FeatureFlagsConfiguration
+```
+
+## Summary
+
+Configuration for enabling/disabling specific features.
+
+## Remarks
+
+Feature flags allow selective enabling of functionality for gradual rollouts,
+            A/B testing, or environment-specific configurations without code changes.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [FeatureFlagsConfiguration](/api-reference/Microsoft/OData/Mcp/Core/Configuration/FeatureFlagsConfiguration) class.
+
+#### Syntax
+
+```csharp
+public FeatureFlagsConfiguration()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CustomFlags
+
+Gets or sets custom feature flag values.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, bool> CustomFlags { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, bool>`
+A dictionary of custom feature flag names and their enabled status.
+
+#### Remarks
+
+Custom feature flags allow applications to define their own toggleable
+            features beyond the predefined flags in this configuration.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableAdvancedQuerying
+
+Gets or sets a value indicating whether advanced querying features are enabled.
+
+#### Syntax
+
+```csharp
+public bool EnableAdvancedQuerying { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable advanced querying; otherwise, `false`.
+
+#### Remarks
+
+Advanced querying includes features like complex $filter expressions,
+            custom functions, and sophisticated $expand operations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableAsyncStreaming
+
+Gets or sets a value indicating whether async streaming is enabled.
+
+#### Syntax
+
+```csharp
+public bool EnableAsyncStreaming { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable async streaming; otherwise, `false`.
+
+#### Remarks
+
+Async streaming allows large result sets to be returned incrementally,
+            improving perceived performance and reducing memory usage.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableBatchOperations
+
+Gets or sets a value indicating whether batch operations are enabled.
+
+#### Syntax
+
+```csharp
+public bool EnableBatchOperations { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable batch operations; otherwise, `false`.
+
+#### Remarks
+
+Batch operations allow multiple operations to be executed in a single request,
+            improving performance but increasing complexity and resource usage.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableBetaApiVersions
+
+Gets or sets a value indicating whether beta API versions are enabled.
+
+#### Syntax
+
+```csharp
+public bool EnableBetaApiVersions { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable beta API versions; otherwise, `false`.
+
+#### Remarks
+
+Beta API versions provide access to new functionality before it becomes
+            generally available, but may be unstable or subject to breaking changes.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableCachingOptimizations
+
+Gets or sets a value indicating whether caching optimizations are enabled.
+
+#### Syntax
+
+```csharp
+public bool EnableCachingOptimizations { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable caching optimizations; otherwise, `false`.
+
+#### Remarks
+
+Caching optimizations include aggressive caching strategies that may
+            improve performance at the cost of data freshness.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableCustomToolExtensions
+
+Gets or sets a value indicating whether custom tool extensions are enabled.
+
+#### Syntax
+
+```csharp
+public bool EnableCustomToolExtensions { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable custom tool extensions; otherwise, `false`.
+
+#### Remarks
+
+Custom tool extensions allow loading additional MCP tools from external
+            assemblies or configuration, extending the server's capabilities.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableDevelopmentEndpoints
+
+Gets or sets a value indicating whether development endpoints are enabled.
+
+#### Syntax
+
+```csharp
+public bool EnableDevelopmentEndpoints { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable development-specific endpoints; otherwise, `false`.
+
+#### Remarks
+
+Development endpoints include features like detailed diagnostics, configuration
+            inspection, and testing utilities that should not be available in production.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableEnhancedSecurity
+
+Gets or sets a value indicating whether enhanced security features are enabled.
+
+#### Syntax
+
+```csharp
+public bool EnableEnhancedSecurity { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable enhanced security; otherwise, `false`.
+
+#### Remarks
+
+Enhanced security features provide additional protection mechanisms
+            that may impact performance or compatibility with some clients.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableExperimentalFeatures
+
+Gets or sets a value indicating whether experimental features are enabled.
+
+#### Syntax
+
+```csharp
+public bool EnableExperimentalFeatures { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable experimental features; otherwise, `false`.
+
+#### Remarks
+
+Experimental features are new or unstable functionality that may change
+            or be removed in future versions. Use with caution in production.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableLegacyCompatibility
+
+Gets or sets a value indicating whether legacy compatibility mode is enabled.
+
+#### Syntax
+
+```csharp
+public bool EnableLegacyCompatibility { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable legacy compatibility; otherwise, `false`.
+
+#### Remarks
+
+Legacy compatibility mode maintains backward compatibility with older
+            OData versions or non-standard implementations at the cost of modern features.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnablePerformanceProfiling
+
+Gets or sets a value indicating whether performance profiling is enabled.
+
+#### Syntax
+
+```csharp
+public bool EnablePerformanceProfiling { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable performance profiling; otherwise, `false`.
+
+#### Remarks
+
+Performance profiling collects detailed timing and resource usage information
+            for optimization purposes but adds overhead to request processing.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnforceStrictSchemaValidation
+
+Gets or sets a value indicating whether schema validation is enforced.
+
+#### Syntax
+
+```csharp
+public bool EnforceStrictSchemaValidation { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enforce strict schema validation; otherwise, `false`.
+
+#### Remarks
+
+Strict schema validation ensures all requests conform exactly to the
+            OData schema but may reject valid requests with minor variations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  FlagMetadata
+
+Gets or sets feature flag metadata.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> FlagMetadata { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary containing metadata about feature flags.
+
+#### Remarks
+
+Metadata can include information such as flag descriptions, deprecation
+            notices, rollout percentages, or other contextual information.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddFlagMetadata
+
+Adds metadata for a feature flag.
+
+#### Syntax
+
+```csharp
+public void AddFlagMetadata(string flagName, object metadata)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `flagName` | `string` | The name of the feature flag. |
+| `metadata` | `object` | The metadata object to associate with the flag. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *flagName* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a copy of this configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.FeatureFlagsConfiguration Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.FeatureFlagsConfiguration`
+A new instance with the same settings.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ForDevelopment
+
+Creates a configuration optimized for development environments.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.FeatureFlagsConfiguration ForDevelopment()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.FeatureFlagsConfiguration`
+A feature flags configuration suitable for development.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ForProduction
+
+Creates a configuration optimized for production environments.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.FeatureFlagsConfiguration ForProduction()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.FeatureFlagsConfiguration`
+A feature flags configuration suitable for production.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetEnabledFlags
+
+Gets all enabled feature flags.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> GetEnabledFlags()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of enabled feature flag names.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetFlagMetadata
+
+Gets metadata for a feature flag.
+
+#### Syntax
+
+```csharp
+public T GetFlagMetadata<T>(string flagName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `flagName` | `string` | The name of the feature flag. |
+
+#### Returns
+
+Type: `T?`
+The metadata object if found and of the correct type; otherwise, the default value.
+
+#### Type Parameters
+
+- `T` - The type of the metadata object.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetStatistics
+
+Gets feature flag statistics for monitoring and diagnostics.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> GetStatistics()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary containing feature flag statistics.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsEnabled
+
+Determines whether a specific feature flag is enabled.
+
+#### Syntax
+
+```csharp
+public bool IsEnabled(string flagName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `flagName` | `string` | The name of the feature flag to check. |
+
+#### Returns
+
+Type: `bool`
+`true` if the flag is enabled; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MergeWith
+
+Merges another configuration into this one, with the other configuration taking precedence.
+
+#### Syntax
+
+```csharp
+public void MergeWith(Microsoft.OData.Mcp.Core.Configuration.FeatureFlagsConfiguration other)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `other` | `Microsoft.OData.Mcp.Core.Configuration.FeatureFlagsConfiguration` | The configuration to merge into this one. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *other* is null. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Minimal
+
+Creates a minimal configuration with most features disabled.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.FeatureFlagsConfiguration Minimal()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.FeatureFlagsConfiguration`
+A feature flags configuration with minimal features enabled.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RemoveCustomFlag
+
+Removes a custom feature flag.
+
+#### Syntax
+
+```csharp
+public bool RemoveCustomFlag(string flagName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `flagName` | `string` | The name of the feature flag to remove. |
+
+#### Returns
+
+Type: `bool`
+`true` if the flag was removed; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SetCustomFlag
+
+Sets the value of a custom feature flag.
+
+#### Syntax
+
+```csharp
+public void SetCustomFlag(string flagName, bool enabled)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `flagName` | `string` | The name of the feature flag. |
+| `enabled` | `bool` | Whether the flag should be enabled. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *flagName* is null or whitespace. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the feature flags configuration.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation warnings, or empty if the configuration is valid.
+
+#### Remarks
+
+Feature flags validation focuses on warnings rather than errors, as most
+            combinations are valid but some may indicate misconfigurations.
+

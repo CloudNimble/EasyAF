@@ -1,0 +1,44 @@
+---
+title: CacheEvictionPolicy
+description: "Defines the cache eviction policies."
+icon: list-ol
+tag: "ENUM"
+keywords: ['CacheEvictionPolicy', 'Microsoft.OData.Mcp.Core.Configuration.CacheEvictionPolicy', 'Microsoft.OData.Mcp.Core.Configuration', 'class', 'System.Enum']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Configuration
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Configuration.CacheEvictionPolicy
+```
+
+## Summary
+
+Defines the cache eviction policies.
+
+## Remarks
+
+Cache eviction policies determine which entries are removed from
+            the cache when size or entry limits are reached. Different policies
+            optimize for different access patterns and performance characteristics.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `LeastRecentlyUsed` | 0 | Least Recently Used (LRU) eviction policy. |
+| `LeastFrequentlyUsed` | 1 | Least Frequently Used (LFU) eviction policy. |
+| `FirstInFirstOut` | 2 | First In, First Out (FIFO) eviction policy. |
+| `Random` | 3 | Random eviction policy. |
+| `TimeToLive` | 4 | Time-based eviction (shortest TTL first). |
+

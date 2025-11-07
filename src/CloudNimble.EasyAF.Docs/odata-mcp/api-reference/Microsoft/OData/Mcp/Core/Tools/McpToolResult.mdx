@@ -1,0 +1,698 @@
+---
+title: McpToolResult
+description: "Represents the result of an MCP tool execution."
+icon: lock
+tag: "SEALED"
+keywords: ['McpToolResult', 'Microsoft.OData.Mcp.Core.Tools.McpToolResult', 'Microsoft.OData.Mcp.Core.Tools', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Tools
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Tools.McpToolResult
+```
+
+## Summary
+
+Represents the result of an MCP tool execution.
+
+## Remarks
+
+This class standardizes the format of tool execution results, providing
+            consistent error handling, data formatting, and metadata across all tools.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [McpToolResult](/api-reference/Microsoft/OData/Mcp/Core/Tools/McpToolResult) class.
+
+#### Syntax
+
+```csharp
+public McpToolResult()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [McpToolResult](/api-reference/Microsoft/OData/Mcp/Core/Tools/McpToolResult) class with success status.
+
+#### Syntax
+
+```csharp
+public McpToolResult(System.Text.Json.JsonDocument data, string correlationId = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `data` | `System.Text.Json.JsonDocument?` | The result data. |
+| `correlationId` | `string?` | The correlation ID. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [McpToolResult](/api-reference/Microsoft/OData/Mcp/Core/Tools/McpToolResult) class with error status.
+
+#### Syntax
+
+```csharp
+public McpToolResult(string errorMessage, string errorCode = null, string correlationId = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `errorMessage` | `string` | The error message. |
+| `errorCode` | `string?` | The error code. |
+| `correlationId` | `string?` | The correlation ID. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CompletedAt
+
+Gets or sets the timestamp when the execution completed.
+
+#### Syntax
+
+```csharp
+public System.DateTime CompletedAt { get; set; }
+```
+
+#### Property Value
+
+Type: `System.DateTime?`
+The UTC timestamp when the tool finished executing.
+
+#### Remarks
+
+This timestamp can be used for auditing and troubleshooting purposes.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CorrelationId
+
+Gets or sets the correlation ID for this execution.
+
+#### Syntax
+
+```csharp
+public string CorrelationId { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The correlation ID that can be used to trace this execution across systems.
+
+#### Remarks
+
+This should match the correlation ID from the tool context for end-to-end tracing.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Data
+
+Gets or sets the result data as a JSON document.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.JsonDocument Data { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.JsonDocument?`
+The structured result data, or null if no data is available.
+
+#### Remarks
+
+The data format depends on the specific tool but should always be
+            valid JSON that can be consumed by MCP clients.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ErrorCode
+
+Gets or sets the error code for failed executions.
+
+#### Syntax
+
+```csharp
+public string ErrorCode { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+A machine-readable error code, or null if execution was successful.
+
+#### Remarks
+
+Error codes provide a standardized way for clients to handle specific
+            error conditions programmatically.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ErrorMessage
+
+Gets or sets the error message for failed executions.
+
+#### Syntax
+
+```csharp
+public string ErrorMessage { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+A human-readable error message, or null if execution was successful.
+
+#### Remarks
+
+Error messages should be clear and actionable, helping users understand
+            what went wrong and how to fix it.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExecutionDuration
+
+Gets or sets the execution duration.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan ExecutionDuration { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan?`
+The time taken to execute the tool.
+
+#### Remarks
+
+This information is useful for performance monitoring and optimization.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsSuccess
+
+Gets or sets a value indicating whether the tool execution was successful.
+
+#### Syntax
+
+```csharp
+public bool IsSuccess { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the execution was successful; otherwise, `false`.
+
+#### Remarks
+
+Success indicates that the tool executed without errors and completed
+            its intended operation, regardless of whether data was found or modified.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Metadata
+
+Gets or sets additional metadata about the execution.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> Metadata { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of metadata key-value pairs.
+
+#### Remarks
+
+Metadata can include information such as execution time, record counts,
+            caching status, or other operational details.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  StatusCode
+
+Gets or sets the HTTP status code equivalent for this result.
+
+#### Syntax
+
+```csharp
+public int StatusCode { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The HTTP status code that best represents this result.
+
+#### Remarks
+
+This helps clients understand the result in terms of standard HTTP semantics,
+            even when the tool isn't directly related to HTTP operations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Warnings
+
+Gets or sets warnings that occurred during execution.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> Warnings { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of warning messages.
+
+#### Remarks
+
+Warnings indicate potential issues or notable conditions that didn't
+            prevent successful execution but may be of interest to users.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddMetadata
+
+Adds metadata to the result.
+
+#### Syntax
+
+```csharp
+public void AddMetadata(string key, object value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `key` | `string` | The metadata key. |
+| `value` | `object` | The metadata value. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *key* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddWarning
+
+Adds a warning to the result.
+
+#### Syntax
+
+```csharp
+public void AddWarning(string warning)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `warning` | `string` | The warning message. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *warning* is null or whitespace. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Error
+
+Creates an error result with the specified message and code.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Tools.McpToolResult Error(string errorMessage, string errorCode = null, string correlationId = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `errorMessage` | `string` | The error message. |
+| `errorCode` | `string?` | The error code. |
+| `correlationId` | `string?` | The correlation ID. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolResult`
+An error MCP tool result.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *errorMessage* is null or whitespace. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Error
+
+Creates an error result from an exception.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Tools.McpToolResult Error(System.Exception exception, string correlationId = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `exception` | `System.Exception` | The exception that occurred. |
+| `correlationId` | `string?` | The correlation ID. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolResult`
+An error MCP tool result.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *exception* is null. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetMetadata
+
+Gets metadata value by key.
+
+#### Syntax
+
+```csharp
+public T GetMetadata<T>(string key)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `key` | `string` | The metadata key. |
+
+#### Returns
+
+Type: `T?`
+The metadata value if found and of the correct type; otherwise, the default value.
+
+#### Type Parameters
+
+- `T` - The type of the metadata value.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  NotFound
+
+Creates a not found result.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Tools.McpToolResult NotFound(string message = null, string correlationId = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `message` | `string?` | The not found message. |
+| `correlationId` | `string?` | The correlation ID. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolResult`
+A not found MCP tool result.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SetExecutionDuration
+
+Sets the execution duration based on a start time.
+
+#### Syntax
+
+```csharp
+public void SetExecutionDuration(System.DateTime startTime)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `startTime` | `System.DateTime?` | The execution start time. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Success
+
+Creates a successful result with the specified data.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Tools.McpToolResult Success(System.Text.Json.JsonDocument data = null, string correlationId = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `data` | `System.Text.Json.JsonDocument?` | The result data. |
+| `correlationId` | `string?` | The correlation ID. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolResult`
+A successful MCP tool result.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Success
+
+Creates a successful result with the specified object data.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Tools.McpToolResult Success(object data, string correlationId = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `data` | `object` | The data object to serialize to JSON. |
+| `correlationId` | `string?` | The correlation ID. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolResult`
+A successful MCP tool result.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *data* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToDictionary
+
+Converts the result to a dictionary for JSON serialization.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> ToDictionary()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.Dictionary<string, object?>`
+A dictionary representation of the result.
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a JSON string representation of the result.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A JSON string representation of the result.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Unauthorized
+
+Creates an unauthorized result.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Tools.McpToolResult Unauthorized(string message = null, string correlationId = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `message` | `string?` | The unauthorized message. |
+| `correlationId` | `string?` | The correlation ID. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolResult`
+An unauthorized MCP tool result.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ValidationError
+
+Creates a validation error result.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Tools.McpToolResult ValidationError(string message, string correlationId = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `message` | `string` | The validation error message. |
+| `correlationId` | `string?` | The correlation ID. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolResult`
+A validation error MCP tool result.
+

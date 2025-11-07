@@ -5,3 +5,14 @@
 	path = external/SimpleMessageBus
 	url = https://github.com/CloudNimble/SimpleMessageBus.git
 	branch = v6
+[submodule "external/RESTier"]
+	path = external/RESTier
+	url = https://github.com/OData/RESTier.git
+	branch = docs
+[submodule "external/OData-MCP"]
+	path = external/OData-MCP
+	url = https://github.com/OData/MCP.git
+	branch = dev
+[submodule "external/BlazorEssentials"]
+	path = external/BlazorEssentials
+	url = https://github.com/CloudNimble/BlazorEssentials.git

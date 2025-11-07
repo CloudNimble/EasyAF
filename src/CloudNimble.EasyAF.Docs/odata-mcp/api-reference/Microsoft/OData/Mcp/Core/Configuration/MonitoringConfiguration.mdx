@@ -1,0 +1,661 @@
+---
+title: MonitoringConfiguration
+description: "Configuration for logging, metrics, and health monitoring."
+icon: lock
+tag: "SEALED"
+keywords: ['MonitoringConfiguration', 'Microsoft.OData.Mcp.Core.Configuration.MonitoringConfiguration', 'Microsoft.OData.Mcp.Core.Configuration', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Configuration
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Configuration.MonitoringConfiguration
+```
+
+## Summary
+
+Configuration for logging, metrics, and health monitoring.
+
+## Remarks
+
+Monitoring configuration controls what information is logged, how metrics
+            are collected, and what health checks are performed for operational visibility.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [MonitoringConfiguration](/api-reference/Microsoft/OData/Mcp/Core/Configuration/MonitoringConfiguration) class.
+
+#### Syntax
+
+```csharp
+public MonitoringConfiguration()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Alerting
+
+Gets or sets the alerting configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.AlertingConfiguration Alerting { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.AlertingConfiguration`
+Configuration for automated alerts based on metrics and logs.
+
+#### Remarks
+
+Alerting configuration defines when and how to notify operations teams
+            about system issues or performance degradations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ApplicationInsights
+
+Gets or sets the application insights configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.ApplicationInsightsConfiguration ApplicationInsights { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.ApplicationInsightsConfiguration`
+Configuration for Azure Application Insights integration.
+
+#### Remarks
+
+Application Insights provides comprehensive application performance
+            monitoring and analytics for Azure-hosted applications.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CustomMetrics
+
+Gets or sets the custom metric definitions.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Configuration.MetricDefinition> CustomMetrics { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Configuration.MetricDefinition>`
+A collection of custom metrics to collect.
+
+#### Remarks
+
+Custom metrics allow tracking application-specific measurements
+            beyond the standard performance metrics.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CustomProperties
+
+Gets or sets custom monitoring properties.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> CustomProperties { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of custom monitoring configuration values.
+
+#### Remarks
+
+Custom properties allow extending the configuration with monitoring system-specific
+            settings that don't fit into the standard configuration properties.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableHealthChecks
+
+Gets or sets a value indicating whether to enable health checks.
+
+#### Syntax
+
+```csharp
+public bool EnableHealthChecks { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable health check endpoints; otherwise, `false`.
+
+#### Remarks
+
+Health checks provide automated monitoring of service health status
+            and can be used by load balancers and monitoring systems.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableMetrics
+
+Gets or sets a value indicating whether to enable performance metrics collection.
+
+#### Syntax
+
+```csharp
+public bool EnableMetrics { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to collect performance metrics; otherwise, `false`.
+
+#### Remarks
+
+Performance metrics include response times, throughput, error rates,
+            and other operational metrics useful for monitoring and alerting.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableStructuredLogging
+
+Gets or sets a value indicating whether to enable structured logging.
+
+#### Syntax
+
+```csharp
+public bool EnableStructuredLogging { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable structured logging; otherwise, `false`.
+
+#### Remarks
+
+Structured logging outputs log messages in a structured format (like JSON)
+            that can be easily parsed by log aggregation systems.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableTracing
+
+Gets or sets a value indicating whether to enable distributed tracing.
+
+#### Syntax
+
+```csharp
+public bool EnableTracing { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable distributed tracing; otherwise, `false`.
+
+#### Remarks
+
+Distributed tracing tracks requests across multiple services and provides
+            end-to-end visibility in microservice architectures.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HealthCheckInterval
+
+Gets or sets the health check interval.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan HealthCheckInterval { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The interval between health check executions.
+
+#### Remarks
+
+More frequent health checks provide faster failure detection but
+            increase system load.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HealthCheckTimeout
+
+Gets or sets the health check timeout.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan HealthCheckTimeout { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The maximum time to wait for health check completion.
+
+#### Remarks
+
+Health checks that take longer than this timeout will be considered failed.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  LogFilters
+
+Gets or sets the log filters.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Configuration.LogFilter> LogFilters { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Configuration.LogFilter>`
+A collection of filters to apply to log messages.
+
+#### Remarks
+
+Log filters can suppress noisy log messages or enhance logging
+            for specific components or scenarios.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  LogLevel
+
+Gets or sets the minimum logging level.
+
+#### Syntax
+
+```csharp
+public string LogLevel { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The minimum level of log messages to record.
+
+#### Remarks
+
+Log levels follow standard .NET logging conventions: Trace, Debug, Information,
+            Warning, Error, Critical. Lower levels include all higher levels.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  LogRequestResponse
+
+Gets or sets a value indicating whether to log request/response details.
+
+#### Syntax
+
+```csharp
+public bool LogRequestResponse { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to log HTTP request and response details; otherwise, `false`.
+
+#### Remarks
+
+Request/response logging provides detailed information about HTTP traffic
+            but can impact performance and may log sensitive information.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  LogSensitiveData
+
+Gets or sets a value indicating whether to log sensitive data.
+
+#### Syntax
+
+```csharp
+public bool LogSensitiveData { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to include sensitive data in logs; otherwise, `false`.
+
+#### Remarks
+
+Sensitive data includes authentication tokens, personal information, and other
+            confidential data. This should be disabled in production environments.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MetricsInterval
+
+Gets or sets the metrics collection interval.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan MetricsInterval { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The interval between metrics collection cycles.
+
+#### Remarks
+
+More frequent collection provides better visibility but increases overhead.
+            The optimal interval depends on your monitoring requirements.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  OpenTelemetry
+
+Gets or sets the OpenTelemetry configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.OpenTelemetryConfiguration OpenTelemetry { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.OpenTelemetryConfiguration`
+Configuration for OpenTelemetry observability.
+
+#### Remarks
+
+OpenTelemetry provides standardized observability with metrics, logs,
+            and traces that can be exported to various monitoring systems.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TracingSamplingRate
+
+Gets or sets the tracing sampling rate.
+
+#### Syntax
+
+```csharp
+public double TracingSamplingRate { get; set; }
+```
+
+#### Property Value
+
+Type: `double`
+The percentage of requests to trace (0.0 to 1.0).
+
+#### Remarks
+
+Sampling reduces the overhead of tracing by only capturing a percentage
+            of requests. A value of 1.0 traces all requests.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddCustomMetric
+
+Adds a custom metric definition.
+
+#### Syntax
+
+```csharp
+public void AddCustomMetric(string name, Microsoft.OData.Mcp.Core.Configuration.MetricType type, string description, string unit = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The metric name. |
+| `type` | `Microsoft.OData.Mcp.Core.Configuration.MetricType` | The metric type. |
+| `description` | `string` | The metric description. |
+| `unit` | `string?` | The metric unit. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *name* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddLogFilter
+
+Adds a log filter.
+
+#### Syntax
+
+```csharp
+public void AddLogFilter(string category, string level)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `category` | `string` | The log category to filter. |
+| `level` | `string` | The minimum log level for the category. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *category* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a copy of this configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.MonitoringConfiguration Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.MonitoringConfiguration`
+A new instance with the same settings.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ForDevelopment
+
+Creates a configuration optimized for development environments.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.MonitoringConfiguration ForDevelopment()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.MonitoringConfiguration`
+A monitoring configuration suitable for development.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ForProduction
+
+Creates a configuration optimized for production environments.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.MonitoringConfiguration ForProduction()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.MonitoringConfiguration`
+A monitoring configuration suitable for production.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MergeWith
+
+Merges another configuration into this one, with the other configuration taking precedence.
+
+#### Syntax
+
+```csharp
+public void MergeWith(Microsoft.OData.Mcp.Core.Configuration.MonitoringConfiguration other)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `other` | `Microsoft.OData.Mcp.Core.Configuration.MonitoringConfiguration` | The configuration to merge into this one. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *other* is null. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Minimal
+
+Creates a minimal monitoring configuration.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.MonitoringConfiguration Minimal()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.MonitoringConfiguration`
+A monitoring configuration with minimal overhead.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the monitoring configuration.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or empty if the configuration is valid.
+

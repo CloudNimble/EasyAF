@@ -1,0 +1,38 @@
+---
+title: ODataAuthenticationType
+description: "Defines the authentication types for OData services."
+icon: list-ol
+tag: "ENUM"
+keywords: ['ODataAuthenticationType', 'Microsoft.OData.Mcp.Core.Configuration.ODataAuthenticationType', 'Microsoft.OData.Mcp.Core.Configuration', 'class', 'System.Enum']
+---
+
+import { DocsBadge } from '/snippets/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Configuration
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Configuration.ODataAuthenticationType
+```
+
+## Summary
+
+Defines the authentication types for OData services.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `None` | 0 | No authentication required. |
+| `ApiKey` | 1 | API key authentication using a custom header. |
+| `Bearer` | 2 | Bearer token authentication using the Authorization header. |
+| `Basic` | 3 | Basic authentication using username and password. |
+| `OAuth2` | 4 | OAuth2 client credentials flow. |
+
