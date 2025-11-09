@@ -1,4 +1,4 @@
-﻿<Project Sdk="DotNetDocs.Sdk/1.1.0-preview.10">
+﻿<Project Sdk="DotNetDocs.Sdk/1.1.0-preview.11">
 
     <PropertyGroup>
         <DocumentationType>Mintlify</DocumentationType>
@@ -33,16 +33,10 @@
                             <Pages>index;why-easyaf;quickstart</Pages>
                         </Group>
                         <Group Name="Guides" Icon="dog-leashed">
-                            <Pages>guides/interval-calculations;guides/property-name-overrides;</Pages>
+                            <Pages>guides/table-design;guides/interval-calculations;guides/property-name-overrides;</Pages>
                         </Group>
                     </Groups>
                 </Pages>
-                <Tabs>
-                    <Tab Name="MCP Servers">
-                    </Tab>
-                    <Tab Name="FrontEnds">
-                    </Tab>
-                </Tabs>
             </Navigation>
             <Interaction>
                 <Drilldown>true</Drilldown>
@@ -51,30 +45,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <DocumentationReference Include="..\..\external\restier\src\Microsoft.Restier.Docs\Microsoft.Restier.Docs.docsproj"
-                                DestinationPath="restier"
-                                IntegrationType="Tabs"
-                                Name="REST APIs" />
+        <DocumentationReference Include="..\..\external\restier\src\Microsoft.Restier.Docs\Microsoft.Restier.Docs.docsproj" DestinationPath="restier" IntegrationType="Tabs" Name="REST APIs" />
 
-        <DocumentationReference Include="..\..\external\odata-mcp\src\Microsoft.OData.Mcp.Docs\Microsoft.OData.Mcp.Docs.docsproj"
-                                DestinationPath="odata-mcp"
-                                IntegrationType="Tabs"
-                                Name="Enabling AI" />
+        <DocumentationReference Include="..\..\external\odata-mcp\src\Microsoft.OData.Mcp.Docs\Microsoft.OData.Mcp.Docs.docsproj" DestinationPath="odata-mcp" IntegrationType="Tabs" Name="Enabling AI" />
 
-        <DocumentationReference Include="..\..\external\BlazorEssentials\src\CloudNimble.BlazorEssentials.Docs\CloudNimble.BlazorEssentials.Docs.docsproj"
-                                DestinationPath="blazoressentials"
-                                IntegrationType="Tabs"
-                                Name="Blazor UI" />
+        <DocumentationReference Include="..\..\external\BlazorEssentials\src\CloudNimble.BlazorEssentials.Docs\CloudNimble.BlazorEssentials.Docs.docsproj" DestinationPath="blazoressentials" IntegrationType="Tabs" Name="Blazor UI" />
 
-        <DocumentationReference Include="..\..\external\SimpleMessageBus\src\SimpleMessageBus.Docs\SimpleMessageBus.Docs.docsproj"
-                                DestinationPath="simplemessagebus"
-                                IntegrationType="Tabs"
-                                Name="Async Events" />
+        <DocumentationReference Include="..\..\external\SimpleMessageBus\src\SimpleMessageBus.Docs\SimpleMessageBus.Docs.docsproj" DestinationPath="simplemessagebus" IntegrationType="Tabs" Name="Async Events" />
 
-        <DocumentationReference Include="..\..\external\Breakdance\src\CloudNimble.Breakdance.Docs\Breakdance.Docs.docsproj"
-                                DestinationPath="breakdance"
-                                IntegrationType="Tabs"
-                                Name="Testing" />
+        <DocumentationReference Include="..\..\external\Breakdance\src\CloudNimble.Breakdance.Docs\Breakdance.Docs.docsproj" DestinationPath="breakdance" IntegrationType="Tabs" Name="Testing" />
     </ItemGroup>
 
     <ItemGroup>
@@ -83,6 +62,11 @@
 
     <ItemGroup>
       <Content Include="style.css" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="quickstart.mdx" />
+      <None Include="why-easyaf.mdx" />
     </ItemGroup>
 
 </Project>
