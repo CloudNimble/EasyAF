@@ -1,5 +1,9 @@
 /* Global styles for EasyAF site */
 
+.nav-logo {
+    height: 2rem !important;
+}
+
 /* Make content area full width across entire site */
 #content-area {
     width: 100% !important;

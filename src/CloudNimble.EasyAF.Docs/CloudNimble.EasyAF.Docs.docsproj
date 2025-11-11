@@ -1,4 +1,4 @@
-﻿<Project Sdk="DotNetDocs.Sdk/1.1.0-preview.12">
+﻿<Project Sdk="DotNetDocs.Sdk/1.1.0-preview.13">
 
     <PropertyGroup>
         <DocumentationType>Mintlify</DocumentationType>
@@ -18,22 +18,40 @@
             <Name>EasyAF</Name>
             <Theme>maple</Theme>
             <Colors>
-                <Primary>#0D9373</Primary>
+                <Primary>#E0EC32</Primary>
+                <Light>#E0EC32</Light>
+                <Dark>#F58D4D</Dark>
             </Colors>
+            <Logo>
+                <Light>/images/logos/easyaf.light.svg</Light>
+                <Dark>/images/logos/easyaf.dark.svg</Dark>
+            </Logo>
+            <Favicon>
+                <Light>/images/icons/favicon-96x96.png</Light>
+                <Dark>/images/icons/favicon-96x96.png</Dark>
+            </Favicon>            
             <Appearance>
                 <Default>dark</Default>
             </Appearance>
             <Styling>
-                <CodeBlocks>dark</CodeBlocks>
+                <Codeblocks>dark</Codeblocks>
             </Styling>
             <Navigation Mode="Unified" Type="Tabs" Name="Core Framework">
                 <Pages>
                     <Groups>
                         <Group Name="Getting Started" Icon="stars">
-                            <Pages>index;why-easyaf;quickstart</Pages>
+                            <Pages>
+                                index;
+                                why-easyaf;
+                                quickstart
+                            </Pages>
                         </Group>
                         <Group Name="Guides" Icon="dog-leashed">
-                            <Pages>guides/table-design;guides/interval-calculations;guides/property-name-overrides;</Pages>
+                            <Pages>
+                                guides/table-design;
+                                guides/interval-calculations;
+                                guides/property-name-overrides;
+                            </Pages>
                         </Group>
                     </Groups>
                 </Pages>
@@ -58,15 +76,6 @@
 
     <ItemGroup>
         <None Include="**/*.jsx" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="style.css" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Include="quickstart.mdx" />
-      <None Include="why-easyaf.mdx" />
     </ItemGroup>
 
 </Project>

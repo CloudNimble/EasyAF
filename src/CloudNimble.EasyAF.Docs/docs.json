@@ -3,10 +3,17 @@
     "default": "dark"
   },
   "colors": {
-    "primary": "#0D9373"
+    "dark": "#F58D4D",
+    "light": "#E0EC32",
+    "primary": "#E0EC32"
   },
+  "favicon": "/images/icons/favicon-96x96.png",
   "interaction": {
     "drilldown": true
+  },
+  "logo": {
+    "dark": "/images/logos/easyaf.dark.svg",
+    "light": "/images/logos/easyaf.light.svg"
   },
   "name": "EasyAF",
   "navigation": {

@@ -32,7 +32,7 @@ https://stackoverflow.com/questions/2363801/what-would-be-the-best-way-to-implem
 
 ## Constructors
 
-### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  .ctor
 
 #### Syntax
 
@@ -40,7 +40,7 @@ https://stackoverflow.com/questions/2363801/what-would-be-the-best-way-to-implem
 public DbObservableObject()
 ```
 
-### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
 
@@ -52,7 +52,7 @@ Initializes a new instance of the [EasyObservableObject](/api-reference/CloudNim
 public EasyObservableObject()
 ```
 
-### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -64,7 +64,7 @@ public Object()
 
 ## Properties
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  IsChanged
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  IsChanged
 
 Specifies whether or not the object has changed.
 
@@ -82,7 +82,7 @@ Type: `bool`
 
 Setting this manually allows you to override the default behavior in case your app needs it.
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  IsGraphChanged
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  IsGraphChanged
 
 #### Syntax
 
@@ -94,7 +94,7 @@ public bool IsGraphChanged { get; }
 
 Type: `bool`
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  OriginalValues
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OriginalValues
 
 #### Syntax
 
@@ -106,7 +106,7 @@ public System.Collections.Generic.Dictionary<string, object> OriginalValues { ge
 
 Type: `System.Collections.Generic.Dictionary<string, object>`
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PropertyChangedHandler <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  PropertyChangedHandler <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
 
@@ -122,7 +122,7 @@ protected internal System.ComponentModel.PropertyChangedEventHandler PropertyCha
 
 Type: `System.ComponentModel.PropertyChangedEventHandler`
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ShouldTrackChanges
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  ShouldTrackChanges
 
 Specifies whether or not property value changes should be tracked.
 
@@ -142,7 +142,7 @@ To track changes, call `Boolean)`. PropertyChanged events will still be fired, r
 
 ## Methods
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  AcceptChanges
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  AcceptChanges
 
 Clears the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#originalvalues) list and sets [DbObservableObject.IsChanged](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#ischanged) to [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
 
@@ -152,7 +152,7 @@ Clears the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF
 public void AcceptChanges()
 ```
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  AcceptChanges
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  AcceptChanges
 
 Clears the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#originalvalues) list and sets [DbObservableObject.IsChanged](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#ischanged) to [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool), and optionally traverses the object graph to call [DbObservableObject.AcceptChanges](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#acceptchanges) on any children.
 
@@ -168,7 +168,7 @@ public void AcceptChanges(bool goDeep)
 |------|------|-------------|
 | `goDeep` | `bool` | - |
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ClearRelationships
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  ClearRelationships
 
 Sets any child relationships (0..1:1 or 1:*) to null.
 
@@ -182,7 +182,7 @@ public void ClearRelationships()
 
 This is typically used to clean an entity before it is POSTed or PUT over an OData API.
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Clone <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Clone <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
 
@@ -209,7 +209,7 @@ A new instance of type *T* that is a deep copy of the current object.
 |-----------|-------------|
 | `JsonException` | Thrown when the object cannot be serialized or deserialized. |
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Dispose <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Dispose <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
 
@@ -227,7 +227,7 @@ protected internal virtual void Dispose(bool disposing)
 |------|------|-------------|
 | `disposing` | `bool` | true to release both managed and unmanaged resources; false to release only unmanaged resources. |
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Dispose <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Dispose <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
 
@@ -239,7 +239,7 @@ Performs application-defined tasks associated with freeing, releasing, or resett
 public void Dispose()
 ```
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `object`</Note>
 
@@ -259,7 +259,7 @@ public virtual bool Equals(object obj)
 
 Type: `bool`
 
-### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -280,7 +280,7 @@ public static bool Equals(object objA, object objB)
 
 Type: `bool`
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `object`</Note>
 
@@ -294,7 +294,7 @@ public virtual int GetHashCode()
 
 Type: `int`
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetRelatedEntityCollectionProperties
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  GetRelatedEntityCollectionProperties
 
 #### Syntax
 
@@ -306,7 +306,7 @@ public System.Collections.Generic.IEnumerable<System.Reflection.PropertyInfo> Ge
 
 Type: `System.Collections.Generic.IEnumerable<System.Reflection.PropertyInfo>`
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetRelatedEntityProperties
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  GetRelatedEntityProperties
 
 #### Syntax
 
@@ -318,7 +318,7 @@ public System.Collections.Generic.IEnumerable<System.Reflection.PropertyInfo> Ge
 
 Type: `System.Collections.Generic.IEnumerable<System.Reflection.PropertyInfo>`
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -332,7 +332,7 @@ public System.Type GetType()
 
 Type: `System.Type`
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -346,7 +346,7 @@ protected internal object MemberwiseClone()
 
 Type: `object`
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RaisePropertyChanged <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  RaisePropertyChanged <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
 
@@ -368,7 +368,7 @@ protected internal virtual void RaisePropertyChanged(string propertyName = null)
 
 If the propertyName parameter does not correspond to an existing property on the current class, an exception is thrown in DEBUG configuration only.
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RaisePropertyChanged <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  RaisePropertyChanged <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
 
@@ -390,7 +390,7 @@ protected internal virtual void RaisePropertyChanged<T>(System.Linq.Expressions.
 
 - `T` - The type of the property that changed.
 
-### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -411,7 +411,7 @@ public static bool ReferenceEquals(object objA, object objB)
 
 Type: `bool`
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RejectChanges
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  RejectChanges
 
 Loops through the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#originalvalues) list, sets any property that has changed back to the value it had when `Boolean)` was called,
             clears the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#originalvalues) list, and sets [DbObservableObject.IsChanged](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#ischanged) to [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
@@ -422,7 +422,7 @@ Loops through the [DbObservableObject.OriginalValues](/api-reference/CloudNimble
 public void RejectChanges()
 ```
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RejectChanges
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  RejectChanges
 
 #### Syntax
 
@@ -436,7 +436,7 @@ public void RejectChanges(bool goDeep)
 |------|------|-------------|
 | `goDeep` | `bool` | - |
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Set <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Set <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
 
@@ -460,7 +460,7 @@ protected internal void Set<T>(System.Linq.Expressions.Expression<System.Func<T>
 
 - `T` - The type of the property that changed.
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Set <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Set <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
 
@@ -484,7 +484,7 @@ protected internal virtual void Set<T>(string propertyName, ref T field, T newVa
 
 - `T` - The type of the property that changed.
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToDeltaPayload
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  ToDeltaPayload
 
 Loops through the keys in the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#originalvalues) list and returns an [ExpandoObject](https://learn.microsoft.com/dotnet/api/system.dynamic.expandoobject) containing JUST the new values for the properties that changed.
 
@@ -509,7 +509,7 @@ An [ExpandoObject](https://learn.microsoft.com/dotnet/api/system.dynamic.expando
 
 If the object implements `IIdentifiable`1`, then the payload will always include the ID.
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `object`</Note>
 
@@ -523,7 +523,7 @@ public virtual string ToString()
 
 Type: `string?`
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  TrackChanges
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  TrackChanges
 
 Starts tracking property value changes for every property, optionally activating this behavior for the entire object graph.
 
@@ -542,7 +542,7 @@ public void TrackChanges(bool deepTracking = false)
 
 ## Events
 
-### <Icon icon="bell" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PropertyChanged <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="bell" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  PropertyChanged <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Core.EasyObservableObject`</Note>
 

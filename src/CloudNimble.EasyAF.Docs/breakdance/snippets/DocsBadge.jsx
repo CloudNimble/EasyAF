@@ -29,7 +29,7 @@ export function DocsBadge({ text, variant = 'neutral' }) {
     <span
       className={`mint-inline-flex mint-items-center mint-px-2 mint-py-0.5 mint-rounded-full mint-text-xs mint-font-medium mint-tracking-wide mint-border mint-ml-1.5 mint-align-middle mint-whitespace-nowrap ${classes}`}
     >
-      WHATSUPMOTHERFUCKERS{text}
+      {text}
     </span>
   );
 }

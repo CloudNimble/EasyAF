@@ -33,7 +33,7 @@ This class provides comprehensive support for loading, validating, and modifying
 
 ## Constructors
 
-### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  .ctor
 
 Initializes a new instance of the [MSBuildProjectManager](/api-reference/CloudNimble/EasyAF/MSBuild/MSBuildProjectManager) class.
 
@@ -43,7 +43,7 @@ Initializes a new instance of the [MSBuildProjectManager](/api-reference/CloudNi
 public MSBuildProjectManager()
 ```
 
-### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  .ctor
 
 Initializes a new instance of the [MSBuildProjectManager](/api-reference/CloudNimble/EasyAF/MSBuild/MSBuildProjectManager) class with the specified file path.
 
@@ -65,7 +65,7 @@ public MSBuildProjectManager(string filePath)
 |-----------|-------------|
 | `ArgumentException` | Thrown when filePath is null or whitespace. |
 
-### <Icon icon="hammer" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -77,7 +77,7 @@ public Object()
 
 ## Properties
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  FilePath
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  FilePath
 
 Gets the file path of the loaded project.
 
@@ -93,7 +93,7 @@ Type: `string`
 The absolute path to the project file that was loaded or will be saved to.
             Returns null if no file path has been specified.
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  IsLoaded
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  IsLoaded
 
 Gets a value indicating whether a project is successfully loaded.
 
@@ -108,7 +108,7 @@ public bool IsLoaded { get; }
 Type: `bool`
 True if a project is loaded and there are no errors; otherwise, false.
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  PreserveFormatting
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  PreserveFormatting
 
 Gets a value indicating whether formatting preservation is enabled.
 
@@ -123,7 +123,7 @@ public bool PreserveFormatting { get; private set; }
 Type: `bool`
 True if the project was loaded with formatting preservation; otherwise, false.
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Project
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Project
 
 Gets the loaded MSBuild project root element.
 
@@ -139,7 +139,7 @@ Type: `Microsoft.Build.Construction.ProjectRootElement`
 The [ProjectRootElement](https://learn.microsoft.com/dotnet/api/microsoft.build.construction.projectrootelement) instance loaded from the file system.
             Returns null if no project has been loaded or if loading failed.
 
-### <Icon icon="tag" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ProjectErrors
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  ProjectErrors
 
 Gets the collection of project loading and processing errors.
 
@@ -157,7 +157,7 @@ A list of [CompilerError](https://learn.microsoft.com/dotnet/api/system.codedom.
 
 ## Methods
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  AddItemGroup
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  AddItemGroup
 
 Adds an ItemGroup with the specified condition and configures it using the provided action.
 
@@ -186,7 +186,7 @@ The current instance for method chaining.
 | `ArgumentNullException` | Thrown when configure is null. |
 | `InvalidOperationException` | Thrown when no project is loaded. |
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  AddPackageReference
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  AddPackageReference
 
 Adds a PackageReference to the project.
 
@@ -216,7 +216,7 @@ The current instance for method chaining.
 | `ArgumentException` | Thrown when packageId or version is null or whitespace. |
 | `InvalidOperationException` | Thrown when no project is loaded. |
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  CreateNew
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  CreateNew
 
 Creates a new MSBuild project file with default structure.
 
@@ -239,7 +239,7 @@ public void CreateNew(string filePath, string targetFramework = "net8.0")
 |-----------|-------------|
 | `ArgumentException` | Thrown when filePath is null or whitespace. |
 
-### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  EnsureMSBuildRegistered
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  EnsureMSBuildRegistered
 
 Ensures MSBuild is registered with the latest available version.
 
@@ -255,7 +255,7 @@ This method should be called before any MSBuild operations to ensure the correct
             version of MSBuild is loaded. It prioritizes MSBuild 17.0 or later for compatibility
             with modern .NET projects.
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `object`</Note>
 
@@ -275,7 +275,7 @@ public virtual bool Equals(object obj)
 
 Type: `bool`
 
-### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -296,7 +296,7 @@ public static bool Equals(object objA, object objB)
 
 Type: `bool`
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `object`</Note>
 
@@ -310,7 +310,7 @@ public virtual int GetHashCode()
 
 Type: `int`
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetPropertyValue
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  GetPropertyValue
 
 Gets the value of a property from the project.
 
@@ -338,7 +338,7 @@ The property value, or null if the property does not exist.
 | `ArgumentException` | Thrown when name is null or whitespace. |
 | `InvalidOperationException` | Thrown when no project is loaded. |
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -352,7 +352,7 @@ public System.Type GetType()
 
 Type: `System.Type`
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Load
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Load
 
 Loads an existing MSBuild project file from the file path specified in the constructor.
 
@@ -379,7 +379,7 @@ The current instance for method chaining.
 |-----------|-------------|
 | `InvalidOperationException` | Thrown when no file path has been specified. |
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Load
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Load
 
 Loads an existing MSBuild project file from the specified file path.
 
@@ -407,7 +407,7 @@ The current instance for method chaining.
 |-----------|-------------|
 | `ArgumentException` | Thrown when filePath is null or whitespace. |
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -421,7 +421,7 @@ protected internal object MemberwiseClone()
 
 Type: `object`
 
-### <Icon icon="thumbtack" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -442,7 +442,7 @@ public static bool ReferenceEquals(object objA, object objB)
 
 Type: `bool`
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  RemoveProperty
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  RemoveProperty
 
 Removes a property from the project.
 
@@ -470,7 +470,7 @@ The current instance for method chaining.
 | `ArgumentException` | Thrown when name is null or whitespace. |
 | `InvalidOperationException` | Thrown when no project is loaded. |
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Save
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Save
 
 Saves the current project to the file system using the original file path.
 
@@ -486,7 +486,7 @@ public void Save()
 |-----------|-------------|
 | `InvalidOperationException` | Thrown when no project is loaded or no file path is specified. |
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  Save
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Save
 
 Saves the current project to the specified file path.
 
@@ -509,7 +509,7 @@ public void Save(string filePath)
 | `ArgumentException` | Thrown when filePath is null or whitespace. |
 | `InvalidOperationException` | Thrown when no project is loaded. |
 
-### <Icon icon="function" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  SetProperty
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  SetProperty
 
 Sets a property value in the project.
 
@@ -538,7 +538,7 @@ The current instance for method chaining.
 | `ArgumentException` | Thrown when name or value is null or whitespace. |
 | `InvalidOperationException` | Thrown when no project is loaded. |
 
-### <Icon icon="code-fork" iconType="duotone" color="#0D9373" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `object`</Note>
 
