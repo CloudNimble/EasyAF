@@ -32,20 +32,24 @@ li button div {
 
 /* Custom scrollbar styling */
 ::-webkit-scrollbar {
-    width: 12px;
+    width: 8px;
 }
 
+    ::-webkit-scrollbar:horizontal {
+        height: 8px;
+    }
+
 ::-webkit-scrollbar-track {
-    background: #0A1628;
+    background: rgba(224, 236, 50, 0.1);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #3CD0E2, #419AC5);
+    background: linear-gradient(180deg, #F5FF5E, #E0EC32);
     border-radius: 6px;
 }
 
     ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(180deg, #419AC5, #3CD0E2);
+        background: linear-gradient(180deg, #E0EC32, #F5FF5E);
     }
 
 /* Smooth scrolling */

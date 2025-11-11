@@ -32,7 +32,9 @@
       "Bash(git pull:*)",
       "Bash(git ls-tree:*)",
       "Bash(git branch:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot"
     ],
     "deny": []
   }
