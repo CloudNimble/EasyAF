@@ -35,7 +35,7 @@ A Manager inheriting from `IdentifiableEntityManager`3` that contains reusable l
 
 ## Constructors
 
-### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> .ctor <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.IdentifiableEntityManager<TContext, TEntity, TId>`</Note>
 
@@ -54,7 +54,7 @@ public IdentifiableEntityManager(TContext dataContext, CloudNimble.SimpleMessage
 | `dataContext` | `TContext` | The [DbContext](https://learn.microsoft.com/dotnet/api/system.data.entity.dbcontext) instance to use for the database connection. Should be injected by the DI container. |
 | `messagePublisher` | `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher` | The SimpleMessageBus `IMessagePublisher` instance to use to publish Messages to a Queue. Should be injected by the DI container. |
 
-### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> .ctor <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -73,7 +73,7 @@ public EntityManager(TContext dataContext, CloudNimble.SimpleMessageBus.Publish.
 | `dataContext` | `TContext` | The database context instance for data operations. Should be injected by the DI container. |
 | `messagePublisher` | `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher` | The message publisher instance for publishing events. Should be injected by the DI container. |
 
-### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> .ctor <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.ManagerBase<TContext>`</Note>
 
@@ -92,7 +92,7 @@ public ManagerBase(TContext dataContext, CloudNimble.SimpleMessageBus.Publish.IM
 | `dataContext` | `TContext` | The database context instance for data operations. Should be injected by the DI container. |
 | `messagePublisher` | `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher` | The message publisher instance for publishing events. Should be injected by the DI container. |
 
-### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> .ctor <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -104,7 +104,7 @@ public Object()
 
 ## Properties
 
-### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DataContext <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DataContext <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.ManagerBase<TContext>`</Note>
 
@@ -121,7 +121,7 @@ public TContext DataContext { get; private set; }
 
 Type: `TContext`
 
-### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  MessagePublisher <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> MessagePublisher <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.ManagerBase<TContext>`</Note>
 
@@ -138,7 +138,7 @@ public CloudNimble.SimpleMessageBus.Publish.IMessagePublisher MessagePublisher {
 
 Type: `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher`
 
-### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  StatusTypes
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> StatusTypes
 
 Gets the collection of active status types available for entities managed by this manager.
             This collection is populated during initialization from the database.
@@ -155,7 +155,7 @@ Type: `System.Collections.Generic.List<TStatusType>`
 
 ## Methods
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DeleteAsync <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DeleteAsync <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -178,7 +178,7 @@ public System.Threading.Tasks.Task<bool> DeleteAsync(TEntity entity, bool save =
 
 Type: `System.Threading.Tasks.Task<bool>`
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DeleteAsync <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DeleteAsync <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -202,7 +202,7 @@ public System.Threading.Tasks.Task<bool> DeleteAsync(TEntity entity, TContext co
 
 Type: `System.Threading.Tasks.Task<bool>`
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DeleteAsync <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DeleteAsync <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -229,7 +229,7 @@ Type: `System.Threading.Tasks.Task<bool>`
 
 RWM: This will need to be Deleted to be generic if it's going to be in a NuGet package.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DeleteAsync <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DeleteAsync <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -253,7 +253,7 @@ public System.Threading.Tasks.Task<bool> DeleteAsync(System.Collections.Generic.
 
 Type: `System.Threading.Tasks.Task<bool>`
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DirectDelete <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DirectDelete <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -280,7 +280,7 @@ Type: `int`
 This overload will give you all of the performance of deleting a set of data without loading entities in the context but none of
             the extra processing provided by OnDeleting / OnDeleted.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DirectDeleteAsync <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DirectDeleteAsync <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -307,7 +307,7 @@ Type: `System.Threading.Tasks.Task<int>`
 This overload will give you all of the performance of deleting a set of data without loading entities in the context but none of
             the extra processing provided by OnDeleting / OnDeleted.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DirectUpdate <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DirectUpdate <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -335,7 +335,7 @@ Type: `int`
 This overload will give you all of the performance of updating a set of data without loading entities in the context but none of
             the extra processing provided by OnUpdating / OnUpdated.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DirectUpdateAsync <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DirectUpdateAsync <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -363,7 +363,7 @@ Type: `System.Threading.Tasks.Task<int>`
 This overload will give you all of the performance of updating a set of data without loading entities in the context but none of
             the extra processing provided by OnUpdating / OnUpdated.
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `object`</Note>
 
@@ -383,7 +383,7 @@ public virtual bool Equals(object obj)
 
 Type: `bool`
 
-### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> Equals <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -404,7 +404,7 @@ public static bool Equals(object objA, object objB)
 
 Type: `bool`
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `object`</Note>
 
@@ -418,7 +418,7 @@ public virtual int GetHashCode()
 
 Type: `int`
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> GetType <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -432,7 +432,7 @@ public System.Type GetType()
 
 Type: `System.Type`
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Initialize <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> Initialize <DocsBadge text="Virtual" variant="warning" />
 
 Initializes the StatusTypes collection by loading active status types from the database.
             This method is called automatically by status update methods if the collection is empty.
@@ -443,7 +443,7 @@ Initializes the StatusTypes collection by loading active status types from the d
 public virtual void Initialize()
 ```
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  InsertAsync <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> InsertAsync <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -472,7 +472,7 @@ True if the entity was successfully inserted; otherwise, false.
 
 RWM: This will need to be updated to be generic if it's going to be in a NuGet package.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  InsertAsync <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> InsertAsync <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -498,7 +498,7 @@ public System.Threading.Tasks.Task<bool> InsertAsync(TEntity entity, TContext co
 Type: `System.Threading.Tasks.Task<bool>`
 True if the entity was successfully inserted; otherwise, false.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  InsertAsync <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> InsertAsync <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -527,7 +527,7 @@ True if the entities were successfully inserted; otherwise, false.
 
 RWM: This will need to be updated to be generic if it's going to be in a NuGet package.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  InsertAsync <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> InsertAsync <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -553,7 +553,7 @@ public System.Threading.Tasks.Task<bool> InsertAsync(System.Collections.Generic.
 Type: `System.Threading.Tasks.Task<bool>`
 True if the entities were successfully inserted; otherwise, false.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -567,7 +567,7 @@ protected internal object MemberwiseClone()
 
 Type: `object`
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnDeletedAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnDeletedAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -591,7 +591,7 @@ public virtual System.Threading.Tasks.Task<bool> OnDeletedAsync(TEntity entity)
 Type: `System.Threading.Tasks.Task<bool>`
 True if post-deletion processing was successful; otherwise, false.
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnDeletedAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnDeletedAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -614,7 +614,7 @@ public virtual System.Threading.Tasks.Task OnDeletedAsync(System.Collections.Gen
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnDeletingAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnDeletingAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -637,7 +637,7 @@ public virtual System.Threading.Tasks.Task OnDeletingAsync(TEntity entity)
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnDeletingAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnDeletingAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -660,7 +660,7 @@ public virtual System.Threading.Tasks.Task OnDeletingAsync(System.Collections.Ge
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnInsertedAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnInsertedAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -684,7 +684,7 @@ public virtual System.Threading.Tasks.Task<bool> OnInsertedAsync(TEntity entity)
 Type: `System.Threading.Tasks.Task<bool>`
 True if post-insertion processing was successful; otherwise, false.
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnInsertedAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnInsertedAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -707,7 +707,7 @@ public virtual System.Threading.Tasks.Task OnInsertedAsync(System.Collections.Ge
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnInsertingAsync <DocsBadge text="Override" variant="info" />
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnInsertingAsync <DocsBadge text="Override" variant="info" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.IdentifiableEntityManager<TContext, TEntity, TId>`</Note>
 
@@ -729,7 +729,7 @@ public override System.Threading.Tasks.Task OnInsertingAsync(TEntity entity)
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnInsertingAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnInsertingAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -759,7 +759,7 @@ This method automatically sets:
             - DateCreated for entities implementing [ICreatedAuditable](/api-reference/CloudNimble/EasyAF/Core/ICreatedAuditable)
             Override this method to add custom business logic before insertion.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnInsertingAsync <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnInsertingAsync <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -782,7 +782,7 @@ public System.Threading.Tasks.Task OnInsertingAsync(System.Collections.Generic.L
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnUpdatedAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnUpdatedAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -806,7 +806,7 @@ public virtual System.Threading.Tasks.Task<bool> OnUpdatedAsync(TEntity entity)
 Type: `System.Threading.Tasks.Task<bool>`
 True if post-update processing was successful; otherwise, false.
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnUpdatedAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnUpdatedAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -829,7 +829,7 @@ public virtual System.Threading.Tasks.Task OnUpdatedAsync(System.Collections.Gen
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnUpdatingAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnUpdatingAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -859,7 +859,7 @@ This method automatically sets:
             - DateUpdated for entities implementing [IUpdatedAuditable](/api-reference/CloudNimble/EasyAF/Core/IUpdatedAuditable)
             Override this method to add custom business logic before updating.
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnUpdatingAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnUpdatingAsync <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -882,7 +882,7 @@ public virtual System.Threading.Tasks.Task OnUpdatingAsync(System.Collections.Ge
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -903,7 +903,7 @@ public static bool ReferenceEquals(object objA, object objB)
 
 Type: `bool`
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  ResetAuditProperties <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> ResetAuditProperties <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -926,7 +926,7 @@ public void ResetAuditProperties<TDbObservable>(TDbObservable entity) where TDbO
 
 - `TDbObservable` - Any [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject) in the object model. DOES NOT have to be the entity for this Manager.
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `object`</Note>
 
@@ -940,7 +940,7 @@ public virtual string ToString()
 
 Type: `string?`
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  UpdateAsync <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> UpdateAsync <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -969,7 +969,7 @@ True if the entity was successfully updated; otherwise, false.
 
 RWM: This will need to be updated to be generic if it's going to be in a NuGet package.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  UpdateAsync <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> UpdateAsync <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -995,7 +995,7 @@ public System.Threading.Tasks.Task<bool> UpdateAsync(TEntity entity, TContext co
 Type: `System.Threading.Tasks.Task<bool>`
 True if the entity was successfully updated; otherwise, false.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  UpdateAsync <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> UpdateAsync <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -1024,7 +1024,7 @@ True if the entities were successfully updated; otherwise, false.
 
 RWM: This will need to be updated to be generic if it's going to be in a NuGet package.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  UpdateAsync <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> UpdateAsync <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
@@ -1050,7 +1050,7 @@ public System.Threading.Tasks.Task<bool> UpdateAsync(System.Collections.Generic.
 Type: `System.Threading.Tasks.Task<bool>`
 True if the entities were successfully updated; otherwise, false.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  UpdateStatusAsync
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> UpdateStatusAsync
 
 Updates the entity's status to the status type with the specified sort order.
             Logs the status transition for tracking purposes.

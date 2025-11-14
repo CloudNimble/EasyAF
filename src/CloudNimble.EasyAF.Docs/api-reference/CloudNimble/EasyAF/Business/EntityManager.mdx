@@ -66,7 +66,7 @@ public class UserManager : EntityManager&lt;MyDbContext, User&gt;
 
 ## Constructors
 
-### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  .ctor
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> .ctor
 
 Initializes a new instance of the `EntityManager`2` class.
 
@@ -83,7 +83,7 @@ public EntityManager(TContext dataContext, CloudNimble.SimpleMessageBus.Publish.
 | `dataContext` | `TContext` | The database context instance for data operations. Should be injected by the DI container. |
 | `messagePublisher` | `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher` | The message publisher instance for publishing events. Should be injected by the DI container. |
 
-### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> .ctor <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.ManagerBase<TContext>`</Note>
 
@@ -102,7 +102,7 @@ public ManagerBase(TContext dataContext, CloudNimble.SimpleMessageBus.Publish.IM
 | `dataContext` | `TContext` | The database context instance for data operations. Should be injected by the DI container. |
 | `messagePublisher` | `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher` | The message publisher instance for publishing events. Should be injected by the DI container. |
 
-### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> .ctor <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -114,7 +114,7 @@ public Object()
 
 ## Properties
 
-### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DataContext <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DataContext <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.ManagerBase<TContext>`</Note>
 
@@ -131,7 +131,7 @@ public TContext DataContext { get; private set; }
 
 Type: `TContext`
 
-### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  MessagePublisher <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> MessagePublisher <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.ManagerBase<TContext>`</Note>
 
@@ -150,7 +150,7 @@ Type: `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher`
 
 ## Methods
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DeleteAsync
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DeleteAsync
 
 Delete a specific [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) with optional save operation.
 
@@ -171,7 +171,7 @@ public System.Threading.Tasks.Task<bool> DeleteAsync(TEntity entity, bool save =
 
 Type: `System.Threading.Tasks.Task<bool>`
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DeleteAsync
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DeleteAsync
 
 Delete a specific [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) with optional save operation using a specified [DbContext](https://learn.microsoft.com/dotnet/api/system.data.entity.dbcontext).
 
@@ -193,7 +193,7 @@ public System.Threading.Tasks.Task<bool> DeleteAsync(TEntity entity, TContext co
 
 Type: `System.Threading.Tasks.Task<bool>`
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DeleteAsync
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DeleteAsync
 
 Delete all [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) from a list with optional save operation.
 
@@ -218,7 +218,7 @@ Type: `System.Threading.Tasks.Task<bool>`
 
 RWM: This will need to be Deleted to be generic if it's going to be in a NuGet package.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DeleteAsync
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DeleteAsync
 
 Delete all [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) from a list with optional save operation using a specified [DbContext](https://learn.microsoft.com/dotnet/api/system.data.entity.dbcontext).
 
@@ -240,7 +240,7 @@ public System.Threading.Tasks.Task<bool> DeleteAsync(System.Collections.Generic.
 
 Type: `System.Threading.Tasks.Task<bool>`
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DirectDelete
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DirectDelete
 
 Delete entities returned by the specified query without individual entity processing.
 
@@ -265,7 +265,7 @@ Type: `int`
 This overload will give you all of the performance of deleting a set of data without loading entities in the context but none of
             the extra processing provided by OnDeleting / OnDeleted.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DirectDeleteAsync
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DirectDeleteAsync
 
 Delete entities returned by the specified query without individual entity processing.
 
@@ -290,7 +290,7 @@ Type: `System.Threading.Tasks.Task<int>`
 This overload will give you all of the performance of deleting a set of data without loading entities in the context but none of
             the extra processing provided by OnDeleting / OnDeleted.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DirectUpdate
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DirectUpdate
 
 Executes a direct UPDATE query on the database without returning objects or processing them through the interceptors.
 
@@ -316,7 +316,7 @@ Type: `int`
 This overload will give you all of the performance of updating a set of data without loading entities in the context but none of
             the extra processing provided by OnUpdating / OnUpdated.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  DirectUpdateAsync
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> DirectUpdateAsync
 
 Executes a direct UPDATE query on the database without returning objects or processing them through the interceptors.
 
@@ -342,7 +342,7 @@ Type: `System.Threading.Tasks.Task<int>`
 This overload will give you all of the performance of updating a set of data without loading entities in the context but none of
             the extra processing provided by OnUpdating / OnUpdated.
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `object`</Note>
 
@@ -362,7 +362,7 @@ public virtual bool Equals(object obj)
 
 Type: `bool`
 
-### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> Equals <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -383,7 +383,7 @@ public static bool Equals(object objA, object objB)
 
 Type: `bool`
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `object`</Note>
 
@@ -397,7 +397,7 @@ public virtual int GetHashCode()
 
 Type: `int`
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> GetType <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -411,7 +411,7 @@ public System.Type GetType()
 
 Type: `System.Type`
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  InsertAsync
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> InsertAsync
 
 Inserts a single entity into the database with optional save operation.
             Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks.
@@ -438,7 +438,7 @@ True if the entity was successfully inserted; otherwise, false.
 
 RWM: This will need to be updated to be generic if it's going to be in a NuGet package.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  InsertAsync
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> InsertAsync
 
 Inserts a single entity into the database using a specified context with optional save operation.
             Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks.
@@ -462,7 +462,7 @@ public System.Threading.Tasks.Task<bool> InsertAsync(TEntity entity, TContext co
 Type: `System.Threading.Tasks.Task<bool>`
 True if the entity was successfully inserted; otherwise, false.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  InsertAsync
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> InsertAsync
 
 Inserts a collection of entities into the database with optional save operation.
             Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks for each entity.
@@ -489,7 +489,7 @@ True if the entities were successfully inserted; otherwise, false.
 
 RWM: This will need to be updated to be generic if it's going to be in a NuGet package.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  InsertAsync
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> InsertAsync
 
 Inserts a collection of entities into the database using a specified context with optional save operation.
             Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks for each entity.
@@ -513,7 +513,7 @@ public System.Threading.Tasks.Task<bool> InsertAsync(System.Collections.Generic.
 Type: `System.Threading.Tasks.Task<bool>`
 True if the entities were successfully inserted; otherwise, false.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -527,7 +527,7 @@ protected internal object MemberwiseClone()
 
 Type: `object`
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnDeletedAsync <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnDeletedAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called after successfully deleting an entity from the database. Use this method for post-deletion
             business logic such as cleanup operations, sending notifications, or triggering external systems.
@@ -549,7 +549,7 @@ public virtual System.Threading.Tasks.Task<bool> OnDeletedAsync(TEntity entity)
 Type: `System.Threading.Tasks.Task<bool>`
 True if post-deletion processing was successful; otherwise, false.
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnDeletedAsync <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnDeletedAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called after successfully deleting a collection of entities from the database.
             Applies OnDeletedAsync logic to each entity in the collection.
@@ -570,7 +570,7 @@ public virtual System.Threading.Tasks.Task OnDeletedAsync(System.Collections.Gen
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnDeletingAsync <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnDeletingAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called before deleting an entity from the database. Override this method to add
             custom business logic or validation before deletion.
@@ -591,7 +591,7 @@ public virtual System.Threading.Tasks.Task OnDeletingAsync(TEntity entity)
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnDeletingAsync <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnDeletingAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called before deleting a collection of entities from the database.
             Applies OnDeletingAsync logic to each entity in the collection.
@@ -612,7 +612,7 @@ public virtual System.Threading.Tasks.Task OnDeletingAsync(System.Collections.Ge
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnInsertedAsync <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnInsertedAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called after successfully inserting an entity into the database. Use this method for post-insertion
             business logic such as sending notifications, publishing events, or triggering external systems.
@@ -634,7 +634,7 @@ public virtual System.Threading.Tasks.Task<bool> OnInsertedAsync(TEntity entity)
 Type: `System.Threading.Tasks.Task<bool>`
 True if post-insertion processing was successful; otherwise, false.
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnInsertedAsync <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnInsertedAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called after successfully inserting a collection of entities into the database.
             Applies OnInsertedAsync logic to each entity in the collection.
@@ -655,7 +655,7 @@ public virtual System.Threading.Tasks.Task OnInsertedAsync(System.Collections.Ge
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnInsertingAsync <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnInsertingAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called before inserting an entity into the database. Automatically handles audit field population
             and user tracking for entities implementing the appropriate interfaces.
@@ -683,7 +683,7 @@ This method automatically sets:
             - DateCreated for entities implementing [ICreatedAuditable](/api-reference/CloudNimble/EasyAF/Core/ICreatedAuditable)
             Override this method to add custom business logic before insertion.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnInsertingAsync
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnInsertingAsync
 
 Called before inserting a collection of entities into the database.
             Applies OnInsertingAsync logic to each entity in the collection.
@@ -704,7 +704,7 @@ public System.Threading.Tasks.Task OnInsertingAsync(System.Collections.Generic.L
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnUpdatedAsync <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnUpdatedAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called after successfully updating an entity in the database. Use this method for post-update
             business logic such as sending notifications, publishing events, or triggering external systems.
@@ -726,7 +726,7 @@ public virtual System.Threading.Tasks.Task<bool> OnUpdatedAsync(TEntity entity)
 Type: `System.Threading.Tasks.Task<bool>`
 True if post-update processing was successful; otherwise, false.
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnUpdatedAsync <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnUpdatedAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called after successfully updating a collection of entities in the database.
             Applies OnUpdatedAsync logic to each entity in the collection.
@@ -747,7 +747,7 @@ public virtual System.Threading.Tasks.Task OnUpdatedAsync(System.Collections.Gen
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnUpdatingAsync <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnUpdatingAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called before updating an entity in the database. Automatically handles audit field population
             and user tracking for entities implementing the appropriate interfaces.
@@ -775,7 +775,7 @@ This method automatically sets:
             - DateUpdated for entities implementing [IUpdatedAuditable](/api-reference/CloudNimble/EasyAF/Core/IUpdatedAuditable)
             Override this method to add custom business logic before updating.
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  OnUpdatingAsync <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> OnUpdatingAsync <DocsBadge text="Virtual" variant="warning" />
 
 Called before updating a collection of entities in the database.
             Applies OnUpdatingAsync logic to each entity in the collection.
@@ -796,7 +796,7 @@ public virtual System.Threading.Tasks.Task OnUpdatingAsync(System.Collections.Ge
 
 Type: `System.Threading.Tasks.Task`
 
-### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
 
 <Note>Inherited from `object`</Note>
 
@@ -817,7 +817,7 @@ public static bool ReferenceEquals(object objA, object objB)
 
 Type: `bool`
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  ResetAuditProperties
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> ResetAuditProperties
 
 Resets audit properties to an "Inserted" state by setting creation fields and clearing update fields.
             Sets CreatedById and DateCreated to current values, while clearing UpdatedById and DateUpdated.
@@ -838,7 +838,7 @@ public void ResetAuditProperties<TDbObservable>(TDbObservable entity) where TDbO
 
 - `TDbObservable` - Any [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject) in the object model. DOES NOT have to be the entity for this Manager.
 
-### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 
 <Note>Inherited from `object`</Note>
 
@@ -852,7 +852,7 @@ public virtual string ToString()
 
 Type: `string?`
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  UpdateAsync
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> UpdateAsync
 
 Updates a single entity in the database with optional save operation.
             Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks.
@@ -879,7 +879,7 @@ True if the entity was successfully updated; otherwise, false.
 
 RWM: This will need to be updated to be generic if it's going to be in a NuGet package.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  UpdateAsync
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> UpdateAsync
 
 Updates a single entity in the database using a specified context with optional save operation.
             Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks.
@@ -903,7 +903,7 @@ public System.Threading.Tasks.Task<bool> UpdateAsync(TEntity entity, TContext co
 Type: `System.Threading.Tasks.Task<bool>`
 True if the entity was successfully updated; otherwise, false.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  UpdateAsync
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> UpdateAsync
 
 Updates a collection of entities in the database with optional save operation.
             Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks for each entity.
@@ -930,7 +930,7 @@ True if the entities were successfully updated; otherwise, false.
 
 RWM: This will need to be updated to be generic if it's going to be in a NuGet package.
 
-### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} />  UpdateAsync
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> UpdateAsync
 
 Updates a collection of entities in the database using a specified context with optional save operation.
             Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks for each entity.
