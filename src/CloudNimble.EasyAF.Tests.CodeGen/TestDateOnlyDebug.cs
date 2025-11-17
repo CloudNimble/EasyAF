@@ -1,4 +1,5 @@
-using CloudNimble.EasyAF.CodeGen;
+﻿using CloudNimble.EasyAF.CodeGen;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -88,8 +89,8 @@ namespace CloudNimble.EasyAF.Tests.CodeGen.Core
                     }
                 }
             }
-            
-            Assert.AreEqual(0, loader.EdmxSchemaErrors.Count, "Should load without errors");
+
+            loader.EdmxSchemaErrors.Should().BeEmpty("Should load without errors");
         }
     }
 }

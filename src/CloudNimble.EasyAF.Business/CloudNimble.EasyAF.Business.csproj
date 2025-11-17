@@ -23,9 +23,9 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
-        <PackageReference Include="System.Text.Json" Version="[10.*-*, 11.0.0)" />
+        <PackageReference Include="System.Text.Json" Version="10.*" />
         <!-- Dealing with security vulnerabilities -->
-        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="[10.*-*, 11.0.0)" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.*" PrivateAssets="All" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">

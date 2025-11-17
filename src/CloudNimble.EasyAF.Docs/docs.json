@@ -193,6 +193,58 @@
                         ]
                       },
                       {
+                        "group": "Tools",
+                        "icon": "folder-tree",
+                        "pages": [
+                          {
+                            "group": "Commands",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/index",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/CleanupCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/CodeGenerateCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/DatabaseGenerateCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/DatabaseInitCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/DatabaseRefreshCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/EasyAFBaseCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/EdmxGenerateCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/EdmxRootCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/EdmxSwapCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/EdmxWatchCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/InitCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/SetupCommand",
+                              {
+                                "group": "Root",
+                                "icon": "folder-tree",
+                                "pages": [
+                                  "api-reference/CloudNimble/EasyAF/Tools/Commands/Root/index",
+                                  "api-reference/CloudNimble/EasyAF/Tools/Commands/Root/CodeRootCommand",
+                                  "api-reference/CloudNimble/EasyAF/Tools/Commands/Root/DatabaseRootCommand",
+                                  "api-reference/CloudNimble/EasyAF/Tools/Commands/Root/EasyAFRootCommand"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "group": "Models",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "api-reference/CloudNimble/EasyAF/Tools/Models/index",
+                              "api-reference/CloudNimble/EasyAF/Tools/Models/CleanupResult"
+                            ]
+                          },
+                          {
+                            "group": "ProjectDiscovery",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "api-reference/CloudNimble/EasyAF/Tools/ProjectDiscovery/index",
+                              "api-reference/CloudNimble/EasyAF/Tools/ProjectDiscovery/ProjectDiscoveryService",
+                              "api-reference/CloudNimble/EasyAF/Tools/ProjectDiscovery/ProjectInfo"
+                            ]
+                          }
+                        ]
+                      },
+                      {
                         "group": "XmlDocumentation",
                         "icon": "folder-tree",
                         "pages": [
@@ -1280,31 +1332,6 @@
                         "pages": [
                           "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Controls/index",
                           "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Controls/LoadingContainer"
-                        ]
-                      },
-                      {
-                        "group": "IndexedDb",
-                        "icon": "folder-tree",
-                        "pages": [
-                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/index",
-                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexAttribute",
-                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexedDbDatabase",
-                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexedDbException",
-                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexedDbIndex",
-                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexedDbNotFoundException",
-                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexedDbObjectStore",
-                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/KeyRange",
-                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/ObjectStoreAttribute",
-                          {
-                            "group": "Schema",
-                            "icon": "folder-tree",
-                            "pages": [
-                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/Schema/index",
-                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/Schema/IndexedDbDatabaseDefinition",
-                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/Schema/IndexedDbIndexDefinition",
-                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/Schema/IndexedDbObjectStoreDefinition"
-                            ]
-                          }
                         ]
                       },
                       {

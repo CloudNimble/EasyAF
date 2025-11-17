@@ -1,4 +1,5 @@
 ﻿using CloudNimble.EasyAF.CodeGen;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -88,7 +89,7 @@ namespace CloudNimble.EasyAF.Tests.CodeGen.Core
             }
             
             Console.WriteLine($"Successfully loaded EDMX with {loader.Entities.Count} entities");
-            Assert.AreEqual(1, loader.Entities.Count);
+            loader.Entities.Should().HaveCount(1);
             
             var eventEntity = loader.Entities.First();
             Assert.AreEqual("Event", eventEntity.EntityType.Name);

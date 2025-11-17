@@ -1,5 +1,6 @@
-using CloudNimble.EasyAF.EFCoreToEdmx;
+﻿using CloudNimble.EasyAF.EFCoreToEdmx;
 using CloudNimble.EasyAF.Tests.EFCoreToEdmx.Models;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -41,7 +42,7 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
             Console.WriteLine($"\nEDMX saved to: {outputPath}");
 
             // Verify it contains our Part entity
-            Assert.IsTrue(result.EdmxContent.Contains("Part"), "EDMX should contain Part entity");
+            result.EdmxContent.Should().Contain("Part", "EDMX should contain Part entity");
         }
 
     }

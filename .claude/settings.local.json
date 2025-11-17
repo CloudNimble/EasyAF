@@ -34,7 +34,9 @@
       "Bash(git branch:*)",
       "Bash(git checkout:*)",
       "mcp__playwright__browser_navigate",
-      "mcp__playwright__browser_take_screenshot"
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_evaluate",
+      "Bash(git submodule:*)"
     ],
     "deny": []
   }

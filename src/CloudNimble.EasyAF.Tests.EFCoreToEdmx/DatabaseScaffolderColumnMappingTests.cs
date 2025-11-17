@@ -1,4 +1,4 @@
-using CloudNimble.EasyAF.EFCoreToEdmx;
+﻿using CloudNimble.EasyAF.EFCoreToEdmx;
 using CloudNimble.EasyAF.EFCoreToEdmx.Models;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -163,7 +163,7 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
             // This ensures the EDMX file gets complete configuration
             // Including proper column name mappings for database operations
 
-            Assert.IsTrue(true, "This is a documentation test");
+            true.Should().BeTrue("This is a documentation test");
         }
 
         #endregion
