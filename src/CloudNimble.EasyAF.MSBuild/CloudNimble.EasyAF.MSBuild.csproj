@@ -9,11 +9,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Build" Version="17.14.28" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.Build.Framework" Version="17.14.28" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build" Version="17.14.*" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Framework" Version="17.14.*" ExcludeAssets="runtime" />
         <PackageReference Include="Microsoft.Build.Locator" Version="1.*" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.28" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.28" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.*" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.*" ExcludeAssets="runtime" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
@@ -30,11 +30,6 @@
 
     <ItemGroup>
         <InternalsVisibleTo Include="CloudNimble.EasyAF.Tools, $(StrongNamePublicKey)" />
-    </ItemGroup>
-
-    <!-- Include buildTransitive props file in NuGet package for transitive ExcludeAssets support -->
-    <ItemGroup>
-        <None Include="buildTransitive\EasyAF.MSBuild.props" Pack="true" PackagePath="buildTransitive" />
     </ItemGroup>
 
 </Project>
