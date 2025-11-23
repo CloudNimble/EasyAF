@@ -151,7 +151,7 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
             var model = _context.Model;
 
             var edmxModel = _modelBuilder.BuildEdmxModel(
-                model, 
+                model,
                 providerType: CloudNimble.EasyAF.EFCoreToEdmx.DatabaseProviderType.PostgreSQL
             );
 
@@ -162,16 +162,66 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
             var result = new CloudNimble.EasyAF.EFCoreToEdmx.Models.EdmxConversionResult("TestDbContext", edmxContent);
 
             // Verify various PostgreSQL type mappings in the generated EDMX
-            result.EdmxContent.Should().Contain("character varying", 
+            result.EdmxContent.Should().Contain("character varying",
                 "PostgreSQL should map string properties to 'character varying'");
-            result.EdmxContent.Should().Contain("integer", 
+            result.EdmxContent.Should().Contain("integer",
                 "PostgreSQL should map int properties to 'integer'");
-            result.EdmxContent.Should().Contain("uuid", 
+            result.EdmxContent.Should().Contain("uuid",
                 "PostgreSQL should map Guid properties to 'uuid'");
-            result.EdmxContent.Should().Contain("boolean", 
+            result.EdmxContent.Should().Contain("boolean",
                 "PostgreSQL should map bool properties to 'boolean'");
-            result.EdmxContent.Should().Contain("timestamp with time zone", 
+            result.EdmxContent.Should().Contain("timestamp with time zone",
                 "PostgreSQL should map DateTimeOffset properties to 'timestamp with time zone'");
+        }
+
+        [TestMethod]
+        public void GenerateEdmxWithPostgreSQLProvider_ShouldConvertLTreeToString()
+        {
+            // This test verifies that PostgreSQL ltree type is converted to String in the conceptual model
+            var model = _context.Model;
+
+            // Build EDMX model with PostgreSQL provider type
+            var edmxModel = _modelBuilder.BuildEdmxModel(
+                model,
+                @namespace: "TestNamespace",
+                name: "TestContainer",
+                providerType: CloudNimble.EasyAF.EFCoreToEdmx.DatabaseProviderType.PostgreSQL
+            );
+
+            // Verify NaicsCode entity exists in the model
+            var naicsCodeEntity = edmxModel.EntityTypes.FirstOrDefault(e => e.Name == "NaicsCode");
+            naicsCodeEntity.Should().NotBeNull("NaicsCode entity should exist in the model");
+
+            // Verify Path property is mapped to String in the conceptual model
+            var pathProperty = naicsCodeEntity.Properties.FirstOrDefault(p => p.Name == "Path");
+            pathProperty.Should().NotBeNull("Path property should exist on NaicsCode entity");
+            pathProperty.Type.Should().Be("String",
+                "PostgreSQL ltree type should be converted to String in the conceptual model");
+
+            // Create XML generator with explicit PostgreSQL provider type
+            var xmlGenerator = new EdmxXmlGenerator(edmxModel, CloudNimble.EasyAF.EFCoreToEdmx.DatabaseProviderType.PostgreSQL);
+            var edmxContent = xmlGenerator.Generate();
+
+            var result = new CloudNimble.EasyAF.EFCoreToEdmx.Models.EdmxConversionResult("TestDbContext", edmxContent);
+
+            result.Should().NotBeNull();
+            result.EdmxContent.Should().NotBeNullOrEmpty();
+
+            // The conceptual model should use String for ltree columns
+            result.EdmxContent.Should().Contain("Type=\"String\"",
+                "Conceptual model should convert ltree to String type");
+
+            // The conceptual model should NOT contain Type="LTree"
+            result.EdmxContent.Should().NotContain("Type=\"LTree\"",
+                "Conceptual model should not contain LTree as a type (it should be converted to String)");
+
+            // The storage model should contain the PostgreSQL ltree type
+            result.EdmxContent.Should().Contain("ltree",
+                "Storage model should preserve the PostgreSQL ltree column type");
+
+            // Print EDMX for debugging
+            Console.WriteLine("PostgreSQL LTree EDMX Content:");
+            Console.WriteLine(result.EdmxContent);
         }
 
         #endregion

@@ -1,13 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup Label="Globals">
-        <SccProjectName>SAK</SccProjectName>
-        <SccProvider>SAK</SccProvider>
-        <SccAuxPath>SAK</SccAuxPath>
-        <SccLocalPath>SAK</SccLocalPath>
-    </PropertyGroup>
-
     <PropertyGroup>
+        <PackageId>EasyAF</PackageId>
         <PackAsTool>True</PackAsTool>
     </PropertyGroup>
 
@@ -18,6 +12,7 @@
         <DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
         <NoWarn>$(NoWarn);CA1822;NU1701;NU1608;</NoWarn>
         <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+        <DisableMSBuildAssemblyCopyCheck>true</DisableMSBuildAssemblyCopyCheck>
     </PropertyGroup>
 
     <ItemGroup>
@@ -26,10 +21,6 @@
 
     <ItemGroup>
         <PackageReference Include="McMaster.Extensions.Hosting.CommandLine" Version="4.*" />
-        <PackageReference Include="Microsoft.Build" Version="17.14.28" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.Build.Locator" Version="1.*" />
-        <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.28" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.28" ExcludeAssets="runtime" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">

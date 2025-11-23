@@ -1,4 +1,4 @@
-﻿<Project Sdk="DotNetDocs.Sdk/1.1.0-preview.14">
+﻿<Project Sdk="DotNetDocs.Sdk/1.1.0">
 
     <PropertyGroup>
         <DocumentationType>Mintlify</DocumentationType>
@@ -63,7 +63,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <DocumentationReference Include="..\..\external\restier\src\Microsoft.Restier.Docs\Microsoft.Restier.Docs.docsproj" DestinationPath="restier" IntegrationType="Tabs" Name="REST APIs" />
+        <DocumentationReference
+            Include="..\..\external\restier\src\Microsoft.Restier.Docs\Microsoft.Restier.Docs.docsproj"
+            DestinationPath="restier" IntegrationType="Tabs" Name="REST APIs" />
 
         <DocumentationReference Include="..\..\external\odata-mcp\src\Microsoft.OData.Mcp.Docs\Microsoft.OData.Mcp.Docs.docsproj" DestinationPath="odata-mcp" IntegrationType="Tabs" Name="Enabling AI" />
 

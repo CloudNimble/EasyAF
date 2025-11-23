@@ -463,7 +463,7 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
             try
             {
                 var storeType = property.GetColumnType();
-                
+
                 if (underlyingType == typeof(DateTime) && !string.IsNullOrEmpty(storeType))
                 {
                     // For PostgreSQL timestamp with time zone columns, use DateTimeOffset in conceptual model
@@ -473,7 +473,7 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
                         Console.WriteLine($"Converting PostgreSQL timestamptz column '{property.Name}' from DateTime to DateTimeOffset in conceptual model");
                         return "DateTimeOffset";
                     }
-                    
+
                     // Also check for variations that might include additional modifiers
                     if (storeType.Contains("timestamp with time zone", StringComparison.OrdinalIgnoreCase) ||
                         storeType.Contains("timestamptz", StringComparison.OrdinalIgnoreCase))
@@ -481,6 +481,14 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
                         Console.WriteLine($"Converting PostgreSQL timestamptz column '{property.Name}' (store type: {storeType}) from DateTime to DateTimeOffset in conceptual model");
                         return "DateTimeOffset";
                     }
+                }
+
+                // Special handling for PostgreSQL ltree type - map to String
+                if (!string.IsNullOrEmpty(storeType) &&
+                    storeType.Equals("ltree", StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine($"Converting PostgreSQL ltree column '{property.Name}' to String in conceptual model");
+                    return "String";
                 }
             }
             catch (InvalidCastException)

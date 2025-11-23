@@ -83,6 +83,18 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx.Models
         public DbSet<Part> Parts { get; set; }
 
         /// <summary>
+        /// Gets or sets the collection of NAICS codes in the database.
+        /// </summary>
+        /// <value>
+        /// A <see cref="DbSet{NaicsCode}"/> representing the NaicsCodes table.
+        /// </value>
+        /// <remarks>
+        /// The NaicsCodes entity set demonstrates PostgreSQL ltree type handling
+        /// for hierarchical classification codes.
+        /// </remarks>
+        public DbSet<NaicsCode> NaicsCodes { get; set; }
+
+        /// <summary>
         /// Configures the model and entity relationships using Fluent API.
         /// </summary>
         /// <param name="modelBuilder">The model builder used to configure the context.</param>
@@ -182,6 +194,25 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx.Models
                 entity.HasOne(e => e.ParentPart)
                       .WithMany(e => e.ChildParts)
                       .HasConstraintName("FK_Parts_ParentPart");
+
+            });
+
+            // Configure NaicsCode entity
+            modelBuilder.Entity<NaicsCode>(entity =>
+            {
+
+                entity.HasKey(e => e.Id);
+
+                // Configure ltree column type for PostgreSQL hierarchical path
+                entity.Property(e => e.Path)
+                      .HasColumnType("ltree")
+                      .IsRequired();
+
+                entity.Property(e => e.Title).HasMaxLength(500);
+                entity.Property(e => e.Code).HasMaxLength(10);
+
+                // Add comment for documentation testing
+                entity.Property(e => e.Path).HasComment("Hierarchical NAICS code path using PostgreSQL ltree type");
 
             });
 

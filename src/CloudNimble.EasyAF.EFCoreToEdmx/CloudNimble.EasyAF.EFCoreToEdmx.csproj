@@ -1,19 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup Label="Globals">
-      <SccProjectName>%24/EasyAF/Dev/CloudNimble.EasyAF.EFCoreToEdmx</SccProjectName>
-      <SccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</SccProvider>
-      <SccAuxPath>https://dev.azure.com/cloudnimble</SccAuxPath>
-      <SccLocalPath>.</SccLocalPath>
-    </PropertyGroup>
-
-    <PropertyGroup>
-    </PropertyGroup>
-
     <PropertyGroup>
         <TargetFrameworks>net10.0;net9.0;net8.0;</TargetFrameworks>
         <DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
         <NoWarn>$(NoWarn);CA1822;EF1001;NU1701;</NoWarn>
+        <DisableMSBuildAssemblyCopyCheck>true</DisableMSBuildAssemblyCopyCheck>
     </PropertyGroup>
 
     <ItemGroup>
@@ -30,7 +21,7 @@
         <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.*" />
         <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.*" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="10.*" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.*-*" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.*" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
@@ -60,7 +51,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CloudNimble.EasyAF.MSBuild\CloudNimble.EasyAF.MSBuild.csproj" />
+        <ProjectReference Include="..\CloudNimble.EasyAF.MSBuild\CloudNimble.EasyAF.MSBuild.csproj" />
     </ItemGroup>
 
 

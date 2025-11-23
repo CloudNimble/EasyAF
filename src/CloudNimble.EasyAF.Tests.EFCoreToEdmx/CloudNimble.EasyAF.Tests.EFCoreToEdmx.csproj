@@ -1,17 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup Label="Globals">
-        <SccProjectName>SAK</SccProjectName>
-        <SccProvider>SAK</SccProvider>
-        <SccAuxPath>SAK</SccAuxPath>
-        <SccLocalPath>SAK</SccLocalPath>
-        <UserSecretsId>bcb335b9-8bc0-43f0-b414-464196a34198</UserSecretsId>
-    </PropertyGroup>
-
     <PropertyGroup>
         <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
         <IsPackable>false</IsPackable>
         <NoWarn>$(NoWarn);CA1822;NU1701;</NoWarn>
+        <UserSecretsId>bcb335b9-8bc0-43f0-b414-464196a34198</UserSecretsId>
+        <DisableMSBuildAssemblyCopyCheck>true</DisableMSBuildAssemblyCopyCheck>
     </PropertyGroup>
 
     <ItemGroup>

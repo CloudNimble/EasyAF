@@ -32,8 +32,8 @@
     <PropertyGroup>
         <PackageId>$(MSBuildProjectName.Replace('CloudNimble.', ''))</PackageId>
         <Product>EasyAF</Product>
-        <AssemblyVersion>3.0.0.0</AssemblyVersion>
-        <PackageVersion>3.0.0-rc.1</PackageVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <PackageVersion>4.0.0-preview.1</PackageVersion>
         <Authors>CloudNimble</Authors>
         <Company>CloudNimble, Inc.</Company>
         <RpmPackageVendor>CloudNimble</RpmPackageVendor>

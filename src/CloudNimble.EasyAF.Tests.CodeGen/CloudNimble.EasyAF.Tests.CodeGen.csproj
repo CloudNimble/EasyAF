@@ -1,17 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup Label="Globals">
-        <SccProjectName>SAK</SccProjectName>
-        <SccProvider>SAK</SccProvider>
-        <SccAuxPath>SAK</SccAuxPath>
-        <SccLocalPath>SAK</SccLocalPath>
-    </PropertyGroup>
-
     <PropertyGroup>
         <TargetFrameworks>$(StandardTestTfms)</TargetFrameworks>
         <IsPackable>false</IsPackable>
-        <NoWarn>$(NoWarn);CA1822;NU1608;</NoWarn>
+        <NoWarn>$(NoWarn);CA1822;NU1608;NU1701;</NoWarn>
         <WarningsAsErrors>NU1605;NU1702</WarningsAsErrors>
+        <DisableMSBuildAssemblyCopyCheck>true</DisableMSBuildAssemblyCopyCheck>
     </PropertyGroup>
 
     <ItemGroup>

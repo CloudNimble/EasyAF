@@ -1,12 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup Label="Globals">
-        <SccProjectName>SAK</SccProjectName>
-        <SccProvider>SAK</SccProvider>
-        <SccAuxPath>SAK</SccAuxPath>
-        <SccLocalPath>SAK</SccLocalPath>
-    </PropertyGroup>
-
     <PropertyGroup>
         <TargetFrameworks>net10.0;net9.0;net8.0;net472</TargetFrameworks>
         <Description>Provides MSBuild project management capabilities for the EasyAF framework, including project file manipulation and property management.</Description>
@@ -17,7 +10,8 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Build" Version="17.14.28" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.Build.Locator" Version="1.*" />
+        <PackageReference Include="Microsoft.Build.Framework" Version="17.14.28" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Locator" Version="1.*" ExcludeAssets="runtime" />
         <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.28" ExcludeAssets="runtime" />
         <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.28" ExcludeAssets="runtime" />
     </ItemGroup>
@@ -36,6 +30,11 @@
 
     <ItemGroup>
         <InternalsVisibleTo Include="CloudNimble.EasyAF.Tools, $(StrongNamePublicKey)" />
+    </ItemGroup>
+
+    <!-- Include buildTransitive props file in NuGet package for transitive ExcludeAssets support -->
+    <ItemGroup>
+        <None Include="buildTransitive\EasyAF.MSBuild.props" Pack="true" PackagePath="buildTransitive" />
     </ItemGroup>
 
 </Project>
