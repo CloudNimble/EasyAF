@@ -11,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\CloudNimble.EasyAF.Business\CloudNimble.EasyAF.Business.csproj" />
+        <ProjectReference Include="..\CloudNimble.EasyAF.Business\CloudNimble.EasyAF.Business.EF6.csproj" />
         <ProjectReference Include="..\CloudNimble.EasyAF.Core\CloudNimble.EasyAF.Core.csproj" />
         <ProjectReference Include="..\CloudNimble.EasyAF.Data.EF6\CloudNimble.EasyAF.Data.EF6.csproj" />
     </ItemGroup>

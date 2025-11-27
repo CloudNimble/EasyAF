@@ -38,7 +38,8 @@
       "mcp__playwright__browser_evaluate",
       "Bash(git submodule:*)",
       "Bash(findstr:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(cat:*)"
     ],
     "deny": []
   }

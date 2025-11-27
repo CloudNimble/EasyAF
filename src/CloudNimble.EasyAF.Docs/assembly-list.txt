@@ -1,4 +1,4 @@
-D:\GitHub\EasyAF\src\CloudNimble.EasyAF.Business\bin\Debug\net10.0\CloudNimble.EasyAF.Business.dll
+D:\GitHub\EasyAF\src\CloudNimble.EasyAF.Business\bin\Debug\net10.0\CloudNimble.EasyAF.Business.EF6.dll
 D:\GitHub\EasyAF\src\CloudNimble.EasyAF.Business.EFCore\bin\Debug\net10.0\CloudNimble.EasyAF.Business.EFCore.dll
 D:\GitHub\EasyAF\src\CloudNimble.EasyAF.Configuration\bin\Debug\net10.0\CloudNimble.EasyAF.Configuration.dll
 D:\GitHub\EasyAF\src\CloudNimble.EasyAF.Core\bin\Debug\net10.0\CloudNimble.EasyAF.Core.dll

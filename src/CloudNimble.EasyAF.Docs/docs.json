@@ -1588,7 +1588,8 @@
                             "pages": [
                               "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/IndexedDb/Core/index",
                               "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/IndexedDb/Core/IndexedDbConstants",
-                              "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/IndexedDb/Core/IndexedDbOptions"
+                              "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/IndexedDb/Core/IndexedDbOptions",
+                              "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/IndexedDb/Core/SimpleMessageBusDb"
                             ]
                           }
                         ]
@@ -1696,20 +1697,6 @@
                 "group": "SimpleMessageBus",
                 "icon": "folder-tree",
                 "pages": [
-                  {
-                    "group": "IndexedDb",
-                    "icon": "folder-tree",
-                    "pages": [
-                      {
-                        "group": "Core",
-                        "icon": "folder-tree",
-                        "pages": [
-                          "simplemessagebus/api-reference/SimpleMessageBus/IndexedDb/Core/index",
-                          "simplemessagebus/api-reference/SimpleMessageBus/IndexedDb/Core/SimpleMessageBusDb"
-                        ]
-                      }
-                    ]
-                  },
                   {
                     "group": "Samples",
                     "icon": "folder-tree",

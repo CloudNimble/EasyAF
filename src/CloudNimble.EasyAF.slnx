@@ -22,7 +22,7 @@
     <Project Path="CloudNimble.EasyAF.Docs/CloudNimble.EasyAF.Docs.docsproj" Type="C#" />
   </Folder>
   <Folder Name="/EF6/">
-    <Project Path="CloudNimble.EasyAF.Business/CloudNimble.EasyAF.Business.csproj" />
+    <Project Path="CloudNimble.EasyAF.Business/CloudNimble.EasyAF.Business.EF6.csproj" />
     <Project Path="CloudNimble.EasyAF.Data.EF6/CloudNimble.EasyAF.Data.EF6.csproj" />
     <Project Path="CloudNimble.EasyAF.Restier.EF6/CloudNimble.EasyAF.Restier.EF6.csproj" Id="d9826c0d-43f2-467b-b157-725cb97f5a40" />
   </Folder>
@@ -47,7 +47,7 @@
     <Project Path="CloudNimble.EasyAF.Tests.Analyzers.EF6/CloudNimble.EasyAF.Tests.Analyzers.EF6.csproj">
       <Build Solution="Debug|*" Project="false" />
     </Project>
-    <Project Path="CloudNimble.EasyAF.Tests.Business/CloudNimble.EasyAF.Tests.Business.csproj" />
+    <Project Path="CloudNimble.EasyAF.Tests.Business/CloudNimble.EasyAF.Tests.Business.EF6.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.CodeGen/CloudNimble.EasyAF.Tests.CodeGen.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.Configuration/CloudNimble.EasyAF.Tests.Configuration.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.Core/CloudNimble.EasyAF.Tests.Core.csproj" />

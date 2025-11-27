@@ -6,12 +6,15 @@ using System.Collections.Generic;
 namespace CloudNimble.EasyAF.EFCoreToEdmx.PostgreSQL
 {
     /// <summary>
-    /// Custom relational type mapping source for PostgreSQL that ensures timestamp with time zone 
-    /// columns are mapped to DateTimeOffset instead of DateTime.
+    /// Custom relational type mapping source for PostgreSQL that ensures proper CLR type mappings
+    /// for PostgreSQL-specific column types during EF Core scaffolding.
     /// </summary>
     /// <remarks>
-    /// This mapper provides correct type mapping for PostgreSQL timestamp with time zone columns, 
-    /// which should be DateTimeOffset in C# to preserve timezone information.
+    /// This mapper provides correct type mappings for:
+    /// <list type="bullet">
+    ///   <item><description>timestamp with time zone / timestamptz → DateTimeOffset (to preserve timezone information)</description></item>
+    ///   <item><description>ltree → string (for hierarchical tree data compatibility with OData)</description></item>
+    /// </list>
     /// </remarks>
     public class PostgreSQLRelationalTypeMappingSource : RelationalTypeMappingSource
     {
@@ -72,6 +75,18 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx.PostgreSQL
                     Console.WriteLine($"Warning: Could not find DateTimeOffset mapping for '{storeTypeName}', falling back to default");
                 }
 
+                // Handle PostgreSQL ltree -> string
+                if (IsLTreeType(storeTypeName))
+                {
+                    Console.WriteLine($"PostgreSQL type mapping: Mapping store type '{storeTypeName}' to String");
+                    var stringMapping = _defaultSource.FindMapping(typeof(string));
+                    if (stringMapping is not null)
+                    {
+                        return stringMapping;
+                    }
+                    Console.WriteLine($"Warning: Could not find String mapping for '{storeTypeName}', falling back to default");
+                }
+
                 return _defaultSource.FindMapping(storeTypeName);
             }
             catch (Exception ex)
@@ -104,13 +119,25 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx.PostgreSQL
                     Console.WriteLine($"Warning: Could not find DateTimeOffset mapping for '{storeTypeName}' with type override, falling back to default");
                 }
 
+                // Handle PostgreSQL ltree -> string
+                if (IsLTreeType(storeTypeName))
+                {
+                    Console.WriteLine($"PostgreSQL type mapping: Forcing String for store type '{storeTypeName}' instead of {type?.Name}");
+                    var mapping = _defaultSource.FindMapping(typeof(string), storeTypeName);
+                    if (mapping is not null)
+                    {
+                        return mapping;
+                    }
+                    Console.WriteLine($"Warning: Could not find String mapping for '{storeTypeName}' with type override, falling back to default");
+                }
+
                 return _defaultSource.FindMapping(type, storeTypeName);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in PostgreSQL type mapping for type '{type?.Name}' and store type '{storeTypeName}': {ex.Message}");
                 // Try base class implementation as fallback
-                try 
+                try
                 {
                     return base.FindMapping(storeTypeName);
                 }
@@ -252,6 +279,23 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx.PostgreSQL
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Determines if the given store type name represents a PostgreSQL ltree type.
+        /// </summary>
+        /// <param name="storeTypeName">The store type name to check.</param>
+        /// <returns>True if it's an ltree type, false otherwise.</returns>
+        /// <remarks>
+        /// The ltree PostgreSQL extension type is used for hierarchical tree-like data.
+        /// It should be mapped to string in C# for compatibility with OData and general use.
+        /// </remarks>
+        private static bool IsLTreeType(string storeTypeName)
+        {
+            if (string.IsNullOrEmpty(storeTypeName))
+                return false;
+
+            return string.Equals(storeTypeName, "ltree", StringComparison.OrdinalIgnoreCase);
         }
     }
 }
