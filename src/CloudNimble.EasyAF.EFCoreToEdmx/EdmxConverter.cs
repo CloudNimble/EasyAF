@@ -1,6 +1,8 @@
 ﻿using CloudNimble.EasyAF.EFCoreToEdmx.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 using System.IO;
 using System.Linq;
@@ -180,18 +182,23 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
             var providerType = DetermineProviderTypeFromContext(context);
 
             var contextType = context.GetType();
-            
-            // Get actual table names from context
-            var tableInfos = GetTableInfoFromContext(context);
+
+            // Get the design-time model which includes all annotations (comments, etc.)
+            // The runtime model (context.Model) is read-optimized and doesn't include comments
+            var designTimeModel = context.GetService<IDesignTimeModel>();
+            var model = designTimeModel?.Model ?? context.Model;
+
+            // Get actual table names from the model
+            var tableInfos = GetTableInfoFromModel(model);
 
             // Build the EDMX model with provider type and table info
             var edmxModel = _modelBuilder.BuildEdmxModel(
-                context.Model, 
-                contextType.Namespace, 
-                contextType.Name, 
-                providerType, 
+                model,
+                contextType.Namespace,
+                contextType.Name,
+                providerType,
                 tableInfos);
-            
+
             // Generate XML using the simplified generator
             var xmlGenerator = new EdmxXmlGenerator(edmxModel, providerType, tableInfos);
             return new EdmxConversionResult(context.GetType().Name, xmlGenerator.Generate());
@@ -262,16 +269,21 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
             {
                 // Determine provider type from config
                 var providerType = MapProviderStringToEnum(config.Provider);
-                
-                // Get table infos from the scaffolded context
-                var tableInfos = GetTableInfoFromContext(scaffoldingResult.Context);
+
+                // Get the design-time model which includes all annotations (comments, etc.)
+                // The runtime model (context.Model) is read-optimized and doesn't include comments
+                var designTimeModel = scaffoldingResult.Context.GetService<IDesignTimeModel>();
+                var model = designTimeModel?.Model ?? scaffoldingResult.Context.Model;
+
+                // Get table infos from the design-time model
+                var tableInfos = GetTableInfoFromModel(model);
 
                 // Create a model builder with pluralization overrides from config
                 var modelBuilderWithOverrides = new EdmxModelBuilder(null, config.PluralizationOverrides);
 
                 // Build the EDMX model with all the information we have
                 var edmxModel = modelBuilderWithOverrides.BuildEdmxModel(
-                    scaffoldingResult.Context.Model,
+                    model,
                     scaffoldingResult.Context.GetType().Namespace,
                     scaffoldingResult.Context.GetType().Name,
                     providerType,
@@ -471,27 +483,27 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
         }
 
         /// <summary>
-        /// Extracts table information from the given DbContext.
+        /// Extracts table information from the given EF Core model.
         /// </summary>
-        /// <param name="context">The DbContext instance.</param>
+        /// <param name="model">The EF Core model (should be the design-time model for full metadata access).</param>
         /// <returns>A dictionary mapping CLR type names to table names.</returns>
-        private Dictionary<string, string> GetTableInfoFromContext(DbContext context)
+        private static Dictionary<string, string> GetTableInfoFromModel(IModel model)
         {
             var tableInfos = new Dictionary<string, string>();
-            
+
             // Extract actual table names from EF Core metadata
-            foreach (var entityType in context.Model.GetEntityTypes())
+            foreach (var entityType in model.GetEntityTypes())
             {
                 var clrTypeName = entityType.ClrType.Name;
                 var tableName = entityType.GetTableName();
                 var schema = entityType.GetSchema() ?? "dbo";
-                
+
                 if (!string.IsNullOrWhiteSpace(tableName))
                 {
                     tableInfos[clrTypeName] = $"{schema}.{tableName}";
                 }
             }
-            
+
             return tableInfos;
         }
 

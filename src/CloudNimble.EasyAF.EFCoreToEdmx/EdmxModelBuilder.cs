@@ -537,15 +537,22 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
             {
                 // Use EF Core's official GetComment() extension method
                 // This properly retrieves comments set via HasComment() in OnModelCreating
-                return property.GetComment() ?? string.Empty;
+                // Note: Requires the design-time model (IDesignTimeModel), not the read-optimized runtime model
+                var comment = property.GetComment();
+                if (!string.IsNullOrEmpty(comment))
+                {
+                    return comment;
+                }
             }
             catch (InvalidOperationException)
             {
                 // GetComment() requires the design-time model. If we have a read-optimized model,
                 // fall back to checking annotations directly
-                var annotation = property.FindAnnotation("Relational:Comment");
-                return annotation?.Value?.ToString() ?? string.Empty;
             }
+
+            // Fall back to checking annotations directly
+            var annotation = property.FindAnnotation("Relational:Comment");
+            return annotation?.Value?.ToString() ?? string.Empty;
         }
 
         /// <summary>
@@ -564,15 +571,22 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
             {
                 // Use EF Core's official GetComment() extension method
                 // This properly retrieves table comments set via HasComment() in OnModelCreating
-                return entityType.GetComment() ?? string.Empty;
+                // Note: Requires the design-time model (IDesignTimeModel), not the read-optimized runtime model
+                var comment = entityType.GetComment();
+                if (!string.IsNullOrEmpty(comment))
+                {
+                    return comment;
+                }
             }
             catch (InvalidOperationException)
             {
                 // GetComment() requires the design-time model. If we have a read-optimized model,
                 // fall back to checking annotations directly
-                var annotation = entityType.FindAnnotation("Relational:Comment");
-                return annotation?.Value?.ToString() ?? string.Empty;
             }
+
+            // Fall back to checking annotations directly
+            var annotation = entityType.FindAnnotation("Relational:Comment");
+            return annotation?.Value?.ToString() ?? string.Empty;
         }
 
         /// <summary>

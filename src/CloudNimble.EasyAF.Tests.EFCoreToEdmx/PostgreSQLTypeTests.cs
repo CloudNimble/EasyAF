@@ -15,7 +15,10 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
     /// </summary>
     /// <remarks>
     /// These tests verify that PostgreSQL-specific data types like "timestamp with time zone"
-    /// are correctly mapped to appropriate CLR types (DateTimeOffset) and EDMX storage types.
+    /// are correctly mapped to appropriate CLR types (DateTimeOffset) in the conceptual model.
+    /// The storage model always uses SQL Server types for EDMX compatibility, as the EDMX
+    /// ProviderManifestToken is set to "2012.Azure" and the storage types are not used by
+    /// the code generator (only the conceptual model CLR types matter).
     /// </remarks>
     [TestClass]
     public class PostgreSQLTypeTests
@@ -85,15 +88,15 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
         }
 
         [TestMethod]
-        public void GenerateEdmxWithPostgreSQLProvider_ShouldMapDateTimeOffsetToTimestampWithTimeZone()
+        public void GenerateEdmxWithPostgreSQLProvider_ShouldMapDateTimeOffsetCorrectly()
         {
             var model = _context.Model;
 
             // Build EDMX model with PostgreSQL provider type
             var edmxModel = _modelBuilder.BuildEdmxModel(
-                model, 
-                @namespace: "TestNamespace", 
-                name: "TestContainer", 
+                model,
+                @namespace: "TestNamespace",
+                name: "TestContainer",
                 providerType: CloudNimble.EasyAF.EFCoreToEdmx.DatabaseProviderType.PostgreSQL
             );
 
@@ -106,18 +109,15 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
             result.Should().NotBeNull();
             result.EdmxContent.Should().NotBeNullOrEmpty();
 
-            // In the SSDL (Storage Schema Definition Language) section, 
-            // DateTimeOffset should be mapped to "timestamp with time zone" for PostgreSQL
-            result.EdmxContent.Should().Contain("timestamp with time zone", 
-                "PostgreSQL storage model should map DateTimeOffset to 'timestamp with time zone'");
+            // The storage model uses SQL Server types for EDMX compatibility
+            // (ProviderManifestToken is "2012.Azure" regardless of source database)
+            result.EdmxContent.Should().Contain("Type=\"datetimeoffset\"",
+                "Storage model should use SQL Server 'datetimeoffset' type for EDMX compatibility");
 
-            // Verify it doesn't contain SQL Server-specific datetimeoffset
-            result.EdmxContent.Should().NotContain("Type=\"datetimeoffset\"", 
-                "PostgreSQL storage model should not contain SQL Server 'datetimeoffset' type");
-
-            // The conceptual model should still use DateTimeOffset
-            result.EdmxContent.Should().Contain("Type=\"DateTimeOffset\"", 
-                "Conceptual model should still use DateTimeOffset CLR type");
+            // The conceptual model should use DateTimeOffset CLR type
+            // This is what the code generator uses
+            result.EdmxContent.Should().Contain("Type=\"DateTimeOffset\"",
+                "Conceptual model should use DateTimeOffset CLR type");
         }
 
         [TestMethod]
@@ -145,9 +145,10 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
         }
 
         [TestMethod]
-        public void PostgreSQLTypeMappingLogic_ShouldHandleAllCommonTypes()
+        public void PostgreSQLTypeMappingLogic_ShouldUseConceptualModelTypes()
         {
-            // This test verifies the PostgreSQL type mapping logic directly
+            // This test verifies that PostgreSQL sources produce correct conceptual model types
+            // The storage model always uses SQL Server types for EDMX compatibility
             var model = _context.Model;
 
             var edmxModel = _modelBuilder.BuildEdmxModel(
@@ -161,17 +162,23 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
 
             var result = new CloudNimble.EasyAF.EFCoreToEdmx.Models.EdmxConversionResult("TestDbContext", edmxContent);
 
-            // Verify various PostgreSQL type mappings in the generated EDMX
-            result.EdmxContent.Should().Contain("character varying",
-                "PostgreSQL should map string properties to 'character varying'");
-            result.EdmxContent.Should().Contain("integer",
-                "PostgreSQL should map int properties to 'integer'");
-            result.EdmxContent.Should().Contain("uuid",
-                "PostgreSQL should map Guid properties to 'uuid'");
-            result.EdmxContent.Should().Contain("boolean",
-                "PostgreSQL should map bool properties to 'boolean'");
-            result.EdmxContent.Should().Contain("timestamp with time zone",
-                "PostgreSQL should map DateTimeOffset properties to 'timestamp with time zone'");
+            // Verify the conceptual model contains correct CLR types (what the code generator uses)
+            result.EdmxContent.Should().Contain("Type=\"String\"",
+                "Conceptual model should have String type for string properties");
+            result.EdmxContent.Should().Contain("Type=\"Int32\"",
+                "Conceptual model should have Int32 type for int properties");
+            result.EdmxContent.Should().Contain("Type=\"Guid\"",
+                "Conceptual model should have Guid type for Guid properties");
+            result.EdmxContent.Should().Contain("Type=\"Boolean\"",
+                "Conceptual model should have Boolean type for bool properties");
+            result.EdmxContent.Should().Contain("Type=\"DateTimeOffset\"",
+                "Conceptual model should have DateTimeOffset type for DateTimeOffset properties");
+
+            // Verify storage model uses SQL Server types
+            result.EdmxContent.Should().Contain("Type=\"nvarchar\"",
+                "Storage model should use SQL Server nvarchar type");
+            result.EdmxContent.Should().Contain("Type=\"datetimeoffset\"",
+                "Storage model should use SQL Server datetimeoffset type");
         }
 
         [TestMethod]
@@ -215,9 +222,10 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
             result.EdmxContent.Should().NotContain("Type=\"LTree\"",
                 "Conceptual model should not contain LTree as a type (it should be converted to String)");
 
-            // The storage model should contain the PostgreSQL ltree type
-            result.EdmxContent.Should().Contain("ltree",
-                "Storage model should preserve the PostgreSQL ltree column type");
+            // The storage model uses SQL Server types for EDMX compatibility
+            // ltree maps to String which maps to nvarchar in SQL Server
+            result.EdmxContent.Should().Contain("Type=\"nvarchar\"",
+                "Storage model should use SQL Server nvarchar type for string properties");
 
             // Print EDMX for debugging
             Console.WriteLine("PostgreSQL LTree EDMX Content:");
@@ -231,15 +239,16 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
         [TestMethod]
         public void ReproduceIssue_PostgreSQLTimestampWithTimeZoneNotRecognizedAsDateTimeOffset()
         {
-            // This test reproduces the issue where PostgreSQL "timestamp with time zone" 
-            // columns are not being recognized as DateTimeOffset CLR types during 
-            // reverse engineering
+            // This test verifies that DateTimeOffset CLR types are correctly identified
+            // in the conceptual model regardless of the source database provider.
+            // The storage model always uses SQL Server types for EDMX compatibility
+            // (ProviderManifestToken is "2012.Azure").
 
             var model = _context.Model;
 
             // Build EDMX model with PostgreSQL provider type
             var edmxModel = _modelBuilder.BuildEdmxModel(
-                model, 
+                model,
                 providerType: CloudNimble.EasyAF.EFCoreToEdmx.DatabaseProviderType.PostgreSQL
             );
 
@@ -252,15 +261,18 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
             result.Should().NotBeNull();
             result.EdmxContent.Should().NotBeNullOrEmpty();
 
-            // The issue: Check if the conceptual model correctly identifies DateTimeOffset
-            // Note: This test currently uses in-memory database, so EF Core already knows
-            // the CLR types. The real issue occurs during reverse engineering from actual PostgreSQL.
-            result.EdmxContent.Should().Contain("Type=\"DateTimeOffset\"", 
-                "Conceptual model should recognize timestamp with time zone as DateTimeOffset");
+            // The conceptual model should correctly identify DateTimeOffset
+            // This is what the code generator uses
+            result.EdmxContent.Should().Contain("Type=\"DateTimeOffset\"",
+                "Conceptual model should recognize DateTimeOffset CLR type");
 
-            // Storage model should use PostgreSQL-specific types
-            result.EdmxContent.Should().Contain("timestamp with time zone", 
-                "Storage model should use PostgreSQL 'timestamp with time zone' type");
+            // Storage model should use SQL Server types for EDMX compatibility
+            result.EdmxContent.Should().Contain("Type=\"datetimeoffset\"",
+                "Storage model should use SQL Server 'datetimeoffset' type for EDMX compatibility");
+
+            // Storage model should NOT contain PostgreSQL-specific types
+            result.EdmxContent.Should().NotContain("timestamp with time zone",
+                "Storage model should not contain PostgreSQL 'timestamp with time zone' type");
 
             // Print EDMX for debugging
             Console.WriteLine("PostgreSQL EDMX Content:");

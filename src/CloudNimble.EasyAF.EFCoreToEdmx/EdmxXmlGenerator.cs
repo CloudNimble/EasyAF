@@ -602,42 +602,19 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
         /// Maps property types to database-specific types for EDMX SSDL.
         /// </summary>
         /// <param name="property">The property to map.</param>
-        /// <returns>The appropriate database type string for EDMX SSDL.</returns>
+        /// <returns>The appropriate SQL Server database type string for EDMX SSDL.</returns>
         /// <remarks>
-        /// Maps CLR types to the appropriate database types based on the configured provider type.
-        /// For PostgreSQL, uses PostgreSQL-native types (e.g., timestamp with time zone, uuid).
-        /// For SQL Server (default), uses SQL Server types (e.g., datetimeoffset, uniqueidentifier).
+        /// Maps CLR types to SQL Server types for EDMX compatibility.
+        /// The EDMX storage model always uses SQL Server types regardless of the source database
+        /// because the ProviderManifestToken is set to "2012.Azure". The conceptual model
+        /// contains the correct CLR types which is what the code generator uses.
         /// </remarks>
         private string MapToSqlType(EdmxProperty property)
         {
             var typeToMap = property.Type;
 
-            // Map based on database provider type
-            if (_databaseProviderType == DatabaseProviderType.PostgreSQL)
-            {
-                return typeToMap switch
-                {
-                    // Use character varying for strings with MaxLength, text otherwise
-                    "String" => property.MaxLength.HasValue ? "character varying" : "text",
-                    "Int32" => "integer",
-                    "Int64" => "bigint",
-                    "Int16" => "smallint",
-                    "Boolean" => "boolean",
-                    "Decimal" => "numeric",
-                    "Double" => "double precision",
-                    "Single" => "real",
-                    "DateTime" => "timestamp without time zone",
-                    "DateTimeOffset" => "timestamp with time zone",
-                    "DateOnly" => "date",
-                    "TimeOnly" => "time without time zone",
-                    "TimeSpan" => "interval",
-                    "Guid" => "uuid",
-                    "Byte[]" => "bytea",
-                    _ => "text"  // Default fallback for PostgreSQL
-                };
-            }
-
-            // Default to SQL Server types for EDMX SSDL compatibility
+            // Always use SQL Server types for EDMX SSDL compatibility
+            // The conceptual model has the correct CLR types for code generation
             return typeToMap switch
             {
                 "String" => "nvarchar",

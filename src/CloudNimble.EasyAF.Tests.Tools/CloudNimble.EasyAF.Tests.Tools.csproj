@@ -5,6 +5,7 @@
         <IsPackable>false</IsPackable>
         <NoWarn>$(NoWarn);NU1701;NU1608</NoWarn>
         <DisableMSBuildAssemblyCopyCheck>true</DisableMSBuildAssemblyCopyCheck>
+        <UserSecretsId>67532ef7-f7c5-4cbb-ab13-4ceb5c71bfab</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>

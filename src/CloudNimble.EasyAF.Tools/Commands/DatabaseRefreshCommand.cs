@@ -115,7 +115,7 @@ namespace CloudNimble.EasyAF.Tools.Commands
         private async Task<int> ProcessAllEdmxFilesAsync(string projectPath)
         {
             var edmxFiles = Directory.GetFiles(projectPath, "*.edmx", SearchOption.TopDirectoryOnly);
-            
+
             if (edmxFiles.Length == 0)
             {
                 Console.Error.WriteLine($"Error: No .edmx files found in: {projectPath}");
@@ -124,6 +124,10 @@ namespace CloudNimble.EasyAF.Tools.Commands
             }
 
             Console.WriteLine($"Found {edmxFiles.Length} EDMX file(s). Processing all...");
+
+            // Resolve the actual project path (with .csproj) for connection string resolution
+            var resolvedProjectPath = ResolveProjectPath(projectPath);
+            Console.WriteLine($"Using project path for connection strings: {resolvedProjectPath}");
 
             var successCount = 0;
             var failureCount = 0;
@@ -135,7 +139,7 @@ namespace CloudNimble.EasyAF.Tools.Commands
 
                 try
                 {
-                    await ProcessSingleEdmxFileAsync(edmxFile, contextName, projectPath);
+                    await ProcessSingleEdmxFileAsync(edmxFile, contextName, resolvedProjectPath);
                     successCount++;
                     Console.WriteLine($"✓ Successfully refreshed {contextName}.edmx");
                 }
@@ -177,7 +181,11 @@ namespace CloudNimble.EasyAF.Tools.Commands
                 return 1;
             }
 
-            await ProcessSingleEdmxFileAsync(edmxPath, contextName, projectPath);
+            // Resolve the actual project path (with .csproj) for connection string resolution
+            var resolvedProjectPath = ResolveProjectPath(projectPath);
+            Console.WriteLine($"Using project path for connection strings: {resolvedProjectPath}");
+
+            await ProcessSingleEdmxFileAsync(edmxPath, contextName, resolvedProjectPath);
             Console.WriteLine($"EDMX file refreshed successfully for {contextName}");
             return 0;
         }
@@ -197,6 +205,29 @@ namespace CloudNimble.EasyAF.Tools.Commands
 
             var (EdmxContent, OnModelCreatingBody) = await _converter.RefreshFromDatabaseAsync(edmxPath, projectPath);
             await File.WriteAllTextAsync(edmxPath, EdmxContent);
+        }
+
+        /// <summary>
+        /// Resolves the project path to find the directory containing the .csproj file.
+        /// </summary>
+        /// <param name="path">The original path provided by the user.</param>
+        /// <returns>The resolved path containing the .csproj file.</returns>
+        /// <remarks>
+        /// If the provided path ends with "Baselines", this method goes up one level to the parent directory
+        /// which should contain the .csproj file. This allows EDMX files to be stored in a Baselines subfolder
+        /// while still resolving connection strings correctly.
+        /// </remarks>
+        private static string ResolveProjectPath(string path)
+        {
+            var dirInfo = new DirectoryInfo(path);
+
+            // If the folder name is "Baselines", go up one level
+            if (dirInfo.Name.Equals("Baselines", StringComparison.OrdinalIgnoreCase))
+            {
+                return dirInfo.Parent?.FullName ?? path;
+            }
+
+            return path;
         }
 
         #endregion
