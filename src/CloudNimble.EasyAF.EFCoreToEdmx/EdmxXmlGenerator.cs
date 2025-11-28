@@ -599,22 +599,45 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
         }
 
         /// <summary>
-        /// Maps property types to standard SQL Server types for EDMX SSDL compatibility.
+        /// Maps property types to database-specific types for EDMX SSDL.
         /// </summary>
         /// <param name="property">The property to map.</param>
-        /// <returns>The appropriate SQL type string for EDMX SSDL.</returns>
+        /// <returns>The appropriate database type string for EDMX SSDL.</returns>
         /// <remarks>
-        /// EDMX files are code generation helpers, not functional databases.
-        /// Always use SQL Server types in SSDL regardless of source database to ensure
-        /// EDMX compatibility and prevent "Type X is not qualified with a namespace" errors.
-        /// The actual database scaffolding handles source database-specific types correctly.
+        /// Maps CLR types to the appropriate database types based on the configured provider type.
+        /// For PostgreSQL, uses PostgreSQL-native types (e.g., timestamp with time zone, uuid).
+        /// For SQL Server (default), uses SQL Server types (e.g., datetimeoffset, uniqueidentifier).
         /// </remarks>
         private string MapToSqlType(EdmxProperty property)
         {
             var typeToMap = property.Type;
-            
-            // Always map to SQL Server types for EDMX SSDL compatibility
-            // This prevents "Type X is not qualified with a namespace" errors
+
+            // Map based on database provider type
+            if (_databaseProviderType == DatabaseProviderType.PostgreSQL)
+            {
+                return typeToMap switch
+                {
+                    // Use character varying for strings with MaxLength, text otherwise
+                    "String" => property.MaxLength.HasValue ? "character varying" : "text",
+                    "Int32" => "integer",
+                    "Int64" => "bigint",
+                    "Int16" => "smallint",
+                    "Boolean" => "boolean",
+                    "Decimal" => "numeric",
+                    "Double" => "double precision",
+                    "Single" => "real",
+                    "DateTime" => "timestamp without time zone",
+                    "DateTimeOffset" => "timestamp with time zone",
+                    "DateOnly" => "date",
+                    "TimeOnly" => "time without time zone",
+                    "TimeSpan" => "interval",
+                    "Guid" => "uuid",
+                    "Byte[]" => "bytea",
+                    _ => "text"  // Default fallback for PostgreSQL
+                };
+            }
+
+            // Default to SQL Server types for EDMX SSDL compatibility
             return typeToMap switch
             {
                 "String" => "nvarchar",

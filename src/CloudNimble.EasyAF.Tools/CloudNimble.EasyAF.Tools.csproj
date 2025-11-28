@@ -44,6 +44,7 @@
     <ItemGroup>
         <ProjectReference Include="..\CloudNimble.EasyAF.CodeGen\CloudNimble.EasyAF.CodeGen.csproj" />
         <ProjectReference Include="..\CloudNimble.EasyAF.EFCoreToEdmx\CloudNimble.EasyAF.EFCoreToEdmx.csproj" />
+        <ProjectReference Include="..\CloudNimble.EasyAF.MSBuild\CloudNimble.EasyAF.MSBuild.csproj" />
     </ItemGroup>
 
     <ItemGroup>

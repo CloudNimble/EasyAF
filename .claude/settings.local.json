@@ -39,7 +39,8 @@
       "Bash(git submodule:*)",
       "Bash(findstr:*)",
       "WebSearch",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(powershell.exe:*)"
     ],
     "deny": []
   }

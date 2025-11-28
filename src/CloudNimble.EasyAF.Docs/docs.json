@@ -36,7 +36,18 @@
             "pages": [
               "guides/table-design",
               "guides/interval-calculations",
-              "guides/property-name-overrides"
+              "guides/property-name-overrides",
+              "guides/business-layer",
+              "guides/clarification-needed",
+              "guides/data-operations-and-audit",
+              "guides/observable-objects",
+              "guides/state-machines-and-status",
+              {
+                "group": "Msbuild",
+                "pages": [
+                  "guides/MSBuild/dotnet-10-changes"
+                ]
+              }
             ]
           },
           {

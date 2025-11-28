@@ -108,8 +108,8 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
             var result = _builder.BuildEdmxModel(_context.Model);
 
             result.Should().NotBeNull();
-            result.EntityTypes.Should().HaveCount(4); // User, Order, OrderItem, Part
-            result.EntitySets.Should().HaveCount(4);
+            result.EntityTypes.Should().HaveCount(5); // User, Order, OrderItem, Part, NaicsCode
+            result.EntitySets.Should().HaveCount(5);
 
             var userEntity = result.EntityTypes.FirstOrDefault(e => e.Name == "User");
             userEntity.Should().NotBeNull();

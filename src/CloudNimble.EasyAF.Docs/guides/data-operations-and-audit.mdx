@@ -1,0 +1,361 @@
+# Data Operations and Audit Documentation
+
+## Overview
+
+EasyAF provides comprehensive data operation management with automatic audit trail creation, user tracking, and data integrity maintenance through a system of interfaces and manager classes. This document explains how these components work together to ensure data consistency and traceability.
+
+## Core Interfaces for Data Operations
+
+### Identity Management
+
+#### IIdentifiable<T>
+Ensures entities have a unique identifier.
+
+```csharp
+public interface IIdentifiable<T> where T : struct
+{
+    T Id { get; set; }
+}
+```
+
+**Usage**: All entities that need unique identification should implement this interface. The framework automatically generates GUIDs for entities when T is Guid.
+
+### Audit Trail Interfaces
+
+#### ICreatedAuditable
+Tracks when an entity was created.
+
+```csharp
+public interface ICreatedAuditable
+{
+    DateTimeOffset DateCreated { get; set; }
+}
+```
+
+#### IUpdatedAuditable
+Tracks when an entity was last updated.
+
+```csharp
+public interface IUpdatedAuditable
+{
+    DateTimeOffset? DateUpdated { get; set; }
+}
+```
+
+**Note**: DateUpdated is nullable since entities may never be updated after creation.
+
+### User Tracking Interfaces
+
+#### ICreatorTrackable<T>
+Tracks which user created an entity.
+
+```csharp
+public interface ICreatorTrackable<T> where T : struct
+{
+    T CreatedById { get; set; }
+}
+```
+
+#### IUpdaterTrackable<T>
+Tracks which user last updated an entity.
+
+```csharp
+public interface IUpdaterTrackable<T> where T : struct
+{
+    T? UpdatedById { get; set; }
+}
+```
+
+**Note**: UpdatedById is nullable since the entity may not have been updated yet.
+
+## Automatic Audit Field Population
+
+The EntityManager automatically detects and populates audit fields based on implemented interfaces.
+
+### During Insert Operations
+
+```csharp
+public virtual async Task OnInsertingAsync(TEntity entity)
+{
+    // Auto-set creator if ICreatorTrackable is implemented
+    if (entity is ICreatorTrackable<Guid> trackable && ClaimsPrincipal.Current != null)
+    {
+        trackable.CreatedById = ClaimsPrincipal.Current.GetIdClaim();
+    }
+    
+    // Auto-set creation date if ICreatedAuditable is implemented
+    if (entity is ICreatedAuditable auditable)
+    {
+        auditable.DateCreated = DateTime.UtcNow;
+    }
+}
+```
+
+### During Update Operations
+
+```csharp
+public virtual async Task OnUpdatingAsync(TEntity entity)
+{
+    // Auto-set updater if IUpdaterTrackable is implemented
+    if (entity is IUpdaterTrackable<Guid> trackable && ClaimsPrincipal.Current != null)
+    {
+        trackable.UpdatedById = ClaimsPrincipal.Current.GetIdClaim();
+    }
+    
+    // Auto-set update date if IUpdatedAuditable is implemented
+    if (entity is IUpdatedAuditable auditable)
+    {
+        auditable.DateUpdated = DateTime.UtcNow;
+    }
+}
+```
+
+## Entity Definition Best Practices
+
+### Complete Auditable Entity
+
+```csharp
+public class AuditableEntity : DbObservableObject, 
+    IIdentifiable<Guid>,
+    ICreatedAuditable, 
+    IUpdatedAuditable,
+    ICreatorTrackable<Guid>, 
+    IUpdaterTrackable<Guid>
+{
+    // Identity
+    public Guid Id { get; set; }
+    
+    // Audit timestamps
+    public DateTimeOffset DateCreated { get; set; }
+    public DateTimeOffset? DateUpdated { get; set; }
+    
+    // User tracking
+    public Guid CreatedById { get; set; }
+    public Guid? UpdatedById { get; set; }
+    
+    // Navigation properties (optional)
+    public User CreatedBy { get; set; }
+    public User UpdatedBy { get; set; }
+    
+    // Business properties
+    public string Name { get; set; }
+    public string Description { get; set; }
+}
+```
+
+## Data Operation Flow
+
+### Insert Flow
+
+1. **Client creates entity** → New instance with business data
+2. **Manager.InsertAsync() called** → Initiates insert operation
+3. **OnInsertingAsync() executed** → 
+   - ID generated (if IIdentifiable<Guid>)
+   - CreatedById set (if ICreatorTrackable)
+   - DateCreated set (if ICreatedAuditable)
+4. **Entity added to context** → EntityState.Added
+5. **SaveChangesAsync()** → Database insert
+6. **OnInsertedAsync() executed** → Post-insert logic (events, notifications)
+
+### Update Flow
+
+1. **Entity retrieved and modified** → Property changes tracked
+2. **Manager.UpdateAsync() called** → Initiates update operation
+3. **OnUpdatingAsync() executed** →
+   - UpdatedById set (if IUpdaterTrackable)
+   - DateUpdated set (if IUpdatedAuditable)
+4. **Entity marked modified** → EntityState.Modified
+5. **SaveChangesAsync()** → Database update
+6. **OnUpdatedAsync() executed** → Post-update logic
+
+### Delete Flow
+
+1. **Entity marked for deletion** → Soft or hard delete decision
+2. **Manager.DeleteAsync() called** → Initiates delete operation
+3. **OnDeletingAsync() executed** → Pre-delete validation/logic
+4. **Entity marked deleted** → EntityState.Deleted
+5. **SaveChangesAsync()** → Database delete
+6. **OnDeletedAsync() executed** → Post-delete cleanup
+
+## Advanced Data Operations
+
+### Batch Operations
+
+Audit fields are populated for each entity in batch operations:
+
+```csharp
+public async Task OnInsertingAsync(List<TEntity> entities)
+{
+    foreach (var entity in entities)
+    {
+        await OnInsertingAsync(entity);  // Each gets audit fields
+    }
+}
+```
+
+### Direct Operations (Performance)
+
+Direct operations bypass entity loading and audit field population:
+
+```csharp
+// Direct update - no audit fields populated
+await manager.DirectUpdateAsync(
+    e => e.Status == "Pending",
+    e => new Order { Status = "Processing" }
+);
+
+// Direct delete - no OnDeleting/OnDeleted hooks
+await manager.DirectDeleteAsync(e => e.IsDeleted == true);
+```
+
+**Use Cases**:
+- Bulk status updates
+- Cleanup operations
+- Performance-critical scenarios
+
+**Trade-offs**:
+- No automatic audit trail
+- No business logic hooks
+- Better performance
+
+### Manual Audit Reset
+
+For special scenarios like entity duplication:
+
+```csharp
+public void ResetAuditProperties<TDbObservable>(TDbObservable entity) 
+    where TDbObservable : DbObservableObject
+{
+    if (entity is ICreatorTrackable<Guid> creator)
+        creator.CreatedById = ClaimsPrincipal.Current.GetIdClaim();
+    
+    if (entity is ICreatedAuditable created)
+        created.DateCreated = DateTime.UtcNow;
+    
+    if (entity is IUpdaterTrackable<Guid> updater)
+        updater.UpdatedById = null;  // Clear update tracking
+    
+    if (entity is IUpdatedAuditable updated)
+        updated.DateUpdated = null;  // Clear update timestamp
+}
+```
+
+## Data Integrity Patterns
+
+### Soft Delete Pattern
+
+```csharp
+public interface ISoftDeletable : IUpdatedAuditable, IUpdaterTrackable<Guid>
+{
+    bool IsDeleted { get; set; }
+    DateTimeOffset? DateDeleted { get; set; }
+    Guid? DeletedById { get; set; }
+}
+
+public override async Task OnDeletingAsync(TEntity entity)
+{
+    if (entity is ISoftDeletable softDelete)
+    {
+        softDelete.IsDeleted = true;
+        softDelete.DateDeleted = DateTime.UtcNow;
+        softDelete.DeletedById = ClaimsPrincipal.Current?.GetIdClaim();
+        
+        // Change to update instead of delete
+        DataContext.Entry(entity).State = EntityState.Modified;
+    }
+}
+```
+
+### Versioning Pattern
+
+```csharp
+public interface IVersionable
+{
+    int Version { get; set; }
+    byte[] RowVersion { get; set; }  // For optimistic concurrency
+}
+
+public override async Task OnUpdatingAsync(TEntity entity)
+{
+    await base.OnUpdatingAsync(entity);
+    
+    if (entity is IVersionable versionable)
+    {
+        versionable.Version++;
+    }
+}
+```
+
+### Active Record Pattern
+
+```csharp
+public interface IActiveTrackable
+{
+    bool IsActive { get; set; }
+}
+
+// Query only active records
+var activeItems = DataContext.Set<TEntity>()
+    .Where(e => (e as IActiveTrackable).IsActive)
+    .ToList();
+```
+
+## Security Considerations
+
+### User Context
+
+The framework relies on `ClaimsPrincipal.Current` for user identification:
+
+```csharp
+// Ensure user context is available
+if (ClaimsPrincipal.Current == null)
+{
+    throw new UnauthorizedAccessException("User context required for audit operations");
+}
+```
+
+### Audit Trail Immutability
+
+Once set, audit fields should not be modified:
+
+```csharp
+public DateTimeOffset DateCreated 
+{ 
+    get => _dateCreated;
+    set 
+    {
+        if (_dateCreated != default)
+            throw new InvalidOperationException("DateCreated cannot be modified");
+        _dateCreated = value;
+    }
+}
+```
+
+## Integration with Change Tracking
+
+DbObservableObject's change tracking works with audit fields:
+
+```csharp
+var entity = new Customer();
+entity.TrackChanges();
+
+entity.Name = "New Name";  // Tracked
+// DateUpdated will be set on save
+// UpdatedById will be set on save
+
+var delta = entity.ToDeltaPayload();
+// Delta includes: { Id, Name, DateUpdated, UpdatedById }
+```
+
+## Best Practices
+
+1. **Always implement audit interfaces**: Provides crucial traceability
+2. **Use nullable types for update fields**: Not all entities get updated
+3. **Leverage automatic population**: Don't manually set audit fields
+4. **Consider soft deletes**: Maintain data history and recovery options
+5. **Use direct operations judiciously**: Balance performance vs audit needs
+6. **Implement versioning for critical entities**: Detect concurrent modifications
+7. **Validate user context**: Ensure ClaimsPrincipal.Current is available
+8. **Test audit trail**: Verify fields are populated correctly
+9. **Document bypass scenarios**: When audit fields won't be populated
+10. **Consider timezone handling**: Store as UTC, display in local time

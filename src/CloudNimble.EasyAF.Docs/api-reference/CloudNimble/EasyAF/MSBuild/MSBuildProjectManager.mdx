@@ -252,8 +252,9 @@ public static void EnsureMSBuildRegistered()
 #### Remarks
 
 This method should be called before any MSBuild operations to ensure the correct
-            version of MSBuild is loaded. It prioritizes MSBuild 17.0 or later for compatibility
-            with modern .NET projects.
+            version of MSBuild is loaded. On .NET Core, QueryVisualStudioInstances() returns
+            SDK instances (versions like 8.0.x, 9.0.x, 10.0.x), not Visual Studio instances.
+            We explicitly select and register the latest available instance.
 
 ### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
 

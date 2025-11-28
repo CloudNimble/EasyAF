@@ -10,11 +10,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Build" Version="17.14.*" />
-        <PackageReference Include="Microsoft.Build.Framework" Version="17.14.*" />
+        <!-- ExcludeAssets="runtime" - compile against NuGet packages, MSBuildLocator redirects to SDK at runtime -->
+        <PackageReference Include="Microsoft.Build" Version="17.14.*" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Framework" Version="17.14.*" ExcludeAssets="runtime" />
         <PackageReference Include="Microsoft.Build.Locator" Version="1.*" />
-        <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.*" />
-        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.*" />
+        <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.*" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.*" ExcludeAssets="runtime" />
+    </ItemGroup>
+
+    <!-- Include .targets file in NuGet package for consuming projects -->
+    <ItemGroup>
+        <None Include="build\**\*" Pack="true" PackagePath="build" />
+        <None Include="build\**\*" Pack="true" PackagePath="buildTransitive" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">

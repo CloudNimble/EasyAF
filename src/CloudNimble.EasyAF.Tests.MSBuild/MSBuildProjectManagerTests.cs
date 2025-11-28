@@ -1,6 +1,5 @@
-using CloudNimble.EasyAF.MSBuild;
+﻿using CloudNimble.EasyAF.MSBuild;
 using FluentAssertions;
-using Microsoft.Build.Construction;
 using Microsoft.Build.Locator;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -15,6 +14,7 @@ namespace CloudNimble.EasyAF.Tests.MSBuild
     /// Unit tests for the <see cref="MSBuildProjectManager"/> class.
     /// </summary>
     [TestClass]
+    [DoNotParallelize]
     public class MSBuildProjectManagerTests
     {
 

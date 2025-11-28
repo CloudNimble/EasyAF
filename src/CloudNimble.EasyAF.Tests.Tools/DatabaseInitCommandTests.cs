@@ -13,6 +13,7 @@ namespace CloudNimble.EasyAF.Tests.Tools
     /// Unit tests for the <see cref="DatabaseInitCommand"/> class.
     /// </summary>
     [TestClass]
+    [DoNotParallelize]
     public class DatabaseInitCommandTests
     {
 

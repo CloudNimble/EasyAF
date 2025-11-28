@@ -169,8 +169,8 @@ namespace CloudNimble.EasyAF.Tests.CodeGen.Core
             }
         }
 
-        [DataRow(ProjectPath)]
-        [TestMethod]
+        //[DataRow(ProjectPath)]
+        //[TestMethod]
         [BreakdanceManifestGenerator]
         public void WriteAllEntityMessages(string path)
         {

@@ -1,4 +1,5 @@
 ﻿using CloudNimble.EasyAF.EFCoreToEdmx.Extensions;
+using CloudNimble.EasyAF.MSBuild;
 using CloudNimble.EasyAF.Tools.Commands.Root;
 using Microsoft.Extensions.Hosting;
 using System.IO;
@@ -11,8 +12,11 @@ namespace CloudNimble.EasyAF.Tools
     class Program
     {
 
-        public static Task<int> Main(string[] args) =>
-            Host.CreateDefaultBuilder()
+        public static Task<int> Main(string[] args)
+        {
+            MSBuildProjectManager.EnsureMSBuildRegistered();
+
+            return Host.CreateDefaultBuilder()
                 // RWM: If this is not set, it won't find appsettings.json.
                 //      https://github.com/dotnet/sdk/issues/9730#issuecomment-433724425
                 .UseContentRoot(Directory.GetParent(Assembly.GetExecutingAssembly().Location)?.FullName)
@@ -21,6 +25,7 @@ namespace CloudNimble.EasyAF.Tools
                     services.AddEFCoreToEdmxServices();
                 })
                 .RunCommandLineApplicationAsync<EasyAFRootCommand>(args);
+        }
 
     }
 

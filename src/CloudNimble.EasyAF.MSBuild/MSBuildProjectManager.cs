@@ -29,40 +29,40 @@ namespace CloudNimble.EasyAF.MSBuild
         /// </summary>
         /// <remarks>
         /// This method should be called before any MSBuild operations to ensure the correct
-        /// version of MSBuild is loaded. It prioritizes MSBuild 17.0 or later for compatibility
-        /// with modern .NET projects.
+        /// version of MSBuild is loaded. On .NET Core, QueryVisualStudioInstances() returns
+        /// SDK instances (versions like 8.0.x, 9.0.x, 10.0.x), not Visual Studio instances.
+        /// We explicitly select and register the latest available instance.
         /// </remarks>
         public static void EnsureMSBuildRegistered()
         {
             if (!MSBuildLocator.IsRegistered)
             {
-                // First try to find Visual Studio instances (MSBuild 17.0+)
-                var msbuildInstances = MSBuildLocator.QueryVisualStudioInstances().ToList();
-                var latestInstance = msbuildInstances
-                    .Where(x => x.Version.Major >= 17)
-                    .OrderByDescending(x => x.Version)
-                    .FirstOrDefault();
-                
-                if (latestInstance is not null)
+                try
                 {
-                    MSBuildLocator.RegisterInstance(latestInstance);
-                }
-                else
-                {
-                    // If no Visual Studio instances found, use RegisterDefaults() which works with .NET SDK
-                    // but first ensure we have a compatible .NET SDK version
-                    try
+                    // Query all available instances and pick the latest one.
+                    // On .NET Core, these are SDK instances (8.0.x, 9.0.x, 10.0.x).
+                    // MSBuildLocator filters by runtime compatibility, so .NET 8 only sees SDKs <= 8.x.
+                    var instances = MSBuildLocator.QueryVisualStudioInstances().ToList();
+                    var latestInstance = instances
+                        .OrderByDescending(x => x.Version)
+                        .FirstOrDefault();
+
+                    if (latestInstance is not null)
                     {
+                        MSBuildLocator.RegisterInstance(latestInstance);
+                    }
+                    else
+                    {
+                        // Fallback if no instances found
                         MSBuildLocator.RegisterDefaults();
                     }
-                    catch (Exception ex)
-                    {
-                        var availableVersions = string.Join(", ", msbuildInstances.Select(x => x.Version.ToString()));
-                        var message = msbuildInstances.Any() 
-                            ? $"No MSBuild 17.0+ instances found and RegisterDefaults() failed. Available VS versions: {availableVersions}. Error: {ex.Message}"
-                            : $"No MSBuild instances found and RegisterDefaults() failed. Error: {ex.Message}";
-                        throw new InvalidOperationException(message, ex);
-                    }
+                }
+                catch (InvalidOperationException ex) when (ex.Message.Contains("assemblies were already loaded"))
+                {
+                    // MSBuild assemblies were loaded before registration could happen.
+                    // This is common in test parallelization scenarios.
+                    // In this case, we're already using whatever MSBuild was loaded, so just continue.
+                    return;
                 }
             }
         }

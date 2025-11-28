@@ -15,6 +15,7 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
     /// including JSON configuration files, environment variables, and user secrets.
     /// </remarks>
     [TestClass]
+    [DoNotParallelize]
     public class ConnectionStringResolverTests
     {
 

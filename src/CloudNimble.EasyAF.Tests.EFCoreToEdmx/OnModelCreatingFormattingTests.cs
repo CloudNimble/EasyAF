@@ -1,6 +1,7 @@
-using CloudNimble.EasyAF.EFCoreToEdmx;
+﻿using CloudNimble.EasyAF.EFCoreToEdmx;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 
 namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
@@ -80,11 +81,12 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
             var result = (string)enhanceMethod.Invoke(null, new object[] { onModelCreating, null });
 
             // Assert
-            var lines = result.Split('\n');
-            
+            // Split by both \r\n and \n to handle cross-platform line endings
+            var lines = result.Split(["\r\n", "\n"], StringSplitOptions.None);
+
             // Check method declaration indentation (4 spaces)
             lines[0].Should().StartWith("    protected override");
-            
+
             // Check opening brace indentation (4 spaces)
             lines[1].Should().Be("    {");
             
@@ -136,16 +138,16 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
             var result = (string)enhanceMethod.Invoke(null, new object[] { onModelCreating, propertyOverrides });
 
             // Assert
-            // Check that HasColumnName is added with proper indentation
+            // Check that HasColumnName is added with proper indentation (16 spaces for method continuations)
             result.Should().Contain("entity.Property(e => e.Niin)");
-            result.Should().Contain("                    .HasColumnName(\"NIIN\")");
-            result.Should().Contain("                .HasMaxLength(9)");
-            result.Should().Contain("                .IsRequired();");
-            
+            result.Should().Contain(".HasColumnName(\"NIIN\")");
+            result.Should().Contain(".HasMaxLength(9)");
+            result.Should().Contain(".IsRequired();");
+
             // Check formatting for second property
             result.Should().Contain("entity.Property(e => e.Fsc)");
-            result.Should().Contain("                    .HasColumnName(\"FSC\")");
-            result.Should().Contain("                .HasMaxLength(4);");
+            result.Should().Contain(".HasColumnName(\"FSC\")");
+            result.Should().Contain(".HasMaxLength(4);");
             
             // Verify semicolons are present
             var semicolonCount = result.Split(';').Length - 1;

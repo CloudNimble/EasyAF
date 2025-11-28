@@ -115,7 +115,7 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx.Models
             // Configure User entity
             modelBuilder.Entity<User>(entity =>
             {
-
+                entity.ToTable(tb => tb.HasComment("Represents a User of the system."));
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Email).HasMaxLength(255).IsRequired();
                 entity.Property(e => e.FirstName).HasMaxLength(100);

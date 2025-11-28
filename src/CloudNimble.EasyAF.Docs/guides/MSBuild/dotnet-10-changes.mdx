@@ -1,0 +1,172 @@
+# MSBuild Integration Changes for .NET 10
+
+## Overview
+
+EasyAF 4.0 includes significant changes to how `EasyAF.MSBuild` integrates with the MSBuild SDK. These changes were necessary to ensure compatibility across .NET 8, .NET 9, and .NET 10 when using `MSBuildLocator` to dynamically load MSBuild assemblies.
+
+## The Problem
+
+### Background: How MSBuildLocator Works
+
+`MSBuildLocator` is a Microsoft library that allows applications to dynamically discover and load the MSBuild assemblies from an installed .NET SDK, rather than shipping specific versions of MSBuild with your application. This is the recommended approach for tools that need to manipulate `.csproj` files.
+
+The workflow is:
+1. Call `MSBuildLocator.RegisterInstance()` or `RegisterDefaults()` **before** any MSBuild types are accessed
+2. MSBuildLocator sets up assembly resolution to redirect `Microsoft.Build.*` assembly loads to the SDK's copies
+3. Your code can then use MSBuild APIs, and the correct SDK assemblies are loaded
+
+### What Broke in .NET 10
+
+When running on .NET 10 SDK with .NET 8 as the target framework, tests began failing with errors like:
+
+```
+Could not load type 'Microsoft.Build.Shared.IMSBuildElementLocation'
+from assembly 'Microsoft.Build.Framework, Version=15.1.0.0'
+```
+
+**Root Cause**: The `Microsoft.Build` NuGet packages were being copied to the application's output directory. When code accessed MSBuild types, the CLR loaded these local assemblies **before** `MSBuildLocator` could redirect to the SDK's assemblies. This created a version mismatch - the NuGet package's assembly version (15.1.0.0) didn't match what the SDK expected.
+
+### Why .NET 10 Exposed This
+
+On .NET 10, `MSBuildLocator.QueryVisualStudioInstances()` returns SDK instances filtered by runtime compatibility:
+- **.NET 8 runtime** only sees SDKs ≤ 8.x (e.g., 8.0.415, 7.0.410, 6.0.428)
+- **.NET 10 runtime** sees SDKs ≤ 10.x (e.g., 10.0.100, 9.0.307, 8.0.415)
+
+The original code filtered for `Version.Major >= 17`, thinking these were Visual Studio versions (17.x = VS 2022). But on .NET Core, these are **SDK versions** (8.x, 9.x, 10.x), so the filter excluded everything, falling back to `RegisterDefaults()` which then failed because assemblies were already loaded.
+
+## The Solution
+
+### 1. Exclude MSBuild Assemblies from Runtime Output
+
+The key fix is preventing the `Microsoft.Build.*` NuGet packages from being copied to the output directory. This is done using `ExcludeAssets="runtime"`:
+
+```xml
+<ItemGroup>
+    <PackageReference Include="Microsoft.Build" Version="17.14.*"
+                      ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Framework" Version="17.14.*"
+                      ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.*" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.*"
+                      ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.*"
+                      ExcludeAssets="runtime" PrivateAssets="all" />
+</ItemGroup>
+```
+
+- **`ExcludeAssets="runtime"`**: Prevents the DLLs from being copied to the output directory
+- **`PrivateAssets="all"`**: Prevents these dependencies from flowing to consuming projects
+- **`Microsoft.Build.Locator`**: Intentionally has NO exclusions - it must be in the output directory
+
+### 2. Provide Dependencies via .targets File
+
+For NuGet package consumers, a `.targets` file is included that provides the same package references:
+
+**`build/EasyAF.MSBuild.targets`**:
+```xml
+<Project>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build" Version="17.14.*"
+                      ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Framework" Version="17.14.*"
+                      ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.*" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.*"
+                      ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.*"
+                      ExcludeAssets="runtime" PrivateAssets="all" />
+  </ItemGroup>
+</Project>
+```
+
+This file is included in both `build/` and `buildTransitive/` folders of the NuGet package, ensuring it's imported by direct and transitive consumers.
+
+### 3. Simplified MSBuild Registration
+
+The `EnsureMSBuildRegistered()` method was simplified to explicitly pick the latest available SDK:
+
+```csharp
+public static void EnsureMSBuildRegistered()
+{
+    if (!MSBuildLocator.IsRegistered)
+    {
+        try
+        {
+            var instances = MSBuildLocator.QueryVisualStudioInstances().ToList();
+            var latestInstance = instances
+                .OrderByDescending(x => x.Version)
+                .FirstOrDefault();
+
+            if (latestInstance is not null)
+            {
+                MSBuildLocator.RegisterInstance(latestInstance);
+            }
+            else
+            {
+                MSBuildLocator.RegisterDefaults();
+            }
+        }
+        catch (InvalidOperationException ex)
+            when (ex.Message.Contains("assemblies were already loaded"))
+        {
+            // Already using loaded MSBuild, continue
+            return;
+        }
+    }
+}
+```
+
+### 4. Early Registration in Applications and Tests
+
+**Critical**: `EnsureMSBuildRegistered()` must be called **before** any code that references `Microsoft.Build` types is loaded by the CLR.
+
+**For applications** (like `EasyAF.Tools`), call it at the start of `Main()`:
+
+```csharp
+public static Task<int> Main(string[] args)
+{
+    MSBuildProjectManager.EnsureMSBuildRegistered();
+
+    return Host.CreateDefaultBuilder()
+        // ... rest of application
+}
+```
+
+**For test projects**, use `[AssemblyInitialize]`:
+
+```csharp
+[TestClass]
+public static class AssemblyInitialize
+{
+    [AssemblyInitialize]
+    public static void Initialize(TestContext context)
+    {
+        MSBuildProjectManager.EnsureMSBuildRegistered();
+    }
+}
+```
+
+## Summary of Changes
+
+| File | Change |
+|------|--------|
+| `CloudNimble.EasyAF.MSBuild.csproj` | Added `ExcludeAssets="runtime" PrivateAssets="all"` to Microsoft.Build packages |
+| `build/EasyAF.MSBuild.targets` | New file providing package references to NuGet consumers |
+| `MSBuildProjectManager.cs` | Simplified `EnsureMSBuildRegistered()` to pick latest SDK |
+| Application `Program.cs` | Call `EnsureMSBuildRegistered()` at start of `Main()` |
+| Test `AssemblyInitialize.cs` | New file with `[AssemblyInitialize]` calling `EnsureMSBuildRegistered()` |
+
+## For Library Consumers
+
+If you're consuming `EasyAF.MSBuild` and need to use MSBuild APIs in your own code:
+
+1. **Always call `MSBuildProjectManager.EnsureMSBuildRegistered()` early** - before any code that uses `Microsoft.Build` types
+2. **For CLI tools**: Call it at the start of `Main()`
+3. **For test projects**: Use `[AssemblyInitialize]`
+4. **For libraries**: Document that consumers must register MSBuild before using your library
+
+## References
+
+- [MSBuildLocator GitHub](https://github.com/microsoft/MSBuildLocator)
+- [MSBuildLocator .NET SDK Discovery](https://github.com/microsoft/MSBuildLocator/wiki/Finding-MSBuild-instances)
+- [MSBuild Find and Use API](https://learn.microsoft.com/en-us/visualstudio/msbuild/updating-an-existing-application)

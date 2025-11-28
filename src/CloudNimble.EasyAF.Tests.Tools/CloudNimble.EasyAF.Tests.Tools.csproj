@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\CloudNimble.EasyAF.MSBuild\CloudNimble.EasyAF.MSBuild.csproj" />
         <ProjectReference Include="..\CloudNimble.EasyAF.Tools\CloudNimble.EasyAF.Tools.csproj" />
         <ProjectReference Include="..\CloudNimble.EasyAF.Tests.Shared\CloudNimble.EasyAF.Tests.Shared.csproj" />
     </ItemGroup>
