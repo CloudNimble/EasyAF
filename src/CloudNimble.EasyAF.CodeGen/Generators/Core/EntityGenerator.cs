@@ -66,7 +66,7 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
             RegionBegin("Constructors");
 
             _writer.WriteLine("/// <summary>");
-            _writer.WriteLine($"/// ");
+            _writer.WriteLine($"/// {MetadataTools.Comment(Entity.EntityType)}");
             _writer.WriteLine("/// </summary>");
             _writer.WriteLine($"public {CodeGenerationTools.Escape(Entity.EntityType)}()");
             _writer.WriteLine("{");
@@ -104,9 +104,9 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
         internal void WriteProperties()
         {
             RegionBegin("Public Properties");
-            Entity.SimpleProperties.ToList().ForEach(c => WriteProperty(c));
-            Entity.ComplexProperties.ForEach(c => WriteProperty(c));
-            Entity.NavigationProperties.ForEach(c => WriteProperty(c));
+            Entity.SimpleProperties.ToList().ForEach(WriteProperty);
+            Entity.ComplexProperties.ForEach(WriteProperty);
+            Entity.NavigationProperties.ForEach(WriteProperty);
             RegionEnd();
         }
 

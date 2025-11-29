@@ -225,7 +225,7 @@ namespace CloudNimble.EasyAF.CodeGen
                 using var mslReader = MslElement.CreateReader();
                 try
                 {
-                    Mappings = new StorageMappingItemCollection(EdmItems, StoreItems, new[] { mslReader });
+                    Mappings = new StorageMappingItemCollection(EdmItems, StoreItems, [mslReader]);
                 }
                 catch (MappingException ex)
                 {

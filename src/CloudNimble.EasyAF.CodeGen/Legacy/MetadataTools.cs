@@ -25,58 +25,103 @@ namespace CloudNimble.EasyAF.CodeGen.Legacy
         }
 
         /// <summary>
-        /// 
+        /// Gets the documentation comment for an EDM type.
         /// </summary>
-        /// <param name="edmType"></param>
-        /// <returns></returns>
+        /// <param name="edmType">The EDM type.</param>
+        /// <returns>The documentation comment, preferring LongDescription over Summary.</returns>
         public static string Comment(EdmType edmType)
         {
             Ensure.ArgumentNotNull(edmType, nameof(edmType));
-            return edmType.Documentation?.LongDescription ?? edmType.Documentation?.Summary ?? string.Empty;
+            var doc = edmType.Documentation;
+            if (doc is null) return string.Empty;
+
+            // Prefer LongDescription over Summary, but check for empty strings
+            // since Documentation properties default to "" not null
+            if (!string.IsNullOrEmpty(doc.LongDescription))
+                return doc.LongDescription;
+            if (!string.IsNullOrEmpty(doc.Summary))
+                return doc.Summary;
+            return string.Empty;
         }
 
         /// <summary>
-        /// 
+        /// Gets the documentation comment for an EDM property.
         /// </summary>
-        /// <param name="edmProperty"></param>
-        /// <returns></returns>
+        /// <param name="edmProperty">The EDM property.</param>
+        /// <returns>The documentation comment, preferring LongDescription over Summary.</returns>
         public static string Comment(EdmProperty edmProperty)
         {
             Ensure.ArgumentNotNull(edmProperty, nameof(edmProperty));
-            return edmProperty.Documentation?.LongDescription ?? edmProperty.Documentation?.Summary ?? string.Empty;
+            var doc = edmProperty.Documentation;
+            if (doc is null) return string.Empty;
+
+            // Prefer LongDescription over Summary, but check for empty strings
+            // since Documentation properties default to "" not null
+            if (!string.IsNullOrEmpty(doc.LongDescription))
+                return doc.LongDescription;
+            if (!string.IsNullOrEmpty(doc.Summary))
+                return doc.Summary;
+            return string.Empty;
         }
 
         /// <summary>
-        /// 
+        /// Gets the documentation comment for a navigation property.
         /// </summary>
-        /// <param name="navigationProperty"></param>
-        /// <returns></returns>
+        /// <param name="navigationProperty">The navigation property.</param>
+        /// <returns>The documentation comment, preferring LongDescription over Summary.</returns>
         public static string Comment(NavigationProperty navigationProperty)
         {
             Ensure.ArgumentNotNull(navigationProperty, nameof(navigationProperty));
-            return navigationProperty.Documentation?.LongDescription ?? navigationProperty.Documentation?.Summary ?? string.Empty;
+            var doc = navigationProperty.Documentation;
+            if (doc is null) return string.Empty;
+
+            // Prefer LongDescription over Summary, but check for empty strings
+            // since Documentation properties default to "" not null
+            if (!string.IsNullOrEmpty(doc.LongDescription))
+                return doc.LongDescription;
+            if (!string.IsNullOrEmpty(doc.Summary))
+                return doc.Summary;
+            return string.Empty;
         }
 
         /// <summary>
-        /// 
+        /// Gets the documentation comment for an entity container.
         /// </summary>
-        /// <param name="container"></param>
-        /// <returns></returns>
+        /// <param name="container">The entity container.</param>
+        /// <returns>The documentation comment, preferring LongDescription over Summary.</returns>
         public static string Comment(EntityContainer container)
         {
             Ensure.ArgumentNotNull(container, nameof(container));
-            return container.Documentation?.LongDescription ?? container.Documentation?.Summary ?? string.Empty;
+            var doc = container.Documentation;
+            if (doc is null) return string.Empty;
+
+            // Prefer LongDescription over Summary, but check for empty strings
+            // since Documentation properties default to "" not null
+            if (!string.IsNullOrEmpty(doc.LongDescription))
+                return doc.LongDescription;
+            if (!string.IsNullOrEmpty(doc.Summary))
+                return doc.Summary;
+            return string.Empty;
         }
 
         /// <summary>
-        /// 
+        /// Gets the documentation comment for an entity set.
         /// </summary>
-        /// <param name="entitySet"></param>
-        /// <returns></returns>
+        /// <param name="entitySet">The entity set.</param>
+        /// <returns>The documentation comment, preferring LongDescription over Summary.</returns>
         public static string Comment(EntitySet entitySet)
         {
             Ensure.ArgumentNotNull(entitySet, nameof(entitySet));
-            return entitySet.Documentation?.LongDescription ?? entitySet.Documentation?.Summary ?? string.Empty;
+            var doc = entitySet.Documentation;
+            if (doc is null) return string.Empty;
+
+            // Prefer LongDescription over Summary, but check for empty strings
+            // since Documentation properties default to "" not null
+            if (!string.IsNullOrEmpty(doc.LongDescription))
+                return doc.LongDescription;
+            if (!string.IsNullOrEmpty(doc.Summary))
+                return doc.Summary;
+            return string.Empty;
         }
 
         /// <summary>

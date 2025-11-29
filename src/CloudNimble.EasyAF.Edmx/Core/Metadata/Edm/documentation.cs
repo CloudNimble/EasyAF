@@ -7,8 +7,8 @@ namespace System.Data.Entity.Core.Metadata.Edm
     /// </summary>
     public sealed class Documentation : MetadataItem
     {
-        private string _summary = "";
-        private string _longDescription = "";
+        private string _summary;
+        private string _longDescription;
 
         // <summary>
         // Default constructor - primarily created for supporting usage of this Documentation class by SOM.
@@ -24,8 +24,8 @@ namespace System.Data.Entity.Core.Metadata.Edm
         /// <param name="longDescription">A long description string.</param>
         public Documentation(string summary, string longDescription)
         {
-            Summary = summary;
-            LongDescription = longDescription;
+            _summary = summary;
+            _longDescription = longDescription;
         }
 
         /// <summary>
@@ -50,18 +50,8 @@ namespace System.Data.Entity.Core.Metadata.Edm
         /// </returns>
         public string Summary
         {
-            get { return _summary; }
-            internal set
-            {
-                if (value is not null)
-                {
-                    _summary = value;
-                }
-                else
-                {
-                    _summary = "";
-                }
-            }
+            get => _summary;
+            internal set => _summary = value;
         }
 
         /// <summary>
@@ -72,18 +62,8 @@ namespace System.Data.Entity.Core.Metadata.Edm
         /// </returns>
         public string LongDescription
         {
-            get { return _longDescription; }
-            internal set
-            {
-                if (value is not null)
-                {
-                    _longDescription = value;
-                }
-                else
-                {
-                    _longDescription = "";
-                }
-            }
+            get => _longDescription;
+            internal set => _longDescription = value;
         }
 
         // <summary>
@@ -133,9 +113,6 @@ namespace System.Data.Entity.Core.Metadata.Edm
         /// <returns>
         /// The summary for this <see cref="T:System.Data.Entity.Core.Metadata.Edm.Documentation" />.
         /// </returns>
-        public override string ToString()
-        {
-            return _summary;
-        }
+        public override string ToString() => _summary ?? string.Empty;
     }
 }

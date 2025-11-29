@@ -99,8 +99,8 @@ namespace CloudNimble.EasyAF.Tests.CodeGen.Core
             sanitizedResult.Should().Be(sanitizedFile);
         }
 
-        [DataRow(ProjectPath)]
-        [TestMethod]
+        //[DataRow(ProjectPath)]
+        //[TestMethod]
         [BreakdanceManifestGenerator]
         public void WriteInterceptors(string path)
         {
