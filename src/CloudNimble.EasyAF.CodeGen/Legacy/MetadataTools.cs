@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Metadata.Edm;
 using CloudNimble.EasyAF.Core;
+using System.Security;
 
 namespace CloudNimble.EasyAF.CodeGen.Legacy
 {
@@ -38,9 +39,9 @@ namespace CloudNimble.EasyAF.CodeGen.Legacy
             // Prefer LongDescription over Summary, but check for empty strings
             // since Documentation properties default to "" not null
             if (!string.IsNullOrEmpty(doc.LongDescription))
-                return doc.LongDescription;
+                return SanitizeXmlComment(doc.LongDescription);
             if (!string.IsNullOrEmpty(doc.Summary))
-                return doc.Summary;
+                return SanitizeXmlComment(doc.Summary);
             return string.Empty;
         }
 
@@ -58,9 +59,9 @@ namespace CloudNimble.EasyAF.CodeGen.Legacy
             // Prefer LongDescription over Summary, but check for empty strings
             // since Documentation properties default to "" not null
             if (!string.IsNullOrEmpty(doc.LongDescription))
-                return doc.LongDescription;
+                return SanitizeXmlComment(doc.LongDescription);
             if (!string.IsNullOrEmpty(doc.Summary))
-                return doc.Summary;
+                return SanitizeXmlComment(doc.Summary);
             return string.Empty;
         }
 
@@ -78,9 +79,9 @@ namespace CloudNimble.EasyAF.CodeGen.Legacy
             // Prefer LongDescription over Summary, but check for empty strings
             // since Documentation properties default to "" not null
             if (!string.IsNullOrEmpty(doc.LongDescription))
-                return doc.LongDescription;
+                return SanitizeXmlComment(doc.LongDescription);
             if (!string.IsNullOrEmpty(doc.Summary))
-                return doc.Summary;
+                return SanitizeXmlComment(doc.Summary);
             return string.Empty;
         }
 
@@ -98,9 +99,9 @@ namespace CloudNimble.EasyAF.CodeGen.Legacy
             // Prefer LongDescription over Summary, but check for empty strings
             // since Documentation properties default to "" not null
             if (!string.IsNullOrEmpty(doc.LongDescription))
-                return doc.LongDescription;
+                return SanitizeXmlComment(doc.LongDescription);
             if (!string.IsNullOrEmpty(doc.Summary))
-                return doc.Summary;
+                return SanitizeXmlComment(doc.Summary);
             return string.Empty;
         }
 
@@ -118,10 +119,34 @@ namespace CloudNimble.EasyAF.CodeGen.Legacy
             // Prefer LongDescription over Summary, but check for empty strings
             // since Documentation properties default to "" not null
             if (!string.IsNullOrEmpty(doc.LongDescription))
-                return doc.LongDescription;
+                return SanitizeXmlComment(doc.LongDescription);
             if (!string.IsNullOrEmpty(doc.Summary))
-                return doc.Summary;
+                return SanitizeXmlComment(doc.Summary);
             return string.Empty;
+        }
+
+        /// <summary>
+        /// Sanitizes a documentation comment for use in C# XML documentation.
+        /// Escapes XML special characters and handles multiline comments.
+        /// </summary>
+        /// <param name="comment">The raw comment text.</param>
+        /// <returns>The sanitized comment safe for XML documentation.</returns>
+        internal static string SanitizeXmlComment(string comment)
+        {
+            if (string.IsNullOrEmpty(comment))
+                return comment;
+
+            // Escape XML special characters (& → &amp;, < → &lt;, > → &gt;)
+            comment = SecurityElement.Escape(comment);
+
+            // Handle multiline - add /// prefix after each newline
+            if (comment.Contains('\n'))
+            {
+                comment = comment.Replace("\r\n", "\n").Replace("\r", "\n");
+                comment = comment.Replace("\n", "\n/// ");
+            }
+
+            return comment;
         }
 
         /// <summary>

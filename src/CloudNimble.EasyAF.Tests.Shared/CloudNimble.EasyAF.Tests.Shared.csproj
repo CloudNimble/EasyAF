@@ -25,7 +25,6 @@
         <Compile Include="..\CloudNimble.EasyAF.Tests.CodeGen\Baselines\Entities\User.Generated.cs" Link="EasyAFModel\User.Generated.cs" />
         <Compile Include="..\CloudNimble.EasyAF.Tests.CodeGen\Baselines\Managers\InquiryManager.Generated.cs" Link="EasyAFModel\InquiryManager.Generated.cs" />
         <Compile Include="..\CloudNimble.EasyAF.Tests.CodeGen\Baselines\Managers\ProductManager.Generated.cs" Link="EasyAFModel\ProductManager.Generated.cs" />
-
     </ItemGroup>
 
     <ItemGroup>

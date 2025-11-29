@@ -157,7 +157,8 @@ namespace CloudNimble.EasyAF.Tests.CodeGen
             Console.WriteLine($"Name Documentation object: {nameProperty.Documentation}");
             Console.WriteLine($"Name Documentation.Summary: {nameProperty.Documentation?.Summary}");
             Console.WriteLine($"Name documentation via MetadataTools: '{nameDoc}'");
-            nameDoc.Should().Be("The user's display name.", "Name property should have documentation");
+            // Note: Apostrophes are escaped for XML compatibility
+            nameDoc.Should().Be("The user&apos;s display name.", "Name property should have documentation (with escaped apostrophe)");
         }
 
         /// <summary>
@@ -228,13 +229,218 @@ namespace CloudNimble.EasyAF.Tests.CodeGen
             generatedCode.Should().Contain("YOUR LUMINARY! YOUR LIBERATOR! CLU!",
                 "User entity documentation should appear in generated code");
 
-            // Property documentation - EmailAddress
-            generatedCode.Should().Contain("You'd better find this you POS.",
-                "EmailAddress property documentation should appear in generated code");
+            // Property documentation - EmailAddress (apostrophe is escaped for XML)
+            generatedCode.Should().Contain("You&apos;d better find this you POS.",
+                "EmailAddress property documentation should appear in generated code (with escaped apostrophe)");
 
             // Property documentation - Id
             generatedCode.Should().Contain("The identifier for the record.",
                 "Id property documentation should appear in generated code");
         }
+
+        #region SanitizeXmlComment Tests
+
+        /// <summary>
+        /// Tests that ampersand characters are properly escaped.
+        /// </summary>
+        [TestMethod]
+        public void SanitizeXmlComment_Ampersand_ShouldBeEscaped()
+        {
+            // Arrange
+            var input = "Save & Load functionality";
+            var expected = "Save &amp; Load functionality";
+
+            // Act
+            var result = MetadataTools.SanitizeXmlComment(input);
+
+            // Assert
+            result.Should().Be(expected);
+        }
+
+        /// <summary>
+        /// Tests that less-than characters are properly escaped.
+        /// </summary>
+        [TestMethod]
+        public void SanitizeXmlComment_LessThan_ShouldBeEscaped()
+        {
+            // Arrange
+            var input = "Value < 100";
+            var expected = "Value &lt; 100";
+
+            // Act
+            var result = MetadataTools.SanitizeXmlComment(input);
+
+            // Assert
+            result.Should().Be(expected);
+        }
+
+        /// <summary>
+        /// Tests that greater-than characters are properly escaped.
+        /// </summary>
+        [TestMethod]
+        public void SanitizeXmlComment_GreaterThan_ShouldBeEscaped()
+        {
+            // Arrange
+            var input = "Value > 0";
+            var expected = "Value &gt; 0";
+
+            // Act
+            var result = MetadataTools.SanitizeXmlComment(input);
+
+            // Assert
+            result.Should().Be(expected);
+        }
+
+        /// <summary>
+        /// Tests that multiple XML special characters are all escaped.
+        /// </summary>
+        [TestMethod]
+        public void SanitizeXmlComment_MultipleSpecialChars_ShouldAllBeEscaped()
+        {
+            // Arrange
+            var input = "Check if value > 0 && value < 100 & save";
+            var expected = "Check if value &gt; 0 &amp;&amp; value &lt; 100 &amp; save";
+
+            // Act
+            var result = MetadataTools.SanitizeXmlComment(input);
+
+            // Assert
+            result.Should().Be(expected);
+        }
+
+        /// <summary>
+        /// Tests that newlines are handled with /// prefix insertion.
+        /// </summary>
+        [TestMethod]
+        public void SanitizeXmlComment_Newline_ShouldAddCommentPrefix()
+        {
+            // Arrange
+            var input = "First line\nSecond line";
+            var expected = "First line\n/// Second line";
+
+            // Act
+            var result = MetadataTools.SanitizeXmlComment(input);
+
+            // Assert
+            result.Should().Be(expected);
+        }
+
+        /// <summary>
+        /// Tests that Windows-style CRLF is normalized and handled.
+        /// </summary>
+        [TestMethod]
+        public void SanitizeXmlComment_CrLf_ShouldNormalizeAndAddPrefix()
+        {
+            // Arrange
+            var input = "First line\r\nSecond line";
+            var expected = "First line\n/// Second line";
+
+            // Act
+            var result = MetadataTools.SanitizeXmlComment(input);
+
+            // Assert
+            result.Should().Be(expected);
+        }
+
+        /// <summary>
+        /// Tests that multiple newlines are all handled.
+        /// </summary>
+        [TestMethod]
+        public void SanitizeXmlComment_MultipleNewlines_ShouldAddPrefixToEach()
+        {
+            // Arrange
+            var input = "Line one\nLine two\nLine three";
+            var expected = "Line one\n/// Line two\n/// Line three";
+
+            // Act
+            var result = MetadataTools.SanitizeXmlComment(input);
+
+            // Assert
+            result.Should().Be(expected);
+        }
+
+        /// <summary>
+        /// Tests that both XML escaping and newline handling work together.
+        /// </summary>
+        [TestMethod]
+        public void SanitizeXmlComment_CombinedEscapingAndNewlines_ShouldHandleBoth()
+        {
+            // Arrange
+            var input = "Save & Load\nCheck value < 100";
+            var expected = "Save &amp; Load\n/// Check value &lt; 100";
+
+            // Act
+            var result = MetadataTools.SanitizeXmlComment(input);
+
+            // Assert
+            result.Should().Be(expected);
+        }
+
+        /// <summary>
+        /// Tests that null input returns null.
+        /// </summary>
+        [TestMethod]
+        public void SanitizeXmlComment_Null_ShouldReturnNull()
+        {
+            // Arrange
+            string input = null;
+
+            // Act
+            var result = MetadataTools.SanitizeXmlComment(input);
+
+            // Assert
+            result.Should().BeNull();
+        }
+
+        /// <summary>
+        /// Tests that empty string returns empty string.
+        /// </summary>
+        [TestMethod]
+        public void SanitizeXmlComment_Empty_ShouldReturnEmpty()
+        {
+            // Arrange
+            var input = string.Empty;
+
+            // Act
+            var result = MetadataTools.SanitizeXmlComment(input);
+
+            // Assert
+            result.Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Tests that text without special characters passes through unchanged.
+        /// </summary>
+        [TestMethod]
+        public void SanitizeXmlComment_NoSpecialChars_ShouldPassThrough()
+        {
+            // Arrange
+            var input = "This is a normal comment with no special characters.";
+
+            // Act
+            var result = MetadataTools.SanitizeXmlComment(input);
+
+            // Assert
+            result.Should().Be(input);
+        }
+
+        /// <summary>
+        /// Tests that quotes are escaped (SecurityElement.Escape handles this).
+        /// </summary>
+        [TestMethod]
+        public void SanitizeXmlComment_Quotes_ShouldBeEscaped()
+        {
+            // Arrange
+            var input = "The \"name\" property";
+            var expected = "The &quot;name&quot; property";
+
+            // Act
+            var result = MetadataTools.SanitizeXmlComment(input);
+
+            // Assert
+            result.Should().Be(expected);
+        }
+
+        #endregion
     }
 }

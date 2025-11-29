@@ -1,4 +1,4 @@
-using CloudNimble.EasyAF.EFCoreToEdmx;
+﻿using CloudNimble.EasyAF.EFCoreToEdmx;
 using CloudNimble.EasyAF.Tools.Commands;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
