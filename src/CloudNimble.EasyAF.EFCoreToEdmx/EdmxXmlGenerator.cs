@@ -470,10 +470,11 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
         /// </remarks>
         private XElement GenerateStorageModel()
         {
-            // EDMX files are code generation helpers, not functional databases
-            // Always use Microsoft.Data.SqlClient and 2012.Azure regardless of source database
-            // This ensures EDMX compatibility and prevents provider-specific issues
-            var providerName = "Microsoft.Data.SqlClient";
+            // RWM: EDMX files are code generation helpers, not functional databases
+            // Always use System.Data.SqlClient and 2012.Azure regardless of source database
+            // This ensures EDMX compatibility and prevents provider-specific issues and allows the model to be opened
+            // by the Designer outside of the solution. (VS2022 & 2026 error out when opening EDMX files in .NET Core solutions.
+            var providerName = "System.Data.SqlClient";
             var providerToken = "2012.Azure";
             
             // Generate SSDL (Store Schema Definition Language)
