@@ -5,8 +5,6 @@ icon: plug
 keywords: ['IDbStateEnum', 'CloudNimble.EasyAF.Core.IDbStateEnum', 'CloudNimble.EasyAF.Core', 'interface', 'CloudNimble.EasyAF.Core.IDbEnum', 'CloudNimble.EasyAF.Core.IIdentifiable<System.Guid>', 'CloudNimble.EasyAF.Core.IActiveTrackable', 'CloudNimble.EasyAF.Core.IHumanReadable', 'CloudNimble.EasyAF.Core.ISortable']
 ---
 
-import { DocsBadge } from '/snippets/DocsBadge.jsx';
-
 ## Definition
 
 **Assembly:** CloudNimble.EasyAF.Core.dll
@@ -25,7 +23,7 @@ An interface that identifies this Entity as being the enumeration details for th
 
 ## Properties
 
-### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> InstructionText <DocsBadge text="Abstract" variant="warning" />
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> InstructionText <Badge color="orange">Abstract</Badge>
 
 Text to display to the user regarding the current state, and what needs to happen next.
 
@@ -39,7 +37,7 @@ string InstructionText { get; set; }
 
 Type: `string`
 
-### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> PrimaryTargetDisplayText <DocsBadge text="Abstract" variant="warning" />
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PrimaryTargetDisplayText <Badge color="orange">Abstract</Badge>
 
 A string that describes the next action in the SimpleStateMachine, usually displayed on a button or link.
 
@@ -53,7 +51,7 @@ string PrimaryTargetDisplayText { get; set; }
 
 Type: `string`
 
-### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> PrimaryTargetSortOrder <DocsBadge text="Abstract" variant="warning" />
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PrimaryTargetSortOrder <Badge color="orange">Abstract</Badge>
 
 An integer that represents the State the Entity should be moved to once this action completes successfully.
 
@@ -67,7 +65,7 @@ int PrimaryTargetSortOrder { get; set; }
 
 Type: `int`
 
-### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> SecondaryTargetDisplayText <DocsBadge text="Abstract" variant="warning" />
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SecondaryTargetDisplayText <Badge color="orange">Abstract</Badge>
 
 A string that describes an alternate action in the SimpleStateMachine. This action could skip States moving forward, or return the Entity to a previous State. This text is usually displayed on a button or link.
 
@@ -81,7 +79,7 @@ string SecondaryTargetDisplayText { get; set; }
 
 Type: `string`
 
-### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> SecondaryTargetSortOrder <DocsBadge text="Abstract" variant="warning" />
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SecondaryTargetSortOrder <Badge color="orange">Abstract</Badge>
 
 An integer that represents an alternate State the Entity should be moved to once this action is finished.
 

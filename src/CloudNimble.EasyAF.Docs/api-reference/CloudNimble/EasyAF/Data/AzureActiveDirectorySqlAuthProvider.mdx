@@ -6,8 +6,6 @@ sidebarTitle: AzureActiveDirectorySqlAuthProvider
 keywords: ['AzureActiveDirectorySqlAuthProvider', 'CloudNimble.EasyAF.Data.AzureActiveDirectorySqlAuthProvider', 'CloudNimble.EasyAF.Data', 'class', 'Microsoft.Data.SqlClient.SqlAuthenticationProvider']
 ---
 
-import { DocsBadge } from '/snippets/DocsBadge.jsx';
-
 ## Definition
 
 **Assembly:** CloudNimble.EasyAF.Data.EF6.dll
@@ -28,7 +26,7 @@ Provides a custom authentication method that gets a [SqlAuthenticationToken](htt
 
 ## Constructors
 
-### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> .ctor
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
 
 #### Syntax
 
@@ -38,7 +36,7 @@ public AzureActiveDirectorySqlAuthProvider()
 
 ## Methods
 
-### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> AcquireTokenAsync <DocsBadge text="Override" variant="info" />
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AcquireTokenAsync <Badge color="blue">Override</Badge>
 
 Request token from the provider using the specified [SqlAuthenticationParameters](https://learn.microsoft.com/dotnet/api/microsoft.data.sqlclient.sqlauthenticationparameters).
             Uses DefaultAzureCredential to obtain an access token for SQL Database authentication.
@@ -60,7 +58,7 @@ public override System.Threading.Tasks.Task<Microsoft.Data.SqlClient.SqlAuthenti
 Type: `System.Threading.Tasks.Task<Microsoft.Data.SqlClient.SqlAuthenticationToken>`
 A SqlAuthenticationToken containing the access token and expiration time.
 
-### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> IsSupported <DocsBadge text="Override" variant="info" />
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> IsSupported <Badge color="blue">Override</Badge>
 
 Returns a flag indicating if the requested [SqlAuthenticationMethod](https://learn.microsoft.com/dotnet/api/microsoft.data.sqlclient.sqlauthenticationmethod) is supported by this custom [SqlAuthenticationProvider](https://learn.microsoft.com/dotnet/api/microsoft.data.sqlclient.sqlauthenticationprovider).
             This provider supports ActiveDirectoryDeviceCodeFlow authentication method.

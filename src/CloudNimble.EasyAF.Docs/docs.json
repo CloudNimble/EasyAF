@@ -1542,6 +1542,10 @@
                           "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler",
                           "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMetadataAware",
                           "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/ITrackable",
+                          "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/KafkaAuthenticationMode",
+                          "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/KafkaBrokerProtocol",
+                          "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/KafkaConstants",
+                          "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/KafkaOptions",
                           "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageBase",
                           "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope"
                         ]
@@ -1573,6 +1577,14 @@
                             "pages": [
                               "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Dispatch/IndexedDb/index",
                               "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Dispatch/IndexedDb/IndexedDbQueueProcessor"
+                            ]
+                          },
+                          {
+                            "group": "Kafka",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Dispatch/Kafka/index",
+                              "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Dispatch/Kafka/KafkaProcessor"
                             ]
                           },
                           {
@@ -1628,6 +1640,15 @@
                             "pages": [
                               "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Publish/IndexedDb/index",
                               "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Publish/IndexedDb/IndexedDbMessagePublisher"
+                            ]
+                          },
+                          {
+                            "group": "Kafka",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Publish/Kafka/index",
+                              "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Publish/Kafka/IKafkaKeyProvider",
+                              "simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Publish/Kafka/KafkaMessagePublisher"
                             ]
                           }
                         ]
