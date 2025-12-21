@@ -5,7 +5,7 @@ icon: file-brackets-curly
 keywords: ['RestierContainerBuilder', 'Microsoft.Restier.Core.RestierContainerBuilder', 'Microsoft.Restier.Core', 'class', 'System.Object', 'Microsoft.OData.IContainerBuilder']
 ---
 
-import { DocsBadge } from '/snippets/DocsBadge.jsx';
+import { DocsBadge } from '/snippets/restier/DocsBadge.jsx';
 
 ## Definition
 
@@ -29,7 +29,7 @@ The default Dependency Injection container builder for Restier.
 
 ### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
 
-Initializes a new instance of the [RestierContainerBuilder](/api-reference/Microsoft/Restier/Core/RestierContainerBuilder) class.
+Initializes a new instance of the [RestierContainerBuilder](/restier/api-reference/Microsoft/Restier/Core/RestierContainerBuilder) class.
 
 #### Syntax
 
@@ -41,7 +41,7 @@ public RestierContainerBuilder(System.Action<Microsoft.Restier.Core.RestierApiBu
 
 | Name | Type | Description |
 |------|------|-------------|
-| `configureApis` | `System.Action<Microsoft.Restier.Core.RestierApiBuilder>` | Action to configure the [ApiBase](/api-reference/Microsoft/Restier/Core/ApiBase) registrations that are available to the Container. |
+| `configureApis` | `System.Action<Microsoft.Restier.Core.RestierApiBuilder>` | Action to configure the [ApiBase](/restier/api-reference/Microsoft/Restier/Core/ApiBase) registrations that are available to the Container. |
 
 #### Remarks
 
@@ -108,7 +108,7 @@ The [IContainerBuilder](https://learn.microsoft.com/dotnet/api/microsoft.odata.i
 
 ### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  BuildContainer <DocsBadge text="Virtual" variant="warning" />
 
-Builds a container which implements [IServiceProvider](/api-reference/System/IServiceProvider) and contains all the services registered for a specific route.
+Builds a container which implements [IServiceProvider](/restier/api-reference/System/IServiceProvider) and contains all the services registered for a specific route.
 
 #### Syntax
 
@@ -119,7 +119,7 @@ public virtual System.IServiceProvider BuildContainer()
 #### Returns
 
 Type: `System.IServiceProvider`
-The [IServiceProvider](/api-reference/System/IServiceProvider)dependency injection container&lt;/see&gt; for the registered services.
+The [IServiceProvider](/restier/api-reference/System/IServiceProvider)dependency injection container&lt;/see&gt; for the registered services.
 
 #### Remarks
 

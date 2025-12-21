@@ -5,7 +5,7 @@ icon: file-brackets-curly
 keywords: ['ApiBase', 'Microsoft.Restier.Core.ApiBase', 'Microsoft.Restier.Core', 'error']
 ---
 
-import { DocsBadge } from '/snippets/DocsBadge.jsx';
+import { DocsBadge } from '/snippets/restier/DocsBadge.jsx';
 
 ## Definition
 
@@ -43,7 +43,7 @@ public Object()
 
 ### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ServiceProvider
 
-Gets the [IServiceProvider](/api-reference/System/IServiceProvider) which contains all services.
+Gets the [IServiceProvider](/restier/api-reference/System/IServiceProvider) which contains all services.
 
 #### Syntax
 
@@ -125,7 +125,7 @@ public static string GenerateVisibilityMatrix(Microsoft.Restier.Core.ApiBase api
 
 | Name | Type | Description |
 |------|------|-------------|
-| `api` | `Microsoft.Restier.Core.ApiBase` | The [ApiBase](/api-reference/Microsoft/Restier/Core/ApiBase) instance to process. |
+| `api` | `Microsoft.Restier.Core.ApiBase` | The [ApiBase](/restier/api-reference/Microsoft/Restier/Core/ApiBase) instance to process. |
 | `markdown` | `bool` | - |
 
 #### Returns
@@ -198,7 +198,7 @@ Type: `int`
 
 <Note>Extension method from `Microsoft.Restier.Core.ApiBaseExtensions`</Note>
 
-Retrieves the [IEdmModel](/api-reference/Microsoft/OData/Edm/IEdmModel) used by this [ApiBase](/api-reference/Microsoft/Restier/Core/ApiBase) instance.
+Retrieves the [IEdmModel](/restier/api-reference/Microsoft/OData/Edm/IEdmModel) used by this [ApiBase](/restier/api-reference/Microsoft/Restier/Core/ApiBase) instance.
 
 #### Syntax
 
@@ -210,12 +210,12 @@ public static Microsoft.OData.Edm.IEdmModel GetModel(Microsoft.Restier.Core.ApiB
 
 | Name | Type | Description |
 |------|------|-------------|
-| `api` | `Microsoft.Restier.Core.ApiBase` | The [ApiBase](/api-reference/Microsoft/Restier/Core/ApiBase) instance to extend. |
+| `api` | `Microsoft.Restier.Core.ApiBase` | The [ApiBase](/restier/api-reference/Microsoft/Restier/Core/ApiBase) instance to extend. |
 
 #### Returns
 
 Type: `Microsoft.OData.Edm.IEdmModel`
-The [IEdmModel](/api-reference/Microsoft/OData/Edm/IEdmModel) used by this [ApiBase](/api-reference/Microsoft/Restier/Core/ApiBase) instance.
+The [IEdmModel](/restier/api-reference/Microsoft/OData/Edm/IEdmModel) used by this [ApiBase](/restier/api-reference/Microsoft/Restier/Core/ApiBase) instance.
 
 ### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetProperty <DocsBadge text="Extension" variant="success" />
 
@@ -647,7 +647,7 @@ public static void WriteCurrentVisibilityMatrix(Microsoft.Restier.Core.ApiBase a
 
 | Name | Type | Description |
 |------|------|-------------|
-| `api` | `Microsoft.Restier.Core.ApiBase` | The [ApiBase](/api-reference/Microsoft/Restier/Core/ApiBase) instance to build the Visibility Matrix for. |
+| `api` | `Microsoft.Restier.Core.ApiBase` | The [ApiBase](/restier/api-reference/Microsoft/Restier/Core/ApiBase) instance to build the Visibility Matrix for. |
 | `sourceDirectory` | `string` | A string containing the relative or absolute path to use as the root. The default is "". If you want to be able to have it as part of the project,
             so you can check it into source control, use "..//..//". |
 | `suffix` | `string` | A string to append to the Api name when writing the text file. |

@@ -5,8 +5,6 @@ icon: file-brackets-curly
 keywords: ['NavigationItem', 'CloudNimble.BlazorEssentials.Navigation.NavigationItem', 'CloudNimble.BlazorEssentials.Navigation', 'class', 'CloudNimble.BlazorEssentials.InterfaceElement']
 ---
 
-import { DocsBadge } from '/snippets/DocsBadge.jsx';
-
 ## Definition
 
 **Assembly:** CloudNimble.BlazorEssentials.dll
@@ -27,7 +25,7 @@ Defines an app navigation structure suitable for binding to navigation menus.
 
 ## Constructors
 
-### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
 
 #### Syntax
 
@@ -35,7 +33,7 @@ Defines an app navigation structure suitable for binding to navigation menus.
 public NavigationItem()
 ```
 
-### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
 
 Creates a new instance with the minimum-required items to render a Blazor NavLink.
 
@@ -50,10 +48,10 @@ public NavigationItem(string text, string icon, string url)
 | Name | Type | Description |
 |------|------|-------------|
 | `text` | `string` | A string representing the text that will be displayed in the NavBar. |
-| `icon` | `string` | A string representing the CSS class(es) for the icon that can be displayed next to the [InterfaceElement.DisplayText](/api-reference/CloudNimble/BlazorEssentials/InterfaceElement#displaytext). |
-| `url` | `string` | A string corresponding to the route for this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). |
+| `icon` | `string` | A string representing the CSS class(es) for the icon that can be displayed next to the [InterfaceElement.DisplayText](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/InterfaceElement#displaytext). |
+| `url` | `string` | A string corresponding to the route for this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). |
 
-### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
 
 #### Syntax
 
@@ -66,12 +64,12 @@ public NavigationItem(string text, string icon, string url, string category)
 | Name | Type | Description |
 |------|------|-------------|
 | `text` | `string` | A string representing the text that will be displayed in the NavBar. |
-| `icon` | `string` | A string representing the CSS class(es) for the icon that can be displayed next to the [InterfaceElement.DisplayText](/api-reference/CloudNimble/BlazorEssentials/InterfaceElement#displaytext). |
-| `url` | `string` | A string corresponding to the route for this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). |
-| `category` | `string` | A string representing the parent category for this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). Can be useful for grouping 
-            [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem)NavigationItems&lt;/see&gt; into caregories for display. |
+| `icon` | `string` | A string representing the CSS class(es) for the icon that can be displayed next to the [InterfaceElement.DisplayText](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/InterfaceElement#displaytext). |
+| `url` | `string` | A string corresponding to the route for this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). |
+| `category` | `string` | A string representing the parent category for this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). Can be useful for grouping 
+            [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem)NavigationItems&lt;/see&gt; into caregories for display. |
 
-### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
 
 #### Syntax
 
@@ -84,13 +82,13 @@ public NavigationItem(string text, string icon, string url, string category, boo
 | Name | Type | Description |
 |------|------|-------------|
 | `text` | `string` | A string representing the text that will be displayed in the NavBar. |
-| `icon` | `string` | A string representing the CSS class(es) for the icon that can be displayed next to the [InterfaceElement.DisplayText](/api-reference/CloudNimble/BlazorEssentials/InterfaceElement#displaytext). |
-| `url` | `string` | A string corresponding to the route for this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). |
-| `category` | `string` | A string representing the parent category for this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). Can be useful for grouping 
-            [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem)NavigationItems&lt;/see&gt; into caregories for display. |
-| `isVisible` | `bool` | Specifies whether or not this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem) is visible on the NavBar. |
+| `icon` | `string` | A string representing the CSS class(es) for the icon that can be displayed next to the [InterfaceElement.DisplayText](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/InterfaceElement#displaytext). |
+| `url` | `string` | A string corresponding to the route for this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). |
+| `category` | `string` | A string representing the parent category for this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). Can be useful for grouping 
+            [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem)NavigationItems&lt;/see&gt; into caregories for display. |
+| `isVisible` | `bool` | Specifies whether or not this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem) is visible on the NavBar. |
 
-### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
 
 #### Syntax
 
@@ -103,13 +101,13 @@ public NavigationItem(string text, string icon, string category, bool isVisible,
 | Name | Type | Description |
 |------|------|-------------|
 | `text` | `string` | A string representing the text that will be displayed in the NavBar. |
-| `icon` | `string` | A string representing the CSS class(es) for the icon that can be displayed next to the [InterfaceElement.DisplayText](/api-reference/CloudNimble/BlazorEssentials/InterfaceElement#displaytext). |
-| `category` | `string` | A string representing the parent category for this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). Can be useful for grouping 
-            [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem)NavigationItems&lt;/see&gt; into caregories for display. |
-| `isVisible` | `bool` | Specifies whether or not this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem) is visible on the NavBar. |
+| `icon` | `string` | A string representing the CSS class(es) for the icon that can be displayed next to the [InterfaceElement.DisplayText](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/InterfaceElement#displaytext). |
+| `category` | `string` | A string representing the parent category for this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). Can be useful for grouping 
+            [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem)NavigationItems&lt;/see&gt; into caregories for display. |
+| `isVisible` | `bool` | Specifies whether or not this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem) is visible on the NavBar. |
 | `children` | `System.Collections.Generic.List<CloudNimble.BlazorEssentials.Navigation.NavigationItem>` | A [List`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1) containing nodes to render underneath this one. |
 
-### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
 
 #### Syntax
 
@@ -122,15 +120,15 @@ public NavigationItem(string text, string icon, string url, string category, boo
 | Name | Type | Description |
 |------|------|-------------|
 | `text` | `string` | A string representing the text that will be displayed in the NavBar. |
-| `icon` | `string` | A string representing the CSS class(es) for the icon that can be displayed next to the [InterfaceElement.DisplayText](/api-reference/CloudNimble/BlazorEssentials/InterfaceElement#displaytext). |
-| `url` | `string` | A string corresponding to the route for this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). |
-| `category` | `string` | A string representing the parent category for this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). Can be useful for grouping 
-            [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem)NavigationItems&lt;/see&gt; into caregories for display. |
-| `isVisible` | `bool` | Specifies whether or not this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem) is visible on the NavBar. |
+| `icon` | `string` | A string representing the CSS class(es) for the icon that can be displayed next to the [InterfaceElement.DisplayText](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/InterfaceElement#displaytext). |
+| `url` | `string` | A string corresponding to the route for this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). |
+| `category` | `string` | A string representing the parent category for this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). Can be useful for grouping 
+            [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem)NavigationItems&lt;/see&gt; into caregories for display. |
+| `isVisible` | `bool` | Specifies whether or not this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem) is visible on the NavBar. |
 | `pageTitle` | `string` | A string representing the text that can be displayed as a page header. |
-| `pageIcon` | `string` | A string representing the CSS class(es) for the icon that can be displayed next to the [NavigationItem.PageTitle](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem#pagetitle) in a page header. |
+| `pageIcon` | `string` | A string representing the CSS class(es) for the icon that can be displayed next to the [NavigationItem.PageTitle](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem#pagetitle) in a page header. |
 
-### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
 
 #### Syntax
 
@@ -143,17 +141,17 @@ public NavigationItem(string text, string icon, string url, string category, boo
 | Name | Type | Description |
 |------|------|-------------|
 | `text` | `string` | A string representing the text that will be displayed in the NavBar. |
-| `icon` | `string` | A string representing the CSS class(es) for the icon that can be displayed next to the [InterfaceElement.DisplayText](/api-reference/CloudNimble/BlazorEssentials/InterfaceElement#displaytext). |
-| `url` | `string` | A string corresponding to the route for this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). |
-| `category` | `string` | A string representing the parent category for this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). Can be useful for grouping 
-            [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem)NavigationItems&lt;/see&gt; into caregories for display. |
-| `isVisible` | `bool` | Specifies whether or not this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem) is visible on the NavBar. |
+| `icon` | `string` | A string representing the CSS class(es) for the icon that can be displayed next to the [InterfaceElement.DisplayText](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/InterfaceElement#displaytext). |
+| `url` | `string` | A string corresponding to the route for this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). |
+| `category` | `string` | A string representing the parent category for this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). Can be useful for grouping 
+            [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem)NavigationItems&lt;/see&gt; into caregories for display. |
+| `isVisible` | `bool` | Specifies whether or not this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem) is visible on the NavBar. |
 | `pageTitle` | `string` | A string representing the text that can be displayed as a page header. |
-| `pageIcon` | `string` | A string representing the CSS class(es) for the icon that can be displayed next to the [NavigationItem.PageTitle](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem#pagetitle) in a page header. |
+| `pageIcon` | `string` | A string representing the CSS class(es) for the icon that can be displayed next to the [NavigationItem.PageTitle](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem#pagetitle) in a page header. |
 | `roles` | `string` | - |
 | `allowAnonymous` | `bool` | - |
 
-### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
 
 <Note>Inherited from `CloudNimble.BlazorEssentials.InterfaceElement`</Note>
 
@@ -163,7 +161,7 @@ public NavigationItem(string text, string icon, string url, string category, boo
 public InterfaceElement()
 ```
 
-### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
 
 <Note>Inherited from `CloudNimble.BlazorEssentials.InterfaceElement`</Note>
 
@@ -181,7 +179,7 @@ public InterfaceElement(string displayText, string iconClass, string cssClass = 
 | `iconClass` | `string` | - |
 | `cssClass` | `string` | - |
 
-### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
 
 <Note>Inherited from `object`</Note>
 
@@ -193,7 +191,7 @@ public Object()
 
 ## Properties
 
-### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AccessibilityText
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> AccessibilityText
 
 Test to be used for screen readers when this item is rendered.
 
@@ -207,9 +205,9 @@ public string AccessibilityText { get; set; }
 
 Type: `string`
 
-### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AllowAnonymous
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> AllowAnonymous
 
-A [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) specifying whether or not this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem) is visible when a user is not logged in.
+A [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) specifying whether or not this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem) is visible when a user is not logged in.
 
 #### Syntax
 
@@ -221,10 +219,10 @@ public bool AllowAnonymous { get; }
 
 Type: `bool`
 
-### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Category
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Category
 
-A string representing the parent category for this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). Can be left blank, but useful for grouping 
-            [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem)NavigationItems&lt;/see&gt; into caregories for display.
+A string representing the parent category for this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem). Can be left blank, but useful for grouping 
+            [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem)NavigationItems&lt;/see&gt; into caregories for display.
 
 #### Syntax
 
@@ -236,7 +234,7 @@ public string Category { get; set; }
 
 Type: `string`
 
-### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Children
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Children
 
 #### Syntax
 
@@ -248,7 +246,7 @@ public System.Collections.Generic.List<CloudNimble.BlazorEssentials.Navigation.N
 
 Type: `System.Collections.Generic.List<CloudNimble.BlazorEssentials.Navigation.NavigationItem>`
 
-### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CssClass <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CssClass <Badge color="gray">Inherited</Badge>
 
 <Note>Inherited from `CloudNimble.BlazorEssentials.InterfaceElement`</Note>
 
@@ -264,7 +262,7 @@ public string CssClass { get; set; }
 
 Type: `string`
 
-### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DisplayText <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DisplayText <Badge color="gray">Inherited</Badge>
 
 <Note>Inherited from `CloudNimble.BlazorEssentials.InterfaceElement`</Note>
 
@@ -280,11 +278,11 @@ public string DisplayText { get; set; }
 
 Type: `string`
 
-### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IconClass <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IconClass <Badge color="gray">Inherited</Badge>
 
 <Note>Inherited from `CloudNimble.BlazorEssentials.InterfaceElement`</Note>
 
-A string representing the CSS class for the icon that will be rendered immediately before the [InterfaceElement.DisplayText](/api-reference/CloudNimble/BlazorEssentials/InterfaceElement#displaytext).
+A string representing the CSS class for the icon that will be rendered immediately before the [InterfaceElement.DisplayText](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/InterfaceElement#displaytext).
 
 #### Syntax
 
@@ -296,9 +294,9 @@ public string IconClass { get; set; }
 
 Type: `string`
 
-### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsVisible
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsVisible
 
-Specifies whether or not this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem) is visible on the NavBar. Defaults to True.
+Specifies whether or not this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem) is visible on the NavBar. Defaults to True.
 
 #### Syntax
 
@@ -310,9 +308,9 @@ public bool IsVisible { get; set; }
 
 Type: `bool`
 
-### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  PageIcon
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PageIcon
 
-A string representing the CSS class(es) for the icon that can be displayed next to the [NavigationItem.PageTitle](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem#pagetitle) in a page header.
+A string representing the CSS class(es) for the icon that can be displayed next to the [NavigationItem.PageTitle](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem#pagetitle) in a page header.
 
 #### Syntax
 
@@ -324,7 +322,7 @@ public string PageIcon { get; set; }
 
 Type: `string`
 
-### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  PageTitle
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PageTitle
 
 A string representing the text that can be displayed as a page header.
 
@@ -338,7 +336,7 @@ public string PageTitle { get; set; }
 
 Type: `string`
 
-### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Parameters
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Parameters
 
 Allows you to set parameters specific to the page that you do NOT want to pass through the Routing system.
 
@@ -354,9 +352,9 @@ Type: `dynamic`
 
 #### Remarks
 
-Accessible through [AppStateBase.CurrentNavItem](/api-reference/CloudNimble/BlazorEssentials/AppStateBase#currentnavitem).
+Accessible through [AppStateBase.CurrentNavItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/AppStateBase#currentnavitem).
 
-### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Roles
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Roles
 
 A [HashSet`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1) of roles that this NavigationItem is visible to.
 
@@ -370,9 +368,9 @@ public System.Collections.Generic.HashSet<string> Roles { get; private set; }
 
 Type: `System.Collections.Generic.HashSet<string>`
 
-### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Url
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Url
 
-A string corresponding to the route for this [NavigationItem](/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem).
+A string corresponding to the route for this [NavigationItem](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/Navigation/NavigationItem).
 
 #### Syntax
 
@@ -386,7 +384,7 @@ Type: `string`
 
 ## Methods
 
-### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
 
 <Note>Inherited from `object`</Note>
 
@@ -406,7 +404,7 @@ public virtual bool Equals(object obj)
 
 Type: `bool`
 
-### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
 
 <Note>Inherited from `object`</Note>
 
@@ -427,7 +425,7 @@ public static bool Equals(object objA, object objB)
 
 Type: `bool`
 
-### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
 
 <Note>Inherited from `object`</Note>
 
@@ -441,7 +439,7 @@ public virtual int GetHashCode()
 
 Type: `int`
 
-### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
 
 <Note>Inherited from `object`</Note>
 
@@ -455,7 +453,7 @@ public System.Type GetType()
 
 Type: `System.Type`
 
-### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsVisibleToUser
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsVisibleToUser
 
 Returns a boolean indicating whether or not the NavItem is available to any of the Roles the *claimsPrincipal* is in.
 
@@ -475,7 +473,7 @@ public bool IsVisibleToUser(System.Security.Claims.ClaimsPrincipal claimsPrincip
 
 Type: `bool`
 
-### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
 
 <Note>Inherited from `object`</Note>
 
@@ -489,7 +487,7 @@ protected internal object MemberwiseClone()
 
 Type: `object`
 
-### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
 
 <Note>Inherited from `object`</Note>
 
@@ -510,7 +508,7 @@ public static bool ReferenceEquals(object objA, object objB)
 
 Type: `bool`
 
-### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
 
 <Note>Inherited from `object`</Note>
 

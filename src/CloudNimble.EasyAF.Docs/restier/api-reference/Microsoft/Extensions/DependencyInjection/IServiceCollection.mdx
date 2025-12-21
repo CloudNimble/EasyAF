@@ -5,7 +5,7 @@ icon: file-brackets-curly
 keywords: ['IServiceCollection', 'Microsoft.Extensions.DependencyInjection.IServiceCollection', 'Microsoft.Extensions.DependencyInjection', 'error']
 ---
 
-import { DocsBadge } from '/snippets/DocsBadge.jsx';
+import { DocsBadge } from '/snippets/restier/DocsBadge.jsx';
 
 ## Definition
 
@@ -46,7 +46,7 @@ public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddCha
 
 | Name | Type | Description |
 |------|------|-------------|
-| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The [IServiceCollection](/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection) to register the *TService* with. |
+| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The [IServiceCollection](/restier/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection) to register the *TService* with. |
 | `factory` | `System.Func<System.IServiceProvider, TService, TService>` | A factory method to create a new instance of service TService, wrapping previous instance."/&gt;. |
 | `serviceLifetime` | `Microsoft.Extensions.DependencyInjection.ServiceLifetime` | The [ServiceLifetime](https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.servicelifetime) of the service being added. |
 
@@ -57,7 +57,7 @@ The *services* instance modified with the new *TService* reference.
 
 #### Type Parameters
 
-- `TService` - The service type to register with the [IServiceCollection](/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection).
+- `TService` - The service type to register with the [IServiceCollection](/restier/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection).
 
 #### Remarks
 
@@ -81,17 +81,17 @@ public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddCha
 
 | Name | Type | Description |
 |------|------|-------------|
-| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The [IServiceCollection](/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection) to register the *TService* with. |
+| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The [IServiceCollection](/restier/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection) to register the *TService* with. |
 | `serviceLifetime` | `Microsoft.Extensions.DependencyInjection.ServiceLifetime` | The [ServiceLifetime](https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.servicelifetime) of the service being added. |
 
 #### Returns
 
 Type: `Microsoft.Extensions.DependencyInjection.IServiceCollection`
-Current [IServiceCollection](/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection)
+Current [IServiceCollection](/restier/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection)
 
 #### Type Parameters
 
-- `TService` - The service type to register with the [IServiceCollection](/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection).
+- `TService` - The service type to register with the [IServiceCollection](/restier/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection).
 - `TImplement` - The implementation type.
 
 #### Remarks
@@ -108,7 +108,7 @@ Current [IServiceCollection](/api-reference/Microsoft/Extensions/DependencyInjec
 
             If want to cutoff previous registration, not define a property with type of TService or do not use it.
             The contributor added will get an instance of *TImplement* from the container, i.e.
-            [IServiceProvider](/api-reference/System/IServiceProvider), every time it's get called.
+            [IServiceProvider](/restier/api-reference/System/IServiceProvider), every time it's get called.
             This method will try to register *TImplement* as a service with
             [Transient](https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.servicelifetime.transient) life time, if it's not yet registered. To override, you can
             register *TImplement* before or after calling this method.
@@ -141,12 +141,12 @@ public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddEF6
 
 | Name | Type | Description |
 |------|------|-------------|
-| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The [IServiceCollection](/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection). |
+| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The [IServiceCollection](/restier/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection). |
 
 #### Returns
 
 Type: `Microsoft.Extensions.DependencyInjection.IServiceCollection`
-Current [IServiceCollection](/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection).
+Current [IServiceCollection](/restier/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection).
 
 #### Type Parameters
 
@@ -168,7 +168,7 @@ public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddEFC
 
 | Name | Type | Description |
 |------|------|-------------|
-| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The [IServiceCollection](/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection). |
+| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The [IServiceCollection](/restier/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection). |
 | `optionsAction` | `System.Action<System.IServiceProvider, Microsoft.EntityFrameworkCore.DbContextOptionsBuilder>` | An optional action to configure the Microsoft.EntityFrameworkCore.DbContextOptions
             for the context. This provides an alternative to performing configuration of
             the context by overriding the Microsoft.EntityFrameworkCore.DbContext.OnConfiguring(Microsoft.EntityFrameworkCore.DbContextOptionsBuilder)
@@ -183,7 +183,7 @@ public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddEFC
 #### Returns
 
 Type: `Microsoft.Extensions.DependencyInjection.IServiceCollection`
-Current [IServiceCollection](/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection).
+Current [IServiceCollection](/restier/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection).
 
 #### Type Parameters
 
@@ -273,7 +273,7 @@ public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddRes
 
 | Name | Type | Description |
 |------|------|-------------|
-| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The [IServiceCollection](/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection) to register Swagger services with. |
+| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The [IServiceCollection](/restier/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection) to register Swagger services with. |
 | `openApiSettings` | `System.Action<Microsoft.OpenApi.OData.OpenApiConvertSettings>` | An [Action`1](https://learn.microsoft.com/dotnet/api/system.action-1) that allows you to configure the core Swagger output. |
 
 #### Returns
@@ -284,7 +284,7 @@ Type: `Microsoft.Extensions.DependencyInjection.IServiceCollection`
 
 <Note>Extension method from `Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions`</Note>
 
-Return true if the [IServiceCollection](/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection) has any *TService* service registered.
+Return true if the [IServiceCollection](/restier/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection) has any *TService* service registered.
 
 #### Syntax
 
@@ -296,7 +296,7 @@ public static bool HasService<TService>(Microsoft.Extensions.DependencyInjection
 
 | Name | Type | Description |
 |------|------|-------------|
-| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The [IServiceCollection](/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection) to register the *TService* with. |
+| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The [IServiceCollection](/restier/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection) to register the *TService* with. |
 
 #### Returns
 
@@ -305,7 +305,7 @@ A [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) specifying wh
 
 #### Type Parameters
 
-- `TService` - The service type to register with the [IServiceCollection](/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection).
+- `TService` - The service type to register with the [IServiceCollection](/restier/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection).
 
 ### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasServiceCount <DocsBadge text="Extension" variant="success" />
 
@@ -323,7 +323,7 @@ public static int HasServiceCount<TService>(Microsoft.Extensions.DependencyInjec
 
 | Name | Type | Description |
 |------|------|-------------|
-| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The [IServiceCollection](/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection) to register the *TService* with. |
+| `services` | `Microsoft.Extensions.DependencyInjection.IServiceCollection` | The [IServiceCollection](/restier/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection) to register the *TService* with. |
 
 #### Returns
 
@@ -332,5 +332,5 @@ An [Int32](https://learn.microsoft.com/dotnet/api/system.int32) representing the
 
 #### Type Parameters
 
-- `TService` - The service type to register with the [IServiceCollection](/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection).
+- `TService` - The service type to register with the [IServiceCollection](/restier/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection).
 

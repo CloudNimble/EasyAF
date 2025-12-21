@@ -1289,9 +1289,15 @@
             "icon": "dog-leashed",
             "pages": [
               "blazoressentials/guides/index",
-              "blazoressentials/guides/pipeline",
-              "blazoressentials/guides/conceptual-docs",
-              "blazoressentials/guides/deployment"
+              {
+                "group": "Client-Side Databases",
+                "icon": "database",
+                "pages": [
+                  "blazoressentials/guides/databases/index",
+                  "blazoressentials/guides/databases/indexeddb",
+                  "blazoressentials/guides/databases/tursodb"
+                ]
+              }
             ]
           },
           {
@@ -1346,6 +1352,31 @@
                         ]
                       },
                       {
+                        "group": "IndexedDb",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/index",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexAttribute",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexedDbDatabase",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexedDbException",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexedDbIndex",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexedDbNotFoundException",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/IndexedDbObjectStore",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/KeyRange",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/ObjectStoreAttribute",
+                          {
+                            "group": "Schema",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/Schema/index",
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/Schema/IndexedDbDatabaseDefinition",
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/Schema/IndexedDbIndexDefinition",
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/IndexedDb/Schema/IndexedDbObjectStoreDefinition"
+                            ]
+                          }
+                        ]
+                      },
+                      {
                         "group": "Merlin",
                         "icon": "folder-tree",
                         "pages": [
@@ -1375,11 +1406,69 @@
                         ]
                       },
                       {
+                        "group": "Server",
+                        "icon": "folder-tree",
+                        "pages": [
+                          {
+                            "group": "Middleware",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Server/Middleware/index",
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Server/Middleware/CrossOriginIsolationMiddleware",
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Server/Middleware/CrossOriginIsolationOptions"
+                            ]
+                          }
+                        ]
+                      },
+                      {
                         "group": "Threading",
                         "icon": "folder-tree",
                         "pages": [
                           "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Threading/index",
                           "blazoressentials/api-reference/CloudNimble/BlazorEssentials/Threading/DelayDispatcher"
+                        ]
+                      },
+                      {
+                        "group": "TursoDb",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/index",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/ColumnAttribute",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/IndexAttribute",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/ITursoDbSet",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/NotMappedAttribute",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/PrimaryKeyAttribute",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/TableAttribute",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/TursoDatabase",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/TursoDatabaseOptions",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/TursoDbException",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/TursoDbSet",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/TursoPreparedStatement",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/TursoPreparedStatement",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/TursoResult",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/TursoSyncDatabase",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/TursoSyncOptions",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/TursoSyncResult",
+                          "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/TursoTransaction",
+                          {
+                            "group": "Query",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/Query/index",
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/Query/TursoQueryBuilder"
+                            ]
+                          },
+                          {
+                            "group": "Schema",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/Schema/index",
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/Schema/ColumnMetadata",
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/Schema/EntityMetadata",
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/Schema/EntityMetadataCache",
+                              "blazoressentials/api-reference/CloudNimble/BlazorEssentials/TursoDb/Schema/SqlGenerator"
+                            ]
+                          }
                         ]
                       }
                     ]
@@ -1394,6 +1483,14 @@
                     "group": "AspNetCore",
                     "icon": "folder-tree",
                     "pages": [
+                      {
+                        "group": "Builder",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "blazoressentials/api-reference/Microsoft/AspNetCore/Builder/index",
+                          "blazoressentials/api-reference/Microsoft/AspNetCore/Builder/IApplicationBuilder"
+                        ]
+                      },
                       {
                         "group": "Components",
                         "icon": "folder-tree",
@@ -1706,65 +1803,11 @@
                     "icon": "folder-tree",
                     "pages": [
                       {
-                        "group": "DependencyInjection",
-                        "icon": "folder-tree",
-                        "pages": [
-                          "simplemessagebus/api-reference/Microsoft/Extensions/DependencyInjection/index",
-                          "simplemessagebus/api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection"
-                        ]
-                      },
-                      {
                         "group": "Hosting",
                         "icon": "folder-tree",
                         "pages": [
                           "simplemessagebus/api-reference/Microsoft/Extensions/Hosting/index",
                           "simplemessagebus/api-reference/Microsoft/Extensions/Hosting/IHostBuilder"
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "SimpleMessageBus",
-                "icon": "folder-tree",
-                "pages": [
-                  {
-                    "group": "Samples",
-                    "icon": "folder-tree",
-                    "pages": [
-                      {
-                        "group": "AzureWebJobs",
-                        "icon": "folder-tree",
-                        "pages": [
-                          "simplemessagebus/api-reference/SimpleMessageBus/Samples/AzureWebJobs/index",
-                          "simplemessagebus/api-reference/SimpleMessageBus/Samples/AzureWebJobs/EmailMessageHandler"
-                        ]
-                      },
-                      {
-                        "group": "Core",
-                        "icon": "folder-tree",
-                        "pages": [
-                          "simplemessagebus/api-reference/SimpleMessageBus/Samples/Core/index",
-                          "simplemessagebus/api-reference/SimpleMessageBus/Samples/Core/NewUserMessage"
-                        ]
-                      },
-                      {
-                        "group": "ExternalTriggers",
-                        "icon": "folder-tree",
-                        "pages": [
-                          "simplemessagebus/api-reference/SimpleMessageBus/Samples/ExternalTriggers/index",
-                          "simplemessagebus/api-reference/SimpleMessageBus/Samples/ExternalTriggers/SampleTimers"
-                        ]
-                      },
-                      {
-                        "group": "OnPrem",
-                        "icon": "folder-tree",
-                        "pages": [
-                          "simplemessagebus/api-reference/SimpleMessageBus/Samples/OnPrem/index",
-                          "simplemessagebus/api-reference/SimpleMessageBus/Samples/OnPrem/EmailMessageHandler",
-                          "simplemessagebus/api-reference/SimpleMessageBus/Samples/OnPrem/Functions",
-                          "simplemessagebus/api-reference/SimpleMessageBus/Samples/OnPrem/Program"
                         ]
                       }
                     ]
@@ -1801,12 +1844,19 @@
         "tab": "Testing",
         "href": "breakdance",
         "pages": [
-          "breakdance/index",
           {
             "group": "Getting Started",
+            "icon": "stars",
             "pages": [
               "breakdance/index",
+              "breakdance/why-breakdance",
               "breakdance/quickstart"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "breakdance/guides/testing-azure-storage"
             ]
           },
           {
@@ -1863,11 +1913,36 @@
                         ]
                       },
                       {
+                        "group": "Azurite",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "breakdance/api-reference/CloudNimble/Breakdance/Azurite/index",
+                          "breakdance/api-reference/CloudNimble/Breakdance/Azurite/AzuriteBreakdanceTestBase",
+                          "breakdance/api-reference/CloudNimble/Breakdance/Azurite/AzuriteConfiguration",
+                          "breakdance/api-reference/CloudNimble/Breakdance/Azurite/AzuriteInstance",
+                          "breakdance/api-reference/CloudNimble/Breakdance/Azurite/AzuriteServiceType"
+                        ]
+                      },
+                      {
                         "group": "Blazor",
                         "icon": "folder-tree",
                         "pages": [
                           "breakdance/api-reference/CloudNimble/Breakdance/Blazor/index",
                           "breakdance/api-reference/CloudNimble/Breakdance/Blazor/BlazorBreakdanceTestBase"
+                        ]
+                      },
+                      {
+                        "group": "Extensions",
+                        "icon": "folder-tree",
+                        "pages": [
+                          {
+                            "group": "MSTest2",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "breakdance/api-reference/CloudNimble/Breakdance/Extensions/MSTest2/index",
+                              "breakdance/api-reference/CloudNimble/Breakdance/Extensions/MSTest2/BreakdanceMSTestBase"
+                            ]
+                          }
                         ]
                       },
                       {
@@ -1914,6 +1989,26 @@
                         "pages": [
                           "breakdance/api-reference/Microsoft/Extensions/Hosting/index",
                           "breakdance/api-reference/Microsoft/Extensions/Hosting/IHostBuilder"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "VisualStudio",
+                    "icon": "folder-tree",
+                    "pages": [
+                      {
+                        "group": "TestTools",
+                        "icon": "folder-tree",
+                        "pages": [
+                          {
+                            "group": "UnitTesting",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "breakdance/api-reference/Microsoft/VisualStudio/TestTools/UnitTesting/index",
+                              "breakdance/api-reference/Microsoft/VisualStudio/TestTools/UnitTesting/TestContext"
+                            ]
+                          }
                         ]
                       }
                     ]

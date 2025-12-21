@@ -5,7 +5,7 @@ icon: file-brackets-curly
 keywords: ['AuthorizationEntry', 'Microsoft.Restier.Core.Authorization.AuthorizationEntry', 'Microsoft.Restier.Core.Authorization', 'class', 'System.Object']
 ---
 
-import { DocsBadge } from '/snippets/DocsBadge.jsx';
+import { DocsBadge } from '/snippets/restier/DocsBadge.jsx';
 
 ## Definition
 
@@ -29,7 +29,7 @@ Describes the methods of verifying various CRUD operations for a given EF Entity
 
 ### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
 
-Creates a new instance of an [AuthorizationEntry](/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry) for a given [AuthorizationEntry.Type](/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type). Assumes all authorization checks will return false by default.
+Creates a new instance of an [AuthorizationEntry](/restier/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry) for a given [AuthorizationEntry.Type](/restier/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type). Assumes all authorization checks will return false by default.
 
 #### Syntax
 
@@ -41,11 +41,11 @@ public AuthorizationEntry(System.Type t)
 
 | Name | Type | Description |
 |------|------|-------------|
-| `t` | `System.Type` | The [AuthorizationEntry.Type](/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type) to track authorization methods for. |
+| `t` | `System.Type` | The [AuthorizationEntry.Type](/restier/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type) to track authorization methods for. |
 
 ### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
 
-Creates a new instance of an [AuthorizationEntry](/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry) for a given [AuthorizationEntry.Type](/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type) while allowing you to specify the action to run when authorizing Inserts.
+Creates a new instance of an [AuthorizationEntry](/restier/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry) for a given [AuthorizationEntry.Type](/restier/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type) while allowing you to specify the action to run when authorizing Inserts.
 
 #### Syntax
 
@@ -57,12 +57,12 @@ public AuthorizationEntry(System.Type t, System.Func<bool> canInsertAction)
 
 | Name | Type | Description |
 |------|------|-------------|
-| `t` | `System.Type` | The [AuthorizationEntry.Type](/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type) to track authorization methods for. |
+| `t` | `System.Type` | The [AuthorizationEntry.Type](/restier/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type) to track authorization methods for. |
 | `canInsertAction` | `System.Func<bool>` | A [Func`1](https://learn.microsoft.com/dotnet/api/system.func-1) that evaluates to a [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) specifying whether or not a record can be inserted through the Restier API. |
 
 ### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
 
-Creates a new instance of an [AuthorizationEntry](/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry) for a given [AuthorizationEntry.Type](/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type) while allowing you to specify the actions to run when authorizing Inserts and Updates.
+Creates a new instance of an [AuthorizationEntry](/restier/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry) for a given [AuthorizationEntry.Type](/restier/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type) while allowing you to specify the actions to run when authorizing Inserts and Updates.
 
 #### Syntax
 
@@ -74,13 +74,13 @@ public AuthorizationEntry(System.Type t, System.Func<bool> canInsertAction, Syst
 
 | Name | Type | Description |
 |------|------|-------------|
-| `t` | `System.Type` | The [AuthorizationEntry.Type](/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type) to track authorization methods for. |
+| `t` | `System.Type` | The [AuthorizationEntry.Type](/restier/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type) to track authorization methods for. |
 | `canInsertAction` | `System.Func<bool>` | A [Func`1](https://learn.microsoft.com/dotnet/api/system.func-1) that evaluates to a [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) specifying whether or not a record can be inserted through the Restier API. |
 | `canUpdateAction` | `System.Func<bool>` | A [Func`1](https://learn.microsoft.com/dotnet/api/system.func-1) that evaluates to a [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) specifying whether or not a record can be updated through the Restier API. |
 
 ### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
 
-Creates a new instance of an [AuthorizationEntry](/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry) for a given [AuthorizationEntry.Type](/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type) while allowing you to specify the actions to run when authorizing Inserts, Updates, and Deletes.
+Creates a new instance of an [AuthorizationEntry](/restier/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry) for a given [AuthorizationEntry.Type](/restier/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type) while allowing you to specify the actions to run when authorizing Inserts, Updates, and Deletes.
 
 #### Syntax
 
@@ -92,7 +92,7 @@ public AuthorizationEntry(System.Type t, System.Func<bool> canInsertAction, Syst
 
 | Name | Type | Description |
 |------|------|-------------|
-| `t` | `System.Type` | The [AuthorizationEntry.Type](/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type) to track authorization methods for. |
+| `t` | `System.Type` | The [AuthorizationEntry.Type](/restier/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type) to track authorization methods for. |
 | `canInsertAction` | `System.Func<bool>` | A [Func`1](https://learn.microsoft.com/dotnet/api/system.func-1) that evaluates to a [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) specifying whether or not a record can be inserted through the Restier API. |
 | `canUpdateAction` | `System.Func<bool>` | A [Func`1](https://learn.microsoft.com/dotnet/api/system.func-1) that evaluates to a [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) specifying whether or not a record can be updated through the Restier API. |
 | `canDeleteAction` | `System.Func<bool>` | A [Func`1](https://learn.microsoft.com/dotnet/api/system.func-1) that evaluates to a [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) specifying whether or not a record can be deleted through the Restier API. |
@@ -153,7 +153,7 @@ Type: `System.Func<bool>`
 
 ### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Type
 
-The [AuthorizationEntry.Type](/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type) to register this [AuthorizationEntry](/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry) for in the [AuthorizationFactory](/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationFactory)AuthorizationFactory's&lt;/see&gt; backing Dictionary.
+The [AuthorizationEntry.Type](/restier/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry#type) to register this [AuthorizationEntry](/restier/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationEntry) for in the [AuthorizationFactory](/restier/api-reference/Microsoft/Restier/Core/Authorization/AuthorizationFactory)AuthorizationFactory's&lt;/see&gt; backing Dictionary.
 
 #### Syntax
 

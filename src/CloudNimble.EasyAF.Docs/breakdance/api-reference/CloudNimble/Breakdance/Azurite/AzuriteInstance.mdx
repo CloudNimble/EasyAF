@@ -1,0 +1,561 @@
+---
+title: AzuriteInstance
+description: "Represents a running Azurite instance with process lifecycle management."
+icon: file-brackets-curly
+keywords: ['AzuriteInstance', 'CloudNimble.Breakdance.Azurite.AzuriteInstance', 'CloudNimble.Breakdance.Azurite', 'class', 'System.Object', 'System.IDisposable', 'System.IAsyncDisposable']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.Breakdance.Azurite.dll
+
+**Namespace:** CloudNimble.Breakdance.Azurite
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.Breakdance.Azurite.AzuriteInstance
+```
+
+## Summary
+
+Represents a running Azurite instance with process lifecycle management.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Creates a new [AzuriteInstance](/breakdance/api-reference/CloudNimble/Breakdance/Azurite/AzuriteInstance) with the specified configuration.
+
+#### Syntax
+
+```csharp
+public AzuriteInstance(CloudNimble.Breakdance.Azurite.AzuriteConfiguration configuration = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `configuration` | `CloudNimble.Breakdance.Azurite.AzuriteConfiguration` | The configuration options. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> BlobEndpoint
+
+Gets the HTTP endpoint URL for the Blob service.
+            Returns null if Blob service was not requested or not started.
+
+#### Syntax
+
+```csharp
+public string BlobEndpoint { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> BlobPort
+
+Gets the port number for the Blob service, or null if not started.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> BlobPort { get; private set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsRunning
+
+Gets whether the Azurite instance is currently running.
+
+#### Syntax
+
+```csharp
+public bool IsRunning { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> QueueEndpoint
+
+Gets the HTTP endpoint URL for the Queue service.
+            Returns null if Queue service was not requested or not started.
+
+#### Syntax
+
+```csharp
+public string QueueEndpoint { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> QueuePort
+
+Gets the port number for the Queue service, or null if not started.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> QueuePort { get; private set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> StandardError
+
+Gets the standard error captured from the Azurite process.
+
+#### Syntax
+
+```csharp
+public string StandardError { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> StandardOutput
+
+Gets the standard output captured from the Azurite process.
+
+#### Syntax
+
+```csharp
+public string StandardOutput { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TableEndpoint
+
+Gets the HTTP endpoint URL for the Table service.
+            Returns null if Table service was not requested or not started.
+
+#### Syntax
+
+```csharp
+public string TableEndpoint { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TablePort
+
+Gets the port number for the Table service, or null if not started.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> TablePort { get; private set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ClearAllBlobContainersAsync
+
+Deletes all blob containers in the storage account.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task ClearAllBlobContainersAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that completes when all containers are deleted.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ClearAllQueuesAsync
+
+Deletes all queues in the storage account.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task ClearAllQueuesAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that completes when all queues are deleted.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ClearAllTablesAsync
+
+Deletes all tables in the storage account.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task ClearAllTablesAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that completes when all tables are deleted.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ClearQueueMessagesAsync
+
+Clears all messages from a queue. Does nothing if the queue doesn't exist.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task ClearQueueMessagesAsync(string queueName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `queueName` | `string` | The name of the queue to clear. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that completes when the operation finishes.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeleteBlobContainerAsync
+
+Deletes a blob container. Does nothing if the container doesn't exist.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task DeleteBlobContainerAsync(string containerName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `containerName` | `string` | The name of the container to delete. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that completes when the operation finishes.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeleteQueueAsync
+
+Deletes a queue. Does nothing if the queue doesn't exist.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task DeleteQueueAsync(string queueName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `queueName` | `string` | The name of the queue to delete. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that completes when the operation finishes.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeleteTableAsync
+
+Deletes a table. Does nothing if the table doesn't exist.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task DeleteTableAsync(string tableName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `tableName` | `string` | The name of the table to delete. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that completes when the operation finishes.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Dispose
+
+Disposes the Azurite instance and releases all resources.
+
+#### Syntax
+
+```csharp
+public void Dispose()
+```
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DisposeAsync
+
+Asynchronously disposes the Azurite instance and releases all resources.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.ValueTask DisposeAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.ValueTask`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetConnectionString
+
+Gets a connection string for the Development Storage account.
+            Only includes endpoints for services that were requested.
+
+#### Syntax
+
+```csharp
+public string GetConnectionString(string accountName = "devstoreaccount1", string accountKey = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==")
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `accountName` | `string` | The account name. Defaults to "devstoreaccount1". |
+| `accountKey` | `string` | The account key. Defaults to the well-known development key. |
+
+#### Returns
+
+Type: `string`
+A connection string that can be used with Azure Storage SDKs.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ListBlobContainersAsync
+
+Lists all blob containers in the storage account.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<System.Collections.Generic.List<string>> ListBlobContainersAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.List<string>>`
+A list of container names.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ListQueuesAsync
+
+Lists all queues in the storage account.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<System.Collections.Generic.List<string>> ListQueuesAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.List<string>>`
+A list of queue names.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ListTablesAsync
+
+Lists all tables in the storage account.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<System.Collections.Generic.List<string>> ListTablesAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.List<string>>`
+A list of table names.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> StartAsync
+
+Starts the Azurite instance asynchronously.
+            Includes automatic retry logic for port conflicts when [AzuriteConfiguration.AutoAssignPorts](/breakdance/api-reference/CloudNimble/Breakdance/Azurite/AzuriteConfiguration#autoassignports) is true.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task StartAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that completes when Azurite is ready to accept connections.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> StopAsync
+
+Stops the Azurite instance asynchronously.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task StopAsync()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that completes when Azurite has stopped.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- System.IDisposable
+- System.IAsyncDisposable
+

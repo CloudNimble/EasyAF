@@ -1,6 +1,6 @@
 ---
 title: IMessageDispatcher
-description: "Defines the required composition of every Dispatcher used by SimpleMessageBus to send [MessageEnvelope](/api-reference/CloudNimble/SimpleMessageBus/Core/Mess..."
+description: "Defines the required composition of every Dispatcher used by SimpleMessageBus to send [MessageEnvelope](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/Mess..."
 icon: plug
 keywords: ['IMessageDispatcher', 'CloudNimble.SimpleMessageBus.Dispatch.IMessageDispatcher', 'CloudNimble.SimpleMessageBus.Dispatch', 'interface']
 ---
@@ -20,19 +20,19 @@ CloudNimble.SimpleMessageBus.Dispatch.IMessageDispatcher
 ## Summary
 
 Defines the required composition of every Dispatcher used by SimpleMessageBus to send [MessageEnvelope](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope)MessageEnvelopes&lt;/see&gt; to the 
-            [IMessageHandler](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler)IMessageHandlers&lt;/see&gt; registered to handle that message's [Type](/api-reference/System/Type).
+            [IMessageHandler](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler)IMessageHandlers&lt;/see&gt; registered to handle that message's [Type](/simplemessagebus/api-reference/System/Type).
 
 ## Remarks
 
 Message dispatchers control how messages are delivered to their handlers. SimpleMessageBus provides two built-in
-            implementations: [OrderedMessageDispatcher](/api-reference/CloudNimble/SimpleMessageBus/Dispatch/OrderedMessageDispatcher) for sequential processing and [ParallelMessageDispatcher](/api-reference/CloudNimble/SimpleMessageBus/Dispatch/ParallelMessageDispatcher)
+            implementations: [OrderedMessageDispatcher](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Dispatch/OrderedMessageDispatcher) for sequential processing and [ParallelMessageDispatcher](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Dispatch/ParallelMessageDispatcher)
             for concurrent processing. Custom dispatchers can be implemented for specialized routing or processing logic.
 
 ## Methods
 
 ### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Dispatch <Badge color="orange">Abstract</Badge>
 
-Dispatches an incoming [MessageEnvelope](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope) to the [IMessageHandler](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler)IMessageHandlers&lt;/see&gt; registered to handle that message's [Type](/api-reference/System/Type).
+Dispatches an incoming [MessageEnvelope](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope) to the [IMessageHandler](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler)IMessageHandlers&lt;/see&gt; registered to handle that message's [Type](/simplemessagebus/api-reference/System/Type).
 
 #### Syntax
 
@@ -44,7 +44,7 @@ System.Threading.Tasks.Task Dispatch(CloudNimble.SimpleMessageBus.Core.MessageEn
 
 | Name | Type | Description |
 |------|------|-------------|
-| `messageEnvelope` | `CloudNimble.SimpleMessageBus.Core.MessageEnvelope` | The [MessageEnvelope](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope) instance to send to the registered [IMessageHandler](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler)IMessageHandlers&lt;/see&gt;. |
+| `messageEnvelope` | `CloudNimble.SimpleMessageBus.Core.MessageEnvelope` | The [MessageEnvelope](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope) instance to send to the registered [IMessageHandler](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler)IMessageHandlers&lt;/see&gt;. |
 
 #### Returns
 

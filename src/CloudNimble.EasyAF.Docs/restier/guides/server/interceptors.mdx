@@ -13,7 +13,7 @@ Interceptors allow you to process validation and business logic **before** and *
 For example, you may need to validate some external business rules before the object is saved, but then after it's saved, you may need to dump the object to an Azure Storage Queue to get picked up by a WebJob for further processing out-of-band.
 </Info>
 
-The way RESTier accomplishes this is virtually identical to the [Method Authorization](/server/method-authorization/) feature. This means there are once again two different approaches to tackle the task.
+The way RESTier accomplishes this is virtually identical to the [Method Authorization](/restier/server/method-authorization/) feature. This means there are once again two different approaches to tackle the task.
 
 <Note>
 No matter what approach you choose, the concept is simple. Either technique uses a function that returns boolean:

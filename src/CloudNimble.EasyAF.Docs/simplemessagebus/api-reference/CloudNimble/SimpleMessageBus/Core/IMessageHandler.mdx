@@ -1,6 +1,6 @@
 ---
 title: IMessageHandler
-description: "Defines the functionality required for all [IMessage](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) processing handlers."
+description: "Defines the functionality required for all [IMessage](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) processing handlers."
 icon: plug
 keywords: ['IMessageHandler', 'CloudNimble.SimpleMessageBus.Core.IMessageHandler', 'CloudNimble.SimpleMessageBus.Core', 'interface']
 ---
@@ -19,7 +19,7 @@ CloudNimble.SimpleMessageBus.Core.IMessageHandler
 
 ## Summary
 
-Defines the functionality required for all [IMessage](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) processing handlers.
+Defines the functionality required for all [IMessage](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) processing handlers.
 
 ## Remarks
 
@@ -70,7 +70,7 @@ public class OrderMessageHandler : IMessageHandler
 
 ### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHandledMessageTypes <Badge color="orange">Abstract</Badge>
 
-Specifies which [IMessage](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) types are handled by this [IMessageHandler](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler).
+Specifies which [IMessage](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) types are handled by this [IMessageHandler](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler).
 
 #### Syntax
 
@@ -81,8 +81,8 @@ System.Collections.Generic.IEnumerable<System.Type> GetHandledMessageTypes()
 #### Returns
 
 Type: `System.Collections.Generic.IEnumerable<System.Type>`
-An [IEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1) containing all of the [IMessage](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) types this 
-            [IMessageHandler](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler) supports. The types must implement [IMessage](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage).
+An [IEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1) containing all of the [IMessage](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) types this 
+            [IMessageHandler](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler) supports. The types must implement [IMessage](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage).
 
 #### Examples
 
@@ -115,7 +115,7 @@ System.Threading.Tasks.Task OnErrorAsync(CloudNimble.SimpleMessageBus.Core.IMess
 
 | Name | Type | Description |
 |------|------|-------------|
-| `message` | `CloudNimble.SimpleMessageBus.Core.IMessage` | The deserialized [IMessage](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) instance that failed. |
+| `message` | `CloudNimble.SimpleMessageBus.Core.IMessage` | The deserialized [IMessage](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) instance that failed. |
 | `exception` | `System.Exception` | The [Exception](https://learn.microsoft.com/dotnet/api/system.exception) that occurred during processing. |
 
 #### Returns
@@ -148,7 +148,7 @@ This method is called when an exception is thrown during message processing. Use
 
 ### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> OnNextAsync <Badge color="orange">Abstract</Badge>
 
-Specifies what this handler should do when it is time to process the [MessageEnvelope](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope).
+Specifies what this handler should do when it is time to process the [MessageEnvelope](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope).
 
 #### Syntax
 
@@ -160,7 +160,7 @@ System.Threading.Tasks.Task OnNextAsync(CloudNimble.SimpleMessageBus.Core.Messag
 
 | Name | Type | Description |
 |------|------|-------------|
-| `messageEnvelope` | `CloudNimble.SimpleMessageBus.Core.MessageEnvelope` | The [MessageEnvelope](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope) to process. |
+| `messageEnvelope` | `CloudNimble.SimpleMessageBus.Core.MessageEnvelope` | The [MessageEnvelope](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope) to process. |
 
 #### Returns
 
@@ -190,7 +190,7 @@ public async Task OnNextAsync(MessageEnvelope messageEnvelope)
 #### Remarks
 
 This is the main processing method for messages. The framework calls this method when a message
-            of a supported type (as declared by [IMessageHandler.GetHandledMessageTypes](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler#gethandledmessagetypes)) is received from the queue.
-            The message is pre-deserialized and available in the [MessageEnvelope.Message](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#message) property.
+            of a supported type (as declared by [IMessageHandler.GetHandledMessageTypes](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler#gethandledmessagetypes)) is received from the queue.
+            The message is pre-deserialized and available in the [MessageEnvelope.Message](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#message) property.
             Any unhandled exceptions thrown from this method will trigger a call to `Exception)`.
 

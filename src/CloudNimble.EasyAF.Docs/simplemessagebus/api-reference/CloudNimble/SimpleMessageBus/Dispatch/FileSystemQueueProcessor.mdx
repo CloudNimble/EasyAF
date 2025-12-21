@@ -1,6 +1,6 @@
 ---
 title: FileSystemQueueProcessor
-description: "Processes queue items stored in the local file system and dispatches them to all [IMessageHandler](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageH..."
+description: "Processes queue items stored in the local file system and dispatches them to all [IMessageHandler](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageH..."
 icon: file-brackets-curly
 keywords: ['FileSystemQueueProcessor', 'CloudNimble.SimpleMessageBus.Dispatch.FileSystemQueueProcessor', 'CloudNimble.SimpleMessageBus.Dispatch', 'class', 'System.Object', 'CloudNimble.SimpleMessageBus.Dispatch.IQueueProcessor']
 ---
@@ -48,7 +48,7 @@ public FileSystemQueueProcessor(Microsoft.Extensions.Options.IOptions<CloudNimbl
 |------|------|-------------|
 | `options` | `Microsoft.Extensions.Options.IOptions<CloudNimble.SimpleMessageBus.Core.FileSystemOptions>` | The injected [IOptions`1](https://learn.microsoft.com/dotnet/api/microsoft.extensions.options.ioptions-1) specifying the options required to leverage the local file system as the SimpleMessageBus backing queue. |
 | `dispatcher` | `CloudNimble.SimpleMessageBus.Dispatch.IMessageDispatcher` | The message dispatcher to route messages to handlers. |
-| `serviceScopeFactory` | `Microsoft.Extensions.DependencyInjection.IServiceScopeFactory` | The Dependency Injection container's [IServiceProvider](https://learn.microsoft.com/dotnet/api/system.iserviceprovider) instance, so that a "per-request" scope can be created that gives each [MessageEnvelope](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope)
+| `serviceScopeFactory` | `Microsoft.Extensions.DependencyInjection.IServiceScopeFactory` | The Dependency Injection container's [IServiceProvider](https://learn.microsoft.com/dotnet/api/system.iserviceprovider) instance, so that a "per-request" scope can be created that gives each [MessageEnvelope](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope)
             its own set of isolated dependencies. |
 
 ### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>

@@ -73,7 +73,7 @@ await Assert.ThrowsExceptionAsync&lt;InvalidOperationException&gt;(() =&gt;
 
 ### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
 
-Initializes a new instance of the [TestableMessagePublisher](/api-reference/CloudNimble/SimpleMessageBus/Breakdance/TestableMessagePublisher) class.
+Initializes a new instance of the [TestableMessagePublisher](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Breakdance/TestableMessagePublisher) class.
             Creates an empty publisher with no published messages or configured actions.
 
 #### Syntax
@@ -109,7 +109,7 @@ public System.Collections.Generic.IReadOnlyList<CloudNimble.SimpleMessageBus.Cor
 
 Type: `System.Collections.Generic.IReadOnlyList<CloudNimble.SimpleMessageBus.Core.IMessage>`
 A read-only list containing all messages published through this publisher in the order they were published.
-            The collection is empty when the publisher is first created or after [TestableMessagePublisher.ClearMessages](/api-reference/CloudNimble/SimpleMessageBus/Breakdance/TestableMessagePublisher#clearmessages) is called.
+            The collection is empty when the publisher is first created or after [TestableMessagePublisher.ClearMessages](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Breakdance/TestableMessagePublisher#clearmessages) is called.
 
 #### Examples
 
@@ -175,7 +175,7 @@ public async Task Should_Publish_Order_Message()
 #### Remarks
 
 This method is typically called in test setup or teardown to ensure each test starts with a clean state.
-            After calling this method, the [TestableMessagePublisher.PublishedMessages](/api-reference/CloudNimble/SimpleMessageBus/Breakdance/TestableMessagePublisher#publishedmessages) collection will be empty until new messages
+            After calling this method, the [TestableMessagePublisher.PublishedMessages](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Breakdance/TestableMessagePublisher#publishedmessages) collection will be empty until new messages
             are published. This prevents test interference where one test's published messages affect another test's assertions.
 
 ### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
@@ -375,7 +375,7 @@ publisher.SetAction(null);
 #### Remarks
 
 This method allows customization of the publisher's behavior during testing. The configured action
-            is invoked after the message is added to the [TestableMessagePublisher.PublishedMessages](/api-reference/CloudNimble/SimpleMessageBus/Breakdance/TestableMessagePublisher#publishedmessages) collection, allowing
+            is invoked after the message is added to the [TestableMessagePublisher.PublishedMessages](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Breakdance/TestableMessagePublisher#publishedmessages) collection, allowing
             for simulation of various publishing scenarios such as failures, delays, or side effects.
             
             Setting this to null removes any previously configured action. The action is optional and publishing

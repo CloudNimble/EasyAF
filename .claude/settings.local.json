@@ -40,7 +40,10 @@
       "Bash(findstr:*)",
       "WebSearch",
       "Bash(cat:*)",
-      "Bash(powershell.exe:*)"
+      "Bash(powershell.exe:*)",
+      "Bash(git config:*)",
+      "Bash(git fetch:*)",
+      "Bash(git sparse-checkout:*)"
     ],
     "deny": []
   }

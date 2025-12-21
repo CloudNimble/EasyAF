@@ -1,6 +1,6 @@
 ---
 title: MessageEnvelope
-description: "Represents a wrapper for an [IMessage](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) that will be published to the SimpleMessageBus Queue."
+description: "Represents a wrapper for an [IMessage](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) that will be published to the SimpleMessageBus Queue."
 icon: file-brackets-curly
 keywords: ['MessageEnvelope', 'CloudNimble.SimpleMessageBus.Core.MessageEnvelope', 'CloudNimble.SimpleMessageBus.Core', 'class', 'System.Object']
 ---
@@ -21,7 +21,7 @@ CloudNimble.SimpleMessageBus.Core.MessageEnvelope
 
 ## Summary
 
-Represents a wrapper for an [IMessage](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) that will be published to the SimpleMessageBus Queue.
+Represents a wrapper for an [IMessage](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) that will be published to the SimpleMessageBus Queue.
 
 ## Remarks
 
@@ -64,7 +64,7 @@ public async Task OnNextAsync(MessageEnvelope envelope)
 
 ### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
 
-Initializes a new instance of the [MessageEnvelope](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope) class.
+Initializes a new instance of the [MessageEnvelope](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope) class.
 
 #### Syntax
 
@@ -79,7 +79,7 @@ This parameterless constructor should only be used for deserializing the Message
 
 ### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
 
-Initializes a new instance of the [MessageEnvelope](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope) class for a given [IMessage](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage).
+Initializes a new instance of the [MessageEnvelope](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope) class for a given [IMessage](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage).
 
 #### Syntax
 
@@ -91,7 +91,7 @@ public MessageEnvelope(CloudNimble.SimpleMessageBus.Core.IMessage message)
 
 | Name | Type | Description |
 |------|------|-------------|
-| `message` | `CloudNimble.SimpleMessageBus.Core.IMessage` | The [IMessage](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) instance that will be wrapped in a [MessageEnvelope](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope) to be posted to the SimpleMessageBus. |
+| `message` | `CloudNimble.SimpleMessageBus.Core.IMessage` | The [IMessage](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) instance that will be wrapped in a [MessageEnvelope](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope) to be posted to the SimpleMessageBus. |
 
 #### Exceptions
 
@@ -189,8 +189,8 @@ public CloudNimble.SimpleMessageBus.Core.IMessage Message { get; }
 #### Property Value
 
 Type: `CloudNimble.SimpleMessageBus.Core.IMessage`
-The [IMessage](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) instance deserialized from [MessageEnvelope.MessageContent](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagecontent) using the type specified
-            in [MessageEnvelope.MessageType](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagetype). This property provides convenient access to the message without requiring
+The [IMessage](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) instance deserialized from [MessageEnvelope.MessageContent](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagecontent) using the type specified
+            in [MessageEnvelope.MessageType](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagetype). This property provides convenient access to the message without requiring
             explicit type specification in handlers.
 
 #### Exceptions
@@ -224,12 +224,12 @@ public async Task OnNextAsync(MessageEnvelope envelope)
 This property deserializes the message on each access. For performance-critical scenarios where the message
             is accessed multiple times, consider caching the result or using the typed `GetMessage``1` method.
             
-            The deserialization uses the [MessageEnvelope.MessageType](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagetype) to determine the target type and deserializes
-            the [MessageEnvelope.MessageContent](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagecontent) JSON string into the appropriate message instance.
+            The deserialization uses the [MessageEnvelope.MessageType](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagetype) to determine the target type and deserializes
+            the [MessageEnvelope.MessageContent](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagecontent) JSON string into the appropriate message instance.
 
 ### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MessageContent
 
-The serialized content of the [IMessage](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage).
+The serialized content of the [IMessage](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage).
 
 #### Syntax
 
@@ -243,7 +243,7 @@ Type: `string`
 
 ### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MessageState
 
-A container to help track the state of a message as it flows between [IMessageHandler](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler)IMessageHandlers&lt;/see&gt;. This value is ignored by the 
+A container to help track the state of a message as it flows between [IMessageHandler](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler)IMessageHandlers&lt;/see&gt;. This value is ignored by the 
             serializer and will not be persisted between failed message runs.
 
 #### Syntax
@@ -357,7 +357,7 @@ Type: `int`
 
 ### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetMessage
 
-Retrieves the [MessageEnvelope.MessageContent](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagecontent) deserialized into an [IMessage](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) of the specified type.
+Retrieves the [MessageEnvelope.MessageContent](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagecontent) deserialized into an [IMessage](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) of the specified type.
 
 #### Syntax
 
@@ -368,18 +368,18 @@ public T GetMessage<T>() where T : CloudNimble.SimpleMessageBus.Core.IMessage
 #### Returns
 
 Type: `T`
-A concrete *T* instance populated with the data from the [MessageEnvelope.MessageContent](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagecontent).
+A concrete *T* instance populated with the data from the [MessageEnvelope.MessageContent](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagecontent).
 
 #### Type Parameters
 
-- `T` - The [IMessage](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) type represented by the [MessageEnvelope.MessageContent](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagecontent).
+- `T` - The [IMessage](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessage) type represented by the [MessageEnvelope.MessageContent](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagecontent).
 
 #### Exceptions
 
 | Exception | Description |
 |-----------|-------------|
-| `JsonException` | Thrown when the [MessageEnvelope.MessageContent](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagecontent) cannot be deserialized to type *T*. |
-| `ArgumentNullException` | Thrown when [MessageEnvelope.MessageContent](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagecontent) is null. |
+| `JsonException` | Thrown when the [MessageEnvelope.MessageContent](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagecontent) cannot be deserialized to type *T*. |
+| `ArgumentNullException` | Thrown when [MessageEnvelope.MessageContent](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagecontent) is null. |
 
 #### Examples
 
@@ -397,8 +397,8 @@ public async Task OnNextAsync(MessageEnvelope envelope)
 #### Remarks
 
 This method provides type-safe deserialization when you know the exact message type at compile time.
-            It directly deserializes the JSON content without using the [MessageEnvelope.MessageType](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagetype) property for type resolution.
-            This can be more performant than the [MessageEnvelope.Message](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#message) property for known types, but requires explicit type specification.
+            It directly deserializes the JSON content without using the [MessageEnvelope.MessageType](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#messagetype) property for type resolution.
+            This can be more performant than the [MessageEnvelope.Message](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope#message) property for known types, but requires explicit type specification.
 
 ### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
 

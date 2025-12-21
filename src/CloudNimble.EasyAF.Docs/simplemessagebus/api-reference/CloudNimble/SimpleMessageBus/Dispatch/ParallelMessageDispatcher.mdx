@@ -1,6 +1,6 @@
 ---
 title: ParallelMessageDispatcher
-description: "An [IMessageDispatcher](/api-reference/CloudNimble/SimpleMessageBus/Dispatch/IMessageDispatcher) implementation that processes the messages in parallel, rega..."
+description: "An [IMessageDispatcher](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Dispatch/IMessageDispatcher) implementation that processes the messages in parallel, rega..."
 icon: file-brackets-curly
 keywords: ['ParallelMessageDispatcher', 'CloudNimble.SimpleMessageBus.Dispatch.ParallelMessageDispatcher', 'CloudNimble.SimpleMessageBus.Dispatch', 'class', 'System.Object', 'CloudNimble.SimpleMessageBus.Dispatch.IMessageDispatcher']
 ---
@@ -21,7 +21,7 @@ CloudNimble.SimpleMessageBus.Dispatch.ParallelMessageDispatcher
 
 ## Summary
 
-An [IMessageDispatcher](/api-reference/CloudNimble/SimpleMessageBus/Dispatch/IMessageDispatcher) implementation that processes the messages in parallel, regardless of the order the [IMessageHandler](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler)IMessageHandlers&lt;/see&gt; 
+An [IMessageDispatcher](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Dispatch/IMessageDispatcher) implementation that processes the messages in parallel, regardless of the order the [IMessageHandler](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler)IMessageHandlers&lt;/see&gt; 
             were registered with the Dependency Injection container.
 
 ## Remarks
@@ -34,7 +34,7 @@ This dispatcher invokes all matching message handlers concurrently using paralle
 
 ### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
 
-Initializes a new instance of the [ParallelMessageDispatcher](/api-reference/CloudNimble/SimpleMessageBus/Dispatch/ParallelMessageDispatcher) class.
+Initializes a new instance of the [ParallelMessageDispatcher](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Dispatch/ParallelMessageDispatcher) class.
 
 #### Syntax
 
@@ -62,7 +62,7 @@ public Object()
 
 ### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Dispatch
 
-Sends the [MessageEnvelope](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope) to the [IMessageHandler](/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler)MessageHandlers&lt;/see&gt; registered to that type, for processing.
+Sends the [MessageEnvelope](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope) to the [IMessageHandler](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/IMessageHandler)MessageHandlers&lt;/see&gt; registered to that type, for processing.
 
 #### Syntax
 
@@ -74,7 +74,7 @@ public System.Threading.Tasks.Task Dispatch(CloudNimble.SimpleMessageBus.Core.Me
 
 | Name | Type | Description |
 |------|------|-------------|
-| `messageEnvelope` | `CloudNimble.SimpleMessageBus.Core.MessageEnvelope` | The [MessageEnvelope](/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope) instance to be processed. |
+| `messageEnvelope` | `CloudNimble.SimpleMessageBus.Core.MessageEnvelope` | The [MessageEnvelope](/simplemessagebus/api-reference/CloudNimble/SimpleMessageBus/Core/MessageEnvelope) instance to be processed. |
 
 #### Returns
 
