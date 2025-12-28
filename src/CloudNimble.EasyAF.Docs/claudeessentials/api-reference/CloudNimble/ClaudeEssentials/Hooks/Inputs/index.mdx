@@ -8,8 +8,6 @@ keywords: ['CloudNimble.ClaudeEssentials.Hooks.Inputs', 'namespace', 'HookInputB
 
 ## Summary
 
-# Summary
-
 The `Inputs` namespace contains classes for deserializing JSON data that Claude Code sends to hooks via stdin. Each hook event type has a corresponding input class.
 
 ## Input Classes
@@ -31,9 +29,7 @@ All input classes inherit from `HookInputBase` which provides common properties 
 
 ## Usage
 
-# Usage
-
-## Deserializing Hook Input
+### Deserializing Hook Input
 
 Use `ClaudeHooksSerializer` to deserialize input from stdin:
 
@@ -48,7 +44,7 @@ var typedInput = ClaudeHooksSerializer.DeserializePreToolUseInput<MyToolInput>(
     json, MyJsonContext.Default.PreToolUseHookInputMyToolInput);
 ```
 
-## Common Base Properties
+### Common Base Properties
 
 All inputs include these properties from `HookInputBase`:
 

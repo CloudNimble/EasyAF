@@ -27,11 +27,9 @@ Provides AOT-compatible JSON serialization context for Claude Code hook types.
 
 ## Usage
 
-# Usage
-
 `ClaudeHooksJsonContext` is a source-generated `JsonSerializerContext` that enables AOT-compatible JSON serialization.
 
-## Direct Usage
+### Direct Usage
 
 ```csharp
 using System.Text.Json;
@@ -47,14 +45,14 @@ string output = JsonSerializer.Serialize(
     ClaudeHooksJsonContext.Default.PostToolUseHookOutput);
 ```
 
-## Accessing Options
+### Accessing Options
 
 ```csharp
 // Get the configured JsonSerializerOptions
 JsonSerializerOptions options = ClaudeHooksJsonContext.Default.Options;
 ```
 
-## Extending for Custom Types
+### Extending for Custom Types
 
 Create your own context for strongly-typed tool inputs:
 
@@ -181,6 +179,20 @@ public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEs
 #### Property Value
 
 Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.HookEventName>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> JsonElement
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<System.Text.Json.JsonElement> JsonElement { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<System.Text.Json.JsonElement>`
 
 ### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NotificationHookInput
 

@@ -8,32 +8,13 @@ keywords: ['CloudNimble.ClaudeEssentials.Hooks.Outputs', 'namespace', 'HookOutpu
 
 ## Summary
 
-# Summary
-
 The `Outputs` namespace contains classes for serializing JSON responses that hooks send to Claude Code via stdout.
-
-## Output Classes
-
-| Class | Hook Event | Purpose |
-|-------|------------|---------|
-| `PreToolUseHookOutput<T>` | PreToolUse | Allow, deny, or modify tool execution |
-| `PostToolUseHookOutput` | PostToolUse | Add context after tool execution |
-| `PermissionRequestHookOutput<T>` | PermissionRequest | Auto-respond to permission dialogs |
-| `UserPromptSubmitHookOutput` | UserPromptSubmit | Block or augment user prompts |
-| `StopHookOutput` | Stop | Prevent Claude from stopping |
-| `SubagentStopHookOutput` | SubagentStop | Prevent subagent from stopping |
-| `SessionStartHookOutput` | SessionStart | Add context at session start |
-| `NotificationHookOutput` | Notification | Control notification behavior |
-| `PreCompactHookOutput` | PreCompact | Control compaction behavior |
-| `SessionEndHookOutput` | SessionEnd | Respond to session end |
 
 All output classes inherit from `HookOutputBase` which provides `Continue`, `StopReason`, `SuppressOutput`, and `SystemMessage` properties.
 
 ## Usage
 
-# Usage
-
-## Creating and Serializing Output
+### Creating and Serializing Output
 
 ```csharp
 // Simple output - allow operation to continue
@@ -49,13 +30,13 @@ var blockOutput = new StopHookOutput
 Console.WriteLine(ClaudeHooksSerializer.SerializeStopOutput(blockOutput));
 ```
 
-## Exit Codes
+### Exit Codes
 
 - **0**: Success - stdout is parsed as JSON
 - **2**: Blocking error - stderr is shown to Claude/user
 - **Other**: Non-blocking error - shown in verbose mode only
 
-## Common Base Properties
+### Common Base Properties
 
 All outputs inherit from `HookOutputBase`:
 

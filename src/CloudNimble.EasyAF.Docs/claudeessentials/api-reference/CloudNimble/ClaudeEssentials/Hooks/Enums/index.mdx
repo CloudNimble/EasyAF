@@ -6,31 +6,7 @@ mode: wide
 keywords: ['CloudNimble.ClaudeEssentials.Hooks.Enums', 'namespace', 'CompactTrigger', 'HookDecision', 'HookEventName', 'NotificationType', 'PermissionDecision', 'PermissionMode', 'PermissionRequestBehavior', 'SessionEndReason', 'SessionStartSource']
 ---
 
-## Summary
-
-# Summary
-
-The `Enums` namespace contains type-safe enumerations for hook events, decisions, and modes.
-
-## Available Enums
-
-| Enum | Description |
-|------|-------------|
-| `HookEventName` | All hook event types (PreToolUse, PostToolUse, Stop, etc.) |
-| `PermissionMode` | Permission modes (Default, Plan, AcceptEdits, BypassPermissions) |
-| `PermissionDecision` | PreToolUse decisions (Allow, Deny, Ask) |
-| `PermissionRequestBehavior` | PermissionRequest behaviors (Allow, Deny) |
-| `HookDecision` | General hook decisions (Allow, Block) |
-| `NotificationType` | Notification types (PermissionPrompt, IdlePrompt, etc.) |
-| `SessionStartSource` | Session start triggers (Startup, Resume, Clear, Compact) |
-| `SessionEndReason` | Session end reasons (Clear, Logout, PromptInputExit, Other) |
-| `CompactTrigger` | Compaction triggers (Manual, Auto) |
-
 ## Usage
-
-# Usage
-
-## Common Patterns
 
 ```csharp
 // Check hook event type

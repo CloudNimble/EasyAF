@@ -8,8 +8,6 @@ keywords: ['CloudNimble.ClaudeEssentials.Hooks', 'namespace', 'ClaudeHooksJsonCo
 
 ## Summary
 
-# Summary
-
 The `CloudNimble.ClaudeEssentials.Hooks` namespace provides strongly-typed C# models for building Claude Code hooks. These models represent the JSON input/output schemas that Claude Code uses to communicate with hook executables.
 
 ## Key Components
@@ -22,9 +20,7 @@ The `CloudNimble.ClaudeEssentials.Hooks` namespace provides strongly-typed C# mo
 
 ## Usage
 
-# Usage
-
-## Basic Hook Pattern
+### Basic Hook Pattern
 
 A Claude Code hook is an executable that:
 1. Reads JSON from stdin
@@ -46,7 +42,7 @@ var output = new PreToolUseHookOutput<object> { Continue = true };
 Console.WriteLine(ClaudeHooksSerializer.SerializePreToolUseOutput(output));
 ```
 
-## Hook Configuration
+### Hook Configuration
 
 Configure hooks in `~/.claude/settings.json` or `.claude/settings.json`:
 
@@ -65,9 +61,7 @@ Configure hooks in `~/.claude/settings.json` or `.claude/settings.json`:
 
 ## Examples
 
-# Examples
-
-## PreToolUse: Auto-approve safe tools
+### PreToolUse: Auto-approve safe tools
 
 ```csharp
 var input = ClaudeHooksSerializer.DeserializePreToolUseInput(Console.In.ReadToEnd());
@@ -86,7 +80,7 @@ var output = new PreToolUseHookOutput<object>
 Console.WriteLine(ClaudeHooksSerializer.SerializePreToolUseOutput(output));
 ```
 
-## PostToolUse: Log tool executions
+### PostToolUse: Log tool executions
 
 ```csharp
 var input = ClaudeHooksSerializer.DeserializePostToolUseInput(Console.In.ReadToEnd());
@@ -96,7 +90,7 @@ File.AppendAllText("hooks.log", $"{DateTime.Now}: {input?.ToolName}\n");
 Console.WriteLine(ClaudeHooksSerializer.SerializePostToolUseOutput(new PostToolUseHookOutput()));
 ```
 
-## Stop: Require confirmation before stopping
+### Stop: Require confirmation before stopping
 
 ```csharp
 var input = ClaudeHooksSerializer.DeserializeStopInput(Console.In.ReadToEnd());
