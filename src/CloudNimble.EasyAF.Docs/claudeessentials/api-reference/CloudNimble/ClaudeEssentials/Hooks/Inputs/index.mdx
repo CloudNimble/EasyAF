@@ -1,0 +1,79 @@
+---
+title: Overview
+description: "Summary of the CloudNimble.ClaudeEssentials.Hooks.Inputs Namespace"
+icon: folder-tree
+mode: wide
+keywords: ['CloudNimble.ClaudeEssentials.Hooks.Inputs', 'namespace', 'HookInputBase', 'NotificationHookInput', 'PermissionRequestHookInput', 'PostToolUseHookInput', 'PreCompactHookInput', 'PreToolUseHookInput', 'SessionEndHookInput', 'SessionStartHookInput', 'StopHookInput', 'SubagentStopHookInput']
+---
+
+## Summary
+
+# Summary
+
+The `Inputs` namespace contains classes for deserializing JSON data that Claude Code sends to hooks via stdin. Each hook event type has a corresponding input class.
+
+## Input Classes
+
+| Class | Hook Event | Description |
+|-------|------------|-------------|
+| `PreToolUseHookInput<T>` | PreToolUse | Received before a tool executes |
+| `PostToolUseHookInput<T,R>` | PostToolUse | Received after a tool completes |
+| `PermissionRequestHookInput<T>` | PermissionRequest | Received when permission is requested |
+| `UserPromptSubmitHookInput` | UserPromptSubmit | Received when user submits a prompt |
+| `StopHookInput` | Stop | Received when Claude finishes responding |
+| `SubagentStopHookInput` | SubagentStop | Received when a subagent completes |
+| `NotificationHookInput` | Notification | Received for notifications |
+| `SessionStartHookInput` | SessionStart | Received when a session starts |
+| `SessionEndHookInput` | SessionEnd | Received when a session ends |
+| `PreCompactHookInput` | PreCompact | Received before context compaction |
+
+All input classes inherit from `HookInputBase` which provides common properties like `SessionId`, `TranscriptPath`, and `CurrentWorkingDirectory`.
+
+## Usage
+
+# Usage
+
+## Deserializing Hook Input
+
+Use `ClaudeHooksSerializer` to deserialize input from stdin:
+
+```csharp
+// For PreToolUse hooks
+var input = ClaudeHooksSerializer.DeserializePreToolUseInput(Console.In.ReadToEnd());
+Console.WriteLine($"Tool: {input?.ToolName}");
+Console.WriteLine($"Session: {input?.SessionId}");
+
+// For strongly-typed tool input (requires custom JsonSerializerContext)
+var typedInput = ClaudeHooksSerializer.DeserializePreToolUseInput<MyToolInput>(
+    json, MyJsonContext.Default.PreToolUseHookInputMyToolInput);
+```
+
+## Common Base Properties
+
+All inputs include these properties from `HookInputBase`:
+
+- `SessionId` - Unique session identifier
+- `TranscriptPath` - Path to conversation transcript
+- `CurrentWorkingDirectory` - Active working directory
+- `PermissionMode` - Current permission mode
+- `HookEventName` - The event that triggered this hook
+
+## Types
+
+### <Icon icon="file-brackets-curly" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} /> Classes
+
+| Name | Summary |
+| ---- | ------- |
+| [HookInputBase](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/HookInputBase) | Base class containing common fields present in all hook inputs.              All hooks receive these fields via JSON through stdin. |
+| [NotificationHookInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/NotificationHookInput) | Represents the input received by a Notification hook.              This hook runs when Claude Code sends notifications. |
+| [PermissionRequestHookInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/PermissionRequestHookInput) | Represents the input received by a PermissionRequest hook.              This hook runs when a permission dialog is shown and can automatically allow or deny permissions. |
+| [PostToolUseHookInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/PostToolUseHookInput) | Represents the input received by a PostToolUse hook.              This hook runs after tool calls complete and includes the tool's response. |
+| [PreCompactHookInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/PreCompactHookInput) | Represents the input received by a PreCompact hook.              This hook runs before a compact operation. |
+| [PreToolUseHookInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/PreToolUseHookInput) | Represents the input received by a PreToolUse hook.              This hook runs before tool calls are executed and can block or modify them. |
+| [SessionEndHookInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/SessionEndHookInput) | Represents the input received by a SessionEnd hook.              This hook runs when a Claude Code session ends. |
+| [SessionStartHookInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/SessionStartHookInput) | Represents the input received by a SessionStart hook.              This hook runs when Claude Code starts a new session or resumes one. |
+| [StopHookInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/StopHookInput) | Represents the input received by a Stop hook.              This hook runs when Claude Code finishes responding. |
+| [SubagentStopHookInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/SubagentStopHookInput) | Represents the input received by a SubagentStop hook.              This hook runs when subagent tasks complete. |
+| [ToolHookInputBase](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/ToolHookInputBase) | Base class for tool-related hook inputs that contain tool name, input, and use ID.              Used as a base for PreToolUse and PostToolUse hook inputs. |
+| [UserPromptSubmitHookInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/UserPromptSubmitHookInput) | Represents the input received by a UserPromptSubmit hook.              This hook runs when the user submits a prompt, before Claude processes it. |
+

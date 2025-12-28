@@ -1,0 +1,56 @@
+---
+title: ClaudeEssentials Documentation
+sidebarTitle: Home
+description: AOT-ready .NET models for Claude Code hooks
+icon: house
+---
+
+# ClaudeEssentials
+
+A lightweight, AOT-compatible .NET library for building [Claude Code](https://docs.anthropic.com/en/docs/claude-code) hook processors. Serialize and deserialize hook payloads with zero reflection overhead.
+
+<CardGroup cols={2}>
+  <Card title="Why ClaudeEssentials?" icon="lightbulb" href="why-claudeessentials">
+    Design philosophy and what makes this library different
+  </Card>
+  <Card title="Quickstart" icon="play" href="quickstart">
+    Get up and running in under 5 minutes
+  </Card>
+</CardGroup>
+
+## What Are Claude Code Hooks?
+
+Claude Code hooks let you intercept and customize Claude's behavior at key points during a session. ClaudeEssentials provides strongly-typed C# models for all hook events:
+
+| Hook | Purpose |
+|------|---------|
+| `PreToolUse` | Approve, deny, or modify tool calls before execution |
+| `PostToolUse` | Add context or take action after tools complete |
+| `Stop` | Enforce policies before Claude ends a session |
+| `SessionStart` | Inject project context when sessions begin |
+| `Notification` | React to permission prompts and other notifications |
+
+## Features
+
+<CardGroup cols={3}>
+  <Card title="AOT Ready" icon="bolt">
+    Source-generated serialization with zero reflection
+  </Card>
+  <Card title="Strongly Typed" icon="shield-check">
+    Full IntelliSense and compile-time safety
+  </Card>
+  <Card title="Lightweight" icon="feather">
+    No dependencies beyond System.Text.Json
+  </Card>
+</CardGroup>
+
+## Documentation
+
+<CardGroup cols={2}>
+  <Card title="API Reference" icon="code" href="api-reference">
+    Complete documentation for all types and members
+  </Card>
+  <Card title="Hooks Namespace" icon="webhook" href="api-reference/CloudNimble/ClaudeEssentials/Hooks">
+    Input/output models and serialization helpers
+  </Card>
+</CardGroup>

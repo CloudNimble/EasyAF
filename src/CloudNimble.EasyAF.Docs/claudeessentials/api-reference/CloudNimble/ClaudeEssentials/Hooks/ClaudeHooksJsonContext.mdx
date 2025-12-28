@@ -1,0 +1,712 @@
+---
+title: ClaudeHooksJsonContext
+description: "Provides AOT-compatible JSON serialization context for Claude Code hook types.             This context uses source generators to pre-compile serialization c..."
+icon: file-brackets-curly
+keywords: ['ClaudeHooksJsonContext', 'CloudNimble.ClaudeEssentials.Hooks.ClaudeHooksJsonContext', 'CloudNimble.ClaudeEssentials.Hooks', 'class', 'System.Text.Json.Serialization.JsonSerializerContext', 'System.Text.Json.Serialization.Metadata.IJsonTypeInfoResolver']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks
+
+**Inheritance:** System.Text.Json.Serialization.JsonSerializerContext
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.ClaudeHooksJsonContext
+```
+
+## Summary
+
+Provides AOT-compatible JSON serialization context for Claude Code hook types.
+            This context uses source generators to pre-compile serialization code,
+            eliminating the need for runtime reflection.
+
+## Usage
+
+# Usage
+
+`ClaudeHooksJsonContext` is a source-generated `JsonSerializerContext` that enables AOT-compatible JSON serialization.
+
+## Direct Usage
+
+```csharp
+using System.Text.Json;
+
+// Deserialize using the context directly
+var input = JsonSerializer.Deserialize(
+    json, 
+    ClaudeHooksJsonContext.Default.PreToolUseHookInputObject);
+
+// Serialize using the context directly
+string output = JsonSerializer.Serialize(
+    hookOutput,
+    ClaudeHooksJsonContext.Default.PostToolUseHookOutput);
+```
+
+## Accessing Options
+
+```csharp
+// Get the configured JsonSerializerOptions
+JsonSerializerOptions options = ClaudeHooksJsonContext.Default.Options;
+```
+
+## Extending for Custom Types
+
+Create your own context for strongly-typed tool inputs:
+
+```csharp
+[JsonSerializable(typeof(PreToolUseHookInput<BashToolInput>))]
+[JsonSerializable(typeof(PreToolUseHookInput<WriteToolInput>))]
+public partial class MyHooksJsonContext : JsonSerializerContext { }
+```
+
+## Remarks
+
+
+
+
+            For generic hook types (PreToolUseHookInput, PostToolUseHookInput, etc.),
+            this context registers versions using [Object](https://learn.microsoft.com/dotnet/api/system.object) as the type parameter.
+            If you need strongly-typed serialization for specific tool inputs/outputs,
+            create your own [JsonSerializerContext](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonserializercontext) with additional type registrations.
+            
+
+
+
+
+            Usage example:
+            ```csharp
+var input = JsonSerializer.Deserialize(json, ClaudeHooksJsonContext.Default.PreToolUseHookInputObject);
+var output = JsonSerializer.Serialize(hookOutput, ClaudeHooksJsonContext.Default.PreToolUseHookOutputObject);
+```
+
+
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public ClaudeHooksJsonContext()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public ClaudeHooksJsonContext(System.Text.Json.JsonSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options` | `System.Text.Json.JsonSerializerOptions` | - |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Boolean
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<bool> Boolean { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<bool>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CompactTrigger
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.CompactTrigger> CompactTrigger { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.CompactTrigger>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Default
+
+The default [JsonSerializerContext](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonserializercontext) associated with a default [JsonSerializerOptions](https://learn.microsoft.com/dotnet/api/system.text.json.jsonserializeroptions) instance.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.ClaudeEssentials.Hooks.ClaudeHooksJsonContext Default { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.ClaudeEssentials.Hooks.ClaudeHooksJsonContext`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> HookDecision
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.HookDecision> HookDecision { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.HookDecision>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> HookEventName
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.HookEventName> HookEventName { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.HookEventName>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NotificationHookInput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.NotificationHookInput> NotificationHookInput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.NotificationHookInput>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NotificationHookOutput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.NotificationHookOutput> NotificationHookOutput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.NotificationHookOutput>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NotificationType
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.NotificationType> NotificationType { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.NotificationType>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NullableHookDecision
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<System.Nullable<CloudNimble.ClaudeEssentials.Hooks.Enums.HookDecision>> NullableHookDecision { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<System.Nullable<CloudNimble.ClaudeEssentials.Hooks.Enums.HookDecision>>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NullablePermissionDecision
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<System.Nullable<CloudNimble.ClaudeEssentials.Hooks.Enums.PermissionDecision>> NullablePermissionDecision { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<System.Nullable<CloudNimble.ClaudeEssentials.Hooks.Enums.PermissionDecision>>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Object
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<object> Object { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<object>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PermissionDecision
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.PermissionDecision> PermissionDecision { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.PermissionDecision>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PermissionMode
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.PermissionMode> PermissionMode { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.PermissionMode>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PermissionRequestBehavior
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.PermissionRequestBehavior> PermissionRequestBehavior { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.PermissionRequestBehavior>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PermissionRequestDecisionObject
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.PermissionRequestDecision<object>> PermissionRequestDecisionObject { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.PermissionRequestDecision<object>>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PermissionRequestHookInputObject
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.PermissionRequestHookInput<object>> PermissionRequestHookInputObject { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.PermissionRequestHookInput<object>>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PermissionRequestHookOutputObject
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.PermissionRequestHookOutput<object>> PermissionRequestHookOutputObject { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.PermissionRequestHookOutput<object>>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PermissionRequestSpecificOutputObject
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.PermissionRequestSpecificOutput<object>> PermissionRequestSpecificOutputObject { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.PermissionRequestSpecificOutput<object>>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PostToolUseHookInputObject
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.PostToolUseHookInput<object, object>> PostToolUseHookInputObject { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.PostToolUseHookInput<object, object>>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PostToolUseHookOutput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.PostToolUseHookOutput> PostToolUseHookOutput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.PostToolUseHookOutput>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PostToolUseSpecificOutput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.PostToolUseSpecificOutput> PostToolUseSpecificOutput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.PostToolUseSpecificOutput>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PreCompactHookInput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.PreCompactHookInput> PreCompactHookInput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.PreCompactHookInput>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PreCompactHookOutput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.PreCompactHookOutput> PreCompactHookOutput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.PreCompactHookOutput>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PreToolUseHookInputObject
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.PreToolUseHookInput<object>> PreToolUseHookInputObject { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.PreToolUseHookInput<object>>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PreToolUseHookOutputObject
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.PreToolUseHookOutput<object>> PreToolUseHookOutputObject { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.PreToolUseHookOutput<object>>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PreToolUseSpecificOutputObject
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.PreToolUseSpecificOutput<object>> PreToolUseSpecificOutputObject { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.PreToolUseSpecificOutput<object>>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SessionEndHookInput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.SessionEndHookInput> SessionEndHookInput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.SessionEndHookInput>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SessionEndHookOutput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.SessionEndHookOutput> SessionEndHookOutput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.SessionEndHookOutput>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SessionEndReason
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.SessionEndReason> SessionEndReason { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.SessionEndReason>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SessionStartHookInput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.SessionStartHookInput> SessionStartHookInput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.SessionStartHookInput>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SessionStartHookOutput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.SessionStartHookOutput> SessionStartHookOutput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.SessionStartHookOutput>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SessionStartSource
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.SessionStartSource> SessionStartSource { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Enums.SessionStartSource>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SessionStartSpecificOutput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.SessionStartSpecificOutput> SessionStartSpecificOutput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.SessionStartSpecificOutput>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> StopHookInput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.StopHookInput> StopHookInput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.StopHookInput>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> StopHookOutput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.StopHookOutput> StopHookOutput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.StopHookOutput>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> String
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<string> String { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<string>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SubagentStopHookInput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.SubagentStopHookInput> SubagentStopHookInput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.SubagentStopHookInput>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SubagentStopHookOutput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.SubagentStopHookOutput> SubagentStopHookOutput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.SubagentStopHookOutput>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> UserPromptSubmitHookInput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.UserPromptSubmitHookInput> UserPromptSubmitHookInput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Inputs.UserPromptSubmitHookInput>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> UserPromptSubmitHookOutput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.UserPromptSubmitHookOutput> UserPromptSubmitHookOutput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.UserPromptSubmitHookOutput>`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> UserPromptSubmitSpecificOutput
+
+Defines the source generated JSON serialization contract metadata for a given type.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.UserPromptSubmitSpecificOutput> UserPromptSubmitSpecificOutput { get; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo<CloudNimble.ClaudeEssentials.Hooks.Outputs.UserPromptSubmitSpecificOutput>`
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetTypeInfo <Badge color="blue">Override</Badge>
+
+#### Syntax
+
+```csharp
+public override System.Text.Json.Serialization.Metadata.JsonTypeInfo GetTypeInfo(System.Type type)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `type` | `System.Type` | - |
+
+#### Returns
+
+Type: `System.Text.Json.Serialization.Metadata.JsonTypeInfo?`
+
+## Related APIs
+
+- System.Text.Json.Serialization.Metadata.IJsonTypeInfoResolver
+

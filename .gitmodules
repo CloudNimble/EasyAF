@@ -4,7 +4,7 @@
 [submodule "external/SimpleMessageBus"]
 	path = external/SimpleMessageBus
 	url = https://github.com/CloudNimble/SimpleMessageBus.git
-	branch = v6
+	branch = main
 [submodule "external/RESTier"]
 	path = external/RESTier
 	url = https://github.com/OData/RESTier.git
@@ -16,3 +16,6 @@
 [submodule "external/BlazorEssentials"]
 	path = external/BlazorEssentials
 	url = https://github.com/CloudNimble/BlazorEssentials.git
+[submodule "external/ClaudeEssentials"]
+	path = external/ClaudeEssentials
+	url = https://github.com/CloudNimble/ClaudeEssentials.git

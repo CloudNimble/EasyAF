@@ -1,0 +1,121 @@
+---
+title: Overview
+description: "Summary of the CloudNimble.ClaudeEssentials.Hooks Namespace"
+icon: folder-tree
+mode: wide
+keywords: ['CloudNimble.ClaudeEssentials.Hooks', 'namespace', 'ClaudeHooksJsonContext', 'ClaudeHooksSerializer']
+---
+
+## Summary
+
+# Summary
+
+The `CloudNimble.ClaudeEssentials.Hooks` namespace provides strongly-typed C# models for building Claude Code hooks. These models represent the JSON input/output schemas that Claude Code uses to communicate with hook executables.
+
+## Key Components
+
+- **Inputs**: Classes for deserializing JSON received from Claude Code via stdin
+- **Outputs**: Classes for serializing JSON responses to stdout
+- **Enums**: Type-safe representations of hook events, decisions, and modes
+- **ClaudeHooksSerializer**: AOT-compatible helper methods for JSON serialization
+- **ClaudeHooksJsonContext**: Source-generated JSON context for Native AOT support
+
+## Usage
+
+# Usage
+
+## Basic Hook Pattern
+
+A Claude Code hook is an executable that:
+1. Reads JSON from stdin
+2. Processes the input
+3. Writes JSON to stdout
+4. Exits with an appropriate code (0 = success, 2 = blocking error)
+
+```csharp
+using CloudNimble.ClaudeEssentials.Hooks;
+using CloudNimble.ClaudeEssentials.Hooks.Inputs;
+using CloudNimble.ClaudeEssentials.Hooks.Outputs;
+
+// Read input from stdin
+var json = Console.In.ReadToEnd();
+var input = ClaudeHooksSerializer.DeserializePreToolUseInput(json);
+
+// Process and respond
+var output = new PreToolUseHookOutput<object> { Continue = true };
+Console.WriteLine(ClaudeHooksSerializer.SerializePreToolUseOutput(output));
+```
+
+## Hook Configuration
+
+Configure hooks in `~/.claude/settings.json` or `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [{ "type": "command", "command": "my-hook.exe" }]
+      }
+    ]
+  }
+}
+```
+
+## Examples
+
+# Examples
+
+## PreToolUse: Auto-approve safe tools
+
+```csharp
+var input = ClaudeHooksSerializer.DeserializePreToolUseInput(Console.In.ReadToEnd());
+
+var output = new PreToolUseHookOutput<object>
+{
+    HookSpecificOutput = new PreToolUseSpecificOutput<object>
+    {
+        PermissionDecision = input?.ToolName == "Read"
+            ? PermissionDecision.Allow
+            : PermissionDecision.Ask,
+        PermissionDecisionReason = "Read operations are safe"
+    }
+};
+
+Console.WriteLine(ClaudeHooksSerializer.SerializePreToolUseOutput(output));
+```
+
+## PostToolUse: Log tool executions
+
+```csharp
+var input = ClaudeHooksSerializer.DeserializePostToolUseInput(Console.In.ReadToEnd());
+
+File.AppendAllText("hooks.log", $"{DateTime.Now}: {input?.ToolName}\n");
+
+Console.WriteLine(ClaudeHooksSerializer.SerializePostToolUseOutput(new PostToolUseHookOutput()));
+```
+
+## Stop: Require confirmation before stopping
+
+```csharp
+var input = ClaudeHooksSerializer.DeserializeStopInput(Console.In.ReadToEnd());
+
+var output = new StopHookOutput
+{
+    Decision = HookDecision.Block,
+    Reason = "Please confirm all tests pass before stopping."
+};
+
+Console.WriteLine(ClaudeHooksSerializer.SerializeStopOutput(output));
+```
+
+## Types
+
+### <Icon icon="file-brackets-curly" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} /> Classes
+
+| Name | Summary |
+| ---- | ------- |
+| [ClaudeHooksJsonContext](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/ClaudeHooksJsonContext) | Provides AOT-compatible JSON serialization context for Claude Code hook types.              This context uses source generators to pre-compile serialization code,              eliminating the need for runtime reflection. |
+| [ClaudeHooksSerializer](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/ClaudeHooksSerializer) | Provides static helper methods for serializing and deserializing Claude Code hook types.              All methods use the AOT-compatible [ClaudeHooksJsonContext](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/ClaudeHooksJsonContext) for serialization. |
+

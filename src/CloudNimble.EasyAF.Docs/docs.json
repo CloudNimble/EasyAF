@@ -900,7 +900,7 @@
         ]
       },
       {
-        "tab": "Enabling AI",
+        "tab": "AI for REST APIs",
         "href": "odata-mcp",
         "pages": [
           {
@@ -2064,6 +2064,108 @@
                         "pages": [
                           "breakdance/api-reference/System/Web/Http/index",
                           "breakdance/api-reference/System/Web/Http/HttpConfiguration"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Building for Claude",
+        "href": "claudeessentials",
+        "pages": [
+          {
+            "group": "Getting Started",
+            "icon": "stars",
+            "pages": [
+              "claudeessentials/index",
+              "claudeessentials/why-CloudNimble-ClaudeEssentials",
+              "claudeessentials/quickstart"
+            ]
+          },
+          {
+            "group": "API Reference",
+            "icon": "code",
+            "pages": [
+              {
+                "group": "CloudNimble",
+                "icon": "folder-tree",
+                "pages": [
+                  {
+                    "group": "ClaudeEssentials",
+                    "icon": "folder-tree",
+                    "pages": [
+                      {
+                        "group": "Hooks",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/index",
+                          "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/ClaudeHooksJsonContext",
+                          "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/ClaudeHooksSerializer",
+                          {
+                            "group": "Enums",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Enums/index",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Enums/CompactTrigger",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Enums/HookDecision",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Enums/HookEventName",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Enums/NotificationType",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Enums/PermissionDecision",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Enums/PermissionMode",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Enums/PermissionRequestBehavior",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Enums/SessionEndReason",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Enums/SessionStartSource"
+                            ]
+                          },
+                          {
+                            "group": "Inputs",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/index",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/HookInputBase",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/NotificationHookInput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/PermissionRequestHookInput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/PostToolUseHookInput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/PreCompactHookInput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/PreToolUseHookInput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/SessionEndHookInput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/SessionStartHookInput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/StopHookInput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/SubagentStopHookInput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/ToolHookInputBase",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/UserPromptSubmitHookInput"
+                            ]
+                          },
+                          {
+                            "group": "Outputs",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/index",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/HookOutputBase",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/HookSpecificOutputBase",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/NotificationHookOutput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/PermissionRequestDecision",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/PermissionRequestHookOutput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/PermissionRequestSpecificOutput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/PostToolUseHookOutput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/PostToolUseSpecificOutput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/PreCompactHookOutput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/PreToolUseHookOutput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/PreToolUseSpecificOutput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/SessionEndHookOutput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/SessionStartHookOutput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/SessionStartSpecificOutput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/StopHookOutput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/SubagentStopHookOutput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/UserPromptSubmitHookOutput",
+                              "claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/UserPromptSubmitSpecificOutput"
+                            ]
+                          }
                         ]
                       }
                     ]

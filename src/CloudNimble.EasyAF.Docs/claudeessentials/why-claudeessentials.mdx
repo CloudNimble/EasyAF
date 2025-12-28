@@ -1,0 +1,95 @@
+---
+title: Why ClaudeEssentials?
+sidebarTitle: Why ClaudeEssentials?
+description: The motivation behind ClaudeEssentials and what makes it different
+icon: lightbulb
+---
+
+## The Problem
+
+Claude Code hooks communicate via JSON over stdin/stdout. Building hook processors means:
+
+- Manually crafting JSON schemas that match Claude's expectations
+- Handling snake_case property names and nullable fields
+- Ensuring your code works with AOT compilation for fast startup
+- Testing serialization round-trips to catch subtle bugs
+
+ClaudeEssentials solves all of this with a single NuGet package.
+
+## Design Principles
+
+<CardGroup cols={2}>
+  <Card title="AOT-First" icon="bolt">
+    Source-generated serialization means zero reflection at runtime. Your hooks start instantly.
+  </Card>
+  <Card title="Type-Safe" icon="shield-check">
+    Strongly-typed models catch errors at compile time, not when Claude calls your hook.
+  </Card>
+  <Card title="Zero Dependencies" icon="cube">
+    Only requires System.Text.Json. No bloat, no conflicts, no surprises.
+  </Card>
+  <Card title="Predictable" icon="arrows-rotate">
+    Every input deserializes correctly. Every output serializes to valid JSON. Guaranteed by tests.
+  </Card>
+</CardGroup>
+
+## What's Included
+
+### Input Models
+Strongly-typed classes for every hook event Claude Code can trigger:
+
+- `PreToolUseHookInput<T>` — Tool name, input parameters, permission mode
+- `PostToolUseHookInput<T, R>` — Tool input plus the response
+- `StopHookInput` — Session context when Claude wants to stop
+- `SessionStartHookInput` — Project path, source (startup vs resume)
+- And more: `Notification`, `UserPromptSubmit`, `PreCompact`, `SessionEnd`
+
+### Output Models
+Response types with all the fields Claude Code expects:
+
+- `PreToolUseHookOutput<T>` — Allow, deny, or ask for permission
+- `PostToolUseHookOutput` — Add context for Claude to consider
+- `StopHookOutput` — Block stopping or add a warning
+- `SessionStartHookOutput` — Inject project context
+
+### Serialization Helpers
+`ClaudeHooksSerializer` provides typed methods that use the pre-compiled `ClaudeHooksJsonContext`:
+
+```csharp
+// Deserialize input
+var input = ClaudeHooksSerializer.DeserializePreToolUseInput(json);
+
+// Serialize output
+var json = ClaudeHooksSerializer.SerializePreToolUseOutput(output);
+```
+
+## Use Cases
+
+<AccordionGroup>
+  <Accordion title="Enforce Team Policies">
+    Auto-approve read-only tools while requiring confirmation for file modifications. Block dangerous commands entirely.
+  </Accordion>
+
+  <Accordion title="Quality Gates">
+    Use Stop hooks to ensure tests pass before Claude completes a task. Warn about uncommitted changes.
+  </Accordion>
+
+  <Accordion title="Context Injection">
+    Detect project type on SessionStart and inject relevant context—framework version, test commands, team guidelines.
+  </Accordion>
+
+  <Accordion title="Audit & Logging">
+    Log every tool call for compliance. Track what Claude does across sessions.
+  </Accordion>
+</AccordionGroup>
+
+## Get Started
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="play" href="/claudeessentials/quickstart">
+    Build your first hook processor
+  </Card>
+  <Card title="API Reference" icon="code" href="/claudeessentials/api-reference">
+    Explore all available types
+  </Card>
+</CardGroup>

@@ -1,0 +1,289 @@
+---
+title: SessionStartHookInput
+description: "Represents the input received by a SessionStart hook.             This hook runs when Claude Code starts a new session or resumes one."
+icon: file-brackets-curly
+keywords: ['SessionStartHookInput', 'CloudNimble.ClaudeEssentials.Hooks.Inputs.SessionStartHookInput', 'CloudNimble.ClaudeEssentials.Hooks.Inputs', 'class', 'CloudNimble.ClaudeEssentials.Hooks.Inputs.HookInputBase']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks.Inputs
+
+**Inheritance:** CloudNimble.ClaudeEssentials.Hooks.Inputs.HookInputBase
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.Inputs.SessionStartHookInput
+```
+
+## Summary
+
+Represents the input received by a SessionStart hook.
+            This hook runs when Claude Code starts a new session or resumes one.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public SessionStartHookInput()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.HookInputBase`</Note>
+
+#### Syntax
+
+```csharp
+protected HookInputBase()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CurrentWorkingDirectory <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.HookInputBase`</Note>
+
+Gets or sets the current working directory where Claude Code is running.
+
+#### Syntax
+
+```csharp
+public string CurrentWorkingDirectory { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> EnvironmentFilePath
+
+Gets or sets the file path where environment variables can be persisted.
+            This file can be written to during SessionStart to set environment variables
+            that will be available throughout the session.
+
+#### Syntax
+
+```csharp
+public string EnvironmentFilePath { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> HookEventName <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.HookInputBase`</Note>
+
+Gets or sets the name of the hook event that triggered this input.
+
+#### Syntax
+
+```csharp
+public CloudNimble.ClaudeEssentials.Hooks.Enums.HookEventName HookEventName { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.ClaudeEssentials.Hooks.Enums.HookEventName`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PermissionMode <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.HookInputBase`</Note>
+
+Gets or sets the permission mode under which Claude Code is operating.
+
+#### Syntax
+
+```csharp
+public CloudNimble.ClaudeEssentials.Hooks.Enums.PermissionMode PermissionMode { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.ClaudeEssentials.Hooks.Enums.PermissionMode`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SessionId <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.HookInputBase`</Note>
+
+Gets or sets the unique identifier for the current Claude Code session.
+
+#### Syntax
+
+```csharp
+public string SessionId { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Source
+
+Gets or sets the source that triggered the session start.
+
+#### Syntax
+
+```csharp
+public CloudNimble.ClaudeEssentials.Hooks.Enums.SessionStartSource Source { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.ClaudeEssentials.Hooks.Enums.SessionStartSource?`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TranscriptPath <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.HookInputBase`</Note>
+
+Gets or sets the file path to the transcript JSONL file for the current session.
+            This file contains the full conversation history.
+
+#### Syntax
+
+```csharp
+public string TranscriptPath { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
