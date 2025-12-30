@@ -1,0 +1,409 @@
+---
+title: GrepToolInput
+description: "Represents the input parameters for the Grep tool.             The Grep tool is a powerful content search built on ripgrep."
+icon: file-brackets-curly
+keywords: ['GrepToolInput', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs.GrepToolInput', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs.GrepToolInput
+```
+
+## Summary
+
+Represents the input parameters for the Grep tool.
+            The Grep tool is a powerful content search built on ripgrep.
+
+## Remarks
+
+
+
+
+            Supports full regex syntax (e.g., "log.*Error", "function\s+\w+").
+            Filter files with glob parameter or type parameter.
+            
+
+
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public GrepToolInput()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CaseInsensitive
+
+Gets or sets whether to perform case insensitive search.
+
+#### Syntax
+
+```csharp
+public System.Nullable<bool> CaseInsensitive { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<bool>?`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Glob
+
+Gets or sets the glob pattern to filter files.
+
+#### Syntax
+
+```csharp
+public string Glob { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+
+#### Remarks
+
+Examples: "*.js", "*.{ts,tsx}"
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> HeadLimit
+
+Gets or sets the limit on output to first N lines/entries.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> HeadLimit { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>?`
+
+#### Remarks
+
+Equivalent to "| head -N". Defaults to 0 (unlimited).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> LinesAfter
+
+Gets or sets the number of lines to show after each match.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> LinesAfter { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>?`
+
+#### Remarks
+
+Requires output_mode: "content", ignored otherwise.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> LinesBefore
+
+Gets or sets the number of lines to show before each match.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> LinesBefore { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>?`
+
+#### Remarks
+
+Requires output_mode: "content", ignored otherwise.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> LinesContext
+
+Gets or sets the number of lines to show before and after each match.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> LinesContext { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>?`
+
+#### Remarks
+
+Requires output_mode: "content", ignored otherwise.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Multiline
+
+Gets or sets whether to enable multiline mode.
+
+#### Syntax
+
+```csharp
+public System.Nullable<bool> Multiline { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<bool>?`
+
+#### Remarks
+
+When enabled, '.' matches newlines and patterns can span lines. Default: false.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Offset
+
+Gets or sets the number of lines/entries to skip before applying head_limit.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> Offset { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>?`
+
+#### Remarks
+
+Equivalent to "| tail -n +N | head -N". Defaults to 0.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> OutputMode
+
+Gets or sets the output mode.
+
+#### Syntax
+
+```csharp
+public string OutputMode { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+
+#### Remarks
+
+Options: "content" (shows matching lines), "files_with_matches" (shows only file paths, default), "count" (shows match counts).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Path
+
+Gets or sets the file or directory to search in.
+
+#### Syntax
+
+```csharp
+public string Path { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+
+#### Remarks
+
+Defaults to current working directory if not specified.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Pattern
+
+Gets or sets the regular expression pattern to search for in file contents.
+
+#### Syntax
+
+```csharp
+public string Pattern { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Remarks
+
+Uses ripgrep syntax. Literal braces need escaping (use "interface\{\}" to find "interface{}" in Go code).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ShowLineNumbers
+
+Gets or sets whether to show line numbers in output.
+
+#### Syntax
+
+```csharp
+public System.Nullable<bool> ShowLineNumbers { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<bool>?`
+
+#### Remarks
+
+Requires output_mode: "content", ignored otherwise. Defaults to true.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Type
+
+Gets or sets the file type to search.
+
+#### Syntax
+
+```csharp
+public string Type { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+
+#### Remarks
+
+Common types: js, py, rust, go, java, etc. More efficient than glob for standard file types.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

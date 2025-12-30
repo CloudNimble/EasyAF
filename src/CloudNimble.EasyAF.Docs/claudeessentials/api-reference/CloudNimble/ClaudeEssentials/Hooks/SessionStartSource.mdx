@@ -1,0 +1,35 @@
+---
+title: SessionStartSource
+description: "Represents the source that triggered a session start event."
+icon: list-ol
+tag: "ENUM"
+keywords: ['SessionStartSource', 'CloudNimble.ClaudeEssentials.Hooks.SessionStartSource', 'CloudNimble.ClaudeEssentials.Hooks', 'class', 'System.Enum']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.SessionStartSource
+```
+
+## Summary
+
+Represents the source that triggered a session start event.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Startup` | 0 | Session started from initial startup of Claude Code. |
+| `Resume` | 1 | Session resumed from a previous session. |
+| `Clear` | 2 | Session started after a clear command. |
+| `Compact` | 3 | Session started after a compact operation. |
+

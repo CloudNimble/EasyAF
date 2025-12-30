@@ -1,17 +1,18 @@
 ---
 title: ApiBase
-description: "Extension methods for ApiBase from Microsoft.Restier.Core"
-icon: file-brackets-curly
-keywords: ['ApiBase', 'Microsoft.Restier.Core.ApiBase', 'Microsoft.Restier.Core', 'error']
+description: "Represents a base class for an API."
+icon: shapes
+tag: "ABSTRACT"
+keywords: ['ApiBase', 'Microsoft.Restier.Core.ApiBase', 'Microsoft.Restier.Core', 'class', 'System.Object', 'System.IDisposable']
 ---
-
-import { DocsBadge } from '/snippets/restier/DocsBadge.jsx';
 
 ## Definition
 
 **Assembly:** Microsoft.Restier.Core.dll
 
 **Namespace:** Microsoft.Restier.Core
+
+**Inheritance:** System.Object
 
 ## Syntax
 
@@ -21,15 +22,23 @@ Microsoft.Restier.Core.ApiBase
 
 ## Summary
 
-This type is defined in Microsoft.Restier.Core.
+Represents a base class for an API.
 
 ## Remarks
 
-See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/microsoft.restier.core.apibase) for more information about the rest of the API.
+
+
+
+            An API configuration is intended to be long-lived, and can be statically cached according to an API type specified when the
+            configuration is created. Additionally, the API model produced as a result of a particular configuration is cached under the same
+            API type to avoid re-computing it on each invocation.
+            
+
+
 
 ## Constructors
 
-### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
 
 <Note>Inherited from `object`</Note>
 
@@ -41,9 +50,9 @@ public Object()
 
 ## Properties
 
-### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ServiceProvider
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ServiceProvider
 
-Gets the [IServiceProvider](/restier/api-reference/System/IServiceProvider) which contains all services.
+Gets the [IServiceProvider](https://learn.microsoft.com/dotnet/api/system.iserviceprovider) which contains all services.
 
 #### Syntax
 
@@ -57,7 +66,7 @@ Type: `System.IServiceProvider`
 
 ## Methods
 
-### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Dispose
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Dispose
 
 Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
 
@@ -67,7 +76,7 @@ Performs application-defined tasks associated with freeing, releasing, or resett
 public void Dispose()
 ```
 
-### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
 
 <Note>Inherited from `object`</Note>
 
@@ -87,7 +96,7 @@ public virtual bool Equals(object obj)
 
 Type: `bool`
 
-### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
 
 <Note>Inherited from `object`</Note>
 
@@ -108,32 +117,7 @@ public static bool Equals(object objA, object objB)
 
 Type: `bool`
 
-### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateVisibilityMatrix <DocsBadge text="Extension" variant="success" />
-
-<Note>Extension method from `Microsoft.Restier.Breakdance.ApiBaseExtensions`</Note>
-
-An extension method that generates a Markdown table of all of the possible Restier methods for the given API in the first column, and a boolean
-            indicating whether or not the method was found in the second column.
-
-#### Syntax
-
-```csharp
-public static string GenerateVisibilityMatrix(Microsoft.Restier.Core.ApiBase api, bool markdown = false)
-```
-
-#### Parameters
-
-| Name | Type | Description |
-|------|------|-------------|
-| `api` | `Microsoft.Restier.Core.ApiBase` | The [ApiBase](/restier/api-reference/Microsoft/Restier/Core/ApiBase) instance to process. |
-| `markdown` | `bool` | - |
-
-#### Returns
-
-Type: `string`
-A string containing the Markdown table of results.
-
-### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetApiService <DocsBadge text="Extension" variant="success" />
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetApiService <Badge color="green">Extension</Badge>
 
 <Note>Extension method from `Microsoft.Restier.Core.ApiBaseExtensions`</Note>
 
@@ -160,7 +144,7 @@ The service instance.
 
 - `T` - The service type.
 
-### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetApiServices <DocsBadge text="Extension" variant="success" />
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetApiServices <Badge color="green">Extension</Badge>
 
 <Note>Extension method from `Microsoft.Restier.Core.ApiBaseExtensions`</Note>
 
@@ -180,7 +164,7 @@ public static System.Collections.Generic.IEnumerable<T> GetApiServices<T>(Micros
 
 Type: `System.Collections.Generic.IEnumerable<T>`
 
-### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
 
 <Note>Inherited from `object`</Note>
 
@@ -194,11 +178,11 @@ public virtual int GetHashCode()
 
 Type: `int`
 
-### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetModel <DocsBadge text="Extension" variant="success" />
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetModel <Badge color="green">Extension</Badge>
 
 <Note>Extension method from `Microsoft.Restier.Core.ApiBaseExtensions`</Note>
 
-Retrieves the [IEdmModel](/restier/api-reference/Microsoft/OData/Edm/IEdmModel) used by this [ApiBase](/restier/api-reference/Microsoft/Restier/Core/ApiBase) instance.
+Retrieves the [IEdmModel](https://learn.microsoft.com/dotnet/api/microsoft.odata.edm.iedmmodel) used by this [ApiBase](/restier/api-reference/Microsoft/Restier/Core/ApiBase) instance.
 
 #### Syntax
 
@@ -215,9 +199,9 @@ public static Microsoft.OData.Edm.IEdmModel GetModel(Microsoft.Restier.Core.ApiB
 #### Returns
 
 Type: `Microsoft.OData.Edm.IEdmModel`
-The [IEdmModel](/restier/api-reference/Microsoft/OData/Edm/IEdmModel) used by this [ApiBase](/restier/api-reference/Microsoft/Restier/Core/ApiBase) instance.
+The [IEdmModel](https://learn.microsoft.com/dotnet/api/microsoft.odata.edm.iedmmodel) used by this [ApiBase](/restier/api-reference/Microsoft/Restier/Core/ApiBase) instance.
 
-### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetProperty <DocsBadge text="Extension" variant="success" />
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetProperty <Badge color="green">Extension</Badge>
 
 <Note>Extension method from `Microsoft.Restier.Core.ApiBaseExtensions`</Note>
 
@@ -245,7 +229,7 @@ The value of the property.
 
 - `T` - The type of the property.
 
-### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetProperty <DocsBadge text="Extension" variant="success" />
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetProperty <Badge color="green">Extension</Badge>
 
 <Note>Extension method from `Microsoft.Restier.Core.ApiBaseExtensions`</Note>
 
@@ -269,7 +253,7 @@ public static object GetProperty(Microsoft.Restier.Core.ApiBase api, string name
 Type: `object`
 The value of the property.
 
-### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetQueryableSource <DocsBadge text="Extension" variant="success" />
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetQueryableSource <Badge color="green">Extension</Badge>
 
 <Note>Extension method from `Microsoft.Restier.Core.ApiBaseExtensions`</Note>
 
@@ -314,7 +298,7 @@ A queryable source.
 
 
 
-### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetQueryableSource <DocsBadge text="Extension" variant="success" />
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetQueryableSource <Badge color="green">Extension</Badge>
 
 <Note>Extension method from `Microsoft.Restier.Core.ApiBaseExtensions`</Note>
 
@@ -359,7 +343,7 @@ A queryable source.
 
 
 
-### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetQueryableSource <DocsBadge text="Extension" variant="success" />
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetQueryableSource <Badge color="green">Extension</Badge>
 
 <Note>Extension method from `Microsoft.Restier.Core.ApiBaseExtensions`</Note>
 
@@ -408,7 +392,7 @@ A queryable source.
 
 
 
-### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetQueryableSource <DocsBadge text="Extension" variant="success" />
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetQueryableSource <Badge color="green">Extension</Badge>
 
 <Note>Extension method from `Microsoft.Restier.Core.ApiBaseExtensions`</Note>
 
@@ -457,7 +441,7 @@ A queryable source.
 
 
 
-### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
 
 <Note>Inherited from `object`</Note>
 
@@ -471,7 +455,7 @@ public System.Type GetType()
 
 Type: `System.Type`
 
-### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasProperty <DocsBadge text="Extension" variant="success" />
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> HasProperty <Badge color="green">Extension</Badge>
 
 <Note>Extension method from `Microsoft.Restier.Core.ApiBaseExtensions`</Note>
 
@@ -495,7 +479,7 @@ public static bool HasProperty(Microsoft.Restier.Core.ApiBase api, string name)
 Type: `bool`
 `true` if this object has the property; otherwise, `false`.
 
-### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
 
 <Note>Inherited from `object`</Note>
 
@@ -509,7 +493,7 @@ protected internal object MemberwiseClone()
 
 Type: `object`
 
-### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  QueryAsync <DocsBadge text="Extension" variant="success" />
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> QueryAsync <Badge color="green">Extension</Badge>
 
 <Note>Extension method from `Microsoft.Restier.Core.ApiBaseExtensions`</Note>
 
@@ -535,7 +519,7 @@ Type: `System.Threading.Tasks.Task<Microsoft.Restier.Core.Query.QueryResult>`
 A task that represents the asynchronous
             operation whose result is a query result.
 
-### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
 
 <Note>Inherited from `object`</Note>
 
@@ -556,7 +540,7 @@ public static bool ReferenceEquals(object objA, object objB)
 
 Type: `bool`
 
-### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RemoveProperty <DocsBadge text="Extension" variant="success" />
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> RemoveProperty <Badge color="green">Extension</Badge>
 
 <Note>Extension method from `Microsoft.Restier.Core.ApiBaseExtensions`</Note>
 
@@ -575,7 +559,7 @@ public static void RemoveProperty(Microsoft.Restier.Core.ApiBase api, string nam
 | `api` | `Microsoft.Restier.Core.ApiBase` | An API. |
 | `name` | `string` | The name of a property. |
 
-### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SetProperty <DocsBadge text="Extension" variant="success" />
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SetProperty <Badge color="green">Extension</Badge>
 
 <Note>Extension method from `Microsoft.Restier.Core.ApiBaseExtensions`</Note>
 
@@ -595,7 +579,7 @@ public static void SetProperty(Microsoft.Restier.Core.ApiBase api, string name, 
 | `name` | `string` | The name of a property. |
 | `value` | `object` | A value for the property. |
 
-### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SubmitAsync
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SubmitAsync
 
 Asynchronously submits changes made using an API context.
 
@@ -617,7 +601,7 @@ public System.Threading.Tasks.Task<Microsoft.Restier.Core.Submit.SubmitResult> S
 Type: `System.Threading.Tasks.Task<Microsoft.Restier.Core.Submit.SubmitResult>`
 A task that represents the asynchronous operation whose result is a submit result.
 
-### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
 
 <Note>Inherited from `object`</Note>
 
@@ -631,25 +615,7 @@ public virtual string ToString()
 
 Type: `string?`
 
-### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  WriteCurrentVisibilityMatrix <DocsBadge text="Extension" variant="success" />
+## Related APIs
 
-<Note>Extension method from `Microsoft.Restier.Breakdance.ApiBaseExtensions`</Note>
-
-An extension method that generates the Visibility Matrix for the current Api and writes it to a text file.
-
-#### Syntax
-
-```csharp
-public static void WriteCurrentVisibilityMatrix(Microsoft.Restier.Core.ApiBase api, string sourceDirectory = "", string suffix = "ApiSurface", bool markdown = false)
-```
-
-#### Parameters
-
-| Name | Type | Description |
-|------|------|-------------|
-| `api` | `Microsoft.Restier.Core.ApiBase` | The [ApiBase](/restier/api-reference/Microsoft/Restier/Core/ApiBase) instance to build the Visibility Matrix for. |
-| `sourceDirectory` | `string` | A string containing the relative or absolute path to use as the root. The default is "". If you want to be able to have it as part of the project,
-            so you can check it into source control, use "..//..//". |
-| `suffix` | `string` | A string to append to the Api name when writing the text file. |
-| `markdown` | `bool` | - |
+- System.IDisposable
 

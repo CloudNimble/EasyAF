@@ -1,0 +1,35 @@
+---
+title: PermissionMode
+description: "Represents the permission mode under which Claude Code is operating."
+icon: list-ol
+tag: "ENUM"
+keywords: ['PermissionMode', 'CloudNimble.ClaudeEssentials.Hooks.PermissionMode', 'CloudNimble.ClaudeEssentials.Hooks', 'class', 'System.Enum']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.PermissionMode
+```
+
+## Summary
+
+Represents the permission mode under which Claude Code is operating.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Default` | 0 | Default permission mode requiring explicit user approval for sensitive operations. |
+| `Plan` | 1 | Plan mode where Claude explores and plans but doesn't execute changes. |
+| `AcceptEdits` | 2 | Mode that automatically accepts file edits without prompting. |
+| `BypassPermissions` | 3 | Mode that bypasses all permission prompts. Use with caution. |
+

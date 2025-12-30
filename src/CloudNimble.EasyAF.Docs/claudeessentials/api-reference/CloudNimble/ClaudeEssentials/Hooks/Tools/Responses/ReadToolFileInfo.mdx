@@ -1,0 +1,312 @@
+---
+title: ReadToolFileInfo
+description: "Contains detailed information about a file read by the Claude Code Read tool,             including its path, content, and line-related metadata."
+icon: file-brackets-curly
+keywords: ['ReadToolFileInfo', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.ReadToolFileInfo', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks.Tools.Responses
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.ReadToolFileInfo
+```
+
+## Summary
+
+Contains detailed information about a file read by the Claude Code Read tool,
+            including its path, content, and line-related metadata.
+
+## Remarks
+
+
+
+
+            The content returned by the Read tool includes line numbers in a specific format:
+            spaces followed by the line number, a tab character, and then the actual content.
+            For example: `"     1→using System;"`
+
+
+
+
+            When using the `offset` and `limit` parameters in [ReadToolInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Inputs/ReadToolInput),
+            the [ReadToolFileInfo.StartLine](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/ReadToolFileInfo#startline) and [ReadToolFileInfo.NumLines](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/ReadToolFileInfo#numlines) properties will reflect the
+            subset of lines that were actually returned, while [ReadToolFileInfo.TotalLines](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/ReadToolFileInfo#totallines) always
+            represents the total number of lines in the entire file.
+            
+
+
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public ReadToolFileInfo()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Content
+
+Gets or sets the content of the file, formatted with line numbers.
+
+#### Syntax
+
+```csharp
+public string Content { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Examples
+
+```csharp
+"     1→using System;\n     2→using System.Text.Json;\n     3→\n     4→namespace MyApp"
+```
+
+#### Remarks
+
+
+
+
+            The content is formatted using `cat -n` style output, where each line is prefixed
+            with its line number. The format is: spaces for padding, line number, tab character (→),
+            then the actual line content.
+            
+
+
+
+
+            Lines longer than 2000 characters are automatically truncated by Claude Code.
+            
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> FilePath
+
+Gets or sets the absolute path to the file that was read.
+
+#### Syntax
+
+```csharp
+public string FilePath { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Examples
+
+```csharp
+"C:\\Users\\Developer\\Projects\\MyApp\\src\\Program.cs"
+```
+
+#### Remarks
+
+This is always an absolute path, regardless of whether the original request
+            used a relative or absolute path. On Windows, this will use backslash separators.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NumLines
+
+Gets or sets the number of lines included in this response.
+
+#### Syntax
+
+```csharp
+public int NumLines { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+#### Remarks
+
+This value reflects the actual number of lines returned, which may be less than
+            [ReadToolFileInfo.TotalLines](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/ReadToolFileInfo#totallines) if the `offset` and `limit` parameters were used
+            in the original [ReadToolInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Inputs/ReadToolInput), or if the file was truncated due to size.
+            By default, the Read tool returns up to 2000 lines.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> StartLine
+
+Gets or sets the starting line number (1-based) of the content in this response.
+
+#### Syntax
+
+```csharp
+public int StartLine { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+#### Remarks
+
+Line numbers in Claude Code are 1-based, meaning the first line of a file is line 1.
+            If an `offset` was specified in the [ReadToolInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Inputs/ReadToolInput), this value
+            will reflect that offset.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TotalLines
+
+Gets or sets the total number of lines in the entire file.
+
+#### Syntax
+
+```csharp
+public int TotalLines { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+#### Remarks
+
+This represents the complete line count of the file, regardless of how many lines
+            were actually returned in this response. Use this to determine if the file was
+            partially read (when [ReadToolFileInfo.NumLines](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/ReadToolFileInfo#numlines) is less than [ReadToolFileInfo.TotalLines](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/ReadToolFileInfo#totallines)).
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

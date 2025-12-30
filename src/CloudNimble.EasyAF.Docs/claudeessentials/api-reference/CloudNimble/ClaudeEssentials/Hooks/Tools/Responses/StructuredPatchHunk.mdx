@@ -1,0 +1,325 @@
+---
+title: StructuredPatchHunk
+description: "Represents a single hunk (contiguous block of changes) in a unified diff patch."
+icon: file-brackets-curly
+keywords: ['StructuredPatchHunk', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.StructuredPatchHunk', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks.Tools.Responses
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.StructuredPatchHunk
+```
+
+## Summary
+
+Represents a single hunk (contiguous block of changes) in a unified diff patch.
+
+## Remarks
+
+
+
+
+            A structured patch hunk follows the unified diff format, showing context lines
+            and changed lines together. Each hunk represents changes to a contiguous section
+            of the file.
+            
+
+
+
+
+            The [StructuredPatchHunk.Lines](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/StructuredPatchHunk#lines) collection uses standard diff prefixes:
+            
+- `"-"` prefix indicates a line removed from the original
+- `"+"` prefix indicates a line added in the new version
+- `" "` (space) prefix indicates an unchanged context line
+- `"\"` indicates metadata like "No newline at end of file"
+
+
+
+
+
+            Example hunk from an Edit operation:
+            ```csharp
+{
+  "oldStart": 10,
+  "oldLines": 3,
+  "newStart": 10,
+  "newLines": 3,
+  "lines": [
+    " // Context line before",
+    "-    var oldValue = 42;",
+    "+    var newValue = 100;",
+    " // Context line after"
+  ]
+}
+```
+
+
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public StructuredPatchHunk()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Lines
+
+Gets or sets the collection of diff lines representing the changes in this hunk.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> Lines { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+
+#### Examples
+
+```csharp
+[
+  "-    oldCode();",
+  "+    newCode();",
+  "\\ No newline at end of file"
+]
+```
+
+#### Remarks
+
+
+
+
+            Each line is prefixed with a character indicating its status:
+            
+- `"-"` - Line was removed from the original file
+- `"+"` - Line was added in the new file
+- `" "` - Line is unchanged (context)
+- `"\"` - Metadata (e.g., "\ No newline at end of file")
+
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NewLines
+
+Gets or sets the number of lines in the new file for this hunk.
+
+#### Syntax
+
+```csharp
+public int NewLines { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+#### Remarks
+
+This count includes both added lines (prefixed with `"+"`) and unchanged
+            context lines (prefixed with `" "`) in the new file.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NewStart
+
+Gets or sets the starting line number in the new file where this hunk begins.
+
+#### Syntax
+
+```csharp
+public int NewStart { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+#### Remarks
+
+Line numbers are 1-based. This indicates where in the modified file the changes
+            represented by this hunk are now located. This may differ from [StructuredPatchHunk.OldStart](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/StructuredPatchHunk#oldstart)
+            if previous hunks added or removed lines.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> OldLines
+
+Gets or sets the number of lines from the original file affected by this hunk.
+
+#### Syntax
+
+```csharp
+public int OldLines { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+#### Remarks
+
+This count includes both removed lines (prefixed with `"-"`) and unchanged
+            context lines (prefixed with `" "`) from the original file.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> OldStart
+
+Gets or sets the starting line number in the original (old) file where this hunk begins.
+
+#### Syntax
+
+```csharp
+public int OldStart { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+#### Remarks
+
+Line numbers are 1-based. This indicates where in the original file the changes
+            represented by this hunk were located.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

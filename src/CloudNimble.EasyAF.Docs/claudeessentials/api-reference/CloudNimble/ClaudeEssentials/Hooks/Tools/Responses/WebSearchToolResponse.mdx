@@ -1,0 +1,284 @@
+---
+title: WebSearchToolResponse
+description: "Represents the response payload returned by the Claude Code WebSearch tool after             performing a web search."
+icon: file-brackets-curly
+keywords: ['WebSearchToolResponse', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.WebSearchToolResponse', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks.Tools.Responses
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.WebSearchToolResponse
+```
+
+## Summary
+
+Represents the response payload returned by the Claude Code WebSearch tool after
+            performing a web search.
+
+## Remarks
+
+
+
+
+            The WebSearch tool allows Claude to search the web for up-to-date information beyond
+            its training data cutoff. This response is received in the
+            [WebSearchPostToolUsePayload](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/WebSearchPostToolUsePayload) when the
+            `tool_name` is "WebSearch".
+            
+
+
+
+
+            Note: Web search is currently only available in the US region.
+            
+
+
+
+
+            Example JSON payload:
+            ```csharp
+{
+  "query": "Claude Code documentation 2025",
+  "results": [
+    {
+      "tool_use_id": "srvtoolu_01ABC123...",
+      "content": [
+        {
+          "title": "Claude Code Documentation",
+          "url": "https://docs.anthropic.com/claude-code"
+        },
+        {
+          "title": "Getting Started with Claude Code",
+          "url": "https://anthropic.com/claude-code/getting-started"
+        }
+      ]
+    }
+  ],
+  "durationSeconds": 2.45
+}
+```
+
+
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public WebSearchToolResponse()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DurationSeconds
+
+Gets or sets the total duration of the search operation in seconds.
+
+#### Syntax
+
+```csharp
+public double DurationSeconds { get; set; }
+```
+
+#### Property Value
+
+Type: `double`
+
+#### Remarks
+
+This includes the time taken to perform the web search and process the results.
+            Web searches typically complete within a few seconds, but may take longer
+            depending on network conditions and search complexity.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Query
+
+Gets or sets the search query that was executed.
+
+#### Syntax
+
+```csharp
+public string Query { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Remarks
+
+This is the exact query string that was sent to the search engine.
+            It matches the [WebSearchToolInput.Query](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Inputs/WebSearchToolInput#query) from the input.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Results
+
+Gets or sets the search results returned from the web search.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.WebSearchResultContainer> Results { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.WebSearchResultContainer>`
+
+#### Remarks
+
+
+
+
+            Results are grouped into containers, each containing multiple search result items.
+            The structure allows for multiple result sets from a single search operation.
+            
+
+
+
+
+            Use these results to inform responses about current events, recent documentation,
+            or other information that may have changed since Claude's training data cutoff.
+            
+
+
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

@@ -3,7 +3,7 @@ title: Overview
 description: "Summary of the CloudNimble.ClaudeEssentials.Hooks.Inputs Namespace"
 icon: folder-tree
 mode: wide
-keywords: ['CloudNimble.ClaudeEssentials.Hooks.Inputs', 'namespace', 'HookInputBase', 'NotificationHookInput', 'PermissionRequestHookInput', 'PostToolUseHookInput', 'PreCompactHookInput', 'PreToolUseHookInput', 'SessionEndHookInput', 'SessionStartHookInput', 'StopHookInput', 'SubagentStopHookInput']
+keywords: ['CloudNimble.ClaudeEssentials.Hooks.Inputs', 'namespace', 'HookInputBase', 'ToolHookInputBase', 'NotificationHookInput', 'PermissionRequestHookInput', 'PostToolUseHookInput', 'PreCompactHookInput', 'PreToolUseHookInput', 'SessionEndHookInput', 'SessionStartHookInput', 'StopHookInput']
 ---
 
 ## Summary
@@ -61,6 +61,7 @@ All inputs include these properties from `HookInputBase`:
 | Name | Summary |
 | ---- | ------- |
 | [HookInputBase](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/HookInputBase) | Base class containing common fields present in all hook inputs.              All hooks receive these fields via JSON through stdin. |
+| [ToolHookInputBase](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/ToolHookInputBase) | Base class for tool-related hook inputs that contain tool name, input, and use ID.              Used as a base for PreToolUse and PostToolUse hook inputs. |
 | [NotificationHookInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/NotificationHookInput) | Represents the input received by a Notification hook.              This hook runs when Claude Code sends notifications. |
 | [PermissionRequestHookInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/PermissionRequestHookInput) | Represents the input received by a PermissionRequest hook.              This hook runs when a permission dialog is shown and can automatically allow or deny permissions. |
 | [PostToolUseHookInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/PostToolUseHookInput) | Represents the input received by a PostToolUse hook.              This hook runs after tool calls complete and includes the tool's response. |
@@ -70,6 +71,5 @@ All inputs include these properties from `HookInputBase`:
 | [SessionStartHookInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/SessionStartHookInput) | Represents the input received by a SessionStart hook.              This hook runs when Claude Code starts a new session or resumes one. |
 | [StopHookInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/StopHookInput) | Represents the input received by a Stop hook.              This hook runs when Claude Code finishes responding. |
 | [SubagentStopHookInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/SubagentStopHookInput) | Represents the input received by a SubagentStop hook.              This hook runs when subagent tasks complete. |
-| [ToolHookInputBase](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/ToolHookInputBase) | Base class for tool-related hook inputs that contain tool name, input, and use ID.              Used as a base for PreToolUse and PostToolUse hook inputs. |
 | [UserPromptSubmitHookInput](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs/UserPromptSubmitHookInput) | Represents the input received by a UserPromptSubmit hook.              This hook runs when the user submits a prompt, before Claude processes it. |
 

@@ -58,17 +58,17 @@ Gets or sets the behavior to take for the permission request.
 #### Syntax
 
 ```csharp
-public CloudNimble.ClaudeEssentials.Hooks.Enums.PermissionRequestBehavior Behavior { get; set; }
+public CloudNimble.ClaudeEssentials.Hooks.PermissionRequestBehavior Behavior { get; set; }
 ```
 
 #### Property Value
 
-Type: `CloudNimble.ClaudeEssentials.Hooks.Enums.PermissionRequestBehavior?`
+Type: `CloudNimble.ClaudeEssentials.Hooks.PermissionRequestBehavior?`
 
 ### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Interrupt
 
 Gets or sets a value indicating whether to interrupt the current operation.
-            Only applicable when `Behavior` is [PermissionRequestBehavior.Deny](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Enums/PermissionRequestBehavior#deny).
+            Only applicable when `Behavior` is [PermissionRequestBehavior.Deny](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/PermissionRequestBehavior#deny).
 
 #### Syntax
 
@@ -83,7 +83,7 @@ Type: `bool`
 ### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Message
 
 Gets or sets the message to display when the permission is denied.
-            Only applicable when `Behavior` is [PermissionRequestBehavior.Deny](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Enums/PermissionRequestBehavior#deny).
+            Only applicable when `Behavior` is [PermissionRequestBehavior.Deny](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/PermissionRequestBehavior#deny).
 
 #### Syntax
 
@@ -98,7 +98,7 @@ Type: `string?`
 ### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> UpdatedInput
 
 Gets or sets optional modifications to the tool's input parameters.
-            Only applicable when `Behavior` is [PermissionRequestBehavior.Allow](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Enums/PermissionRequestBehavior#allow).
+            Only applicable when `Behavior` is [PermissionRequestBehavior.Allow](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/PermissionRequestBehavior#allow).
 
 #### Syntax
 

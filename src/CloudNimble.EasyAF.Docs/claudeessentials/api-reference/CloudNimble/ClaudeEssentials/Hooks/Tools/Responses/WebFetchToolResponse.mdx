@@ -1,0 +1,372 @@
+---
+title: WebFetchToolResponse
+description: "Represents the response payload returned by the Claude Code WebFetch tool after             fetching and processing content from a URL."
+icon: file-brackets-curly
+keywords: ['WebFetchToolResponse', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.WebFetchToolResponse', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks.Tools.Responses
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.WebFetchToolResponse
+```
+
+## Summary
+
+Represents the response payload returned by the Claude Code WebFetch tool after
+            fetching and processing content from a URL.
+
+## Remarks
+
+
+
+
+            The WebFetch tool retrieves content from a specified URL, converts HTML to markdown,
+            and processes it using a small, fast model based on the provided prompt. This response
+            is received in the [WebFetchPostToolUsePayload](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/WebFetchPostToolUsePayload)
+            when the `tool_name` is "WebFetch".
+            
+
+
+
+
+            Key features of the WebFetch tool:
+            
+- HTTP URLs are automatically upgraded to HTTPS
+- Content is converted from HTML to markdown for easier processing
+- Large content may be summarized or truncated
+- Includes a 15-minute cache for repeated requests to the same URL
+- Redirects to different hosts are reported rather than followed automatically
+
+
+
+
+
+            Example JSON payload:
+            ```csharp
+{
+  "url": "https://docs.anthropic.com/claude-code",
+  "content": "# Claude Code Documentation\n\nClaude Code is a CLI tool...",
+  "durationSeconds": 1.25,
+  "truncated": false
+}
+```
+
+
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public WebFetchToolResponse()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Content
+
+Gets or sets the processed content from the fetched URL.
+
+#### Syntax
+
+```csharp
+public string Content { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Remarks
+
+
+
+
+            The content is the result of processing the URL with the prompt specified in
+            [WebFetchToolInput.Prompt](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Inputs/WebFetchToolInput#prompt). HTML content is converted to markdown
+            before processing.
+            
+
+
+
+
+            If the content was very large, it may have been summarized by the processing
+            model. Check [WebFetchToolResponse.Truncated](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/WebFetchToolResponse#truncated) to determine if truncation occurred.
+            
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DurationSeconds
+
+Gets or sets the duration of the fetch and processing operation in seconds.
+
+#### Syntax
+
+```csharp
+public System.Nullable<double> DurationSeconds { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<double>`
+
+#### Remarks
+
+This includes the time taken to:
+            
+
+            Cached responses (within the 15-minute cache window) will typically be faster.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> RedirectUrl
+
+Gets or sets the redirect URL if the fetch resulted in a redirect to a different host.
+
+#### Syntax
+
+```csharp
+public string RedirectUrl { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+
+#### Examples
+
+```csharp
+// Original URL: https://short.link/abc
+// Redirect URL: https://example.com/full-article
+```
+
+#### Remarks
+
+
+
+
+            When a URL redirects to a different host (domain), the WebFetch tool does not
+            automatically follow the redirect. Instead, it reports the redirect URL here
+            so that a new fetch request can be made explicitly.
+            
+
+
+
+
+            This behavior provides transparency about where content is coming from and
+            prevents unexpected cross-domain requests.
+            
+
+
+
+
+            If no cross-host redirect occurred, this property will be `null`.
+            Same-host redirects (e.g., HTTP to HTTPS on the same domain) are followed automatically.
+            
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Truncated
+
+Gets or sets a value indicating whether the content was truncated due to size limits.
+
+#### Syntax
+
+```csharp
+public System.Nullable<bool> Truncated { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<bool>`
+
+#### Remarks
+
+
+
+
+            When `true`, the original content exceeded the maximum size and was
+            truncated or summarized. The [WebFetchToolResponse.Content](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/WebFetchToolResponse#content) will contain a condensed
+            version of the information.
+            
+
+
+
+
+            For very large pages, consider using a more specific prompt in
+            [WebFetchToolInput.Prompt](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Inputs/WebFetchToolInput#prompt) to extract only the relevant information.
+            
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Url
+
+Gets or sets the URL that was fetched.
+
+#### Syntax
+
+```csharp
+public string Url { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Remarks
+
+
+
+
+            This is the actual URL that was requested. If the original URL used HTTP,
+            it will have been upgraded to HTTPS.
+            
+
+
+
+
+            If a redirect occurred to a different host, this will still show the original
+            URL, and [WebFetchToolResponse.RedirectUrl](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/WebFetchToolResponse#redirecturl) will contain the redirect destination.
+            
+
+
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

@@ -3,7 +3,7 @@ title: Overview
 description: "Summary of the CloudNimble.ClaudeEssentials.Hooks Namespace"
 icon: folder-tree
 mode: wide
-keywords: ['CloudNimble.ClaudeEssentials.Hooks', 'namespace', 'ClaudeHooksJsonContext', 'ClaudeHooksSerializer']
+keywords: ['CloudNimble.ClaudeEssentials.Hooks', 'namespace', 'ClaudeHooksJsonContext', 'ClaudeHooksSerializer', 'CompactTrigger', 'HookDecision', 'HookEventName', 'NotificationType', 'PermissionDecision', 'PermissionMode', 'PermissionRequestBehavior', 'SessionEndReason']
 ---
 
 ## Summary
@@ -112,4 +112,27 @@ Console.WriteLine(ClaudeHooksSerializer.SerializeStopOutput(output));
 | ---- | ------- |
 | [ClaudeHooksJsonContext](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/ClaudeHooksJsonContext) | Provides AOT-compatible JSON serialization context for Claude Code hook types.              This context uses source generators to pre-compile serialization code,              eliminating the need for runtime reflection. |
 | [ClaudeHooksSerializer](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/ClaudeHooksSerializer) | Provides static helper methods for serializing and deserializing Claude Code hook types.              All methods use the AOT-compatible [ClaudeHooksJsonContext](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/ClaudeHooksJsonContext) for serialization. |
+| [CompactTrigger](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/CompactTrigger) | Represents what triggered a compact operation. |
+| [HookDecision](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/HookDecision) | Represents a hook's decision to block or allow an operation. |
+| [HookEventName](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/HookEventName) | Represents the different types of hook events that can be triggered in Claude Code. |
+| [NotificationType](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/NotificationType) | Represents the type of notification sent by Claude Code. |
+| [PermissionDecision](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/PermissionDecision) | Represents the decision for a PreToolUse permission check. |
+| [PermissionMode](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/PermissionMode) | Represents the permission mode under which Claude Code is operating. |
+| [PermissionRequestBehavior](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/PermissionRequestBehavior) | Represents the behavior decision for a PermissionRequest hook. |
+| [SessionEndReason](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/SessionEndReason) | Represents the reason why a session ended. |
+| [SessionStartSource](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/SessionStartSource) | Represents the source that triggered a session start event. |
+
+### <Icon icon="list-ol" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} /> Enums
+
+| Name | Summary |
+| ---- | ------- |
+| [CompactTrigger](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/CompactTrigger) | Represents what triggered a compact operation. |
+| [HookDecision](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/HookDecision) | Represents a hook's decision to block or allow an operation. |
+| [HookEventName](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/HookEventName) | Represents the different types of hook events that can be triggered in Claude Code. |
+| [NotificationType](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/NotificationType) | Represents the type of notification sent by Claude Code. |
+| [PermissionDecision](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/PermissionDecision) | Represents the decision for a PreToolUse permission check. |
+| [PermissionMode](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/PermissionMode) | Represents the permission mode under which Claude Code is operating. |
+| [PermissionRequestBehavior](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/PermissionRequestBehavior) | Represents the behavior decision for a PermissionRequest hook. |
+| [SessionEndReason](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/SessionEndReason) | Represents the reason why a session ended. |
+| [SessionStartSource](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/SessionStartSource) | Represents the source that triggered a session start event. |
 

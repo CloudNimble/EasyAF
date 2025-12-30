@@ -1,0 +1,319 @@
+---
+title: TaskToolResponse
+description: "Represents the response payload returned by the Claude Code Task tool after executing             a subagent to handle a complex task."
+icon: file-brackets-curly
+keywords: ['TaskToolResponse', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.TaskToolResponse', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks.Tools.Responses
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.TaskToolResponse
+```
+
+## Summary
+
+Represents the response payload returned by the Claude Code Task tool after executing
+            a subagent to handle a complex task.
+
+## Remarks
+
+
+
+
+            The Task tool launches specialized agents (subprocesses) that autonomously handle
+            complex, multi-step tasks. Each agent type has specific capabilities and tools available
+            to it. This response is received in the [TaskPostToolUsePayload](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/TaskPostToolUsePayload)
+            when the `tool_name` is "Task".
+            
+
+
+
+
+            Available agent types include:
+            
+- `general-purpose` - For research, code search, and multi-step tasks
+- `Explore` - Fast codebase exploration and pattern searches
+- `Plan` - Software architecture and implementation planning
+- `claude-code-guide` - Documentation and guidance queries
+
+
+
+
+
+            Agents can be resumed using the [TaskToolResponse.AgentId](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/TaskToolResponse#agentid) returned in the response,
+            allowing continuation of previous work with full context preserved.
+            
+
+
+
+
+            Example JSON payload:
+            ```csharp
+{
+  "result": "I found 5 files that match your search criteria...",
+  "agentId": "agent_01ABC123XYZ",
+  "status": "completed"
+}
+```
+
+
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public TaskToolResponse()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> AgentId
+
+Gets or sets the unique identifier for this agent instance.
+
+#### Syntax
+
+```csharp
+public string AgentId { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+
+#### Examples
+
+```csharp
+"agent_01ABC123XYZ789"
+```
+
+#### Remarks
+
+
+
+
+            This ID can be used to resume the agent later via the [TaskToolInput.Resume](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Inputs/TaskToolInput#resume)
+            parameter. When resumed, the agent continues with its full previous context preserved,
+            allowing for follow-up work or continuation of interrupted tasks.
+            
+
+
+
+
+            Agent IDs are unique within a session and follow the format `"agent_"` followed
+            by an identifier string.
+            
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Result
+
+Gets or sets the result message returned by the agent upon completion.
+
+#### Syntax
+
+```csharp
+public string Result { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Remarks
+
+
+
+
+            This contains the agent's response after completing (or attempting to complete)
+            the assigned task. The content varies based on what was requested and what
+            the agent discovered or accomplished.
+            
+
+
+
+
+            Note that agent results are not automatically visible to the user. Claude must
+            summarize or relay the information in its response to share it with the user.
+            
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Status
+
+Gets or sets the completion status of the task execution.
+
+#### Syntax
+
+```csharp
+public string Status { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+
+#### Remarks
+
+
+
+
+            Indicates the final state of the agent's work. Common values include:
+            
+- `"completed"` - The agent finished its task successfully
+- `"running"` - The agent is still working (for background tasks)
+- `"error"` - The agent encountered an error
+- `"interrupted"` - The agent was stopped before completion
+
+
+
+
+
+            For agents run in the background (using [TaskToolInput.RunInBackground](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Inputs/TaskToolInput#runinbackground)),
+            use the TaskOutput tool to check the status and retrieve results once the agent completes.
+            
+
+
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

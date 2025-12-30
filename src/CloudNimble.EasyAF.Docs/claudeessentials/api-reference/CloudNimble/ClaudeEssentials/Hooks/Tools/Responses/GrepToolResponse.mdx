@@ -1,0 +1,368 @@
+---
+title: GrepToolResponse
+description: "Represents the response payload returned by the Claude Code Grep tool after searching             for content within files."
+icon: file-brackets-curly
+keywords: ['GrepToolResponse', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.GrepToolResponse', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks.Tools.Responses
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.GrepToolResponse
+```
+
+## Summary
+
+Represents the response payload returned by the Claude Code Grep tool after searching
+            for content within files.
+
+## Remarks
+
+
+
+
+            The Grep tool is built on ripgrep and provides powerful content search capabilities
+            with full regex support. This response is received in the
+            [GrepPostToolUsePayload](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/GrepPostToolUsePayload) when the
+            `tool_name` is "Grep".
+            
+
+
+
+
+            The response structure varies based on the [GrepToolInput.OutputMode](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Inputs/GrepToolInput#outputmode):
+            
+- `"files_with_matches"` (default) - Returns only file paths containing matches
+- `"content"` - Returns matching lines with context
+- `"count"` - Returns match counts per file
+
+
+
+
+
+            Example JSON payload (files_with_matches mode):
+            ```csharp
+{
+  "mode": "files_with_matches",
+  "filenames": [
+    "C:\\Projects\\MyApp\\src\\Program.cs",
+    "C:\\Projects\\MyApp\\src\\Utilities.cs"
+  ],
+  "numFiles": 2
+}
+```
+
+
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public GrepToolResponse()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Content
+
+Gets or sets the matching content with line numbers and optional context.
+
+#### Syntax
+
+```csharp
+public string Content { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+
+#### Examples
+
+```csharp
+"C:\\Projects\\MyApp\\src\\Program.cs:10:    public static void Main(string[] args)\nC:\\Projects\\MyApp\\src\\Program.cs:15:    static void Helper()"
+```
+
+#### Remarks
+
+
+
+
+            This property is populated when [GrepToolResponse.Mode](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/GrepToolResponse#mode) is `"content"`.
+            It contains the actual matching lines from the files, formatted with line numbers.
+            
+
+
+
+
+            The format includes the file path, line number, and matching content.
+            Additional context lines can be included using the `-A`, `-B`, or `-C`
+            parameters in [GrepToolInput](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Inputs/GrepToolInput).
+            
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Counts
+
+Gets or sets the match counts per file.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, int> Counts { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, int>?`
+
+#### Examples
+
+```csharp
+{
+  "C:\\Projects\\MyApp\\src\\Program.cs": 5,
+  "C:\\Projects\\MyApp\\src\\Utilities.cs": 2
+}
+```
+
+#### Remarks
+
+
+
+
+            This property is populated when [GrepToolResponse.Mode](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/GrepToolResponse#mode) is `"count"`.
+            The dictionary keys are absolute file paths, and the values are the number
+            of matches found in each file.
+            
+
+
+
+
+            This is useful for understanding the distribution of matches across files
+            before deciding which files to read or edit.
+            
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Filenames
+
+Gets or sets the list of file paths containing matches.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> Filenames { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>?`
+
+#### Remarks
+
+
+
+
+            This property is populated when [GrepToolResponse.Mode](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/GrepToolResponse#mode) is `"files_with_matches"`.
+            It contains the absolute paths to all files where the search pattern was found.
+            
+
+
+
+
+            Files are listed in the order they were found. Use the
+            [GrepToolInput.HeadLimit](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Inputs/GrepToolInput#headlimit) parameter to limit the number of results.
+            
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Mode
+
+Gets or sets the output mode that was used for the search.
+
+#### Syntax
+
+```csharp
+public string Mode { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Remarks
+
+
+
+
+            This indicates which output format was requested and determines which properties
+            contain the results:
+            
+- `"files_with_matches"` - Results are in [GrepToolResponse.Filenames](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/GrepToolResponse#filenames)
+- `"content"` - Results are in [GrepToolResponse.Content](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/GrepToolResponse#content)
+- `"count"` - Results are in [GrepToolResponse.Counts](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/GrepToolResponse#counts)
+
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NumFiles
+
+Gets or sets the number of files that contained matches.
+
+#### Syntax
+
+```csharp
+public int NumFiles { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+#### Remarks
+
+This represents the count of unique files where the pattern was found.
+            When [GrepToolResponse.Mode](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/GrepToolResponse#mode) is `"files_with_matches"`, this equals the
+            length of [GrepToolResponse.Filenames](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/GrepToolResponse#filenames).
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

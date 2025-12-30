@@ -75,7 +75,7 @@ Type: `string`
 ### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CustomInstructions
 
 Gets or sets custom instructions for the compact operation.
-            Only set when the trigger is [CompactTrigger.Manual](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Enums/CompactTrigger#manual).
+            Only set when the trigger is [CompactTrigger.Manual](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/CompactTrigger#manual).
 
 #### Syntax
 
@@ -96,12 +96,12 @@ Gets or sets the name of the hook event that triggered this input.
 #### Syntax
 
 ```csharp
-public CloudNimble.ClaudeEssentials.Hooks.Enums.HookEventName HookEventName { get; set; }
+public CloudNimble.ClaudeEssentials.Hooks.HookEventName HookEventName { get; set; }
 ```
 
 #### Property Value
 
-Type: `CloudNimble.ClaudeEssentials.Hooks.Enums.HookEventName`
+Type: `CloudNimble.ClaudeEssentials.Hooks.HookEventName`
 
 ### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PermissionMode <Badge color="gray">Inherited</Badge>
 
@@ -112,12 +112,12 @@ Gets or sets the permission mode under which Claude Code is operating.
 #### Syntax
 
 ```csharp
-public CloudNimble.ClaudeEssentials.Hooks.Enums.PermissionMode PermissionMode { get; set; }
+public CloudNimble.ClaudeEssentials.Hooks.PermissionMode PermissionMode { get; set; }
 ```
 
 #### Property Value
 
-Type: `CloudNimble.ClaudeEssentials.Hooks.Enums.PermissionMode`
+Type: `CloudNimble.ClaudeEssentials.Hooks.PermissionMode`
 
 ### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SessionId <Badge color="gray">Inherited</Badge>
 
@@ -159,12 +159,12 @@ Gets or sets what triggered the compact operation.
 #### Syntax
 
 ```csharp
-public CloudNimble.ClaudeEssentials.Hooks.Enums.CompactTrigger Trigger { get; set; }
+public CloudNimble.ClaudeEssentials.Hooks.CompactTrigger Trigger { get; set; }
 ```
 
 #### Property Value
 
-Type: `CloudNimble.ClaudeEssentials.Hooks.Enums.CompactTrigger?`
+Type: `CloudNimble.ClaudeEssentials.Hooks.CompactTrigger?`
 
 ## Methods
 
