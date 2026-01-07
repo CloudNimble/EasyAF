@@ -1,0 +1,194 @@
+---
+title: Understanding Claude Code Hooks
+description: A deep dive into Claude Code hook payloads, naming conventions, and the quirks ClaudeEssentials handles for you
+---
+
+# Understanding Claude Code Hooks
+
+<Info>
+**Good news:** ClaudeEssentials handles all of the serialization quirks documented below automatically.
+You don't need to worry about these details when using our library.
+
+This guide exists for two reasons:
+1. **Transparency** - So you understand what's happening under the hood when debugging issues
+2. **Advocacy** - To document these inconsistencies so Anthropic can address them in future versions of Claude Code
+</Info>
+
+When building integrations with Claude Code hooks, you'll encounter several naming convention inconsistencies
+that can cause serialization failures if not handled correctly. This guide documents these quirks so you
+understand what ClaudeEssentials is doing for you.
+
+## Property Naming: The snake_case / camelCase Split
+
+One of the most surprising aspects of Claude Code hooks is that **inputs and outputs use different naming conventions**.
+
+### Hook Inputs: snake_case
+
+All properties in hook input payloads from Claude Code use `snake_case`:
+
+```json
+{
+  "session_id": "abc-123",
+  "transcript_path": "/path/to/transcript.jsonl",
+  "cwd": "/working/directory",
+  "permission_mode": "default",
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Bash",
+  "tool_input": { ... },
+  "tool_use_id": "toolu_01ABC123"
+}
+```
+
+<Note>
+ClaudeEssentials handles this automatically with `[JsonPropertyName("snake_case")]` attributes on all input types.
+</Note>
+
+### Hook Outputs: camelCase
+
+When your hook returns a response to Claude Code, all properties must use `camelCase`:
+
+```json
+{
+  "continue": true,
+  "stopReason": "Operation blocked by policy",
+  "suppressOutput": false,
+  "systemMessage": "Additional context for Claude",
+  "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "permissionDecision": "allow",
+    "permissionDecisionReason": "Approved by automation"
+  }
+}
+```
+
+<Warning>
+**Why this matters:** Using the wrong casing will cause Claude Code to ignore your hook output silently.
+There's no error message - the hook simply won't have the intended effect. This is why ClaudeEssentials
+uses explicit `[JsonPropertyName]` attributes on all output types.
+</Warning>
+
+## Enum Value Casing: The Inconsistent Trio
+
+Claude Code expects different casing for different enum types. Getting these wrong results in
+`JsonException` errors during deserialization. ClaudeEssentials uses `[JsonStringEnumMemberName]`
+attributes to handle each case correctly.
+
+### HookEventName: PascalCase
+
+The `hook_event_name` property uses PascalCase values:
+
+```json
+{
+  "hook_event_name": "PreToolUse"
+}
+```
+
+Valid values:
+- `PreToolUse`
+- `PostToolUse`
+- `PermissionRequest`
+- `UserPromptSubmit`
+- `Notification`
+- `Stop`
+- `SubagentStop`
+- `PreCompact`
+- `SessionStart`
+- `SessionEnd`
+
+### PermissionMode: camelCase
+
+The `permission_mode` property uses camelCase values:
+
+```json
+{
+  "permission_mode": "acceptEdits"
+}
+```
+
+Valid values:
+- `default`
+- `plan`
+- `acceptEdits`
+- `bypassPermissions`
+
+### PermissionDecision: lowercase
+
+The `permissionDecision` property in hook outputs uses all lowercase:
+
+```json
+{
+  "hookSpecificOutput": {
+    "permissionDecision": "allow"
+  }
+}
+```
+
+Valid values:
+- `allow`
+- `deny`
+- `ask`
+
+<Tip>
+ClaudeEssentials uses `[JsonStringEnumMemberName]` attributes on all enums to ensure correct serialization.
+Each enum has the appropriate casing baked in, so you can use the natural C# enum values without worrying
+about JSON serialization.
+</Tip>
+
+## Quick Reference Table
+
+| Context | Convention | Example |
+|---------|------------|---------|
+| Input property names | snake_case | `hook_event_name`, `tool_input`, `permission_mode` |
+| Output property names | camelCase | `hookSpecificOutput`, `permissionDecision`, `stopReason` |
+| HookEventName values | PascalCase | `PreToolUse`, `PostToolUse`, `SessionStart` |
+| PermissionMode values | camelCase | `default`, `acceptEdits`, `bypassPermissions` |
+| PermissionDecision values | lowercase | `allow`, `deny`, `ask` |
+
+## Common Errors and Solutions
+
+These are errors you might see if building your own serialization, or issues ClaudeEssentials prevents:
+
+### "The JSON value could not be converted to PermissionMode"
+
+**Cause:** Using wrong casing for `permission_mode` value.
+
+**Solution:** Use camelCase: `"acceptEdits"` not `"AcceptEdits"`.
+
+**ClaudeEssentials fix:** `[JsonStringEnumMemberName("acceptEdits")]` on enum values.
+
+### "The JSON value could not be converted to PermissionDecision"
+
+**Cause:** Using wrong casing for `permissionDecision` value in output.
+
+**Solution:** Use lowercase: `"allow"` not `"Allow"`.
+
+**ClaudeEssentials fix:** `[JsonStringEnumMemberName("allow")]` on enum values.
+
+### Hook output has no effect
+
+**Cause:** Using snake_case for output properties.
+
+**Solution:** Use camelCase: `"hookSpecificOutput"` not `"hook_specific_output"`.
+
+**ClaudeEssentials fix:** `[JsonPropertyName("hookSpecificOutput")]` on output properties.
+
+## Summary
+
+<CardGroup cols={3}>
+  <Card title="ClaudeEssentials Handles It" icon="shield-check">
+    All naming conventions and enum casing are handled automatically through JSON attributes. Just use the library types.
+  </Card>
+  <Card title="AOT Compatible" icon="bolt">
+    All serialization uses source generators and `JsonTypeInfo<T>` for ahead-of-time compilation support.
+  </Card>
+  <Card title="Tested Against Real Payloads" icon="flask">
+    Our test suite uses actual Claude Code hook payloads captured from production usage.
+  </Card>
+</CardGroup>
+
+<Note>
+**For Anthropic:** We hope these inconsistencies can be addressed in a future version of Claude Code to
+provide a more consistent developer experience. Specifically:
+- Standardizing on a single casing convention for both inputs and outputs
+- Standardizing enum value casing across all enum types
+</Note>

@@ -1886,6 +1886,12 @@
             ]
           },
           {
+            "group": "Guides",
+            "pages": [
+              "claudeessentials/guides/understanding-hooks"
+            ]
+          },
+          {
             "group": "API Reference",
             "icon": "code",
             "pages": [
