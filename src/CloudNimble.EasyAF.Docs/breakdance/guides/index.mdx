@@ -1,0 +1,58 @@
+---
+title: Guides
+sidebarTitle: Overview
+description: "Step-by-step tutorials for testing real things in your .NET applications with Breakdance."
+icon: circle-info
+---
+
+Breakdance provides specialized testing support for various .NET technologies. These guides walk you through
+practical scenarios using the "Test Real Things" philosophy - no mocks, no fakes, just real behavior.
+
+## By Category
+
+<CardGroup cols={2}>
+  <Card title="Web & API Testing" icon="globe" href="/breakdance/guides/web/index">
+    Test HTTP APIs with in-memory servers and HTTP snapshots
+  </Card>
+  <Card title="Azure Storage" icon="database" href="/breakdance/guides/testing-azure-storage">
+    Integration testing with Azurite for Blob, Queue, and Table storage
+  </Card>
+</CardGroup>
+
+## Web & API Testing
+
+<Cards>
+  <Card title="Snapshots Overview" icon="camera" href="/breakdance/guides/web/snapshots/index">
+    Learn the "Test Real Things" philosophy and how snapshots replace mocking
+  </Card>
+  <Card title="Response Snapshots" icon="arrow-down" href="/breakdance/guides/web/snapshots/responses">
+    Capture real HTTP responses and replay them for fast, deterministic tests
+  </Card>
+  <Card title="Request Snapshots" icon="arrow-up" href="/breakdance/guides/web/snapshots/requests">
+    Write API tests using Visual Studio's `.http` file format with variables and chaining
+  </Card>
+  <Card title="ASP.NET Core Testing" icon="bolt" href="/breakdance/guides/web/aspnet-core-rest">
+    Test ASP.NET Core APIs with in-memory TestServer
+  </Card>
+  <Card title="ASP.NET Classic Testing" icon="landmark" href="/breakdance/guides/web/aspnet-classic-rest">
+    Test ASP.NET Web API 2 controllers on .NET Framework
+  </Card>
+</Cards>
+
+## Azure Services
+
+<Cards>
+  <Card title="Azure Storage with Azurite" icon="box-archive" href="/breakdance/guides/testing-azure-storage">
+    Test against real Blob, Queue, and Table storage using the Azurite emulator
+  </Card>
+</Cards>
+
+## Getting Started
+
+New to Breakdance? Start with understanding [Why Breakdance?](/breakdance/why-breakdance) to learn the philosophy,
+then explore the guides relevant to your application's technology stack.
+
+<Tip>
+  Each guide includes practical examples you can copy directly into your test projects.
+  All examples follow the "Test Real Things" approach - capturing real behavior instead of mocking it.
+</Tip>

@@ -1,9 +1,8 @@
 ---
-title: TestCacheDelegatingHandlerBase
-description: "Base class for implementation of TestCache handlers for unit testing."
+title: ResponseSnapshotReplayHandler
+description: "A [DelegatingHandler](https://learn.microsoft.com/dotnet/api/system.net.http.delegatinghandler) that replays previously captured HTTP responses from snapshot..."
 icon: file-brackets-curly
-tag: "OBSOLETE"
-keywords: ['TestCacheDelegatingHandlerBase', 'CloudNimble.Breakdance.Assemblies.Http.TestCacheDelegatingHandlerBase', 'CloudNimble.Breakdance.Assemblies.Http', 'class', 'CloudNimble.Breakdance.Assemblies.Http.ResponseSnapshotHandlerBase']
+keywords: ['ResponseSnapshotReplayHandler', 'CloudNimble.Breakdance.Assemblies.Http.ResponseSnapshotReplayHandler', 'CloudNimble.Breakdance.Assemblies.Http', 'class', 'CloudNimble.Breakdance.Assemblies.Http.ResponseSnapshotHandlerBase']
 ---
 
 ## Definition
@@ -17,38 +16,60 @@ keywords: ['TestCacheDelegatingHandlerBase', 'CloudNimble.Breakdance.Assemblies.
 ## Syntax
 
 ```csharp
-CloudNimble.Breakdance.Assemblies.Http.TestCacheDelegatingHandlerBase
+CloudNimble.Breakdance.Assemblies.Http.ResponseSnapshotReplayHandler
 ```
 
 ## Summary
 
-Base class for implementation of TestCache handlers for unit testing.
+A [DelegatingHandler](https://learn.microsoft.com/dotnet/api/system.net.http.delegatinghandler) that replays previously captured HTTP responses from snapshot files.
 
 ## Remarks
 
-This class is deprecated. Use [ResponseSnapshotHandlerBase](/breakdance/api-reference/CloudNimble/Breakdance/Assemblies/Http/ResponseSnapshotHandlerBase) instead.
+
+
+
+             This handler intercepts outgoing HTTP requests and returns responses from snapshot files
+             instead of making actual network calls. This enables deterministic testing against real
+             response data without hitting live endpoints.
+             
+
+
+
+
+             Response snapshots are typically captured using [ResponseSnapshotCaptureHandler](/breakdance/api-reference/CloudNimble/Breakdance/Assemblies/Http/ResponseSnapshotCaptureHandler)
+             during an initial recording phase, then replayed during test execution.
+             
+
+
+
+## Examples
+
+```csharp
+// Create a handler that reads from snapshot files
+var handler = new ResponseSnapshotReplayHandler("TestData/Snapshots");
+var client = new HttpClient(handler);
+
+// Requests will be served from snapshot files instead of the network
+var response = await client.GetAsync("https://api.example.com/users");
+```
 
 ## Constructors
 
 ### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
 
-Creates a new [TestCacheDelegatingHandlerBase](/breakdance/api-reference/CloudNimble/Breakdance/Assemblies/Http/TestCacheDelegatingHandlerBase) with the specified root folder path.
+Creates a new [ResponseSnapshotReplayHandler](/breakdance/api-reference/CloudNimble/Breakdance/Assemblies/Http/ResponseSnapshotReplayHandler) that reads response snapshots from the specified path.
 
 #### Syntax
 
 ```csharp
-public TestCacheDelegatingHandlerBase(string responseFilesPath)
+public ResponseSnapshotReplayHandler(string responseSnapshotsPath)
 ```
 
 #### Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `responseFilesPath` | `string` | Root folder path for storing static response files. |
-
-#### Remarks
-
-This constructor is deprecated. Use [ResponseSnapshotHandlerBase](/breakdance/api-reference/CloudNimble/Breakdance/Assemblies/Http/ResponseSnapshotHandlerBase) instead.
+| `responseSnapshotsPath` | `string` | Root folder path containing response snapshot files. |
 
 ### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
 
@@ -76,24 +97,6 @@ var client = new HttpClient(handler);
 ```
 
 ## Properties
-
-### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ResponseFilesPath
-
-Gets the root folder path for reading/writing static response files.
-
-#### Syntax
-
-```csharp
-public string ResponseFilesPath { get; }
-```
-
-#### Property Value
-
-Type: `string`
-
-#### Remarks
-
-This property is deprecated. Use [ResponseSnapshotHandlerBase.ResponseSnapshotsPath](/breakdance/api-reference/CloudNimble/Breakdance/Assemblies/Http/ResponseSnapshotHandlerBase#responsesnapshotspath) instead.
 
 ### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ResponseSnapshotsPath <Badge color="gray">Inherited</Badge>
 

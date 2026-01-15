@@ -1,0 +1,104 @@
+---
+title: "Web & API Testing"
+sidebarTitle: Overview
+description: "Test HTTP APIs and web services with in-memory servers, request snapshots, and response snapshots."
+icon: circle-info
+---
+
+Breakdance provides multiple approaches for testing web APIs, each suited to different scenarios.
+Choose based on your testing needs:
+
+## Choose Your Approach
+
+<CardGroup cols={3}>
+  <Card title="In-Memory Testing" icon="server" href="/breakdance/guides/web/aspnet-core-rest">
+    **Best for:** Unit testing HTTP APIs you're building without deploying infra
+
+    Fast, no network overhead, great for CI/CD
+  </Card>
+  <Card title="Request Snapshots" icon="arrow-up" href="/breakdance/guides/web/snapshots/requests">
+    **Best for:** Replicating requests from 3rd party APIs
+
+    `.http` files with variables, request chaining
+  </Card>
+  <Card title="Response Snapshots" icon="arrow-down" href="/breakdance/guides/web/snapshots/responses">
+    **Best for:** Replicating responses from 3rd party APIs
+
+    Capture once, replay everywhere
+  </Card>
+</CardGroup>
+
+## Quick Comparison
+
+| Feature | In-Memory | Request Snapshots | Response Snapshots |
+|---------|-----------|-------------------|-------------------|
+| Network calls | None | Optional | Captured |
+| Test speed | Fastest | Fast | Fast (cached) |
+| Real API testing | No | Yes | Initial capture |
+| Offline capable | Yes | With snapshots | Yes |
+| Request chaining | Manual | Built-in | N/A |
+| Environment configs | N/A | Yes | Per-folder |
+
+## Combining Approaches
+
+These techniques work well together. See the [Snapshots Overview](/breakdance/guides/web/snapshots/index) for the full philosophy.
+
+```csharp
+// Use .http file format with captured response snapshots
+public class ApiTests : DotHttpTestBase
+{
+    protected override HttpMessageHandler CreateHttpMessageHandler()
+    {
+        // Serve responses from snapshot files
+        return new ResponseSnapshotReplayHandler("ResponseSnapshots");
+    }
+
+    [TestMethod]
+    public async Task GetUsers_Test()
+    {
+        SetVariable("baseUrl", "https://api.example.com");
+
+        var response = await SendRequestAsync(new DotHttpRequest
+        {
+            Method = "GET",
+            Url = "{{baseUrl}}/users"
+        });
+
+        await DotHttpAssertions.AssertValidResponseAsync(response);
+    }
+}
+```
+
+## Guides
+
+<Cards>
+  <Card title="ASP.NET Core Testing" icon="bolt" href="/breakdance/guides/web/aspnet-core-rest">
+    Test ASP.NET Core APIs with the built-in TestServer. Fast, in-memory testing
+    with full dependency injection support.
+  </Card>
+  <Card title="ASP.NET Classic Testing" icon="landmark" href="/breakdance/guides/web/aspnet-classic-rest">
+    Test ASP.NET Web API 2 controllers on .NET Framework without a real HTTP server.
+    Create an HttpClient wired directly to your API's routing pipeline.
+  </Card>
+  <Card title="Snapshots Overview" icon="camera" href="/breakdance/guides/web/snapshots/index">
+    Learn about Breakdance's "Test Real Things" philosophy and how snapshots
+    replace traditional mocking for API tests.
+  </Card>
+  <Card title="Request Snapshots" icon="arrow-up" href="/breakdance/guides/web/snapshots/requests">
+    Write API tests using Visual Studio's `.http` file format. Supports variables,
+    environment files, and request chaining with response extraction.
+  </Card>
+  <Card title="Response Snapshots" icon="arrow-down" href="/breakdance/guides/web/snapshots/responses">
+    Capture HTTP responses from real APIs and replay them in tests. Perfect for
+    testing against external services without network dependencies.
+  </Card>
+</Cards>
+
+## Related Packages
+
+| Package | Purpose |
+|---------|---------|
+| `Breakdance.WebApi` | In-memory Web API 2 testing on .NET Framework |
+| `Breakdance.AspNetCore` | In-memory ASP.NET Core testing with TestServer |
+| `Breakdance.DotHttp` | `.http` file parsing and test base class |
+| `Breakdance.Assemblies` | Response snapshot handlers |
