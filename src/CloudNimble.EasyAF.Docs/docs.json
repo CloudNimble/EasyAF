@@ -34,20 +34,15 @@
             "group": "Guides",
             "icon": "dog-leashed",
             "pages": [
+              "guides/index",
               "guides/table-design",
+              "guides/observable-objects",
+              "guides/business-layer",
+              "guides/data-operations-and-audit",
+              "guides/state-machines-and-status",
               "guides/interval-calculations",
               "guides/property-name-overrides",
-              "guides/business-layer",
-              "guides/clarification-needed",
-              "guides/data-operations-and-audit",
-              "guides/observable-objects",
-              "guides/state-machines-and-status",
-              {
-                "group": "Msbuild",
-                "pages": [
-                  "guides/MSBuild/dotnet-10-changes"
-                ]
-              }
+              "guides/MSBuild/dotnet-10-changes"
             ]
           },
           {

@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="McMaster.Extensions.Hosting.CommandLine" Version="4.*" />
+        <PackageReference Include="McMaster.Extensions.Hosting.CommandLine" Version="5.*" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">

@@ -19,9 +19,9 @@
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.*-*" PrivateAssets="all" />
         <PackageReference Include="System.Reflection.TypeExtensions" Version="4.*" PrivateAssets="all" />
         <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="4.*" PrivateAssets="all" />
-        <!-- transitory dependency fixes -->
-        <!--
-        <PackageReference Include="System.Collections.Immutable" Version="9.*-*" />-->
+        <!-- Exclude unused transitive dependencies from analyzer package -->
+        <PackageReference Include="Humanizer.Core" Version="*" ExcludeAssets="all" PrivateAssets="all" />
+        <PackageReference Include="Ben.Demystifier" Version="*" ExcludeAssets="all" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>

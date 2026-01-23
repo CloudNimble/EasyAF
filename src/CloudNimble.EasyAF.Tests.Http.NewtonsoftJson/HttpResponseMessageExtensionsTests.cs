@@ -31,7 +31,7 @@ namespace CloudNimble.EasyAF.Tests.Http.SystemTextJson
         public async Task DeserializeResponseAsync_List()
         {
             var client = new HttpClient();
-            var response = await client.GetAsync("https://services.odata.org/TripPinRESTierService/People");
+            var response = await client.GetAsync("https://services.odata.org/TripPinRESTierService/People", TestContext.CancellationToken);
             var (Result, ErrorContent) = await response.DeserializeResponseAsync<ODataV4List<ExpandoObject>>();
             ErrorContent.Should().BeNullOrEmpty();
             Result.Should().NotBeNull();
@@ -40,8 +40,8 @@ namespace CloudNimble.EasyAF.Tests.Http.SystemTextJson
         [TestMethod]
         public async Task DeserializeResponseAsync_List2()
         {
-            var client = new HttpClient(new TestCacheReadDelegatingHandler(baselines));
-            var response = await client.GetAsync("https://localhost/api/tests/Books");
+            var client = new HttpClient(new ResponseSnapshotReplayHandler(baselines));
+            var response = await client.GetAsync("https://localhost/api/tests/Books", TestContext.CancellationToken);
             var (Result, ErrorContent) = await response.DeserializeResponseAsync<ODataV4List<Book>>();
             ErrorContent.Should().BeNullOrEmpty();
             Result.Should().NotBeNull();
@@ -52,8 +52,8 @@ namespace CloudNimble.EasyAF.Tests.Http.SystemTextJson
         [TestMethod]
         public async Task DeserializeResponseAsync_SystemTextJsonAnnotations()
         {
-            var client = new HttpClient(new TestCacheReadDelegatingHandler(baselines));
-            var response = await client.GetAsync("https://localhost/api/tests/People");
+            var client = new HttpClient(new ResponseSnapshotReplayHandler(baselines));
+            var response = await client.GetAsync("https://localhost/api/tests/People", TestContext.CancellationToken);
             var (Result, ErrorContent) = await response.DeserializeResponseAsync<ODataV4List<Person>>();
             ErrorContent.Should().BeNullOrEmpty();
             Result.Should().NotBeNull();
@@ -79,7 +79,7 @@ namespace CloudNimble.EasyAF.Tests.Http.SystemTextJson
         {
             var client = new HttpClient();
             var request = new HttpRequestMessage(HttpMethod.Options, "https://services.odata.org/TripPinRESTierService/People");
-            var response = await client.SendAsync(request);
+            var response = await client.SendAsync(request, TestContext.CancellationToken);
             response.IsSuccessStatusCode.Should().BeTrue();
 
             var (Result, ErrorContent) = await response.DeserializeResponseAsync<ExpandoObject>();
@@ -92,7 +92,7 @@ namespace CloudNimble.EasyAF.Tests.Http.SystemTextJson
         {
             var client = new HttpClient();
             var request = new HttpRequestMessage(HttpMethod.Delete, "https://services.odata.org/TripPinRESTierService/People");
-            var response = await client.SendAsync(request);
+            var response = await client.SendAsync(request, TestContext.CancellationToken);
 
             var (Result, ErrorContent) = await response.DeserializeResponseAsync<ExpandoObject, ODataV4ErrorResponse>();
 
@@ -102,6 +102,7 @@ namespace CloudNimble.EasyAF.Tests.Http.SystemTextJson
             ErrorContent.Error.Message.Should().Be("Element type cannot be found for 'Collection(Trippin.Person)'.");
         }
 
+        public TestContext TestContext { get; set; }
     }
 
 }

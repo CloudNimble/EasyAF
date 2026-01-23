@@ -136,6 +136,11 @@
     <ItemGroup>
         <InternalsVisibleTo Include="CloudNimble.EasyAF.Tests.CodeGen, $(StrongNamePublicKey)" />
         <InternalsVisibleTo Include="CloudNimble.EasyAF.Tests.Edmx, $(StrongNamePublicKey)" />
+        <!-- Modern Entity Designer Visibility -->
+        <InternalsVisibleTo Include="Microsoft.Data.Entity.Design.VersioningFacade, $(StrongNamePublicKey)" />      
+        <InternalsVisibleTo Include="Microsoft.Data.Entity.Design, $(StrongNamePublicKey)" />
+        <InternalsVisibleTo Include="Microsoft.Data.Entity.Tests.Design, $(StrongNamePublicKey)" />
+        <InternalsVisibleTo Include="Microsoft.Data.Entity.Tests.Design.VersioningFacade, $(StrongNamePublicKey)" />
     </ItemGroup>
 
 </Project>
