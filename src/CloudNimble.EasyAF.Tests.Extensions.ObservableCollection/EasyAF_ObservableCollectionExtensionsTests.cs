@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 
 namespace CloudNimble.EasyAF.Tests.Extensions.ObservableCollection
 {
@@ -60,8 +61,8 @@ namespace CloudNimble.EasyAF.Tests.Extensions.ObservableCollection
 
             events.Should().HaveCount(1);
             events[0].Action.Should().Be(NotifyCollectionChangedAction.Add);
-            events[0].NewItems.Should().HaveCount(3);
-            events[0].NewItems.Should().Contain(new[] { 2, 3, 4 });
+            events[0].NewItems.Cast<int>().Should().HaveCount(3);
+            events[0].NewItems.Cast<int>().Should().Contain(new[] { 2, 3, 4 });
             events[0].NewStartingIndex.Should().Be(1);
         }
 
@@ -144,7 +145,7 @@ namespace CloudNimble.EasyAF.Tests.Extensions.ObservableCollection
 
             events.Should().HaveCount(1);
             events[0].Action.Should().Be(NotifyCollectionChangedAction.Add);
-            events[0].NewItems.Should().Contain(new[] { 2, 3 });
+            events[0].NewItems.Cast<int>().Should().Contain(new[] { 2, 3 });
             events[0].NewStartingIndex.Should().Be(1);
         }
 
@@ -217,8 +218,8 @@ namespace CloudNimble.EasyAF.Tests.Extensions.ObservableCollection
 
             events.Should().HaveCount(1);
             events[0].Action.Should().Be(NotifyCollectionChangedAction.Remove);
-            events[0].OldItems.Should().HaveCount(2);
-            events[0].OldItems.Should().Contain(new[] { 2, 3 });
+            events[0].OldItems.Cast<int>().Should().HaveCount(2);
+            events[0].OldItems.Cast<int>().Should().Contain(new[] { 2, 3 });
             events[0].OldStartingIndex.Should().Be(1);
         }
 
@@ -304,8 +305,8 @@ namespace CloudNimble.EasyAF.Tests.Extensions.ObservableCollection
 
             events.Should().HaveCount(1);
             events[0].Action.Should().Be(NotifyCollectionChangedAction.Replace);
-            events[0].NewItems.Should().Contain(new[] { 20, 30 });
-            events[0].OldItems.Should().Contain(new[] { 2, 3 });
+            events[0].NewItems.Cast<int>().Should().Contain(new[] { 20, 30 });
+            events[0].OldItems.Cast<int>().Should().Contain(new[] { 2, 3 });
             events[0].NewStartingIndex.Should().Be(1);
         }
 

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace System.Collections.ObjectModel
 {
@@ -24,7 +25,7 @@ namespace System.Collections.ObjectModel
             /// <exception cref="ArgumentNullException"><paramref name="items"/> is <see langword="null"/>.</exception>
             public void AddRange(IEnumerable<T> items, CollectionChangeNotificationMode mode = CollectionChangeNotificationMode.Batched)
             {
-                InsertRange(collection.Count, items, mode);
+                collection.InsertRange(collection.Count, items, mode);
             }
 
             /// <summary>
@@ -50,7 +51,7 @@ namespace System.Collections.ObjectModel
                     return;
                 }
 
-                var innerList = collection.Items;
+                var innerList = CollectionAccessor<T>.GetItems(collection);
                 for (var i = 0; i < itemsList.Count; i++)
                 {
                     innerList.Insert(index + i, itemsList[i]);
@@ -91,7 +92,7 @@ namespace System.Collections.ObjectModel
                     return;
                 }
 
-                var innerList = collection.Items;
+                var innerList = CollectionAccessor<T>.GetItems(collection);
                 var removedItems = new T[count];
                 for (var i = 0; i < count; i++)
                 {
@@ -135,7 +136,7 @@ namespace System.Collections.ObjectModel
 
                 var newItems = items is IList<T> list ? list : new List<T>(items);
 
-                var innerList = collection.Items;
+                var innerList = CollectionAccessor<T>.GetItems(collection);
                 var oldItems = new T[count];
                 for (var i = 0; i < count; i++)
                 {
@@ -159,9 +160,6 @@ namespace System.Collections.ObjectModel
 
         }
 
-        /// <summary>
-        /// Raises the appropriate change notifications on the <see cref="ObservableCollection{T}"/> based on the specified <paramref name="mode"/>.
-        /// </summary>
         private static void RaiseChangeNotification<T>(
             ObservableCollection<T> collection,
             CollectionChangeNotificationMode mode,
@@ -170,18 +168,45 @@ namespace System.Collections.ObjectModel
         {
             if (mode == CollectionChangeNotificationMode.Reset)
             {
-                collection.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                ObservableCollectionAccessor<T>.OnCollectionChanged(collection, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             }
             else
             {
-                collection.OnCollectionChanged(batchedArgs);
+                ObservableCollectionAccessor<T>.OnCollectionChanged(collection, batchedArgs);
             }
 
             if (countChanged)
             {
-                collection.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+                ObservableCollectionAccessor<T>.OnPropertyChanged(collection, new PropertyChangedEventArgs("Count"));
             }
-            collection.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+            ObservableCollectionAccessor<T>.OnPropertyChanged(collection, new PropertyChangedEventArgs("Item[]"));
+        }
+
+        /// <summary>
+        /// Provides zero-overhead access to the protected <see cref="Collection{T}.Items"/> property
+        /// via <see cref="UnsafeAccessorAttribute"/>. The generic parameter <typeparamref name="T"/>
+        /// is at the class level (ELEMENT_TYPE_VAR) as required by .NET 9+ for open-generic member lookup.
+        /// </summary>
+        private static class CollectionAccessor<T>
+        {
+            [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "get_Items")]
+            public static extern IList<T> GetItems(Collection<T> collection);
+        }
+
+        /// <summary>
+        /// Provides zero-overhead access to the protected <c>OnCollectionChanged</c> and
+        /// <c>OnPropertyChanged</c> methods on <see cref="ObservableCollection{T}"/>
+        /// via <see cref="UnsafeAccessorAttribute"/>.
+        /// </summary>
+        private static class ObservableCollectionAccessor<T>
+        {
+            [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "OnCollectionChanged")]
+            public static extern void OnCollectionChanged(
+                ObservableCollection<T> collection, NotifyCollectionChangedEventArgs e);
+
+            [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "OnPropertyChanged")]
+            public static extern void OnPropertyChanged(
+                ObservableCollection<T> collection, PropertyChangedEventArgs e);
         }
 
     }
