@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\CloudNimble.EasyAF.Extensions.ObservableCollection\CloudNimble.EasyAF.Extensions.ObservableCollection.csproj" />
+        <ProjectReference Include="..\CloudNimble.EasyAF.Extensions.Collections\CloudNimble.EasyAF.Extensions.Collections.csproj" />
     </ItemGroup>
 
 </Project>

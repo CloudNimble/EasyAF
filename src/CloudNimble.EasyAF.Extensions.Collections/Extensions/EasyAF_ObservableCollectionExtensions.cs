@@ -7,35 +7,153 @@ namespace System.Collections.ObjectModel
 {
 
     /// <summary>
-    /// Adds bulk-operation extension members to <see cref="ObservableCollection{T}"/> using C# 14 extension syntax.
-    /// Each method manipulates the inner <see cref="Collection{T}.Items"/> list directly and raises a single
-    /// change notification instead of one per item.
+    /// Adds bulk-operation extension members to <see cref="Collection{T}"/> and <see cref="ObservableCollection{T}"/>
+    /// using C# 14 extension syntax.
+    /// <para>
+    /// The <see cref="Collection{T}"/> overloads call per-item virtual methods (<c>InsertItem</c> / <c>RemoveItem</c>),
+    /// preserving subclass validation. The <see cref="ObservableCollection{T}"/> overloads manipulate the inner
+    /// <see cref="Collection{T}.Items"/> list directly and raise a single change notification instead of one per item.
+    /// </para>
     /// </summary>
     public static class EasyAF_ObservableCollectionExtensions
     {
+
+        #region Collection<T> — per-item virtual dispatch (preserves subclass validation)
+
+        extension<T>(Collection<T> collection)
+        {
+
+            /// <summary>
+            /// Adds the elements of the specified collection to the end of the <see cref="Collection{T}"/>.
+            /// </summary>
+            /// <param name="items">The items to add. The collection itself cannot be <see langword="null"/>, but it can contain elements that are <see langword="null"/> if <typeparamref name="T"/> is a reference type.</param>
+            /// <exception cref="ArgumentNullException"><paramref name="items"/> is <see langword="null"/>.</exception>
+            public void AddRange(IEnumerable<T> items)
+            {
+                collection.InsertRange(collection.Count, items);
+            }
+
+            /// <summary>
+            /// Inserts the elements of the specified collection at the specified index in the <see cref="Collection{T}"/>.
+            /// </summary>
+            /// <param name="index">The zero-based index at which the new elements should be inserted.</param>
+            /// <param name="items">The items to insert. The collection itself cannot be <see langword="null"/>, but it can contain elements that are <see langword="null"/> if <typeparamref name="T"/> is a reference type.</param>
+            /// <exception cref="ArgumentNullException"><paramref name="items"/> is <see langword="null"/>.</exception>
+            /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than 0 or greater than <see cref="Collection{T}.Count"/>.</exception>
+            public void InsertRange(int index, IEnumerable<T> items)
+            {
+                ArgumentNullException.ThrowIfNull(items);
+
+                if (index < 0 || index > collection.Count)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                }
+
+                var itemsList = items is IList<T> list ? list : new List<T>(items);
+                for (var i = 0; i < itemsList.Count; i++)
+                {
+                    collection.Insert(index + i, itemsList[i]);
+                }
+            }
+
+            /// <summary>
+            /// Removes a range of elements from the <see cref="Collection{T}"/>.
+            /// </summary>
+            /// <param name="index">The zero-based starting index of the range of elements to remove.</param>
+            /// <param name="count">The number of elements to remove.</param>
+            /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than 0, or <paramref name="count"/> is less than 0.</exception>
+            /// <exception cref="ArgumentException"><paramref name="index"/> and <paramref name="count"/> do not denote a valid range of elements in the collection.</exception>
+            public void RemoveRange(int index, int count)
+            {
+                if (index < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                }
+                if (count < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(count));
+                }
+                if (index + count > collection.Count)
+                {
+                    throw new ArgumentException("The specified index and count do not denote a valid range of elements in the collection.");
+                }
+
+                for (var i = 0; i < count; i++)
+                {
+                    collection.RemoveAt(index);
+                }
+            }
+
+            /// <summary>
+            /// Replaces a range of elements in the <see cref="Collection{T}"/> with the elements from the specified collection.
+            /// </summary>
+            /// <param name="index">The zero-based starting index of the range of elements to replace.</param>
+            /// <param name="count">The number of elements to remove before inserting.</param>
+            /// <param name="items">The items to insert in place of the removed elements. The collection itself cannot be <see langword="null"/>.</param>
+            /// <exception cref="ArgumentNullException"><paramref name="items"/> is <see langword="null"/>.</exception>
+            /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than 0, or <paramref name="count"/> is less than 0.</exception>
+            /// <exception cref="ArgumentException"><paramref name="index"/> and <paramref name="count"/> do not denote a valid range of elements in the collection.</exception>
+            public void ReplaceRange(int index, int count, IEnumerable<T> items)
+            {
+                ArgumentNullException.ThrowIfNull(items);
+
+                if (index < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                }
+                if (count < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(count));
+                }
+                if (index + count > collection.Count)
+                {
+                    throw new ArgumentException("The specified index and count do not denote a valid range of elements in the collection.");
+                }
+
+                for (var i = 0; i < count; i++)
+                {
+                    collection.RemoveAt(index);
+                }
+
+                var newItems = items is IList<T> list ? list : new List<T>(items);
+                for (var i = 0; i < newItems.Count; i++)
+                {
+                    collection.Insert(index + i, newItems[i]);
+                }
+            }
+
+        }
+
+        #endregion
+
+        #region ObservableCollection<T> — batched notification (writes directly to inner Items list)
 
         extension<T>(ObservableCollection<T> collection)
         {
 
             /// <summary>
-            /// Adds the elements of the specified collection to the end of the <see cref="ObservableCollection{T}"/>.
+            /// Adds the elements of the specified collection to the end of the <see cref="ObservableCollection{T}"/>,
+            /// raising a single change notification instead of one per item.
             /// </summary>
             /// <param name="items">The items to add. The collection itself cannot be <see langword="null"/>, but it can contain elements that are <see langword="null"/> if <typeparamref name="T"/> is a reference type.</param>
             /// <param name="mode">Specifies how the change notification is raised. Defaults to <see cref="CollectionChangeNotificationMode.Batched"/>.</param>
             /// <exception cref="ArgumentNullException"><paramref name="items"/> is <see langword="null"/>.</exception>
+            [OverloadResolutionPriority(1)]
             public void AddRange(IEnumerable<T> items, CollectionChangeNotificationMode mode = CollectionChangeNotificationMode.Batched)
             {
                 collection.InsertRange(collection.Count, items, mode);
             }
 
             /// <summary>
-            /// Inserts the elements of the specified collection at the specified index in the <see cref="ObservableCollection{T}"/>.
+            /// Inserts the elements of the specified collection at the specified index in the <see cref="ObservableCollection{T}"/>,
+            /// raising a single change notification instead of one per item.
             /// </summary>
             /// <param name="index">The zero-based index at which the new elements should be inserted.</param>
             /// <param name="items">The items to insert. The collection itself cannot be <see langword="null"/>, but it can contain elements that are <see langword="null"/> if <typeparamref name="T"/> is a reference type.</param>
             /// <param name="mode">Specifies how the change notification is raised. Defaults to <see cref="CollectionChangeNotificationMode.Batched"/>.</param>
             /// <exception cref="ArgumentNullException"><paramref name="items"/> is <see langword="null"/>.</exception>
             /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than 0 or greater than <see cref="Collection{T}.Count"/>.</exception>
+            [OverloadResolutionPriority(1)]
             public void InsertRange(int index, IEnumerable<T> items, CollectionChangeNotificationMode mode = CollectionChangeNotificationMode.Batched)
             {
                 ArgumentNullException.ThrowIfNull(items);
@@ -63,13 +181,15 @@ namespace System.Collections.ObjectModel
             }
 
             /// <summary>
-            /// Removes a range of elements from the <see cref="ObservableCollection{T}"/>.
+            /// Removes a range of elements from the <see cref="ObservableCollection{T}"/>,
+            /// raising a single change notification instead of one per item.
             /// </summary>
             /// <param name="index">The zero-based starting index of the range of elements to remove.</param>
             /// <param name="count">The number of elements to remove.</param>
             /// <param name="mode">Specifies how the change notification is raised. Defaults to <see cref="CollectionChangeNotificationMode.Batched"/>.</param>
             /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than 0, or <paramref name="count"/> is less than 0.</exception>
             /// <exception cref="ArgumentException"><paramref name="index"/> and <paramref name="count"/> do not denote a valid range of elements in the collection.</exception>
+            [OverloadResolutionPriority(1)]
             public void RemoveRange(int index, int count, CollectionChangeNotificationMode mode = CollectionChangeNotificationMode.Batched)
             {
                 ArgumentOutOfRangeException.ThrowIfNegative(index);
@@ -97,7 +217,8 @@ namespace System.Collections.ObjectModel
             }
 
             /// <summary>
-            /// Replaces a range of elements in the <see cref="ObservableCollection{T}"/> with the elements from the specified collection.
+            /// Replaces a range of elements in the <see cref="ObservableCollection{T}"/> with the elements from the specified collection,
+            /// raising a single change notification instead of one per item.
             /// </summary>
             /// <param name="index">The zero-based starting index of the range of elements to replace.</param>
             /// <param name="count">The number of elements to remove before inserting.</param>
@@ -106,6 +227,7 @@ namespace System.Collections.ObjectModel
             /// <exception cref="ArgumentNullException"><paramref name="items"/> is <see langword="null"/>.</exception>
             /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than 0, or <paramref name="count"/> is less than 0.</exception>
             /// <exception cref="ArgumentException"><paramref name="index"/> and <paramref name="count"/> do not denote a valid range of elements in the collection.</exception>
+            [OverloadResolutionPriority(1)]
             public void ReplaceRange(int index, int count, IEnumerable<T> items, CollectionChangeNotificationMode mode = CollectionChangeNotificationMode.Batched)
             {
                 ArgumentNullException.ThrowIfNull(items);
@@ -142,6 +264,8 @@ namespace System.Collections.ObjectModel
             }
 
         }
+
+        #endregion
 
         private static void RaiseChangeNotification<T>(
             ObservableCollection<T> collection,

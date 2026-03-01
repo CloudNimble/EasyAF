@@ -7,7 +7,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
-namespace CloudNimble.EasyAF.Tests.Extensions.ObservableCollection
+namespace CloudNimble.EasyAF.Tests.Extensions.Collections
 {
 
     [TestClass]
@@ -377,6 +377,94 @@ namespace CloudNimble.EasyAF.Tests.Extensions.ObservableCollection
 
             propertyNames.Should().Contain("Count");
             propertyNames.Should().Contain("Item[]");
+        }
+
+        #endregion
+
+        #region Collection<T> Extension Tests
+
+        [TestMethod]
+        public void Collection_AddRange_AddsItems()
+        {
+            Collection<int> collection = new Collection<int> { 1, 2, 3 };
+
+            collection.AddRange(new[] { 4, 5, 6 });
+
+            collection.Should().HaveCount(6);
+            collection.Should().ContainInOrder(1, 2, 3, 4, 5, 6);
+        }
+
+        [TestMethod]
+        public void Collection_InsertRange_InsertsAtIndex()
+        {
+            Collection<string> collection = new Collection<string> { "a", "d" };
+
+            collection.InsertRange(1, new[] { "b", "c" });
+
+            collection.Should().ContainInOrder("a", "b", "c", "d");
+        }
+
+        [TestMethod]
+        public void Collection_RemoveRange_RemovesItems()
+        {
+            Collection<int> collection = new Collection<int> { 1, 2, 3, 4, 5 };
+
+            collection.RemoveRange(1, 3);
+
+            collection.Should().HaveCount(2);
+            collection.Should().ContainInOrder(1, 5);
+        }
+
+        [TestMethod]
+        public void Collection_ReplaceRange_ReplacesItems()
+        {
+            Collection<int> collection = new Collection<int> { 1, 2, 3, 4, 5 };
+
+            collection.ReplaceRange(1, 2, new[] { 20, 30, 40 });
+
+            collection.Should().HaveCount(6);
+            collection.Should().ContainInOrder(1, 20, 30, 40, 4, 5);
+        }
+
+        [TestMethod]
+        public void Collection_AddRange_Null_ThrowsArgumentNullException()
+        {
+            Collection<int> collection = new Collection<int>();
+
+            Action act = () => collection.AddRange(null);
+
+            act.Should().Throw<ArgumentNullException>();
+        }
+
+        [TestMethod]
+        public void Collection_RemoveRange_BoundsValidation()
+        {
+            Collection<int> collection = new Collection<int> { 1, 2, 3 };
+
+            Action negativeIndex = () => collection.RemoveRange(-1, 1);
+            Action negativeCount = () => collection.RemoveRange(0, -1);
+            Action exceedsCount = () => collection.RemoveRange(1, 3);
+
+            negativeIndex.Should().Throw<ArgumentOutOfRangeException>();
+            negativeCount.Should().Throw<ArgumentOutOfRangeException>();
+            exceedsCount.Should().Throw<ArgumentException>();
+        }
+
+        [TestMethod]
+        public void ObservableCollection_AddRange_UsesBatchedVersion()
+        {
+            // When the static type is ObservableCollection<T>, the OverloadResolutionPriority(1)
+            // overload should win, firing exactly 1 batched CollectionChanged event.
+            var collection = new ObservableCollection<int> { 1 };
+            var events = new List<NotifyCollectionChangedEventArgs>();
+            collection.CollectionChanged += (s, e) => events.Add(e);
+
+            collection.AddRange(new[] { 2, 3, 4 });
+
+            // If the Collection<T> version ran instead, we'd see 3 individual Add events.
+            events.Should().HaveCount(1);
+            events[0].Action.Should().Be(NotifyCollectionChangedAction.Add);
+            events[0].NewItems.Cast<int>().Should().HaveCount(3);
         }
 
         #endregion
