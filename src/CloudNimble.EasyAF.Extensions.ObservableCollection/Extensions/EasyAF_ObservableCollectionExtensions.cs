@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -45,11 +45,9 @@ namespace System.Collections.ObjectModel
                     throw new ArgumentOutOfRangeException(nameof(index));
                 }
 
-                var itemsList = items is IList<T> list ? list : new List<T>(items);
-                if (itemsList.Count == 0)
-                {
-                    return;
-                }
+                var itemsList = items is IList<T> list ? list : [.. items];
+                if (itemsList.Count is 0) return;
+
 
                 var innerList = CollectionAccessor<T>.GetItems(collection);
                 for (var i = 0; i < itemsList.Count; i++)
@@ -74,23 +72,14 @@ namespace System.Collections.ObjectModel
             /// <exception cref="ArgumentException"><paramref name="index"/> and <paramref name="count"/> do not denote a valid range of elements in the collection.</exception>
             public void RemoveRange(int index, int count, CollectionChangeNotificationMode mode = CollectionChangeNotificationMode.Batched)
             {
-                if (index < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index));
-                }
-                if (count < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(count));
-                }
+                ArgumentOutOfRangeException.ThrowIfNegative(index);
+                ArgumentOutOfRangeException.ThrowIfNegative(count);
                 if (index + count > collection.Count)
                 {
                     throw new ArgumentException("The specified index and count do not denote a valid range of elements in the collection.");
                 }
 
-                if (count == 0)
-                {
-                    return;
-                }
+                if (count is 0) return;
 
                 var innerList = CollectionAccessor<T>.GetItems(collection);
                 var removedItems = new T[count];
@@ -121,20 +110,14 @@ namespace System.Collections.ObjectModel
             {
                 ArgumentNullException.ThrowIfNull(items);
 
-                if (index < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index));
-                }
-                if (count < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(count));
-                }
+                ArgumentOutOfRangeException.ThrowIfNegative(index);
+                ArgumentOutOfRangeException.ThrowIfNegative(count);
                 if (index + count > collection.Count)
                 {
                     throw new ArgumentException("The specified index and count do not denote a valid range of elements in the collection.");
                 }
 
-                var newItems = items is IList<T> list ? list : new List<T>(items);
+                var newItems = items is IList<T> list ? list : [.. items];
 
                 var innerList = CollectionAccessor<T>.GetItems(collection);
                 var oldItems = new T[count];
@@ -166,7 +149,7 @@ namespace System.Collections.ObjectModel
             NotifyCollectionChangedEventArgs batchedArgs,
             bool countChanged)
         {
-            if (mode == CollectionChangeNotificationMode.Reset)
+            if (mode is CollectionChangeNotificationMode.Reset)
             {
                 ObservableCollectionAccessor<T>.OnCollectionChanged(collection, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             }
