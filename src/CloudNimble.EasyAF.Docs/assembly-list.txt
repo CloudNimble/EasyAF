@@ -4,6 +4,7 @@ D:\GitHub\EasyAF\src\CloudNimble.EasyAF.Configuration\bin\Debug\net10.0\CloudNim
 D:\GitHub\EasyAF\src\CloudNimble.EasyAF.Core\bin\Debug\net10.0\CloudNimble.EasyAF.Core.dll
 D:\GitHub\EasyAF\src\CloudNimble.EasyAF.Data.EF6\bin\Debug\net48\CloudNimble.EasyAF.Data.EF6.dll
 D:\GitHub\EasyAF\src\CloudNimble.EasyAF.Data.EFCore\bin\Debug\net10.0\CloudNimble.EasyAF.Data.EFCore.dll
+D:\GitHub\EasyAF\src\CloudNimble.EasyAF.Extensions.Collections\bin\Debug\net10.0\CloudNimble.EasyAF.Extensions.Collections.dll
 D:\GitHub\EasyAF\src\CloudNimble.EasyAF.Http\bin\Debug\net10.0\CloudNimble.EasyAF.Http.dll
 D:\GitHub\EasyAF\src\CloudNimble.EasyAF.Http.NewtonsoftJson\bin\Debug\net10.0\CloudNimble.EasyAF.Http.NewtonsoftJson.dll
 D:\GitHub\EasyAF\src\CloudNimble.EasyAF.Http.SystemTextJson\bin\Debug\net10.0\CloudNimble.EasyAF.Http.SystemTextJson.dll

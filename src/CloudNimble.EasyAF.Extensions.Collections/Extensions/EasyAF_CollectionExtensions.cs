@@ -15,7 +15,7 @@ namespace System.Collections.ObjectModel
     /// <see cref="Collection{T}.Items"/> list directly and raise a single change notification instead of one per item.
     /// </para>
     /// </summary>
-    public static class EasyAF_ObservableCollectionExtensions
+    public static class EasyAF_CollectionExtensions
     {
 
         #region Collection<T> — per-item virtual dispatch (preserves subclass validation)
@@ -65,14 +65,9 @@ namespace System.Collections.ObjectModel
             /// <exception cref="ArgumentException"><paramref name="index"/> and <paramref name="count"/> do not denote a valid range of elements in the collection.</exception>
             public void RemoveRange(int index, int count)
             {
-                if (index < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index));
-                }
-                if (count < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(count));
-                }
+                ArgumentOutOfRangeException.ThrowIfNegative(index);
+                ArgumentOutOfRangeException.ThrowIfNegative(count);
+
                 if (index + count > collection.Count)
                 {
                     throw new ArgumentException("The specified index and count do not denote a valid range of elements in the collection.");
@@ -97,14 +92,9 @@ namespace System.Collections.ObjectModel
             {
                 ArgumentNullException.ThrowIfNull(items);
 
-                if (index < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index));
-                }
-                if (count < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(count));
-                }
+                ArgumentOutOfRangeException.ThrowIfNegative(index);
+                ArgumentOutOfRangeException.ThrowIfNegative(count);
+
                 if (index + count > collection.Count)
                 {
                     throw new ArgumentException("The specified index and count do not denote a valid range of elements in the collection.");
@@ -194,6 +184,7 @@ namespace System.Collections.ObjectModel
             {
                 ArgumentOutOfRangeException.ThrowIfNegative(index);
                 ArgumentOutOfRangeException.ThrowIfNegative(count);
+
                 if (index + count > collection.Count)
                 {
                     throw new ArgumentException("The specified index and count do not denote a valid range of elements in the collection.");
@@ -234,6 +225,7 @@ namespace System.Collections.ObjectModel
 
                 ArgumentOutOfRangeException.ThrowIfNegative(index);
                 ArgumentOutOfRangeException.ThrowIfNegative(count);
+
                 if (index + count > collection.Count)
                 {
                     throw new ArgumentException("The specified index and count do not denote a valid range of elements in the collection.");
