@@ -131,6 +131,7 @@ namespace System.Collections.ObjectModel
             [OverloadResolutionPriority(1)]
             public void AddRange(IEnumerable<T> items, CollectionChangeNotificationMode mode = CollectionChangeNotificationMode.Batched)
             {
+                ObservableCollectionAccessor<T>.CheckReentrancy(collection);
                 collection.InsertRange(collection.Count, items, mode);
             }
 
@@ -146,6 +147,7 @@ namespace System.Collections.ObjectModel
             [OverloadResolutionPriority(1)]
             public void InsertRange(int index, IEnumerable<T> items, CollectionChangeNotificationMode mode = CollectionChangeNotificationMode.Batched)
             {
+                ObservableCollectionAccessor<T>.CheckReentrancy(collection);
                 ArgumentNullException.ThrowIfNull(items);
 
                 if (index < 0 || index > collection.Count)
@@ -182,6 +184,7 @@ namespace System.Collections.ObjectModel
             [OverloadResolutionPriority(1)]
             public void RemoveRange(int index, int count, CollectionChangeNotificationMode mode = CollectionChangeNotificationMode.Batched)
             {
+                ObservableCollectionAccessor<T>.CheckReentrancy(collection);
                 ArgumentOutOfRangeException.ThrowIfNegative(index);
                 ArgumentOutOfRangeException.ThrowIfNegative(count);
 
@@ -221,6 +224,7 @@ namespace System.Collections.ObjectModel
             [OverloadResolutionPriority(1)]
             public void ReplaceRange(int index, int count, IEnumerable<T> items, CollectionChangeNotificationMode mode = CollectionChangeNotificationMode.Batched)
             {
+                ObservableCollectionAccessor<T>.CheckReentrancy(collection);
                 ArgumentNullException.ThrowIfNull(items);
 
                 ArgumentOutOfRangeException.ThrowIfNegative(index);
@@ -293,12 +297,15 @@ namespace System.Collections.ObjectModel
         }
 
         /// <summary>
-        /// Provides zero-overhead access to the protected <c>OnCollectionChanged</c> and
-        /// <c>OnPropertyChanged</c> methods on <see cref="ObservableCollection{T}"/>
-        /// via <see cref="UnsafeAccessorAttribute"/>.
+        /// Provides zero-overhead access to the protected <c>CheckReentrancy</c>,
+        /// <c>OnCollectionChanged</c>, and <c>OnPropertyChanged</c> methods on
+        /// <see cref="ObservableCollection{T}"/> via <see cref="UnsafeAccessorAttribute"/>.
         /// </summary>
         private static class ObservableCollectionAccessor<T>
         {
+            [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "CheckReentrancy")]
+            public static extern void CheckReentrancy(ObservableCollection<T> collection);
+
             [UnsafeAccessor(UnsafeAccessorKind.Method, Name = "OnCollectionChanged")]
             public static extern void OnCollectionChanged(
                 ObservableCollection<T> collection, NotifyCollectionChangedEventArgs e);

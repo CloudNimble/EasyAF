@@ -469,6 +469,105 @@ namespace CloudNimble.EasyAF.Tests.Extensions.Collections
 
         #endregion
 
+        #region Reentrancy Tests
+
+        [TestMethod]
+        public void AddRange_ReentrantModification_WithMultipleHandlers_ThrowsInvalidOperationException()
+        {
+            var collection = new ObservableCollection<int> { 1, 2, 3 };
+            // Two handlers required — single-handler reentrancy is permitted by ObservableCollection.
+            collection.CollectionChanged += (s, e) => { };
+            collection.CollectionChanged += (s, e) =>
+            {
+                if (e.Action is NotifyCollectionChangedAction.Add)
+                {
+                    collection.AddRange(new[] { 99 });
+                }
+            };
+
+            Action act = () => collection.AddRange(new[] { 4, 5 });
+
+            act.Should().Throw<InvalidOperationException>();
+        }
+
+        [TestMethod]
+        public void InsertRange_ReentrantModification_WithMultipleHandlers_ThrowsInvalidOperationException()
+        {
+            var collection = new ObservableCollection<int> { 1, 2, 3 };
+            collection.CollectionChanged += (s, e) => { };
+            collection.CollectionChanged += (s, e) =>
+            {
+                if (e.Action is NotifyCollectionChangedAction.Add)
+                {
+                    collection.InsertRange(0, new[] { 99 });
+                }
+            };
+
+            Action act = () => collection.InsertRange(0, new[] { 4, 5 });
+
+            act.Should().Throw<InvalidOperationException>();
+        }
+
+        [TestMethod]
+        public void RemoveRange_ReentrantModification_WithMultipleHandlers_ThrowsInvalidOperationException()
+        {
+            var collection = new ObservableCollection<int> { 1, 2, 3, 4, 5 };
+            collection.CollectionChanged += (s, e) => { };
+            collection.CollectionChanged += (s, e) =>
+            {
+                if (e.Action is NotifyCollectionChangedAction.Remove)
+                {
+                    collection.RemoveRange(0, 1);
+                }
+            };
+
+            Action act = () => collection.RemoveRange(0, 2);
+
+            act.Should().Throw<InvalidOperationException>();
+        }
+
+        [TestMethod]
+        public void ReplaceRange_ReentrantModification_WithMultipleHandlers_ThrowsInvalidOperationException()
+        {
+            var collection = new ObservableCollection<int> { 1, 2, 3, 4, 5 };
+            collection.CollectionChanged += (s, e) => { };
+            collection.CollectionChanged += (s, e) =>
+            {
+                if (e.Action is NotifyCollectionChangedAction.Replace)
+                {
+                    collection.ReplaceRange(0, 1, new[] { 99 });
+                }
+            };
+
+            Action act = () => collection.ReplaceRange(0, 2, new[] { 10, 20 });
+
+            act.Should().Throw<InvalidOperationException>();
+        }
+
+        [TestMethod]
+        public void AddRange_ReentrantModification_WithSingleHandler_Succeeds()
+        {
+            var collection = new ObservableCollection<int> { 1, 2, 3 };
+            var reentrantCallMade = false;
+
+            // Single handler — reentrancy IS allowed by ObservableCollection's design.
+            collection.CollectionChanged += (s, e) =>
+            {
+                if (e.Action is NotifyCollectionChangedAction.Add && !reentrantCallMade)
+                {
+                    reentrantCallMade = true;
+                    collection.AddRange(new[] { 99 });
+                }
+            };
+
+            collection.AddRange(new[] { 4, 5 });
+
+            reentrantCallMade.Should().BeTrue();
+            collection.Should().Contain(99);
+        }
+
+        #endregion
+
     }
 
 }
