@@ -16,6 +16,7 @@
     <Project Path="CloudNimble.EasyAF.NewtonsoftJson.Compatibility/CloudNimble.EasyAF.NewtonsoftJson.Compatibility.csproj" />
     <Project Path="CloudNimble.EasyAF.ODataClient/CloudNimble.EasyAF.ODataClient.csproj" />
     <Project Path="CloudNimble.EasyAF.Restier.Breakdance/CloudNimble.EasyAF.Restier.Breakdance.csproj" />
+    <Project Path="CloudNimble.EasyAF.Extensions.Collections/CloudNimble.EasyAF.Extensions.Collections.csproj" />
     <Project Path="CloudNimble.EasyAF.Restier/CloudNimble.EasyAF.Restier.csproj" />
   </Folder>
   <Folder Name="/Docs/">
@@ -61,6 +62,7 @@
     <Project Path="CloudNimble.EasyAF.Tests.Restier/CloudNimble.EasyAF.Tests.Restier.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.Shared/CloudNimble.EasyAF.Tests.Shared.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.Tools/CloudNimble.EasyAF.Tests.Tools.csproj" />
+    <Project Path="CloudNimble.EasyAF.Tests.Extensions.Collections/CloudNimble.EasyAF.Tests.Extensions.Collections.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.XmlDocumentation/CloudNimble.EasyAF.Tests.XmlDocumentation.csproj" Id="704244c3-ac6c-41a9-be2d-d7c9122d5174" />
   </Folder>
   <Folder Name="/Tools/" />
