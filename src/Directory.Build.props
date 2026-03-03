@@ -33,7 +33,7 @@
         <PackageId>$(MSBuildProjectName.Replace('CloudNimble.', ''))</PackageId>
         <Product>EasyAF</Product>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
-        <PackageVersion>4.0.0-preview.1</PackageVersion>
+        <PackageVersion>4.0.2-preview.1</PackageVersion>
         <Authors>CloudNimble</Authors>
         <Company>CloudNimble, Inc.</Company>
         <RpmPackageVendor>CloudNimble</RpmPackageVendor>
@@ -61,8 +61,6 @@
         <Serviceable>true</Serviceable>
 
         <RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
-        <!--<RepositoryUrl>https://dev.azure.c/CloudNimble/EasyAF</RepositoryUrl>
-    <RepositoryType>tfvc</RepositoryType>-->
     </PropertyGroup>
 
     <!-- Compilation options -->
