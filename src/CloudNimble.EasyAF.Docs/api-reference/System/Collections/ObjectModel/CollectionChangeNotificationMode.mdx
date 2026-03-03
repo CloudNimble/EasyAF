@@ -1,0 +1,36 @@
+---
+title: CollectionChangeNotificationMode
+description: "Specifies how bulk-change notifications are raised on an [ObservableCollection`1](https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.obser..."
+icon: list-ol
+sidebarTitle: CollectionChangeNotificationMode
+tag: "ENUM"
+keywords: ['CollectionChangeNotificationMode', 'System.Collections.ObjectModel.CollectionChangeNotificationMode', 'System.Collections.ObjectModel', 'class', 'System.Enum']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Extensions.Collections.dll
+
+**Namespace:** System.Collections.ObjectModel
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+System.Collections.ObjectModel.CollectionChangeNotificationMode
+```
+
+## Summary
+
+Specifies how bulk-change notifications are raised on an [ObservableCollection`1](https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1).
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Batched` | 0 | Raises a single event with the proper action (Add, Remove, or Replace)
+            and populates <c>NewItems</c>/<c>OldItems</c> with all affected items. |
+| `Reset` | 1 | Raises a single <see cref="F:System.Collections.Specialized.NotifyCollectionChangedAction.Reset" /> event.
+            Compatible with all UI frameworks including WPF. |
+
