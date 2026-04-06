@@ -32,8 +32,8 @@ See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/microsoft.e
 <Note>Extension method from `Microsoft.Extensions.DependencyInjection.EasyAF_Configuration_IServiceCollectionExtensions`</Note>
 
 Adds a configuration class that inherits from [ConfigurationBase](/api-reference/CloudNimble/EasyAF/Configuration/ConfigurationBase) to the service collection.
-            The configuration is bound from the specified configuration section and registered as both the specific
-            type and the base [ConfigurationBase](/api-reference/CloudNimble/EasyAF/Configuration/ConfigurationBase) type for dependency injection.
+The configuration is bound from the specified configuration section and registered as both the specific
+type and the base [ConfigurationBase](/api-reference/CloudNimble/EasyAF/Configuration/ConfigurationBase) type for dependency injection.
 
 #### Syntax
 
@@ -77,7 +77,7 @@ var myConfig = builder.Services.AddConfigurationBase&lt;MyAppConfiguration&gt;(
 <Note>Extension method from `Microsoft.Extensions.DependencyInjection.EasyAF_Http_IServiceCollectionExtensions`</Note>
 
 Adds HTTP clients to the service collection based on configuration properties marked with [HttpEndpointAttribute](/api-reference/CloudNimble/EasyAF/Configuration/HttpEndpointAttribute).
-            Uses the default HttpHandlerMode from the configuration.
+Uses the default HttpHandlerMode from the configuration.
 
 #### Syntax
 
@@ -107,7 +107,7 @@ The service collection for method chaining.
 <Note>Extension method from `Microsoft.Extensions.DependencyInjection.EasyAF_Http_IServiceCollectionExtensions`</Note>
 
 Adds HTTP clients to the service collection based on configuration properties marked with [HttpEndpointAttribute](/api-reference/CloudNimble/EasyAF/Configuration/HttpEndpointAttribute).
-            Allows explicit specification of the HttpHandlerMode for message handler configuration.
+Allows explicit specification of the HttpHandlerMode for message handler configuration.
 
 #### Syntax
 

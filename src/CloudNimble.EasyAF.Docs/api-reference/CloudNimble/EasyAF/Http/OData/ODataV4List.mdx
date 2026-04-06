@@ -1,6 +1,6 @@
 ---
 title: ODataV4List
-description: "Represents an OData v4.0 collection response containing a list of entities with optional pagination metadata.             Provides strongly-typed access to c..."
+description: "Represents an OData v4.0 collection response containing a list of entities with optional pagination metadata. Provides strongly-typed access to collection da..."
 icon: code-branch
 keywords: ['ODataV4List', 'CloudNimble.EasyAF.Http.OData.ODataV4List<T>', 'CloudNimble.EasyAF.Http.OData', 'class', 'CloudNimble.EasyAF.Http.OData.ODataV4ResponseBase']
 ---
@@ -22,7 +22,7 @@ CloudNimble.EasyAF.Http.OData.ODataV4List<T>
 ## Summary
 
 Represents an OData v4.0 collection response containing a list of entities with optional pagination metadata.
-            Provides strongly-typed access to collection data with count and next link information.
+Provides strongly-typed access to collection data with count and next link information.
 
 ## Type Parameters
 
@@ -63,7 +63,7 @@ public Object()
 ### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Items
 
 Gets or sets the collection of entities returned by the OData service.
-            This property contains the actual data payload of the response.
+This property contains the actual data payload of the response.
 
 #### Syntax
 
@@ -80,7 +80,7 @@ Type: `System.Collections.Generic.List<T>`
 <Note>Inherited from `CloudNimble.EasyAF.Http.OData.ODataV4ResponseBase`</Note>
 
 Gets or sets the OData context URL that describes the payload.
-            This metadata property provides information about the entity set, type, and other context details.
+This metadata property provides information about the entity set, type, and other context details.
 
 #### Syntax
 
@@ -95,7 +95,7 @@ Type: `string`
 ### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ODataCount
 
 Gets or sets the total number of entities in the collection, regardless of pagination.
-            This property is only populated when the $count query option is used.
+This property is only populated when the $count query option is used.
 
 #### Syntax
 
@@ -110,7 +110,7 @@ Type: `long`
 ### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ODataNextLink
 
 Gets or sets the URL for retrieving the next page of results when server-side paging is enabled.
-            This property is null if there are no more pages available.
+This property is null if there are no more pages available.
 
 #### Syntax
 

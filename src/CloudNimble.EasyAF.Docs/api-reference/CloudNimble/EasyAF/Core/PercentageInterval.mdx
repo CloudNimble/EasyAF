@@ -1,6 +1,6 @@
 ---
 title: PercentageInterval
-description: "Represents a percentage rate that occurs at regular time intervals, enabling conversion between different time periods.             This class combines a bas..."
+description: "Represents a percentage rate that occurs at regular time intervals, enabling conversion between different time periods. This class combines a base time inter..."
 icon: code-branch
 keywords: ['PercentageInterval', 'CloudNimble.EasyAF.Core.PercentageInterval<T>', 'CloudNimble.EasyAF.Core', 'class', 'CloudNimble.EasyAF.Core.Interval<T>']
 ---
@@ -22,30 +22,22 @@ CloudNimble.EasyAF.Core.PercentageInterval<T>
 ## Summary
 
 Represents a percentage rate that occurs at regular time intervals, enabling conversion between different time periods.
-            This class combines a base time interval (from the `Interval`1` class) with a percentage rate to calculate 
-            total percentage amounts across different time periods.
+This class combines a base time interval (from the `Interval`1` class) with a percentage rate to calculate 
+total percentage amounts across different time periods.
 
 ## Remarks
 
-
-
-
-  &lt;strong&gt;Key Concepts:&lt;/strong&gt;
-
+&lt;strong&gt;Key Concepts:&lt;/strong&gt;
 
 
 
 
-
-  &lt;strong&gt;Method Types:&lt;/strong&gt;
-
+&lt;strong&gt;Method Types:&lt;/strong&gt;
 
 
 
 
-
-  &lt;strong&gt;Common Use Cases:&lt;/strong&gt;
-
+&lt;strong&gt;Common Use Cases:&lt;/strong&gt;
 
 
 
@@ -654,7 +646,7 @@ decimal totalPerYear = production.PerYear(500); // 26071 widgets per year (52.14
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> RatePerDay
 
 Calculates the total percentage rate per day based on the interval and rate.
-            This method multiplies the interval frequency (how many intervals occur per day) by the rate value.
+This method multiplies the interval frequency (how many intervals occur per day) by the rate value.
 
 #### Syntax
 
@@ -707,7 +699,7 @@ decimal growthPerDay = growth.RatePerDay(25000); // $8,000 per day
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> RatePerHour
 
 Calculates the total percentage rate per hour based on the interval and rate.
-            This method multiplies the interval frequency (how many intervals occur per hour) by the rate value.
+This method multiplies the interval frequency (how many intervals occur per hour) by the rate value.
 
 #### Syntax
 
@@ -760,7 +752,7 @@ decimal growthPerHour = growth.RatePerHour(10000); // $400 per hour
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> RatePerMinute
 
 Calculates the total percentage rate per minute based on the interval and rate.
-            This method multiplies the interval frequency (how many intervals occur per minute) by the rate value.
+This method multiplies the interval frequency (how many intervals occur per minute) by the rate value.
 
 #### Syntax
 
@@ -813,7 +805,7 @@ decimal interestPerMinute = interest.RatePerMinute(50000); // ~$0.19 per minute
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> RatePerMonth
 
 Calculates the total percentage rate per month based on the interval and rate.
-            This method multiplies the interval frequency (how many intervals occur per month) by the rate value.
+This method multiplies the interval frequency (how many intervals occur per month) by the rate value.
 
 #### Syntax
 
@@ -866,7 +858,7 @@ decimal growthPerMonth = growth.RatePerMonth(5000); // $2,170 per month
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> RatePerWeek
 
 Calculates the total percentage rate per week based on the interval and rate.
-            This method multiplies the interval frequency (how many intervals occur per week) by the rate value.
+This method multiplies the interval frequency (how many intervals occur per week) by the rate value.
 
 #### Syntax
 
@@ -919,7 +911,7 @@ decimal discountPerWeek = discount.RatePerWeek(1000); // $525 per week
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> RatePerYear
 
 Calculates the total percentage rate per year based on the interval and rate.
-            This method multiplies the interval frequency (how many intervals occur per year) by the rate value.
+This method multiplies the interval frequency (how many intervals occur per year) by the rate value.
 
 #### Syntax
 

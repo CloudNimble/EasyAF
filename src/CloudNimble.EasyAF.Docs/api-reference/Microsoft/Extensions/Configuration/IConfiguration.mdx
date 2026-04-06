@@ -32,8 +32,8 @@ See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/microsoft.e
 <Note>Extension method from `Microsoft.Extensions.Configuration.IConfigurationExtensions`</Note>
 
 Binds the configuration values to the specified instance using JSON property names for key mapping.
-            This method respects [JsonPropertyNameAttribute](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonpropertynameattribute) when determining configuration keys,
-            allowing for JSON-style configuration binding with different property naming conventions.
+This method respects [JsonPropertyNameAttribute](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonpropertynameattribute) when determining configuration keys,
+allowing for JSON-style configuration binding with different property naming conventions.
 
 #### Syntax
 
@@ -71,7 +71,7 @@ configuration.BindWithJsonNames(config);
 #### Remarks
 
 This method supports automatic type conversion for common types including DateTime, DateTimeOffset,
-            and all types supported by [Type)](https://learn.microsoft.com/dotnet/api/system.convert.changetype(system.object,system.type)). If a property has a
-            [JsonPropertyNameAttribute](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonpropertynameattribute), the attribute's Name value is used as the configuration key;
-            otherwise, the property name is used directly.
+and all types supported by [Type)](https://learn.microsoft.com/dotnet/api/system.convert.changetype(system.object,system.type)). If a property has a
+[JsonPropertyNameAttribute](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonpropertynameattribute), the attribute's Name value is used as the configuration key;
+otherwise, the property name is used directly.
 

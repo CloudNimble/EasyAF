@@ -107,7 +107,7 @@ public Object()
 <Note>Inherited from `CloudNimble.EasyAF.Business.ManagerBase<TContext>`</Note>
 
 Gets the database context instance used for data operations.
-            This context is injected through the constructor and provides access to the database.
+This context is injected through the constructor and provides access to the database.
 
 #### Syntax
 
@@ -124,7 +124,7 @@ Type: `TContext`
 <Note>Inherited from `CloudNimble.EasyAF.Business.ManagerBase<TContext>`</Note>
 
 Gets the message publisher instance used for publishing events and messages to the message bus.
-            This publisher is injected through the constructor and enables event-driven architecture patterns.
+This publisher is injected through the constructor and enables event-driven architecture patterns.
 
 #### Syntax
 
@@ -139,7 +139,7 @@ Type: `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher`
 ### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> StateTypes
 
 Gets the collection of active state types available for entities managed by this manager.
-            This collection is populated during initialization from the database.
+This collection is populated during initialization from the database.
 
 #### Syntax
 
@@ -276,7 +276,7 @@ Type: `int`
 #### Remarks
 
 This overload will give you all of the performance of deleting a set of data without loading entities in the context but none of
-            the extra processing provided by OnDeleting / OnDeleted.
+the extra processing provided by OnDeleting / OnDeleted.
 
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DirectDeleteAsync <Badge color="gray">Inherited</Badge>
 
@@ -303,7 +303,7 @@ Type: `System.Threading.Tasks.Task<int>`
 #### Remarks
 
 This overload will give you all of the performance of deleting a set of data without loading entities in the context but none of
-            the extra processing provided by OnDeleting / OnDeleted.
+the extra processing provided by OnDeleting / OnDeleted.
 
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DirectUpdate <Badge color="gray">Inherited</Badge>
 
@@ -331,7 +331,7 @@ Type: `int`
 #### Remarks
 
 This overload will give you all of the performance of updating a set of data without loading entities in the context but none of
-            the extra processing provided by OnUpdating / OnUpdated.
+the extra processing provided by OnUpdating / OnUpdated.
 
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DirectUpdateAsync <Badge color="gray">Inherited</Badge>
 
@@ -359,7 +359,7 @@ Type: `System.Threading.Tasks.Task<int>`
 #### Remarks
 
 This overload will give you all of the performance of updating a set of data without loading entities in the context but none of
-            the extra processing provided by OnUpdating / OnUpdated.
+the extra processing provided by OnUpdating / OnUpdated.
 
 ### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
 
@@ -433,7 +433,7 @@ Type: `System.Type`
 ### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Initialize <Badge color="orange">Virtual</Badge>
 
 Initializes the StateTypes collection by loading active state types from the database.
-            This method is called automatically by state update methods if the collection is empty.
+This method is called automatically by state update methods if the collection is empty.
 
 #### Syntax
 
@@ -446,7 +446,7 @@ public virtual void Initialize()
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Inserts a single entity into the database with optional save operation.
-            Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks.
+Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks.
 
 #### Syntax
 
@@ -475,7 +475,7 @@ RWM: This will need to be updated to be generic if it's going to be in a NuGet p
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Inserts a single entity into the database using a specified context with optional save operation.
-            Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks.
+Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks.
 
 #### Syntax
 
@@ -501,7 +501,7 @@ True if the entity was successfully inserted; otherwise, false.
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Inserts a collection of entities into the database with optional save operation.
-            Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks for each entity.
+Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks for each entity.
 
 #### Syntax
 
@@ -530,7 +530,7 @@ RWM: This will need to be updated to be generic if it's going to be in a NuGet p
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Inserts a collection of entities into the database using a specified context with optional save operation.
-            Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks for each entity.
+Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks for each entity.
 
 #### Syntax
 
@@ -570,7 +570,7 @@ Type: `object`
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Called after successfully deleting an entity from the database. Use this method for post-deletion
-            business logic such as cleanup operations, sending notifications, or triggering external systems.
+business logic such as cleanup operations, sending notifications, or triggering external systems.
 
 #### Syntax
 
@@ -594,7 +594,7 @@ True if post-deletion processing was successful; otherwise, false.
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Called after successfully deleting a collection of entities from the database.
-            Applies OnDeletedAsync logic to each entity in the collection.
+Applies OnDeletedAsync logic to each entity in the collection.
 
 #### Syntax
 
@@ -617,7 +617,7 @@ Type: `System.Threading.Tasks.Task`
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Called before deleting an entity from the database. Override this method to add
-            custom business logic or validation before deletion.
+custom business logic or validation before deletion.
 
 #### Syntax
 
@@ -640,7 +640,7 @@ Type: `System.Threading.Tasks.Task`
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Called before deleting a collection of entities from the database.
-            Applies OnDeletingAsync logic to each entity in the collection.
+Applies OnDeletingAsync logic to each entity in the collection.
 
 #### Syntax
 
@@ -663,7 +663,7 @@ Type: `System.Threading.Tasks.Task`
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Called after successfully inserting an entity into the database. Use this method for post-insertion
-            business logic such as sending notifications, publishing events, or triggering external systems.
+business logic such as sending notifications, publishing events, or triggering external systems.
 
 #### Syntax
 
@@ -687,7 +687,7 @@ True if post-insertion processing was successful; otherwise, false.
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Called after successfully inserting a collection of entities into the database.
-            Applies OnInsertedAsync logic to each entity in the collection.
+Applies OnInsertedAsync logic to each entity in the collection.
 
 #### Syntax
 
@@ -732,7 +732,7 @@ Type: `System.Threading.Tasks.Task`
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Called before inserting an entity into the database. Automatically handles audit field population
-            and user tracking for entities implementing the appropriate interfaces.
+and user tracking for entities implementing the appropriate interfaces.
 
 #### Syntax
 
@@ -753,16 +753,16 @@ Type: `System.Threading.Tasks.Task`
 #### Remarks
 
 This method automatically sets:
-            - CreatedById for entities implementing `ICreatorTrackable`1`
-            - DateCreated for entities implementing [ICreatedAuditable](/api-reference/CloudNimble/EasyAF/Core/ICreatedAuditable)
-            Override this method to add custom business logic before insertion.
+- CreatedById for entities implementing `ICreatorTrackable`1`
+- DateCreated for entities implementing [ICreatedAuditable](/api-reference/CloudNimble/EasyAF/Core/ICreatedAuditable)
+Override this method to add custom business logic before insertion.
 
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> OnInsertingAsync <Badge color="gray">Inherited</Badge>
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Called before inserting a collection of entities into the database.
-            Applies OnInsertingAsync logic to each entity in the collection.
+Applies OnInsertingAsync logic to each entity in the collection.
 
 #### Syntax
 
@@ -785,7 +785,7 @@ Type: `System.Threading.Tasks.Task`
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Called after successfully updating an entity in the database. Use this method for post-update
-            business logic such as sending notifications, publishing events, or triggering external systems.
+business logic such as sending notifications, publishing events, or triggering external systems.
 
 #### Syntax
 
@@ -809,7 +809,7 @@ True if post-update processing was successful; otherwise, false.
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Called after successfully updating a collection of entities in the database.
-            Applies OnUpdatedAsync logic to each entity in the collection.
+Applies OnUpdatedAsync logic to each entity in the collection.
 
 #### Syntax
 
@@ -832,7 +832,7 @@ Type: `System.Threading.Tasks.Task`
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Called before updating an entity in the database. Automatically handles audit field population
-            and user tracking for entities implementing the appropriate interfaces.
+and user tracking for entities implementing the appropriate interfaces.
 
 #### Syntax
 
@@ -853,16 +853,16 @@ Type: `System.Threading.Tasks.Task`
 #### Remarks
 
 This method automatically sets:
-            - UpdatedById for entities implementing `IUpdaterTrackable`1`
-            - DateUpdated for entities implementing [IUpdatedAuditable](/api-reference/CloudNimble/EasyAF/Core/IUpdatedAuditable)
-            Override this method to add custom business logic before updating.
+- UpdatedById for entities implementing `IUpdaterTrackable`1`
+- DateUpdated for entities implementing [IUpdatedAuditable](/api-reference/CloudNimble/EasyAF/Core/IUpdatedAuditable)
+Override this method to add custom business logic before updating.
 
 ### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> OnUpdatingAsync <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
 
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Called before updating a collection of entities in the database.
-            Applies OnUpdatingAsync logic to each entity in the collection.
+Applies OnUpdatingAsync logic to each entity in the collection.
 
 #### Syntax
 
@@ -906,7 +906,7 @@ Type: `bool`
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Resets audit properties to an "Inserted" state by setting creation fields and clearing update fields.
-            Sets CreatedById and DateCreated to current values, while clearing UpdatedById and DateUpdated.
+Sets CreatedById and DateCreated to current values, while clearing UpdatedById and DateUpdated.
 
 #### Syntax
 
@@ -1029,7 +1029,7 @@ Type: `string?`
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Updates a single entity in the database with optional save operation.
-            Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks.
+Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks.
 
 #### Syntax
 
@@ -1058,7 +1058,7 @@ RWM: This will need to be updated to be generic if it's going to be in a NuGet p
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Updates a single entity in the database using a specified context with optional save operation.
-            Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks.
+Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks.
 
 #### Syntax
 
@@ -1084,7 +1084,7 @@ True if the entity was successfully updated; otherwise, false.
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Updates a collection of entities in the database with optional save operation.
-            Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks for each entity.
+Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks for each entity.
 
 #### Syntax
 
@@ -1113,7 +1113,7 @@ RWM: This will need to be updated to be generic if it's going to be in a NuGet p
 <Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
 
 Updates a collection of entities in the database using a specified context with optional save operation.
-            Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks for each entity.
+Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks for each entity.
 
 #### Syntax
 
@@ -1137,7 +1137,7 @@ True if the entities were successfully updated; otherwise, false.
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> UpdateStateAsync
 
 Updates the entity's state to the state type with the specified sort order.
-            Logs the state transition for tracking purposes.
+Logs the state transition for tracking purposes.
 
 #### Syntax
 

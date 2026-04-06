@@ -22,7 +22,7 @@ CloudNimble.EasyAF.Core.DbObservableObject
 ## Summary
 
 A base class for Entity Framework objects to implement [INotifyPropertyChanged](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged), [IChangeTracking](https://learn.microsoft.com/dotnet/api/system.componentmodel.ichangetracking), 
-            and [IRevertibleChangeTracking](https://learn.microsoft.com/dotnet/api/system.componentmodel.irevertiblechangetracking) in front-end development.
+and [IRevertibleChangeTracking](https://learn.microsoft.com/dotnet/api/system.componentmodel.irevertiblechangetracking) in front-end development.
 
 ## Remarks
 
@@ -412,7 +412,7 @@ Type: `bool`
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> RejectChanges
 
 Loops through the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#originalvalues) list, sets any property that has changed back to the value it had when `Boolean)` was called,
-            clears the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#originalvalues) list, and sets [DbObservableObject.IsChanged](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#ischanged) to [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+clears the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#originalvalues) list, and sets [DbObservableObject.IsChanged](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#ischanged) to [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
 
 #### Syntax
 
@@ -536,7 +536,7 @@ public void TrackChanges(bool deepTracking = false)
 | Name | Type | Description |
 |------|------|-------------|
 | `deepTracking` | `bool` | When [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool), loops recursively through the object graph and calls `Boolean)` on every object that 
-            inherits from [EasyObservableObject](/api-reference/CloudNimble/EasyAF/Core/EasyObservableObject). |
+inherits from [EasyObservableObject](/api-reference/CloudNimble/EasyAF/Core/EasyObservableObject). |
 
 ## Events
 

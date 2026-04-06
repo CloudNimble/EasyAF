@@ -1,6 +1,6 @@
 ---
 title: ManagerBase
-description: "Represents the base class for all EasyAF business logic managers. Provides access to a database context             and message publishing capabilities for i..."
+description: "Represents the base class for all EasyAF business logic managers. Provides access to a database context and message publishing capabilities for implementing ..."
 icon: code-branch
 keywords: ['ManagerBase', 'CloudNimble.EasyAF.Business.ManagerBase<TContext>', 'CloudNimble.EasyAF.Business', 'class', 'System.Object']
 ---
@@ -22,13 +22,13 @@ CloudNimble.EasyAF.Business.ManagerBase<TContext>
 ## Summary
 
 Represents the base class for all EasyAF business logic managers. Provides access to a database context
-            and message publishing capabilities for implementing business operations and workflows.
+and message publishing capabilities for implementing business operations and workflows.
 
 ## Remarks
 
 This base class is designed to encapsulate business logic that requires database access and messaging capabilities.
-            It's particularly useful for implementing complex business processes such as user registration, order processing,
-            or any workflow that needs to coordinate database operations with message publishing for event-driven architectures.
+It's particularly useful for implementing complex business processes such as user registration, order processing,
+or any workflow that needs to coordinate database operations with message publishing for event-driven architectures.
 
 ## Type Parameters
 
@@ -88,7 +88,7 @@ public Object()
 ### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DataContext
 
 Gets the database context instance used for data operations.
-            This context is injected through the constructor and provides access to the database.
+This context is injected through the constructor and provides access to the database.
 
 #### Syntax
 
@@ -103,7 +103,7 @@ Type: `TContext`
 ### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MessagePublisher
 
 Gets the message publisher instance used for publishing events and messages to the message bus.
-            This publisher is injected through the constructor and enables event-driven architecture patterns.
+This publisher is injected through the constructor and enables event-driven architecture patterns.
 
 #### Syntax
 

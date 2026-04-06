@@ -1,6 +1,6 @@
 ---
 title: HttpEndpointAttribute
-description: "Specifies that a configuration property represents an HTTP endpoint URL for an HttpClient.              Used by the EasyAF configuration system to automatica..."
+description: "Specifies that a configuration property represents an HTTP endpoint URL for an HttpClient.  Used by the EasyAF configuration system to automatically register..."
 icon: file-brackets-curly
 keywords: ['HttpEndpointAttribute', 'CloudNimble.EasyAF.Configuration.HttpEndpointAttribute', 'CloudNimble.EasyAF.Configuration', 'class', 'System.Attribute']
 ---
@@ -22,13 +22,13 @@ CloudNimble.EasyAF.Configuration.HttpEndpointAttribute
 ## Summary
 
 Specifies that a configuration property represents an HTTP endpoint URL for an HttpClient. 
-            Used by the EasyAF configuration system to automatically register HttpClients with their base addresses.
+Used by the EasyAF configuration system to automatically register HttpClients with their base addresses.
 
 ## Remarks
 
 This attribute enables automatic HttpClient registration by linking configuration properties
-            that contain URLs to the corresponding HttpClient name properties. The configuration system
-            uses this information to set up named HttpClient instances with appropriate base addresses.
+that contain URLs to the corresponding HttpClient name properties. The configuration system
+uses this information to set up named HttpClient instances with appropriate base addresses.
 
 ## Examples
 
@@ -74,7 +74,7 @@ public HttpEndpointAttribute(string clientNameProperty)
 ### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ClientNameProperty
 
 Gets or sets the name of the property that contains the HttpClient name to be registered.
-            This property should contain the string value that will be used as the named HttpClient identifier.
+This property should contain the string value that will be used as the named HttpClient identifier.
 
 #### Syntax
 

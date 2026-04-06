@@ -3,9 +3,9 @@
     "default": "dark"
   },
   "colors": {
+    "primary": "#E0EC32",
     "dark": "#F58D4D",
-    "light": "#E0EC32",
-    "primary": "#E0EC32"
+    "light": "#E0EC32"
   },
   "favicon": "/images/icons/favicon-96x96.png",
   "interaction": {
@@ -130,6 +130,33 @@
                         ]
                       },
                       {
+                        "group": "Http",
+                        "icon": "folder-tree",
+                        "pages": [
+                          {
+                            "group": "OData",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "api-reference/CloudNimble/EasyAF/Http/OData/index",
+                              "api-reference/CloudNimble/EasyAF/Http/OData/ODataConstants",
+                              "api-reference/CloudNimble/EasyAF/Http/OData/ODataV401List",
+                              "api-reference/CloudNimble/EasyAF/Http/OData/ODataV401PrimitiveResult",
+                              "api-reference/CloudNimble/EasyAF/Http/OData/ODataV401ResponseBase",
+                              "api-reference/CloudNimble/EasyAF/Http/OData/ODataV401SingleEntityResponseBase",
+                              "api-reference/CloudNimble/EasyAF/Http/OData/ODataV4Error",
+                              "api-reference/CloudNimble/EasyAF/Http/OData/ODataV4ErrorDetail",
+                              "api-reference/CloudNimble/EasyAF/Http/OData/ODataV4ErrorResponse",
+                              "api-reference/CloudNimble/EasyAF/Http/OData/ODataV4InnerError",
+                              "api-reference/CloudNimble/EasyAF/Http/OData/ODataV4List",
+                              "api-reference/CloudNimble/EasyAF/Http/OData/ODataV4PrimitiveResult",
+                              "api-reference/CloudNimble/EasyAF/Http/OData/ODataV4ResponseBase",
+                              "api-reference/CloudNimble/EasyAF/Http/OData/ODataV4ResultList",
+                              "api-reference/CloudNimble/EasyAF/Http/OData/ODataV4SingleEntityResponseBase"
+                            ]
+                          }
+                        ]
+                      },
+                      {
                         "group": "MSBuild",
                         "icon": "folder-tree",
                         "pages": [
@@ -149,6 +176,77 @@
                             "pages": [
                               "api-reference/CloudNimble/EasyAF/NewtonsoftJson/Compatibility/index",
                               "api-reference/CloudNimble/EasyAF/NewtonsoftJson/Compatibility/SystemTextJsonContractResolver"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "group": "OData",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "api-reference/CloudNimble/EasyAF/OData/index",
+                          "api-reference/CloudNimble/EasyAF/OData/ApiBatch",
+                          "api-reference/CloudNimble/EasyAF/OData/ApiClient"
+                        ]
+                      },
+                      {
+                        "group": "Restier",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "api-reference/CloudNimble/EasyAF/Restier/index",
+                          "api-reference/CloudNimble/EasyAF/Restier/EasyAFEntityFrameworkApi",
+                          "api-reference/CloudNimble/EasyAF/Restier/RestierHelpers",
+                          "api-reference/CloudNimble/EasyAF/Restier/RestierOperationType"
+                        ]
+                      },
+                      {
+                        "group": "Tools",
+                        "icon": "folder-tree",
+                        "pages": [
+                          {
+                            "group": "Commands",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/index",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/CleanupCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/CodeGenerateCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/DatabaseGenerateCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/DatabaseInitCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/DatabaseRefreshCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/EasyAFBaseCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/EdmxGenerateCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/EdmxRootCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/EdmxSwapCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/EdmxWatchCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/InitCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/SetupCommand",
+                              {
+                                "group": "Root",
+                                "icon": "folder-tree",
+                                "pages": [
+                                  "api-reference/CloudNimble/EasyAF/Tools/Commands/Root/index",
+                                  "api-reference/CloudNimble/EasyAF/Tools/Commands/Root/CodeRootCommand",
+                                  "api-reference/CloudNimble/EasyAF/Tools/Commands/Root/DatabaseRootCommand",
+                                  "api-reference/CloudNimble/EasyAF/Tools/Commands/Root/EasyAFRootCommand"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "group": "Models",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "api-reference/CloudNimble/EasyAF/Tools/Models/index",
+                              "api-reference/CloudNimble/EasyAF/Tools/Models/CleanupResult"
+                            ]
+                          },
+                          {
+                            "group": "ProjectDiscovery",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "api-reference/CloudNimble/EasyAF/Tools/ProjectDiscovery/index",
+                              "api-reference/CloudNimble/EasyAF/Tools/ProjectDiscovery/ProjectDiscoveryService",
+                              "api-reference/CloudNimble/EasyAF/Tools/ProjectDiscovery/ProjectInfo"
                             ]
                           }
                         ]
@@ -191,6 +289,26 @@
                 "icon": "folder-tree",
                 "pages": [
                   {
+                    "group": "AspNet",
+                    "icon": "folder-tree",
+                    "pages": [
+                      {
+                        "group": "OData",
+                        "icon": "folder-tree",
+                        "pages": [
+                          {
+                            "group": "Builder",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "api-reference/Microsoft/AspNet/OData/Builder/index",
+                              "api-reference/Microsoft/AspNet/OData/Builder/EntitySetConfiguration"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
                     "group": "EntityFrameworkCore",
                     "icon": "folder-tree",
                     "pages": [
@@ -227,6 +345,7 @@
                         "icon": "folder-tree",
                         "pages": [
                           "api-reference/Microsoft/Extensions/DependencyInjection/index",
+                          "api-reference/Microsoft/Extensions/DependencyInjection/IHttpClientBuilder",
                           "api-reference/Microsoft/Extensions/DependencyInjection/IServiceCollection"
                         ]
                       }
@@ -244,6 +363,7 @@
                   "api-reference/System/Exception",
                   "api-reference/System/Guid",
                   "api-reference/System/Nullable",
+                  "api-reference/System/Uri",
                   {
                     "group": "Collections",
                     "icon": "folder-tree",

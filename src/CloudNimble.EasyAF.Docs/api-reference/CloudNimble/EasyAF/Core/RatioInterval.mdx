@@ -1,6 +1,6 @@
 ---
 title: RatioInterval
-description: "Represents a ratio value that occurs at regular time intervals, enabling conversion between different time periods.             This class combines a base ti..."
+description: "Represents a ratio value that occurs at regular time intervals, enabling conversion between different time periods. This class combines a base time interval ..."
 icon: code-branch
 keywords: ['RatioInterval', 'CloudNimble.EasyAF.Core.RatioInterval<T>', 'CloudNimble.EasyAF.Core', 'class', 'CloudNimble.EasyAF.Core.Interval<T>']
 ---
@@ -22,30 +22,22 @@ CloudNimble.EasyAF.Core.RatioInterval<T>
 ## Summary
 
 Represents a ratio value that occurs at regular time intervals, enabling conversion between different time periods.
-            This class combines a base time interval (from the `Interval`1` class) with a ratio value to calculate 
-            total ratio amounts across different time periods.
+This class combines a base time interval (from the `Interval`1` class) with a ratio value to calculate 
+total ratio amounts across different time periods.
 
 ## Remarks
 
-
-
-
-  &lt;strong&gt;Key Concepts:&lt;/strong&gt;
-
+&lt;strong&gt;Key Concepts:&lt;/strong&gt;
 
 
 
 
-
-  &lt;strong&gt;Method Types:&lt;/strong&gt;
-
+&lt;strong&gt;Method Types:&lt;/strong&gt;
 
 
 
 
-
-  &lt;strong&gt;Common Use Cases:&lt;/strong&gt;
-
+&lt;strong&gt;Common Use Cases:&lt;/strong&gt;
 
 
 
@@ -159,7 +151,7 @@ public Object()
 ### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Ratio
 
 Gets or sets the decimal ratio value that is calculated over the given interval.
-            Can represent a ratio, rate, or other decimal value per time period.
+Can represent a ratio, rate, or other decimal value per time period.
 
 #### Syntax
 
@@ -655,7 +647,7 @@ decimal totalPerYear = production.PerYear(500); // 26071 widgets per year (52.14
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> RatioPerDay
 
 Calculates the total ratio value per day based on the interval and ratio.
-            This method multiplies the interval frequency (how many intervals occur per day) by the ratio value.
+This method multiplies the interval frequency (how many intervals occur per day) by the ratio value.
 
 #### Syntax
 
@@ -708,7 +700,7 @@ decimal conversionsPerDay = conversion.RatioPerDay(30); // ~0.69 conversions per
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> RatioPerHour
 
 Calculates the total ratio value per hour based on the interval and ratio.
-            This method multiplies the interval frequency (how many intervals occur per hour) by the ratio value.
+This method multiplies the interval frequency (how many intervals occur per hour) by the ratio value.
 
 #### Syntax
 
@@ -761,7 +753,7 @@ decimal conversionsPerHour = conversion.RatioPerHour(100); // ~46.67 conversions
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> RatioPerMinute
 
 Calculates the total ratio value per minute based on the interval and ratio.
-            This method multiplies the interval frequency (how many intervals occur per minute) by the ratio value.
+This method multiplies the interval frequency (how many intervals occur per minute) by the ratio value.
 
 #### Syntax
 
@@ -814,7 +806,7 @@ decimal conversionsPerMinute = conversion.RatioPerMinute(1000); // ~0.016 conver
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> RatioPerMonth
 
 Calculates the total ratio value per month based on the interval and ratio.
-            This method multiplies the interval frequency (how many intervals occur per month) by the ratio value.
+This method multiplies the interval frequency (how many intervals occur per month) by the ratio value.
 
 #### Syntax
 
@@ -867,7 +859,7 @@ decimal conversionsPerMonth = conversion.RatioPerMonth(100); // 260 conversions 
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> RatioPerWeek
 
 Calculates the total ratio value per week based on the interval and ratio.
-            This method multiplies the interval frequency (how many intervals occur per week) by the ratio value.
+This method multiplies the interval frequency (how many intervals occur per week) by the ratio value.
 
 #### Syntax
 
@@ -920,7 +912,7 @@ decimal conversionsPerWeek = conversion.RatioPerWeek(50); // 140 conversions per
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> RatioPerYear
 
 Calculates the total ratio value per year based on the interval and ratio.
-            This method multiplies the interval frequency (how many intervals occur per year) by the ratio value.
+This method multiplies the interval frequency (how many intervals occur per year) by the ratio value.
 
 #### Syntax
 
