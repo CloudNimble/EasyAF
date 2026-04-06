@@ -151,7 +151,10 @@ jobs:
       run: dotnet restore ${{ env.SOLUTION_FILE }}
 
     - name: Build solution
-      run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore /p:Version=${{ steps.version.outputs.VERSION }} /p:PackageVersion=${{ steps.version.outputs.VERSION }}
+      # Note: not using --no-restore here. Solution-level restore can silently skip projects
+      # with analyzer ProjectReferences (e.g. Tests.Analyzers.EF6). Letting build handle
+      # restore for any missed projects only adds a few seconds since packages are already cached.
+      run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release /p:Version=${{ steps.version.outputs.VERSION }} /p:PackageVersion=${{ steps.version.outputs.VERSION }}
 
     - name: Test
       working-directory: src
