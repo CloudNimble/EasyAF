@@ -1,0 +1,502 @@
+---
+title: RetryPolicyOptions
+description: "Configuration options for retry policies in authentication operations."
+icon: lock
+tag: "SEALED"
+keywords: ['RetryPolicyOptions', 'Microsoft.OData.Mcp.Authentication.Models.RetryPolicyOptions', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.RetryPolicyOptions
+```
+
+## Summary
+
+Configuration options for retry policies in authentication operations.
+
+## Remarks
+
+Retry policies help handle transient failures in authentication and token
+            delegation operations, such as network timeouts, temporary service
+            unavailability, or rate limiting from authorization servers.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [RetryPolicyOptions](/odata-mcp/api-reference/Microsoft/OData/Mcp/Authentication/Models/RetryPolicyOptions) class.
+
+#### Syntax
+
+```csharp
+public RetryPolicyOptions()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  BackoffStrategy
+
+Gets or sets the backoff strategy for calculating retry delays.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.BackoffStrategy BackoffStrategy { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.BackoffStrategy`
+The strategy used to calculate delays between retry attempts.
+
+#### Remarks
+
+Different backoff strategies provide different trade-offs between
+            recovery speed and load on the target service. Exponential backoff
+            is generally recommended for most scenarios.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  BaseDelay
+
+Gets or sets the base delay between retry attempts.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan BaseDelay { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The initial delay before the first retry attempt.
+
+#### Remarks
+
+The actual delay may be modified by the backoff strategy.
+            This value should be chosen based on the expected recovery time
+            for transient failures.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CircuitBreakerFailureThreshold
+
+Gets or sets the circuit breaker failure threshold.
+
+#### Syntax
+
+```csharp
+public int CircuitBreakerFailureThreshold { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The number of consecutive failures that will trip the circuit breaker.
+
+#### Remarks
+
+Once this many consecutive failures occur, the circuit breaker will
+            "open" and prevent further attempts for a period of time. This helps
+            avoid overwhelming a failing service.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CircuitBreakerTimeout
+
+Gets or sets the circuit breaker recovery timeout.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan CircuitBreakerTimeout { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The time to wait before attempting to close an open circuit breaker.
+
+#### Remarks
+
+After the circuit breaker opens, it will remain open for this duration
+            before allowing a test request to check if the service has recovered.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Enabled
+
+Gets or sets a value indicating whether retry is enabled.
+
+#### Syntax
+
+```csharp
+public bool Enabled { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if retry is enabled; otherwise, `false`.
+
+#### Remarks
+
+When disabled, failed operations will not be retried and will fail
+            immediately. Enabling retries can improve reliability but may
+            increase latency for operations that ultimately fail.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  JitterFactor
+
+Gets or sets the jitter factor for randomizing retry delays.
+
+#### Syntax
+
+```csharp
+public double JitterFactor { get; set; }
+```
+
+#### Property Value
+
+Type: `double`
+A value between 0.0 and 1.0 that controls the amount of randomization applied to delays.
+
+#### Remarks
+
+Jitter helps prevent the "thundering herd" problem when multiple
+            clients retry simultaneously. A value of 0.0 disables jitter, while
+            1.0 allows delays to vary by up to 100% of the calculated value.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxAttempts
+
+Gets or sets the maximum number of retry attempts.
+
+#### Syntax
+
+```csharp
+public int MaxAttempts { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum number of times to retry a failed operation.
+
+#### Remarks
+
+This count does not include the initial attempt. For example, a value
+            of 3 means the operation will be attempted up to 4 times total.
+            Higher values provide more resilience but may cause longer delays.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxDelay
+
+Gets or sets the maximum delay between retry attempts.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan MaxDelay { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The maximum time to wait before a retry attempt.
+
+#### Remarks
+
+This prevents exponential backoff from creating extremely long
+            delays. The actual delay will be capped at this value regardless
+            of the backoff calculation.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RetryableExceptionTypes
+
+Gets or sets the exception types that should trigger retries.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.HashSet<string> RetryableExceptionTypes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.HashSet<string>`
+A collection of exception type names that indicate retryable failures.
+
+#### Remarks
+
+Exceptions of these types will trigger retries. The type names should
+            be the full type name including namespace. This is typically used for
+            network-related exceptions like timeouts and connection failures.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RetryableStatusCodes
+
+Gets or sets the HTTP status codes that should trigger retries.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.HashSet<int> RetryableStatusCodes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.HashSet<int>`
+A collection of HTTP status codes that indicate retryable failures.
+
+#### Remarks
+
+Only failures with these status codes will be retried. Other status
+            codes will cause the operation to fail immediately. Common retryable
+            codes include 429 (Too Many Requests), 502 (Bad Gateway), and
+            503 (Service Unavailable).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  UseCircuitBreaker
+
+Gets or sets a value indicating whether to use circuit breaker pattern.
+
+#### Syntax
+
+```csharp
+public bool UseCircuitBreaker { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if circuit breaker should be used; otherwise, `false`.
+
+#### Remarks
+
+The circuit breaker pattern prevents cascading failures by temporarily
+            stopping retries when a service is consistently failing. This can
+            improve overall system stability during outages.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CalculateDelay
+
+Calculates the delay for a specific retry attempt.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan CalculateDelay(int attemptNumber)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `attemptNumber` | `int` | The retry attempt number (starting from 1). |
+
+#### Returns
+
+Type: `System.TimeSpan`
+The delay to wait before the retry attempt.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ShouldRetry
+
+Determines whether an exception should trigger a retry.
+
+#### Syntax
+
+```csharp
+public bool ShouldRetry(System.Exception exception)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `exception` | `System.Exception` | The exception to check. |
+
+#### Returns
+
+Type: `bool`
+`true` if the exception should trigger a retry; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ShouldRetry
+
+Determines whether an HTTP status code should trigger a retry.
+
+#### Syntax
+
+```csharp
+public bool ShouldRetry(int statusCode)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `statusCode` | `int` | The HTTP status code to check. |
+
+#### Returns
+
+Type: `bool`
+`true` if the status code should trigger a retry; otherwise, `false`.
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the retry policy options.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A summary of the retry policy configuration.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the retry policy options for consistency and completeness.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or an empty collection if the options are valid.
+

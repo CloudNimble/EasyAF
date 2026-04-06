@@ -1,0 +1,245 @@
+---
+title: ItemGroupBuilder
+description: "Builder class for configuring MSBuild ItemGroups in a fluent manner."
+icon: file-brackets-curly
+keywords: ['ItemGroupBuilder', 'CloudNimble.EasyAF.MSBuild.ItemGroupBuilder', 'CloudNimble.EasyAF.MSBuild', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.MSBuild.dll
+
+**Namespace:** CloudNimble.EasyAF.MSBuild
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.MSBuild.ItemGroupBuilder
+```
+
+## Summary
+
+Builder class for configuring MSBuild ItemGroups in a fluent manner.
+
+## Remarks
+
+This class provides a fluent API for adding items to MSBuild ItemGroups,
+making it easier to construct complex project structures programmatically.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AddAdditionalFiles
+
+Adds an AdditionalFiles item to the ItemGroup.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.MSBuild.ItemBuilder AddAdditionalFiles(string include)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `include` | `string` | The file pattern to include. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.MSBuild.ItemBuilder`
+An ItemBuilder for further configuration of the AdditionalFiles item.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when include is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AddItem
+
+Adds a generic item to the ItemGroup.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.MSBuild.ItemBuilder AddItem(string itemType, string include)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `itemType` | `string` | The type of the item. |
+| `include` | `string` | The include value for the item. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.MSBuild.ItemBuilder`
+An ItemBuilder for further configuration of the item.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when itemType or include is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AddPackageReference
+
+Adds a PackageReference item to the ItemGroup.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.MSBuild.ItemBuilder AddPackageReference(string packageId, string version)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `packageId` | `string` | The package ID. |
+| `version` | `string` | The package version. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.MSBuild.ItemBuilder`
+An ItemBuilder for further configuration of the PackageReference.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when packageId or version is null or whitespace. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

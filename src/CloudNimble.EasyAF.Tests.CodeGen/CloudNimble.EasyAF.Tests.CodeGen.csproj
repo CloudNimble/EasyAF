@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>$(StandardTestTfms)</TargetFrameworks>
+        <IsPackable>false</IsPackable>
+        <NoWarn>$(NoWarn);CA1822;NU1608;NU1701;</NoWarn>
+        <WarningsAsErrors>NU1605;NU1702</WarningsAsErrors>
+        <DisableMSBuildAssemblyCopyCheck>true</DisableMSBuildAssemblyCopyCheck>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Breakdance.Assemblies" Version="*-*" />
+        <PackageReference Include="Z.Expressions.Eval" Version="6.*" NoWarn="NU1608" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CloudNimble.EasyAF.Core\CloudNimble.EasyAF.Core.csproj" />
+        <ProjectReference Include="..\CloudNimble.EasyAF.CodeGen\CloudNimble.EasyAF.CodeGen.csproj" />
+        <ProjectReference Include="..\CloudNimble.EasyAF.Tools\CloudNimble.EasyAF.Tools.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Remove="Baselines\**\*.*" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="Baselines\**\*.*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <!--<Target Name="CopyAppConfig" AfterTargets="Build" DependsOnTargets="Build" Condition="'$(OutputPath)' != 'bin\Debug\' AND '$(OutputPath)' != 'bin\Release\'">
+        <Message Importance="high" Text="$(OutputPath)" />
+        <CreateItem Include="$(OutputPath)$(AssemblyName).dll.config">
+            <Output TaskParameter="Include" ItemName="FilesToCopy"/>
+        </CreateItem>
+        <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="$(OutputPath)testhost.dll.config" />
+    </Target>-->
+</Project>

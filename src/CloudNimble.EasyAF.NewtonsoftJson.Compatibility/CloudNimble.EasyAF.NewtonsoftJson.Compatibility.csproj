@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net9.0;net8.0;netstandard2.0;</TargetFrameworks>
+        <DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Title>EasyAF: Newtonsoft.Json Compatibility for System.Text.Json</Title>
+        <Summary>
+            EasyAF = the Easy Application Framework that is easy AF. This package helps objects decorated with System.Text.Json.Serialization
+            attributes work properly in Newtonsoft.Json apps.
+        </Summary>
+        <Description>
+            $(Summary)
+
+            Commonly used types:
+            System.Text.Json.Serialization.JsonIgnoreAttribute
+            System.Text.Json.Serialization.JsonPropertyNameAttribute
+            CloudNimble.EasyAF.NewtonsoftJson.Compatibility.SystemTextJsonContractResolver
+        </Description>
+        <PackageTags>$(PackageTags)newtonsoft;newtonsoft.json;system.text.json;</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="[13.0.1, 14.0.0)" />
+        <PackageReference Include="System.Text.Json" Version="[8.*, 11.0.0)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="CloudNimble.EasyAF.Http.NewtonsoftJson, $(StrongNamePublicKey)" />
+    </ItemGroup>
+
+</Project>

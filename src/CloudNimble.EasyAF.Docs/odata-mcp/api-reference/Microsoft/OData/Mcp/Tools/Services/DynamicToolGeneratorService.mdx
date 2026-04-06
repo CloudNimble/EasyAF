@@ -1,0 +1,226 @@
+---
+title: DynamicToolGeneratorService
+description: "Background service that generates dynamic MCP tools based on OData metadata."
+icon: file-brackets-curly
+keywords: ['DynamicToolGeneratorService', 'Microsoft.OData.Mcp.Tools.Services.DynamicToolGeneratorService', 'Microsoft.OData.Mcp.Tools.Services', 'class', 'System.Object', 'Microsoft.Extensions.Hosting.IHostedService']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Tools.dll
+
+**Namespace:** Microsoft.OData.Mcp.Tools.Services
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Tools.Services.DynamicToolGeneratorService
+```
+
+## Summary
+
+Background service that generates dynamic MCP tools based on OData metadata.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [DynamicToolGeneratorService](/odata-mcp/api-reference/Microsoft/OData/Mcp/Tools/Services/DynamicToolGeneratorService) class.
+
+#### Syntax
+
+```csharp
+public DynamicToolGeneratorService(Microsoft.Extensions.Logging.ILogger<Microsoft.OData.Mcp.Tools.Services.DynamicToolGeneratorService> logger, Microsoft.OData.Mcp.Core.Tools.IMcpToolFactory toolFactory, Microsoft.OData.Mcp.Core.Parsing.ICsdlMetadataParser metadataParser, Microsoft.Extensions.Options.IOptions<Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration> configuration, Microsoft.OData.Mcp.Core.Server.DynamicODataMcpTools dynamicTools, System.IServiceProvider serviceProvider)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `logger` | `Microsoft.Extensions.Logging.ILogger<Microsoft.OData.Mcp.Tools.Services.DynamicToolGeneratorService>` | The logger. |
+| `toolFactory` | `Microsoft.OData.Mcp.Core.Tools.IMcpToolFactory` | The tool factory for generating dynamic tools. |
+| `metadataParser` | `Microsoft.OData.Mcp.Core.Parsing.ICsdlMetadataParser` | The CSDL metadata parser. |
+| `configuration` | `Microsoft.Extensions.Options.IOptions<Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration>` | The server configuration. |
+| `dynamicTools` | `Microsoft.OData.Mcp.Core.Server.DynamicODataMcpTools` | The dynamic OData tools instance. |
+| `serviceProvider` | `System.IServiceProvider` | The service provider for DI. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  StartAsync
+
+Starts the service and generates dynamic tools.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task StartAsync(System.Threading.CancellationToken cancellationToken)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `cancellationToken` | `System.Threading.CancellationToken` | The cancellation token. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task representing the asynchronous operation.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  StopAsync
+
+Stops the service.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task StopAsync(System.Threading.CancellationToken cancellationToken)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `cancellationToken` | `System.Threading.CancellationToken` | The cancellation token. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task representing the asynchronous operation.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- Microsoft.Extensions.Hosting.IHostedService
+

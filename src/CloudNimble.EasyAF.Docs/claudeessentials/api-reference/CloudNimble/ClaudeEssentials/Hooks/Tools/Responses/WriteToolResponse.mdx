@@ -1,0 +1,332 @@
+---
+title: WriteToolResponse
+description: "Represents the response payload returned by the Claude Code Write tool after creating or overwriting a file."
+icon: file-brackets-curly
+keywords: ['WriteToolResponse', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.WriteToolResponse', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks.Tools.Responses
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.WriteToolResponse
+```
+
+## Summary
+
+Represents the response payload returned by the Claude Code Write tool after creating or overwriting a file.
+
+## Remarks
+
+
+
+
+            The Write tool creates new files or overwrites existing files on the local filesystem.
+            This response is received in the [WritePostToolUsePayload](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/WritePostToolUsePayload)
+            when the `tool_name` is "Write".
+            
+
+
+
+
+            Unlike the Edit tool which performs targeted string replacements, the Write tool completely
+            replaces the file content. Claude Code requires that an existing file be read first before
+            it can be overwritten, to prevent accidental data loss.
+            
+
+
+
+
+            Example JSON payload for a new file:
+            ```csharp
+{
+  "type": "create",
+  "filePath": "C:\\Projects\\MyApp\\NewFile.cs",
+  "content": "using System;\n\nnamespace MyApp { }",
+  "structuredPatch": [],
+  "originalFile": null
+}
+```
+
+
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public WriteToolResponse()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Content
+
+Gets or sets the content that was written to the file.
+
+#### Syntax
+
+```csharp
+public string Content { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Remarks
+
+This contains the complete content of the file after the write operation.
+            For new files, this is the entire file content. For overwrites, this is
+            the new content that replaced the original.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> FilePath
+
+Gets or sets the absolute path to the file that was written.
+
+#### Syntax
+
+```csharp
+public string FilePath { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Examples
+
+```csharp
+"C:\\Users\\Developer\\Projects\\MyApp\\src\\NewClass.cs"
+```
+
+#### Remarks
+
+This is always an absolute path, regardless of whether the original request
+            used a relative or absolute path. On Windows, this will use backslash separators.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> OriginalFile
+
+Gets or sets the original file content before the write operation.
+
+#### Syntax
+
+```csharp
+public string OriginalFile { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+
+#### Remarks
+
+
+
+
+            This is `null` when creating a new file ([WriteToolResponse.Type](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/WriteToolResponse#type) = "create")
+            since there was no previous content.
+            
+
+
+
+
+            For overwrites, this contains the complete original content of the file
+            before it was replaced, which can be useful for implementing undo functionality
+            or auditing changes.
+            
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> StructuredPatch
+
+Gets or sets the structured patch representing the changes made to the file.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.StructuredPatchHunk> StructuredPatch { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.StructuredPatchHunk>`
+
+#### Remarks
+
+
+
+
+            For new files ([WriteToolResponse.Type](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/WriteToolResponse#type) = "create"), this will be an empty list since
+            there is no previous content to diff against.
+            
+
+
+
+
+            For overwrites, this contains a unified diff representation showing what changed
+            between the original and new content. Each [StructuredPatchHunk](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/StructuredPatchHunk)
+            represents a contiguous block of changes.
+            
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Type
+
+Gets or sets the type of write operation that was performed.
+
+#### Syntax
+
+```csharp
+public string Type { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Remarks
+
+Known values include:
+            
+
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

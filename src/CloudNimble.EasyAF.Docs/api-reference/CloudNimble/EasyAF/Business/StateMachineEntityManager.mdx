@@ -1,0 +1,1165 @@
+---
+title: StateMachineEntityManager
+description: "A Manager inheriting from `IdentifiableEntityManager`3` that contains reusable logic for updating a *TEntity*'s current State."
+icon: code-branch
+tag: "ABSTRACT"
+keywords: ['StateMachineEntityManager', 'CloudNimble.EasyAF.Business.StateMachineEntityManager<TContext, TEntity, TId, TStateType>', 'CloudNimble.EasyAF.Business', 'class', 'CloudNimble.EasyAF.Business.IdentifiableEntityManager<TContext, TEntity, TId>']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Business.EF6.dll
+
+**Namespace:** CloudNimble.EasyAF.Business
+
+**Inheritance:** CloudNimble.EasyAF.Business.IdentifiableEntityManager&lt;TContext, TEntity, TId&gt;
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Business.StateMachineEntityManager<TContext, TEntity, TId, TStateType>
+```
+
+## Summary
+
+A Manager inheriting from `IdentifiableEntityManager`3` that contains reusable logic for updating a *TEntity*'s current State.
+
+## Type Parameters
+
+- `TContext` - 
+- `TEntity` - 
+- `TId` - 
+- `TStateType` - 
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.IdentifiableEntityManager<TContext, TEntity, TId>`</Note>
+
+Create a new instance of the given Manager for a given [DbContext](https://learn.microsoft.com/dotnet/api/system.data.entity.dbcontext).
+
+#### Syntax
+
+```csharp
+public IdentifiableEntityManager(TContext dataContext, CloudNimble.SimpleMessageBus.Publish.IMessagePublisher messagePublisher)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `dataContext` | `TContext` | The [DbContext](https://learn.microsoft.com/dotnet/api/system.data.entity.dbcontext) instance to use for the database connection. Should be injected by the DI container. |
+| `messagePublisher` | `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher` | The SimpleMessageBus `IMessagePublisher` instance to use to publish Messages to a Queue. Should be injected by the DI container. |
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Initializes a new instance of the `EntityManager`2` class.
+
+#### Syntax
+
+```csharp
+public EntityManager(TContext dataContext, CloudNimble.SimpleMessageBus.Publish.IMessagePublisher messagePublisher)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `dataContext` | `TContext` | The database context instance for data operations. Should be injected by the DI container. |
+| `messagePublisher` | `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher` | The message publisher instance for publishing events. Should be injected by the DI container. |
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.ManagerBase<TContext>`</Note>
+
+Initializes a new instance of the `ManagerBase`1` class.
+
+#### Syntax
+
+```csharp
+public ManagerBase(TContext dataContext, CloudNimble.SimpleMessageBus.Publish.IMessagePublisher messagePublisher)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `dataContext` | `TContext` | The database context instance for data operations. Should be injected by the DI container. |
+| `messagePublisher` | `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher` | The message publisher instance for publishing events. Should be injected by the DI container. |
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DataContext <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.ManagerBase<TContext>`</Note>
+
+Gets the database context instance used for data operations.
+This context is injected through the constructor and provides access to the database.
+
+#### Syntax
+
+```csharp
+public TContext DataContext { get; private set; }
+```
+
+#### Property Value
+
+Type: `TContext`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MessagePublisher <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.ManagerBase<TContext>`</Note>
+
+Gets the message publisher instance used for publishing events and messages to the message bus.
+This publisher is injected through the constructor and enables event-driven architecture patterns.
+
+#### Syntax
+
+```csharp
+public CloudNimble.SimpleMessageBus.Publish.IMessagePublisher MessagePublisher { get; private set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.SimpleMessageBus.Publish.IMessagePublisher`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> StateTypes
+
+Gets the collection of active state types available for entities managed by this manager.
+This collection is populated during initialization from the database.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<TStateType> StateTypes { get; private set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<TStateType>`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DeleteAsync <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Delete a specific [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) with optional save operation.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> DeleteAsync(TEntity entity, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | - |
+| `save` | `bool` | - |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DeleteAsync <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Delete a specific [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) with optional save operation using a specified [DbContext](https://learn.microsoft.com/dotnet/api/system.data.entity.dbcontext).
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> DeleteAsync(TEntity entity, TContext context, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | - |
+| `context` | `TContext` | - |
+| `save` | `bool` | - |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DeleteAsync <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Delete all [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) from a list with optional save operation.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> DeleteAsync(System.Collections.Generic.List<TEntity> entities, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | - |
+| `save` | `bool` | - |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+
+#### Remarks
+
+RWM: This will need to be Deleted to be generic if it's going to be in a NuGet package.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DeleteAsync <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Delete all [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) from a list with optional save operation using a specified [DbContext](https://learn.microsoft.com/dotnet/api/system.data.entity.dbcontext).
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> DeleteAsync(System.Collections.Generic.List<TEntity> entities, TContext context, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | - |
+| `context` | `TContext` | - |
+| `save` | `bool` | - |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DirectDelete <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Delete entities returned by the specified query without individual entity processing.
+
+#### Syntax
+
+```csharp
+public int DirectDelete(System.Linq.Expressions.Expression<System.Func<TEntity, bool>> predicate)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `predicate` | `System.Linq.Expressions.Expression<System.Func<TEntity, bool>>` | An [Expression`1](https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1) to execute against the [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) |
+
+#### Returns
+
+Type: `int`
+
+#### Remarks
+
+This overload will give you all of the performance of deleting a set of data without loading entities in the context but none of
+the extra processing provided by OnDeleting / OnDeleted.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DirectDeleteAsync <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Delete entities returned by the specified query without individual entity processing.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<int> DirectDeleteAsync(System.Linq.Expressions.Expression<System.Func<TEntity, bool>> predicate)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `predicate` | `System.Linq.Expressions.Expression<System.Func<TEntity, bool>>` | An [Expression`1](https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1) to execute against the [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<int>`
+
+#### Remarks
+
+This overload will give you all of the performance of deleting a set of data without loading entities in the context but none of
+the extra processing provided by OnDeleting / OnDeleted.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DirectUpdate <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Executes a direct UPDATE query on the database without returning objects or processing them through the interceptors.
+
+#### Syntax
+
+```csharp
+public int DirectUpdate(System.Linq.Expressions.Expression<System.Func<TEntity, bool>> predicate, System.Linq.Expressions.Expression<System.Func<TEntity, TEntity>> updateExpression)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `predicate` | `System.Linq.Expressions.Expression<System.Func<TEntity, bool>>` | An [Expression`1](https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1) to execute against the [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) |
+| `updateExpression` | `System.Linq.Expressions.Expression<System.Func<TEntity, TEntity>>` | An [Expression`1](https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1) defining the updates to be performed on the records returned by the predicate. |
+
+#### Returns
+
+Type: `int`
+
+#### Remarks
+
+This overload will give you all of the performance of updating a set of data without loading entities in the context but none of
+the extra processing provided by OnUpdating / OnUpdated.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DirectUpdateAsync <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Executes a direct UPDATE query on the database without returning objects or processing them through the interceptors.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<int> DirectUpdateAsync(System.Linq.Expressions.Expression<System.Func<TEntity, bool>> predicate, System.Linq.Expressions.Expression<System.Func<TEntity, TEntity>> updateExpression)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `predicate` | `System.Linq.Expressions.Expression<System.Func<TEntity, bool>>` | An [Expression`1](https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1) to execute against the [DbSet`1](https://learn.microsoft.com/dotnet/api/system.data.entity.dbset-1) |
+| `updateExpression` | `System.Linq.Expressions.Expression<System.Func<TEntity, TEntity>>` | An [Expression`1](https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression-1) defining the updates to be performed on the records returned by the predicate. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<int>`
+
+#### Remarks
+
+This overload will give you all of the performance of updating a set of data without loading entities in the context but none of
+the extra processing provided by OnUpdating / OnUpdated.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Initialize <Badge color="orange">Virtual</Badge>
+
+Initializes the StateTypes collection by loading active state types from the database.
+This method is called automatically by state update methods if the collection is empty.
+
+#### Syntax
+
+```csharp
+public virtual void Initialize()
+```
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> InsertAsync <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Inserts a single entity into the database with optional save operation.
+Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> InsertAsync(TEntity entity, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to be inserted. |
+| `save` | `bool` | Whether to immediately save changes to the database. Defaults to true. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the entity was successfully inserted; otherwise, false.
+
+#### Remarks
+
+RWM: This will need to be updated to be generic if it's going to be in a NuGet package.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> InsertAsync <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Inserts a single entity into the database using a specified context with optional save operation.
+Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> InsertAsync(TEntity entity, TContext context, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to be inserted. |
+| `context` | `TContext` | The database context to use for the operation. |
+| `save` | `bool` | Whether to immediately save changes to the database. Defaults to true. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the entity was successfully inserted; otherwise, false.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> InsertAsync <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Inserts a collection of entities into the database with optional save operation.
+Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks for each entity.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> InsertAsync(System.Collections.Generic.List<TEntity> entities, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities to be inserted. |
+| `save` | `bool` | Whether to immediately save changes to the database. Defaults to true. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the entities were successfully inserted; otherwise, false.
+
+#### Remarks
+
+RWM: This will need to be updated to be generic if it's going to be in a NuGet package.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> InsertAsync <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Inserts a collection of entities into the database using a specified context with optional save operation.
+Executes the OnInsertingAsync and OnInsertedAsync lifecycle hooks for each entity.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> InsertAsync(System.Collections.Generic.List<TEntity> entities, TContext context, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities to be inserted. |
+| `context` | `TContext` | The database context to use for the operation. |
+| `save` | `bool` | Whether to immediately save changes to the database. Defaults to true. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the entities were successfully inserted; otherwise, false.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> OnDeletedAsync <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Called after successfully deleting an entity from the database. Use this method for post-deletion
+business logic such as cleanup operations, sending notifications, or triggering external systems.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task<bool> OnDeletedAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity that was deleted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if post-deletion processing was successful; otherwise, false.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> OnDeletedAsync <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Called after successfully deleting a collection of entities from the database.
+Applies OnDeletedAsync logic to each entity in the collection.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task OnDeletedAsync(System.Collections.Generic.List<TEntity> entities)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities that were deleted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> OnDeletingAsync <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Called before deleting an entity from the database. Override this method to add
+custom business logic or validation before deletion.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task OnDeletingAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to be deleted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> OnDeletingAsync <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Called before deleting a collection of entities from the database.
+Applies OnDeletingAsync logic to each entity in the collection.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task OnDeletingAsync(System.Collections.Generic.List<TEntity> entities)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities to be deleted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> OnInsertedAsync <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Called after successfully inserting an entity into the database. Use this method for post-insertion
+business logic such as sending notifications, publishing events, or triggering external systems.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task<bool> OnInsertedAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity that was inserted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if post-insertion processing was successful; otherwise, false.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> OnInsertedAsync <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Called after successfully inserting a collection of entities into the database.
+Applies OnInsertedAsync logic to each entity in the collection.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task OnInsertedAsync(System.Collections.Generic.List<TEntity> entities)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities that were inserted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> OnInsertingAsync <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.IdentifiableEntityManager<TContext, TEntity, TId>`</Note>
+
+Perform business logic (like setting the entity's Id) prior to saving the *TEntity* to the *TContext*.
+
+#### Syntax
+
+```csharp
+public override System.Threading.Tasks.Task OnInsertingAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The *TEntity* to be inserted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> OnInsertingAsync <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Called before inserting an entity into the database. Automatically handles audit field population
+and user tracking for entities implementing the appropriate interfaces.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task OnInsertingAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to be inserted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+#### Remarks
+
+This method automatically sets:
+- CreatedById for entities implementing `ICreatorTrackable`1`
+- DateCreated for entities implementing [ICreatedAuditable](/api-reference/CloudNimble/EasyAF/Core/ICreatedAuditable)
+Override this method to add custom business logic before insertion.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> OnInsertingAsync <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Called before inserting a collection of entities into the database.
+Applies OnInsertingAsync logic to each entity in the collection.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task OnInsertingAsync(System.Collections.Generic.List<TEntity> entities)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities to be inserted. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> OnUpdatedAsync <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Called after successfully updating an entity in the database. Use this method for post-update
+business logic such as sending notifications, publishing events, or triggering external systems.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task<bool> OnUpdatedAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity that was updated. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if post-update processing was successful; otherwise, false.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> OnUpdatedAsync <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Called after successfully updating a collection of entities in the database.
+Applies OnUpdatedAsync logic to each entity in the collection.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task OnUpdatedAsync(System.Collections.Generic.List<TEntity> entities)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities that were updated. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> OnUpdatingAsync <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Called before updating an entity in the database. Automatically handles audit field population
+and user tracking for entities implementing the appropriate interfaces.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task OnUpdatingAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to be updated. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+#### Remarks
+
+This method automatically sets:
+- UpdatedById for entities implementing `IUpdaterTrackable`1`
+- DateUpdated for entities implementing [IUpdatedAuditable](/api-reference/CloudNimble/EasyAF/Core/IUpdatedAuditable)
+Override this method to add custom business logic before updating.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> OnUpdatingAsync <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Called before updating a collection of entities in the database.
+Applies OnUpdatingAsync logic to each entity in the collection.
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task OnUpdatingAsync(System.Collections.Generic.List<TEntity> entities)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities to be updated. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ResetAuditProperties <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Resets audit properties to an "Inserted" state by setting creation fields and clearing update fields.
+Sets CreatedById and DateCreated to current values, while clearing UpdatedById and DateUpdated.
+
+#### Syntax
+
+```csharp
+public void ResetAuditProperties<TDbObservable>(TDbObservable entity) where TDbObservable : CloudNimble.EasyAF.Core.DbObservableObject
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TDbObservable` | The entity whose audit properties should be reset. |
+
+#### Type Parameters
+
+- `TDbObservable` - Any [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject) in the object model. DOES NOT have to be the entity for this Manager.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SetCancelledAsync <Badge color="orange">Virtual</Badge>
+
+Sets the entity's state to "Cancelled" (sort order 98).
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task<bool> SetCancelledAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to update. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the state was successfully updated; otherwise, false.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SetCompletedAsync <Badge color="orange">Virtual</Badge>
+
+Sets the entity's state to "Completed" (sort order 100).
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task<bool> SetCompletedAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to update. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the state was successfully updated; otherwise, false.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SetCreatedAsync
+
+Sets the entity's state to "Created" (sort order 0).
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> SetCreatedAsync(TEntity entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to update. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the state was successfully updated; otherwise, false.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SetFailedAsync <Badge color="orange">Virtual</Badge>
+
+Sets the entity's state to "Failed" (sort order 99).
+
+#### Syntax
+
+```csharp
+public virtual System.Threading.Tasks.Task<bool> SetFailedAsync(TEntity entity, string errorMessage = "", string errorDetail = "")
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to update. |
+| `errorMessage` | `string` | Optional error message (currently not used in implementation). |
+| `errorDetail` | `string` | Optional error detail (currently not used in implementation). |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the state was successfully updated; otherwise, false.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> UpdateAsync <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Updates a single entity in the database with optional save operation.
+Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> UpdateAsync(TEntity entity, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to be updated. |
+| `save` | `bool` | Whether to immediately save changes to the database. Defaults to true. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the entity was successfully updated; otherwise, false.
+
+#### Remarks
+
+RWM: This will need to be updated to be generic if it's going to be in a NuGet package.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> UpdateAsync <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Updates a single entity in the database using a specified context with optional save operation.
+Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> UpdateAsync(TEntity entity, TContext context, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to be updated. |
+| `context` | `TContext` | The database context to use for the operation. |
+| `save` | `bool` | Whether to immediately save changes to the database. Defaults to true. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the entity was successfully updated; otherwise, false.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> UpdateAsync <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Updates a collection of entities in the database with optional save operation.
+Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks for each entity.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> UpdateAsync(System.Collections.Generic.List<TEntity> entities, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities to be updated. |
+| `save` | `bool` | Whether to immediately save changes to the database. Defaults to true. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the entities were successfully updated; otherwise, false.
+
+#### Remarks
+
+RWM: This will need to be updated to be generic if it's going to be in a NuGet package.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> UpdateAsync <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Business.EntityManager<TContext, TEntity>`</Note>
+
+Updates a collection of entities in the database using a specified context with optional save operation.
+Executes the OnUpdatingAsync and OnUpdatedAsync lifecycle hooks for each entity.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> UpdateAsync(System.Collections.Generic.List<TEntity> entities, TContext context, bool save = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entities` | `System.Collections.Generic.List<TEntity>` | The collection of entities to be updated. |
+| `context` | `TContext` | The database context to use for the operation. |
+| `save` | `bool` | Whether to immediately save changes to the database. Defaults to true. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the entities were successfully updated; otherwise, false.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> UpdateStateAsync
+
+Updates the entity's state to the state type with the specified sort order.
+Logs the state transition for tracking purposes.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<bool> UpdateStateAsync(TEntity entity, int sortOrder)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entity` | `TEntity` | The entity to update. |
+| `sortOrder` | `int` | The sort order of the target state type. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<bool>`
+True if the state was successfully updated; otherwise, false.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `Exception` | Thrown when no state type is found with the specified sort order. |
+

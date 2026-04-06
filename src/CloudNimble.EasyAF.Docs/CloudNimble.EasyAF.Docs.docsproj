@@ -1,0 +1,93 @@
+<Project Sdk="DotNetDocs.Sdk/1.5.4">
+
+    <PropertyGroup>
+        <DocumentationType>Mintlify</DocumentationType>
+        <GenerateDocumentation>true</GenerateDocumentation>
+        <NamespaceMode>Folder</NamespaceMode>
+        <ShowDocumentationStats>true</ShowDocumentationStats>
+
+        <ConceptualDocsEnabled>true</ConceptualDocsEnabled>
+        <ShowPlaceholders>false</ShowPlaceholders>
+
+        <!-- Exclude test projects from documentation -->
+        <ExcludePatterns>Edmx;Analyzers;CodeGen</ExcludePatterns>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <MintlifyTemplate>
+            <Name>EasyAF</Name>
+            <Theme>maple</Theme>
+            <Colors>
+                <Primary>#E0EC32</Primary>
+                <Light>#E0EC32</Light>
+                <Dark>#F58D4D</Dark>
+            </Colors>
+            <Logo>
+                <Light>/images/logos/easyaf.light.svg</Light>
+                <Dark>/images/logos/easyaf.dark.svg</Dark>
+            </Logo>
+            <Favicon>
+                <Light>/images/icons/favicon-96x96.png</Light>
+                <Dark>/images/icons/favicon-96x96.png</Dark>
+            </Favicon>
+            <Appearance>
+                <Default>dark</Default>
+            </Appearance>
+            <Styling>
+                <Codeblocks>dark</Codeblocks>
+            </Styling>
+            <Navigation Mode="Unified" Type="Tabs" Name="Core Framework">
+                <Pages>
+                    <Groups>
+                        <Group Name="Getting Started" Icon="stars">
+                            <Pages>
+                                index;
+                                why-easyaf;
+                                quickstart
+                            </Pages>
+                        </Group>
+                        <Group Name="Guides" Icon="dog-leashed">
+                            <Pages>
+                                guides/index;
+                                guides/table-design;
+                                guides/observable-objects;
+                                guides/business-layer;
+                                guides/data-operations-and-audit;
+                                guides/state-machines-and-status;
+                                guides/interval-calculations;
+                                guides/property-name-overrides;
+                                guides/MSBuild/dotnet-10-changes;
+                            </Pages>
+                        </Group>
+                    </Groups>
+                </Pages>
+            </Navigation>
+            <Interaction>
+                <Drilldown>true</Drilldown>
+            </Interaction>
+        </MintlifyTemplate>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <DocumentationReference Include="..\..\external\restier\src\Microsoft.Restier.Docs\Microsoft.Restier.Docs.docsproj" DestinationPath="restier" IntegrationType="Tabs" Name="REST APIs" />
+
+        <DocumentationReference Include="..\..\external\odata-mcp\src\Microsoft.OData.Mcp.Docs\Microsoft.OData.Mcp.Docs.docsproj" DestinationPath="odata-mcp" IntegrationType="Tabs" Name="AI for REST APIs" />
+
+        <DocumentationReference Include="..\..\external\BlazorEssentials\src\CloudNimble.BlazorEssentials.Docs\CloudNimble.BlazorEssentials.Docs.docsproj" DestinationPath="blazoressentials" IntegrationType="Tabs" Name="Blazor UI" />
+
+        <DocumentationReference Include="..\..\external\SimpleMessageBus\src\SimpleMessageBus.Docs\SimpleMessageBus.Docs.docsproj" DestinationPath="simplemessagebus" IntegrationType="Tabs" Name="Async Events" />
+
+        <DocumentationReference Include="..\..\external\Breakdance\src\CloudNimble.Breakdance.Docs\Breakdance.Docs.docsproj" DestinationPath="breakdance" IntegrationType="Tabs" Name="Testing" />
+
+        <DocumentationReference Include="..\..\external\ClaudeEssentials\src\CloudNimble.ClaudeEssentials.Docs\CloudNimble.ClaudeEssentials.Docs.docsproj" DestinationPath="claudeessentials" IntegrationType="Tabs" Name="Building for Claude" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="**/*.jsx" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="guides\index.mdx" />
+    </ItemGroup>
+
+</Project>

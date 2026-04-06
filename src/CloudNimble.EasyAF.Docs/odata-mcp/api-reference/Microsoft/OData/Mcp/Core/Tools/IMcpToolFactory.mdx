@@ -1,0 +1,298 @@
+---
+title: IMcpToolFactory
+description: "Factory for creating MCP tools dynamically from OData metadata."
+icon: plug
+keywords: ['IMcpToolFactory', 'Microsoft.OData.Mcp.Core.Tools.IMcpToolFactory', 'Microsoft.OData.Mcp.Core.Tools', 'interface']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Tools
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Tools.IMcpToolFactory
+```
+
+## Summary
+
+Factory for creating MCP tools dynamically from OData metadata.
+
+## Remarks
+
+This factory generates MCP tools based on the parsed OData model, creating tools for
+            CRUD operations, queries, and navigation between entities. The tools are generated
+            dynamically to match the structure and capabilities of the OData service.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  FilterToolsForUser <DocsBadge text="Abstract" variant="warning" />
+
+Filters tools based on user authorization context.
+
+#### Syntax
+
+```csharp
+System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition> FilterToolsForUser(System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition> tools, System.Collections.Generic.IEnumerable<string> userScopes, System.Collections.Generic.IEnumerable<string> userRoles, Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `tools` | `System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>` | The tools to filter. |
+| `userScopes` | `System.Collections.Generic.IEnumerable<string>` | The user's OAuth2 scopes. |
+| `userRoles` | `System.Collections.Generic.IEnumerable<string>` | The user's roles. |
+| `options` | `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions?` | Options for authorization filtering. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>`
+A collection of tools the user is authorized to access.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *tools* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateCrudToolsAsync <DocsBadge text="Abstract" variant="warning" />
+
+Generates CRUD operation tools for a specific entity type.
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>> GenerateCrudToolsAsync(Microsoft.OData.Mcp.Core.Models.EdmEntityType entityType, Microsoft.OData.Mcp.Core.Models.EdmModel model, Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityType` | `Microsoft.OData.Mcp.Core.Models.EdmEntityType` | The entity type to generate CRUD tools for. |
+| `model` | `Microsoft.OData.Mcp.Core.Models.EdmModel` | The complete OData model for context. |
+| `options` | `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions?` | Options for tool generation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>>`
+A collection of CRUD tool definitions.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *entityType* or *model* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateEntitySetToolsAsync <DocsBadge text="Abstract" variant="warning" />
+
+Generates tools for entity set operations (collection-level operations).
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>> GenerateEntitySetToolsAsync(Microsoft.OData.Mcp.Core.Models.EdmEntitySet entitySet, Microsoft.OData.Mcp.Core.Models.EdmModel model, Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySet` | `Microsoft.OData.Mcp.Core.Models.EdmEntitySet` | The entity set to generate tools for. |
+| `model` | `Microsoft.OData.Mcp.Core.Models.EdmModel` | The complete OData model for context. |
+| `options` | `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions?` | Options for tool generation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>>`
+A collection of entity set tool definitions.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *entitySet* or *model* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateEntityToolsAsync <DocsBadge text="Abstract" variant="warning" />
+
+Generates MCP tools for a specific entity type.
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>> GenerateEntityToolsAsync(Microsoft.OData.Mcp.Core.Models.EdmEntityType entityType, Microsoft.OData.Mcp.Core.Models.EdmModel model, Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityType` | `Microsoft.OData.Mcp.Core.Models.EdmEntityType` | The entity type to generate tools for. |
+| `model` | `Microsoft.OData.Mcp.Core.Models.EdmModel` | The complete OData model for context. |
+| `options` | `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions?` | Options for tool generation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>>`
+A collection of generated MCP tool definitions for the entity type.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *entityType* or *model* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateNavigationToolsAsync <DocsBadge text="Abstract" variant="warning" />
+
+Generates navigation tools for entity relationships.
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>> GenerateNavigationToolsAsync(Microsoft.OData.Mcp.Core.Models.EdmEntityType entityType, Microsoft.OData.Mcp.Core.Models.EdmModel model, Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityType` | `Microsoft.OData.Mcp.Core.Models.EdmEntityType` | The entity type to generate navigation tools for. |
+| `model` | `Microsoft.OData.Mcp.Core.Models.EdmModel` | The complete OData model for context. |
+| `options` | `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions?` | Options for tool generation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>>`
+A collection of navigation tool definitions.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *entityType* or *model* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateQueryToolsAsync <DocsBadge text="Abstract" variant="warning" />
+
+Generates query tools for the OData model.
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>> GenerateQueryToolsAsync(Microsoft.OData.Mcp.Core.Models.EdmModel model, Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `model` | `Microsoft.OData.Mcp.Core.Models.EdmModel` | The OData model to generate query tools for. |
+| `options` | `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions?` | Options for tool generation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>>`
+A collection of query tool definitions.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *model* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateToolsAsync <DocsBadge text="Abstract" variant="warning" />
+
+Generates all MCP tools for the specified OData model.
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>> GenerateToolsAsync(Microsoft.OData.Mcp.Core.Models.EdmModel model, Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `model` | `Microsoft.OData.Mcp.Core.Models.EdmModel` | The OData model to generate tools for. |
+| `options` | `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions?` | Options for tool generation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>>`
+A collection of generated MCP tool definitions.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *model* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetAvailableToolNames <DocsBadge text="Abstract" variant="warning" />
+
+Gets all available tool names.
+
+#### Syntax
+
+```csharp
+System.Collections.Generic.IEnumerable<string> GetAvailableToolNames()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of all tool names that have been generated.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetTool <DocsBadge text="Abstract" variant="warning" />
+
+Gets the tool definition by name.
+
+#### Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Tools.McpToolDefinition GetTool(string toolName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `toolName` | `string` | The name of the tool to retrieve. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolDefinition?`
+The tool definition if found; otherwise, null.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ValidateTools <DocsBadge text="Abstract" variant="warning" />
+
+Validates that the generated tools are compatible with the MCP specification.
+
+#### Syntax
+
+```csharp
+System.Collections.Generic.IEnumerable<string> ValidateTools(System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition> tools)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `tools` | `System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Tools.McpToolDefinition>` | The tools to validate. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or empty if all tools are valid.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *tools* is null. |
+

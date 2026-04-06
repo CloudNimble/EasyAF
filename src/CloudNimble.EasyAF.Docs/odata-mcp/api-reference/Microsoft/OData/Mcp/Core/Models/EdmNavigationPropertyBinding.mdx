@@ -1,0 +1,295 @@
+---
+title: EdmNavigationPropertyBinding
+description: "Represents a navigation property binding in an entity set."
+icon: lock
+tag: "SEALED"
+keywords: ['EdmNavigationPropertyBinding', 'Microsoft.OData.Mcp.Core.Models.EdmNavigationPropertyBinding', 'Microsoft.OData.Mcp.Core.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Models.EdmNavigationPropertyBinding
+```
+
+## Summary
+
+Represents a navigation property binding in an entity set.
+
+## Remarks
+
+Navigation property bindings establish the connection between navigation properties
+            and the entity sets that contain the target entities. They are essential for
+            defining how relationships are resolved in the OData service.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmNavigationPropertyBinding](/odata-mcp/api-reference/Microsoft/OData/Mcp/Core/Models/EdmNavigationPropertyBinding) class.
+
+#### Syntax
+
+```csharp
+public EdmNavigationPropertyBinding()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmNavigationPropertyBinding](/odata-mcp/api-reference/Microsoft/OData/Mcp/Core/Models/EdmNavigationPropertyBinding) class
+            with the specified path and target.
+
+#### Syntax
+
+```csharp
+public EdmNavigationPropertyBinding(string path, string target)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `path` | `string` | The path of the navigation property. |
+| `target` | `string` | The target entity set name. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *path* or *target* is null or whitespace. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Path
+
+Gets or sets the path of the navigation property.
+
+#### Syntax
+
+```csharp
+public required string Path { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The navigation property path, which may be a simple property name or a more complex path.
+
+#### Remarks
+
+The path identifies which navigation property this binding applies to. For simple cases,
+            this is just the property name. For more complex scenarios involving inheritance or
+            containment, the path may include type casts or additional segments.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Target
+
+Gets or sets the target entity set name.
+
+#### Syntax
+
+```csharp
+public required string Target { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The name of the entity set that contains the target entities for this navigation property.
+
+#### Remarks
+
+When following this navigation property, the target entities will be found in the
+            entity set specified by this property. The target entity set must be defined in
+            the same entity container.
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Override" variant="info" />
+
+Determines whether the specified object is equal to the current navigation property binding.
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | The object to compare with the current navigation property binding. |
+
+#### Returns
+
+Type: `bool`
+`true` if the specified object is equal to the current navigation property binding; otherwise, `false`.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Override" variant="info" />
+
+Returns a hash code for the current navigation property binding.
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+A hash code for the current navigation property binding.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the navigation property binding.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A string showing the path and target relationship.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

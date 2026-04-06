@@ -1,0 +1,332 @@
+---
+title: SecurityHeadersConfiguration
+description: "Configuration for security-related HTTP headers."
+icon: lock
+tag: "SEALED"
+keywords: ['SecurityHeadersConfiguration', 'Microsoft.OData.Mcp.Core.Configuration.SecurityHeadersConfiguration', 'Microsoft.OData.Mcp.Core.Configuration', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Configuration
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Configuration.SecurityHeadersConfiguration
+```
+
+## Summary
+
+Configuration for security-related HTTP headers.
+
+## Remarks
+
+Security headers configuration controls the HTTP headers that are sent
+            with responses to provide additional protection against various web-based
+            attacks such as XSS, clickjacking, MIME sniffing, and protocol downgrade attacks.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public SecurityHeadersConfiguration()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableHsts
+
+Gets or sets a value indicating whether HTTP Strict Transport Security (HSTS) is enabled.
+
+#### Syntax
+
+```csharp
+public bool EnableHsts { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable HSTS; otherwise, `false`.
+
+#### Remarks
+
+HSTS forces browsers to use HTTPS connections and prevents protocol downgrade attacks.
+            This should be enabled for production environments using HTTPS.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableXContentTypeOptions
+
+Gets or sets a value indicating whether X-Content-Type-Options header is enabled.
+
+#### Syntax
+
+```csharp
+public bool EnableXContentTypeOptions { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable X-Content-Type-Options; otherwise, `false`.
+
+#### Remarks
+
+The X-Content-Type-Options header prevents browsers from MIME sniffing,
+            which can lead to security vulnerabilities when serving user-uploaded content.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableXFrameOptions
+
+Gets or sets a value indicating whether X-Frame-Options header is enabled.
+
+#### Syntax
+
+```csharp
+public bool EnableXFrameOptions { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable X-Frame-Options; otherwise, `false`.
+
+#### Remarks
+
+The X-Frame-Options header prevents the page from being embedded in frames,
+            protecting against clickjacking attacks.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  XFrameOptions
+
+Gets or sets the X-Frame-Options header value.
+
+#### Syntax
+
+```csharp
+public string XFrameOptions { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The X-Frame-Options directive value.
+
+#### Remarks
+
+Valid values are "DENY" (never allow framing), "SAMEORIGIN" (allow framing from same origin),
+            or "ALLOW-FROM uri" (allow framing from specific URI).
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a copy of this security headers configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.SecurityHeadersConfiguration Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.SecurityHeadersConfiguration`
+A new instance with the same settings.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ForDevelopment
+
+Creates a security headers configuration optimized for development environments.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.SecurityHeadersConfiguration ForDevelopment()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.SecurityHeadersConfiguration`
+A security headers configuration suitable for development use.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ForProduction
+
+Creates a security headers configuration optimized for production environments.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.SecurityHeadersConfiguration ForProduction()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.SecurityHeadersConfiguration`
+A security headers configuration suitable for production use.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MergeWith
+
+Merges another security headers configuration into this one.
+
+#### Syntax
+
+```csharp
+public void MergeWith(Microsoft.OData.Mcp.Core.Configuration.SecurityHeadersConfiguration other)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `other` | `Microsoft.OData.Mcp.Core.Configuration.SecurityHeadersConfiguration` | The configuration to merge into this one. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the security headers configuration.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or empty if the configuration is valid.
+

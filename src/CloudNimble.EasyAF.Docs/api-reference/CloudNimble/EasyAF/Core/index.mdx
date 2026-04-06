@@ -1,0 +1,51 @@
+---
+title: Overview
+description: "Summary of the CloudNimble.EasyAF.Core Namespace"
+icon: folder-tree
+mode: wide
+keywords: ['CloudNimble.EasyAF.Core', 'namespace', 'DbObservableObject', 'EasyObservableObject', 'Ensure', 'HttpHandlerMode', 'IIdentifiableEqualityComparer', 'IActiveTrackable', 'ICreatedAuditable', 'ICreatorTrackable', 'IDbEnum', 'IDbStateEnum']
+---
+
+## Types
+
+### <Icon icon="file-brackets-curly" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> Classes
+
+| Name | Summary |
+| ---- | ------- |
+| [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject) | A base class for Entity Framework objects to implement [INotifyPropertyChanged](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged), [IChangeTracking](https://learn.microsoft.com/dotnet/api/system.componentmodel.ichangetracking),   and [IRevertibleChangeTracking](https://learn.microsoft.com/dotnet/api/system.componentmodel.irevertiblechangetracking) in front-end development. |
+| [EasyObservableObject](/api-reference/CloudNimble/EasyAF/Core/EasyObservableObject) | A base class for objects to implement [INotifyPropertyChanged](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged).  Provides strongly-typed property change notifications and automatic property setting with change detection. |
+| [Ensure](/api-reference/CloudNimble/EasyAF/Core/Ensure) | Provides methods for ensuring that method arguments meet specific criteria.  This class provides a consistent way to validate arguments and throw appropriate exceptions. |
+| [HttpHandlerMode](/api-reference/CloudNimble/EasyAF/Core/HttpHandlerMode) | Specifies how HttpClient message handlers should be configured when registering HTTP clients.  Determines whether handlers are added to existing handlers or replace them entirely. |
+| [IIdentifiableEqualityComparer](/api-reference/CloudNimble/EasyAF/Core/IIdentifiableEqualityComparer) | Provides an equality comparer for objects that implement `IIdentifiable`1`.  Compares objects based on their Id property values for equality and hash code generation. |
+| [Interval](/api-reference/CloudNimble/EasyAF/Core/Interval) | Describes an interval of time to be used in time-based calculations.  Provides methods to calculate rates and frequencies based on the interval value and type. |
+| [IntervalType](/api-reference/CloudNimble/EasyAF/Core/IntervalType) | Specifies the type of interval duration. |
+| [MoneyInterval](/api-reference/CloudNimble/EasyAF/Core/MoneyInterval) | Represents a sum of money to be exchanged during a given interval. |
+| [NameOf](/api-reference/CloudNimble/EasyAF/Core/NameOf) | Fills a gap in `nameof` by allowing you to use deep name references instead of local name references. |
+| [PercentageInterval](/api-reference/CloudNimble/EasyAF/Core/PercentageInterval) | Represents a percentage rate that occurs at regular time intervals, enabling conversion between different time periods.  This class combines a base time interval (from the `Interval`1` class) with a percentage rate to calculate   total percentage amounts across different time periods. |
+| [RatioInterval](/api-reference/CloudNimble/EasyAF/Core/RatioInterval) | Represents a ratio value that occurs at regular time intervals, enabling conversion between different time periods.  This class combines a base time interval (from the `Interval`1` class) with a ratio value to calculate   total ratio amounts across different time periods. |
+
+### <Icon icon="plug" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> Interfaces
+
+| Name | Summary |
+| ---- | ------- |
+| [IActiveTrackable](/api-reference/CloudNimble/EasyAF/Core/IActiveTrackable) | An interface that implements the CloudNimble common pattern for tracking who created an Entity. |
+| [ICreatedAuditable](/api-reference/CloudNimble/EasyAF/Core/ICreatedAuditable) | An interface that implements the CloudNimble common pattern for tracking who created an Entity. |
+| [ICreatorTrackable](/api-reference/CloudNimble/EasyAF/Core/ICreatorTrackable) | An interface that implements the CloudNimble common pattern for tracking who created an Entity. |
+| [IDbEnum](/api-reference/CloudNimble/EasyAF/Core/IDbEnum) | An interface that represents the CloudNimble database-driven enumeration pattern that lets you update the Enum as processes change  without changing the meaning of Entities that are linked to the older enums. |
+| [IDbStateEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStateEnum) | An interface that identifies this Entity as being the enumeration details for the SimpleStateMachine. |
+| [IDbStatusEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStatusEnum) | An interface that identifies this Entity as being the enumeration details for the SimpleStateMachine. |
+| [IHasState](/api-reference/CloudNimble/EasyAF/Core/IHasState) | An interface that specifes an implementing Entity changes State as part of the SimpleStateMachine. |
+| [IHasStatus](/api-reference/CloudNimble/EasyAF/Core/IHasStatus) | An interface that specifes an implementing Entity contains a child Entity of T that implements [IDbStatusEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStatusEnum) and  represents the Entity's current status. |
+| [IHumanReadable](/api-reference/CloudNimble/EasyAF/Core/IHumanReadable) | An interface that specifies the implementing Entity displays text to the user. |
+| [IIdentifiable](/api-reference/CloudNimble/EasyAF/Core/IIdentifiable) | An interface that guarantees a particular Entity contains an "Id" property with a type *T*. |
+| [ISortable](/api-reference/CloudNimble/EasyAF/Core/ISortable) | An interface that specifies the implementing Entity can be contains an [Int32](https://learn.microsoft.com/dotnet/api/system.int32) that tracks the order items should be displayed in a list. |
+| [IUpdatedAuditable](/api-reference/CloudNimble/EasyAF/Core/IUpdatedAuditable) | An interface that implements the CloudNimble common pattern for tracking who created an Entity. |
+| [IUpdaterTrackable](/api-reference/CloudNimble/EasyAF/Core/IUpdaterTrackable) | An interface that implements the CloudNimble common pattern for tracking who updated an Entity. |
+
+### <Icon icon="list-ol" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> Enums
+
+| Name | Summary |
+| ---- | ------- |
+| [HttpHandlerMode](/api-reference/CloudNimble/EasyAF/Core/HttpHandlerMode) | Specifies how HttpClient message handlers should be configured when registering HTTP clients.  Determines whether handlers are added to existing handlers or replace them entirely. |
+| [IntervalType](/api-reference/CloudNimble/EasyAF/Core/IntervalType) | Specifies the type of interval duration. |
+

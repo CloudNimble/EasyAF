@@ -1,0 +1,17 @@
+﻿{
+  "@odata.context": "http://localhost/api/tests/$metadata#Books",
+  "value": [
+    {
+      "@odata.type": "#Microsoft.Restier.Tests.Shared.Scenarios.Library.Book",
+      "@odata.id": "http://localhost/api/tests/Books(19d68c75-1313-4369-b2bf-521f2b260a59)",
+      "@odata.editLink": "http://localhost/api/tests/Books(19d68c75-1313-4369-b2bf-521f2b260a59)",
+      "Id@odata.type": "#Guid",
+      "Id": "19d68c75-1313-4369-b2bf-521f2b260a59",
+      "Isbn": "9476324472648",
+      "Title": "A Clockwork Orange",
+      "IsActive": true,
+      "Publisher@odata.associationLink": "http://localhost/api/tests/Books(19d68c75-1313-4369-b2bf-521f2b260a59)/Publisher/$ref",
+      "Publisher@odata.navigationLink": "http://localhost/api/tests/Books(19d68c75-1313-4369-b2bf-521f2b260a59)/Publisher"
+    }
+  ]
+}

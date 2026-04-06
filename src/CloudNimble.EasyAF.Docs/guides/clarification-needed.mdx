@@ -1,0 +1,212 @@
+---
+title: 'Clarification Needed'
+sidebarTitle: 'Clarification'
+description: 'Aspects of the EasyAF framework that require additional clarification or design decisions'
+icon: 'circle-question'
+---
+
+# Areas Requiring Clarification
+
+This document lists aspects of the EasyAF framework that require additional clarification or decisions from the development team.
+
+## Type System Assumptions
+
+### 1. User ID Type Hardcoding
+**Location**: EntityManager.cs lines 114, 154, 610, 620
+
+The code currently assumes `Guid` for user IDs in several places:
+```csharp
+// TODO: RWM: This probably need to figure out how to check the type and make sure we don't just assume GUIDs.
+(entity as ICreatorTrackable<Guid>).CreatedById = ClaimsPrincipal.Current.GetIdClaim();
+```
+
+**Questions**:
+- Should the framework support different ID types for users (int, string, etc.)?
+- How should the type be determined at runtime?
+- Should this be a generic parameter on the manager?
+
+### 2. ClaimsPrincipal.Current Usage
+**Location**: Throughout EntityManager
+
+The framework relies on `ClaimsPrincipal.Current` which may not be available in all contexts (e.g., background jobs, non-web contexts).
+
+**Questions**:
+- Should there be an abstraction for user context?
+- How should the framework handle missing user context?
+- Should there be a way to manually provide user context?
+
+## State Machine Error Handling
+
+### 3. SetFailedAsync Parameters
+**Location**: StateMachineEntityManager.cs line 110
+
+The method accepts `errorMessage` and `errorDetail` parameters but doesn't use them:
+```csharp
+public virtual async Task<bool> SetFailedAsync(TEntity entity, string errorMessage = "", string errorDetail = "")
+{
+    return await UpdateStateAsync(entity, 99);  // Parameters ignored
+}
+```
+
+**Questions**:
+- Should these parameters be stored somewhere?
+- Should there be an IHasErrorInfo interface?
+- How should error information be persisted?
+
+## Missing XML Documentation
+
+### 4. Incomplete Documentation
+Several properties and methods lack XML documentation comments:
+
+- DbObservableObject.IsGraphChanged (line 38)
+- DbObservableObject.OriginalValues (line 44)
+- Multiple interface comments say "who created" when they mean "when created"
+
+**Questions**:
+- What level of documentation detail is required?
+- Should examples be included in all XML comments?
+
+## Performance Considerations
+
+### 5. Interface Dictionary Caching
+**Location**: EntityManager.cs line 63
+
+The static `InterfaceDictionary` grows unbounded as new entity types are encountered.
+
+**Questions**:
+- Should there be a maximum cache size?
+- Should the cache be cleared periodically?
+- Is memory usage a concern for large applications?
+
+### 6. Deep Graph Traversal
+**Location**: DbObservableObject.cs RecurseGraphInternal methods
+
+Deep tracking can be expensive for large object graphs.
+
+**Questions**:
+- Should there be a maximum depth limit?
+- Should there be cycle detection beyond the HashSet?
+- Should there be performance warnings for large graphs?
+
+## Entity Framework Version Support
+
+### 7. Conditional Compilation
+The code uses `#if EFCORE` to support both EF6 and EF Core.
+
+**Questions**:
+- Which versions specifically need to be supported?
+- Are there version-specific features being missed?
+- Should EF6 support be deprecated?
+
+## Missing Features
+
+### 8. Bulk Operations
+The framework lacks true bulk insert/update operations.
+
+**Questions**:
+- Should EFCore.BulkExtensions be integrated?
+- What performance targets exist for bulk operations?
+- Should there be batch size limits?
+
+### 9. Concurrency Control
+No built-in optimistic concurrency support.
+
+**Questions**:
+- Should IVersionable be part of the core interfaces?
+- How should concurrency conflicts be handled?
+- Should RowVersion be automatically managed?
+
+### 10. Soft Delete
+No built-in soft delete pattern.
+
+**Questions**:
+- Should ISoftDeletable be a core interface?
+- How should soft-deleted entities be filtered?
+- Should there be a restore capability?
+
+## Architecture Questions
+
+### 11. MessagePublisher Requirement
+All managers require an IMessagePublisher even if events aren't used.
+
+**Questions**:
+- Should MessagePublisher be optional?
+- Should there be a NullMessagePublisher implementation?
+- Should event publishing be a separate concern?
+
+### 12. Direct Operations Audit Trail
+DirectUpdate and DirectDelete bypass audit trail creation.
+
+**Questions**:
+- Should there be a way to include audit fields in direct operations?
+- Should this limitation be more prominently documented?
+- Are there scenarios where this is problematic?
+
+## Integration Points
+
+### 13. OData Compatibility
+The `ClearRelationships()` method suggests OData usage.
+
+**Questions**:
+- Should there be specific OData integration features?
+- How should circular references be handled for serialization?
+- Should there be DTO generation support?
+
+### 14. Dependency Injection
+No clear DI container integration guidance.
+
+**Questions**:
+- Should managers be registered as scoped or transient?
+- How should DbContext lifetime be managed?
+- Should there be extension methods for popular DI containers?
+
+## Testing Support
+
+### 15. Testability Concerns
+Static ClaimsPrincipal.Current and DateTime.UtcNow make testing difficult.
+
+**Questions**:
+- Should there be abstractions for time and user context?
+- Should there be test helpers or mocks provided?
+- How should integration tests handle audit fields?
+
+## Migration and Versioning
+
+### 16. Database Migration Strategy
+No guidance on migrating existing data to use status/state enums.
+
+**Questions**:
+- Should there be migration helpers?
+- How should existing foreign keys be converted?
+- What about data consistency during migration?
+
+### 17. Breaking Changes
+No clear versioning or upgrade path documentation.
+
+**Questions**:
+- How should breaking changes be communicated?
+- Should there be compatibility layers?
+- What is the deprecation policy?
+
+## Configuration
+
+### 18. Global Settings
+No apparent way to configure framework behavior globally.
+
+**Questions**:
+- Should there be an EasyAFOptions configuration class?
+- How should defaults be overridden?
+- Should behavior be configurable per-entity or globally?
+
+## Recommendations for Next Steps
+
+1. **Create a configuration system** for framework-wide settings
+2. **Abstract user context** to support different authentication schemes
+3. **Add time provider abstraction** for testability
+4. **Document version support matrix** for Entity Framework
+5. **Implement soft delete** as a first-class feature
+6. **Add concurrency control** interfaces and support
+7. **Create NullMessagePublisher** for scenarios without events
+8. **Provide DI registration helpers** for common containers
+9. **Add performance guidance** documentation
+10. **Create migration guides** for existing databases

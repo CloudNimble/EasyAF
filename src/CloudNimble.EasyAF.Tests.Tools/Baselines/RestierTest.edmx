@@ -1,0 +1,284 @@
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!--EF Runtime content-->
+  <edmx:Runtime>
+    <!--SSDL content-->
+    <edmx:StorageModels>
+      <Schema Namespace="RstierTest.Data.Store" Provider="Microsoft.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Parts">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CreatedById" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DateCreated" Type="datetimeoffset" Nullable="false" />
+          <Property Name="DateUpdated" Type="datetimeoffset" Nullable="true" />
+          <Property Name="Description" Type="nvarchar" Nullable="true" />
+          <Property Name="DisplayName" Type="nvarchar" Nullable="false" />
+          <Property Name="InternalId" Type="nvarchar" Nullable="true" />
+          <Property Name="ManufacturerLocationId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ParentId" Type="uniqueidentifier" Nullable="true" />
+          <Property Name="UniversalProductCode" Type="nvarchar" Nullable="true" />
+          <Property Name="UpdatedById" Type="uniqueidentifier" Nullable="true" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Documentation>
+            <Summary>YOUR LUMINARY! YOUR LIBERATOR! CLU!</Summary>
+          </Documentation>
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="EmailAddress" Type="nvarchar" Nullable="true" />
+          <Property Name="UserTypeId" Type="uniqueidentifier" Nullable="true" />
+        </EntityType>
+        <EntityType Name="UserTypes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DateCreated" Type="datetimeoffset" Nullable="true" />
+          <Property Name="DisplayName" Type="nvarchar" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="true" />
+        </EntityType>
+        <Association Name="FK_Part_Parent_Children_ParentId">
+          <End Role="Parts_Principal" Type="Self.Parts" Multiplicity="0..1" />
+          <End Role="Parts_Dependent" Type="Self.Parts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Parts_Principal">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Parts_Dependent">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserType_User_UserTypeId">
+          <End Role="UserTypes" Type="Self.UserTypes" Multiplicity="0..1" />
+          <End Role="Users" Type="Self.Users" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserTypes">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Users">
+              <PropertyRef Name="UserTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="RestierTestDbContextStoreContainer">
+          <EntitySet Name="Parts" EntityType="Self.Parts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserTypes" EntityType="Self.UserTypes" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="Part_Parent_Children_ParentIdSet" Association="Self.FK_Part_Parent_Children_ParentId">
+            <End Role="Parts_Principal" EntitySet="Parts" />
+            <End Role="Parts_Dependent" EntitySet="Parts" />
+          </AssociationSet>
+          <AssociationSet Name="UserType_User_UserTypeIdSet" Association="Self.FK_UserType_User_UserTypeId">
+            <End Role="UserTypes" EntitySet="UserTypes" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!--CSDL content-->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RstierTest.Data" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="RestierTestDbContext" annotation:LazyLoadingEnabled="false">
+          <EntitySet Name="Parts" EntityType="RstierTest.Data.Part" />
+          <EntitySet Name="Users" EntityType="RstierTest.Data.User" />
+          <EntitySet Name="UserTypes" EntityType="RstierTest.Data.UserType" />
+          <AssociationSet Name="Part_Parent_Children_ParentIdSet" Association="RstierTest.Data.Part_Parent_Children_ParentId">
+            <End Role="Part_Parent" EntitySet="Parts" />
+            <End Role="Part_Children" EntitySet="Parts" />
+          </AssociationSet>
+          <AssociationSet Name="UserType_User_UserTypeIdSet" Association="RstierTest.Data.UserType_User_UserTypeId">
+            <End Role="UserType" EntitySet="UserTypes" />
+            <End Role="User" EntitySet="Users" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Part">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="CreatedById" Type="Guid" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTimeOffset" Nullable="false" />
+          <Property Name="DateUpdated" Type="DateTimeOffset" Nullable="true" />
+          <Property Name="Description" Type="String" Nullable="true" />
+          <Property Name="DisplayName" Type="String" Nullable="false" />
+          <Property Name="InternalId" Type="String" Nullable="true" />
+          <Property Name="ManufacturerLocationId" Type="Guid" Nullable="false" />
+          <Property Name="ParentId" Type="Guid" Nullable="true">
+            <Documentation>
+              <Summary>The Part ID this Part is a component of.</Summary>
+            </Documentation>
+          </Property>
+          <Property Name="UniversalProductCode" Type="String" Nullable="true" />
+          <Property Name="UpdatedById" Type="Guid" Nullable="true" />
+          <NavigationProperty Name="Children" Relationship="RstierTest.Data.Part_Parent_Children_ParentId" FromRole="Part_Parent" ToRole="Part_Children" />
+          <NavigationProperty Name="Parent" Relationship="RstierTest.Data.Part_Parent_Children_ParentId" FromRole="Part_Children" ToRole="Part_Parent" />
+        </EntityType>
+        <EntityType Name="User">
+          <Documentation>
+            <Summary>YOUR LUMINARY! YOUR LIBERATOR! CLU!</Summary>
+          </Documentation>
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false">
+            <Documentation>
+              <Summary>The identifier for the record.</Summary>
+            </Documentation>
+          </Property>
+          <Property Name="EmailAddress" Type="String" Nullable="true">
+            <Documentation>
+              <Summary>You'd better find this you POS.</Summary>
+            </Documentation>
+          </Property>
+          <Property Name="UserTypeId" Type="Guid" Nullable="true">
+            <Documentation>
+              <Summary>The user type, duh.</Summary>
+            </Documentation>
+          </Property>
+          <NavigationProperty Name="UserType" Relationship="RstierTest.Data.UserType_User_UserTypeId" FromRole="User" ToRole="UserType" />
+        </EntityType>
+        <EntityType Name="UserType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTimeOffset" Nullable="true" />
+          <Property Name="DisplayName" Type="String" Nullable="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="true" />
+          <NavigationProperty Name="Users" Relationship="RstierTest.Data.UserType_User_UserTypeId" FromRole="UserType" ToRole="User" />
+        </EntityType>
+        <Association Name="Part_Parent_Children_ParentId">
+          <End Role="Part_Parent" Type="Self.Part" Multiplicity="0..1" />
+          <End Role="Part_Children" Type="Self.Part" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Part_Parent">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Part_Children">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserType_User_UserTypeId">
+          <End Role="UserType" Type="Self.UserType" Multiplicity="0..1" />
+          <End Role="User" Type="Self.User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserType">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="User">
+              <PropertyRef Name="UserTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!--C-S mapping content-->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RestierTestDbContextStoreContainer" CdmEntityContainer="RestierTestDbContext">
+          <EntitySetMapping Name="Parts">
+            <EntityTypeMapping TypeName="RstierTest.Data.Part">
+              <MappingFragment StoreEntitySet="Parts">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+                <ScalarProperty Name="InternalId" ColumnName="InternalId" />
+                <ScalarProperty Name="ManufacturerLocationId" ColumnName="ManufacturerLocationId" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="UniversalProductCode" ColumnName="UniversalProductCode" />
+                <ScalarProperty Name="UpdatedById" ColumnName="UpdatedById" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="RstierTest.Data.User">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="EmailAddress" ColumnName="EmailAddress" />
+                <ScalarProperty Name="UserTypeId" ColumnName="UserTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserTypes">
+            <EntityTypeMapping TypeName="RstierTest.Data.UserType">
+              <MappingFragment StoreEntitySet="UserTypes">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!--EF Designer content (Do not edit manually)-->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx" xmlns:easyaf="http://schemas.cloudnimble.com/easyaf/2025/01/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <easyaf:Extensions>
+      <easyaf:OnModelCreating><![CDATA[    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.HasPostgresExtension("uuid-ossp");
+
+        modelBuilder.Entity<Part>(entity =>
+        {
+            entity.IgnoreTrackingFields();
+
+            entity.HasKey(e => e.Id).HasName("PK_Parts_Id");
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.ParentId).HasComment("The Part ID this Part is a component of.");
+            entity.HasOne(d => d.Parent).WithMany(p => p.Children).HasConstraintName("FK_Parts_ParentPart");
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.IgnoreTrackingFields();
+
+            entity.HasKey(e => e.Id).HasName("PK_Users_Id");
+            entity.ToTable(tb => tb.HasComment("YOUR LUMINARY! YOUR LIBERATOR! CLU!"));
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasComment("The identifier for the record.");
+            entity.Property(e => e.EmailAddress).HasComment("You'd better find this you POS.");
+            entity.Property(e => e.UserTypeId).HasComment("The user type, duh.");
+            entity.HasOne(d => d.UserType).WithMany(p => p.Users).HasConstraintName("FK_Users_UserTypes");
+        });
+
+        modelBuilder.Entity<UserType>(entity =>
+        {
+            entity.IgnoreTrackingFields();
+
+            entity.HasKey(e => e.Id).HasName("PK_UserTypes_Id");
+            entity.Property(e => e.Id).HasDefaultValueSql("uuid_generate_v4()");
+            entity.Property(e => e.DateCreated).HasDefaultValueSql("now()");
+        });
+
+        OnModelCreatingPartial(modelBuilder);
+
+    }
+]]></easyaf:OnModelCreating>
+    </easyaf:Extensions>
+  </Designer>
+</edmx:Edmx>

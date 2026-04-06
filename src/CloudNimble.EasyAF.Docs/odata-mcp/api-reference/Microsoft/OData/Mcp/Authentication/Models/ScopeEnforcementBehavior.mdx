@@ -1,0 +1,36 @@
+---
+title: ScopeEnforcementBehavior
+description: "Defines the behavior when required scopes are missing."
+icon: list-ol
+tag: "ENUM"
+keywords: ['ScopeEnforcementBehavior', 'Microsoft.OData.Mcp.Authentication.Models.ScopeEnforcementBehavior', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Enum']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.ScopeEnforcementBehavior
+```
+
+## Summary
+
+Defines the behavior when required scopes are missing.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `DenyAccess` | 0 | Deny access to the operation or tool when required scopes are missing. |
+| `FilterTools` | 1 | Filter out tools and operations that the user cannot access due to missing scopes. |
+| `LogOnly` | 2 | Log the authorization decision but allow access even when scopes are missing. |
+

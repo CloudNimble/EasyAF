@@ -1,0 +1,14 @@
+﻿<Project>
+
+    <ItemGroup>
+        <CompilerVisibleProperty Include="EasyAFProjectType" />
+        <CompilerVisibleProperty Include="EasyAFNamespace" />
+        <CompilerVisibleProperty Include="EasyAFGenerateViews" />
+        <CompilerVisibleProperty Include="EasyAFApiInheritance" />
+        <CompilerVisibleProperty Include="EasyAFAdminApiInheritance" />
+        <CompilerVisibleProperty Include="EasyAFApiBaseClass" />
+        <CompilerVisibleProperty Include="EasyAFAdminApiBaseClass" />
+        <CompilerVisibleProperty Include="EasyAFApiAdditionalUsings" />
+    </ItemGroup>
+
+</Project>

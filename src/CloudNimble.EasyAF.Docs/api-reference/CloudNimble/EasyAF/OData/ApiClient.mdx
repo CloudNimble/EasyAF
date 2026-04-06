@@ -1,0 +1,45 @@
+---
+title: ApiClient
+description: "Provides a pre-configured Simple.OData.V4 `ODataClient`."
+icon: file-brackets-curly
+keywords: ['ApiClient', 'CloudNimble.EasyAF.OData.ApiClient', 'CloudNimble.EasyAF.OData', 'class', 'Simple.OData.Client.ODataClient']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.ODataClient.dll
+
+**Namespace:** CloudNimble.EasyAF.OData
+
+**Inheritance:** Simple.OData.Client.ODataClient
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.OData.ApiClient
+```
+
+## Summary
+
+Provides a pre-configured Simple.OData.V4 `ODataClient`.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the Simple.OData.Client.ODataClient class with custom configuration
+
+#### Syntax
+
+```csharp
+public ApiClient(System.Net.Http.IHttpClientFactory httpClientFactory, CloudNimble.EasyAF.Configuration.ConfigurationBase configurationBase, string apiClientName = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `httpClientFactory` | `System.Net.Http.IHttpClientFactory` | An [IHttpClientFactory](https://learn.microsoft.com/dotnet/api/system.net.http.ihttpclientfactory) instance, provided by DI. |
+| `configurationBase` | `CloudNimble.EasyAF.Configuration.ConfigurationBase` | A [ConfigurationBase](/api-reference/CloudNimble/EasyAF/Configuration/ConfigurationBase) instance, containing the name identifier for the [HttpClient](https://learn.microsoft.com/dotnet/api/system.net.http.httpclient). |
+| `apiClientName` | `string` | Optional name for the API client. If not provided, uses the ApiClientName from the configuration. |
+

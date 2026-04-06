@@ -1,0 +1,406 @@
+---
+title: ProjectInfo
+description: "Represents information about a discovered project."
+icon: file-brackets-curly
+keywords: ['ProjectInfo', 'CloudNimble.EasyAF.Tools.ProjectDiscovery.ProjectInfo', 'CloudNimble.EasyAF.Tools.ProjectDiscovery', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.ProjectDiscovery
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.ProjectDiscovery.ProjectInfo
+```
+
+## Summary
+
+Represents information about a discovered project.
+
+## Remarks
+
+This class contains metadata about a project file, including its path,
+target frameworks, output directories, and XML documentation settings.
+It is used by the project discovery system to identify eligible projects
+for documentation generation.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the ProjectInfo class.
+
+#### Syntax
+
+```csharp
+public ProjectInfo()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the ProjectInfo class with a project path.
+
+#### Syntax
+
+```csharp
+public ProjectInfo(string projectPath)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `projectPath` | `string` | The path to the project file. |
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AssemblyName
+
+Gets or sets the assembly name for the project.
+
+#### Syntax
+
+```csharp
+public string AssemblyName { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DocumentationFile
+
+Gets or sets the XML documentation file path pattern.
+
+#### Syntax
+
+```csharp
+public string DocumentationFile { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GeneratesDocumentation
+
+Gets or sets whether this project generates XML documentation.
+
+#### Syntax
+
+```csharp
+public bool GeneratesDocumentation { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> IsTemplateProject
+
+Gets or sets whether this is a template project.
+
+#### Syntax
+
+```csharp
+public bool IsTemplateProject { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> IsTestProject
+
+Gets or sets whether this is a test project.
+
+#### Syntax
+
+```csharp
+public bool IsTestProject { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> IsToolProject
+
+Gets or sets whether this is a tool project.
+
+#### Syntax
+
+```csharp
+public bool IsToolProject { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> LatestTargetFramework
+
+Gets or sets the latest (highest version) target framework.
+
+#### Syntax
+
+```csharp
+public string LatestTargetFramework { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ProjectDirectory
+
+Gets or sets the project directory path.
+
+#### Syntax
+
+```csharp
+public string ProjectDirectory { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ProjectName
+
+Gets or sets the project name (without extension).
+
+#### Syntax
+
+```csharp
+public string ProjectName { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ProjectPath
+
+Gets or sets the full path to the project file.
+
+#### Syntax
+
+```csharp
+public string ProjectPath { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> TargetFrameworks
+
+Gets the collection of target frameworks for this project.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> TargetFrameworks { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetAllDocumentationFilePaths
+
+Gets all XML documentation file paths for all target frameworks.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, string> GetAllDocumentationFilePaths()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.Dictionary<string, string>`
+A dictionary mapping target frameworks to documentation file paths.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetLatestDocumentationFilePath
+
+Gets the XML documentation file path for the latest target framework.
+
+#### Syntax
+
+```csharp
+public string GetLatestDocumentationFilePath()
+```
+
+#### Returns
+
+Type: `string`
+The path to the XML documentation file, or empty string if not available.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ShouldIncludeInDocumentation
+
+Determines whether this project should be included in documentation generation.
+
+#### Syntax
+
+```csharp
+public bool ShouldIncludeInDocumentation()
+```
+
+#### Returns
+
+Type: `bool`
+True if the project should be included; otherwise, false.
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="blue">Override</Badge>
+
+Returns a string representation of the project information.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A string containing the project name and target frameworks.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

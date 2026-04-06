@@ -1,0 +1,37 @@
+---
+title: BackoffStrategy
+description: "Defines the backoff strategies for retry delays."
+icon: list-ol
+tag: "ENUM"
+keywords: ['BackoffStrategy', 'Microsoft.OData.Mcp.Authentication.Models.BackoffStrategy', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Enum']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.BackoffStrategy
+```
+
+## Summary
+
+Defines the backoff strategies for retry delays.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Fixed` | 0 | Use a fixed delay between all retry attempts. |
+| `Linear` | 1 | Increase delay linearly with each retry attempt. |
+| `Exponential` | 2 | Increase delay exponentially with each retry attempt. |
+| `ExponentialWithJitter` | 3 | Use exponential backoff with random jitter to prevent thundering herd. |
+

@@ -1,0 +1,303 @@
+---
+title: EdmAction
+description: "Represents an action in the Entity Data Model."
+icon: lock
+tag: "SEALED"
+keywords: ['EdmAction', 'Microsoft.OData.Mcp.Core.Models.EdmAction', 'Microsoft.OData.Mcp.Core.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Models.EdmAction
+```
+
+## Summary
+
+Represents an action in the Entity Data Model.
+
+## Remarks
+
+Actions are operations that may have side effects and are used to modify
+            data or perform operations that cannot be expressed through standard CRUD operations.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmAction](/odata-mcp/api-reference/Microsoft/OData/Mcp/Core/Models/EdmAction) class.
+
+#### Syntax
+
+```csharp
+public EdmAction()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmAction](/odata-mcp/api-reference/Microsoft/OData/Mcp/Core/Models/EdmAction) class with the specified name and namespace.
+
+#### Syntax
+
+```csharp
+public EdmAction(string name, string namespaceName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The action name. |
+| `namespaceName` | `string` | The namespace containing this action. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  BindingParameterType
+
+Gets or sets the type that this action is bound to.
+
+#### Syntax
+
+```csharp
+public string BindingParameterType { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The type name that this action is bound to, if applicable.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  FullName
+
+Gets the fully qualified name of the action.
+
+#### Syntax
+
+```csharp
+public string FullName { get; }
+```
+
+#### Property Value
+
+Type: `string`
+The namespace and name separated by a dot.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsBound
+
+Gets or sets a value indicating whether the action is bound.
+
+#### Syntax
+
+```csharp
+public bool IsBound { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the action is bound to a type; otherwise, `false`.
+
+#### Remarks
+
+Bound actions are called on instances of a specific type.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Name
+
+Gets or sets the name of the action.
+
+#### Syntax
+
+```csharp
+public string Name { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The action name.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Namespace
+
+Gets or sets the namespace of the action.
+
+#### Syntax
+
+```csharp
+public string Namespace { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The namespace containing this action.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Parameters
+
+Gets or sets the parameters of the action.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmParameter> Parameters { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Models.EdmParameter>`
+A collection of parameters that the action accepts.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReturnType
+
+Gets or sets the return type of the action.
+
+#### Syntax
+
+```csharp
+public string ReturnType { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The type returned by the action, if any.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

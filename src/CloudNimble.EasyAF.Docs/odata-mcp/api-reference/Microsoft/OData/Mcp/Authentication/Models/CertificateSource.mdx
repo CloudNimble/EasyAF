@@ -1,0 +1,36 @@
+---
+title: CertificateSource
+description: "Defines the sources from which client certificates can be loaded."
+icon: list-ol
+tag: "ENUM"
+keywords: ['CertificateSource', 'Microsoft.OData.Mcp.Authentication.Models.CertificateSource', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Enum']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.CertificateSource
+```
+
+## Summary
+
+Defines the sources from which client certificates can be loaded.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Store` | 0 | Load certificate from the Windows certificate store. |
+| `File` | 1 | Load certificate from a file on disk. |
+| `Base64` | 2 | Load certificate from Base64-encoded data in configuration. |
+

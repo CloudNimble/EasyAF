@@ -1,0 +1,315 @@
+---
+title: InputValidationConfiguration
+description: "Configuration for input validation and sanitization."
+icon: lock
+tag: "SEALED"
+keywords: ['InputValidationConfiguration', 'Microsoft.OData.Mcp.Core.Configuration.InputValidationConfiguration', 'Microsoft.OData.Mcp.Core.Configuration', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Configuration
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Configuration.InputValidationConfiguration
+```
+
+## Summary
+
+Configuration for input validation and sanitization.
+
+## Remarks
+
+Input validation configuration controls how user-provided data is validated
+            and sanitized before processing. This helps prevent injection attacks,
+            data corruption, and ensures data integrity throughout the application.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public InputValidationConfiguration()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AllowSpecialCharacters
+
+Gets or sets a value indicating whether special characters are allowed in input.
+
+#### Syntax
+
+```csharp
+public bool AllowSpecialCharacters { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to allow special characters; otherwise, `false`.
+
+#### Remarks
+
+Special characters can be used in injection attacks but may also be
+            legitimate parts of user data. This setting controls the balance
+            between security and functionality.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableStrictValidation
+
+Gets or sets a value indicating whether strict validation is enabled.
+
+#### Syntax
+
+```csharp
+public bool EnableStrictValidation { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable strict validation; otherwise, `false`.
+
+#### Remarks
+
+Strict validation applies more rigorous rules to input data, rejecting
+            potentially dangerous content. This provides better security but may
+            be more restrictive for legitimate use cases.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxStringLength
+
+Gets or sets the maximum allowed length for string inputs.
+
+#### Syntax
+
+```csharp
+public int MaxStringLength { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum string length in characters.
+
+#### Remarks
+
+String length limits prevent buffer overflow attacks and ensure
+            predictable resource usage. This applies to all string inputs
+            unless overridden by specific field validation rules.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a copy of this input validation configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.InputValidationConfiguration Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.InputValidationConfiguration`
+A new instance with the same settings.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Lenient
+
+Creates an input validation configuration with lenient rules.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.InputValidationConfiguration Lenient()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.InputValidationConfiguration`
+A validation configuration suitable for environments requiring flexible input handling.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MergeWith
+
+Merges another input validation configuration into this one.
+
+#### Syntax
+
+```csharp
+public void MergeWith(Microsoft.OData.Mcp.Core.Configuration.InputValidationConfiguration other)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `other` | `Microsoft.OData.Mcp.Core.Configuration.InputValidationConfiguration` | The configuration to merge into this one. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Strict
+
+Creates an input validation configuration with strict rules.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.InputValidationConfiguration Strict()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.InputValidationConfiguration`
+A validation configuration suitable for high-security environments.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the input validation configuration.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or empty if the configuration is valid.
+

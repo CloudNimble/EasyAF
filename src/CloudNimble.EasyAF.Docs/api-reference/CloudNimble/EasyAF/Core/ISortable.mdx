@@ -1,0 +1,39 @@
+---
+title: ISortable
+description: "An interface that specifies the implementing Entity can be contains an [Int32](https://learn.microsoft.com/dotnet/api/system.int32) that tracks the order ite..."
+icon: plug
+keywords: ['ISortable', 'CloudNimble.EasyAF.Core.ISortable', 'CloudNimble.EasyAF.Core', 'interface']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.ISortable
+```
+
+## Summary
+
+An interface that specifies the implementing Entity can be contains an [Int32](https://learn.microsoft.com/dotnet/api/system.int32) that tracks the order items should be displayed in a list.
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SortOrder <Badge color="orange">Abstract</Badge>
+
+The order this entity should be displayed in a list.
+
+#### Syntax
+
+```csharp
+int SortOrder { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+

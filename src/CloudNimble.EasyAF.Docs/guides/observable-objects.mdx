@@ -1,0 +1,163 @@
+---
+title: 'Observable Objects'
+sidebarTitle: 'Observable Objects'
+description: 'Implement property change notification and change tracking with EasyObservableObject and DbObservableObject'
+icon: 'eye'
+---
+
+# Observable Objects Documentation
+
+## Overview
+
+EasyAF provides two foundational classes for implementing property change notification and change tracking in your entities: `EasyObservableObject` and `DbObservableObject`. These classes form the basis for all data-aware entities in the EasyAF framework.
+
+## EasyObservableObject
+
+`EasyObservableObject` is the base class that implements `INotifyPropertyChanged` for WPF/XAML data binding scenarios.
+
+### Key Features
+
+- **Property Change Notification**: Automatically raises `PropertyChanged` events when property values change
+- **Type-Safe Property Setting**: Provides strongly-typed methods to set properties with automatic change detection
+- **Deep Cloning**: Built-in JSON-based deep clone functionality
+- **Disposable Pattern**: Implements `IDisposable` for proper resource cleanup
+
+### Usage Pattern
+
+```csharp
+public class Person : EasyObservableObject
+{
+    private string _name;
+    private int _age;
+
+    public string Name
+    {
+        get => _name;
+        set => Set(nameof(Name), ref _name, value);
+    }
+
+    public int Age
+    {
+        get => _age;
+        set => Set(() => Age, ref _age, value);  // Expression-based alternative
+    }
+}
+```
+
+### Methods
+
+- **Set<T>(propertyName, ref field, newValue)**: Sets a property value and raises PropertyChanged if the value changes
+- **Set<T>(propertyExpression, ref field, newValue)**: Expression-based property setter for compile-time safety
+- **RaisePropertyChanged(propertyName)**: Manually raises the PropertyChanged event
+- **Clone<T>()**: Creates a deep copy of the object using JSON serialization
+
+## DbObservableObject
+
+`DbObservableObject` extends `EasyObservableObject` and adds comprehensive change tracking capabilities for Entity Framework scenarios. It implements `IChangeTracking` and `IRevertibleChangeTracking`.
+
+### Key Features
+
+- **Change Tracking**: Tracks original values and modifications to properties
+- **Graph Traversal**: Can track changes across entire object graphs (related entities)
+- **Revertible Changes**: Supports accepting or rejecting changes
+- **Delta Payloads**: Generates minimal update payloads containing only changed properties
+- **Relationship Management**: Utilities for clearing navigation properties before API calls
+
+### Properties
+
+- **IsChanged**: Indicates if the entity has been modified
+- **IsGraphChanged**: Indicates if any entity in the object graph has been modified
+- **OriginalValues**: Dictionary storing original property values before changes
+- **ShouldTrackChanges**: Controls whether changes are tracked
+
+### Change Tracking Workflow
+
+1. **Start Tracking**: Call `TrackChanges(deepTracking)` to begin monitoring changes
+2. **Make Changes**: Modify properties using the inherited `Set` methods
+3. **Check Status**: Use `IsChanged` or `IsGraphChanged` to determine if modifications occurred
+4. **Accept/Reject**: Call `AcceptChanges()` to commit or `RejectChanges()` to rollback
+
+### Example Usage
+
+```csharp
+public class Customer : DbObservableObject
+{
+    private string _name;
+    private string _email;
+    private List<Order> _orders;
+
+    public string Name
+    {
+        get => _name;
+        set => Set(nameof(Name), ref _name, value);
+    }
+
+    public string Email
+    {
+        get => _email;
+        set => Set(nameof(Email), ref _email, value);
+    }
+
+    public List<Order> Orders
+    {
+        get => _orders;
+        set => Set(nameof(Orders), ref _orders, value);
+    }
+}
+
+// Usage
+var customer = GetCustomer();
+customer.TrackChanges(true);  // Track entire graph
+
+customer.Name = "New Name";
+customer.Orders[0].Status = "Shipped";
+
+if (customer.IsGraphChanged)
+{
+    var delta = customer.ToDeltaPayload(true);  // Get only changed properties
+    await UpdateCustomer(delta);
+    customer.AcceptChanges(true);  // Clear tracking after successful save
+}
+```
+
+### Key Methods
+
+- **TrackChanges(deepTracking)**: Starts tracking property changes
+- **AcceptChanges(goDeep)**: Clears tracking and marks entity as unchanged
+- **RejectChanges(goDeep)**: Reverts all properties to original values
+- **ToDeltaPayload(deepTracking)**: Creates an ExpandoObject with only changed properties
+- **ClearRelationships()**: Sets all navigation properties to null (useful for API operations)
+- **GetRelatedEntityProperties()**: Returns PropertyInfo for all single-entity navigation properties
+- **GetRelatedEntityCollectionProperties()**: Returns PropertyInfo for all collection navigation properties
+
+### Deep Tracking
+
+When `deepTracking` is enabled:
+- Changes are tracked across the entire object graph
+- Related entities and collections are automatically included
+- Circular references are handled to prevent infinite loops
+- Delta payloads include nested changes
+
+## Integration Points
+
+Both observable objects integrate seamlessly with:
+- **Entity Framework**: Change tracking aligns with EF's state management
+- **WPF/XAML Binding**: PropertyChanged events update UI automatically
+- **Business Layer**: EntityManager classes leverage these for audit trails
+- **API Operations**: Delta payloads minimize network traffic for updates
+
+## Best Practices
+
+1. **Always use Set() methods**: Ensures proper change notification and tracking
+2. **Enable tracking before modifications**: Call TrackChanges() before making changes
+3. **Clear relationships for APIs**: Use ClearRelationships() before serializing for OData/REST
+4. **Accept changes after save**: Call AcceptChanges() after successful database operations
+5. **Use deep tracking sparingly**: Graph traversal can be expensive for large object graphs
+6. **Dispose properly**: Call Dispose() when objects are no longer needed
+
+## Performance Considerations
+
+- **Property Setting**: Minimal overhead with equality checking preventing unnecessary events
+- **Deep Tracking**: Can be expensive for large graphs; use selectively
+- **Delta Payloads**: Reduces payload size but requires traversal computation
+- **Clone Operations**: Uses JSON serialization which may be slow for complex objects

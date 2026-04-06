@@ -1,0 +1,34 @@
+---
+title: JsonConstants
+description: "Provides centralized, reusable JsonSerializerOptions instances to improve memory efficiency and performance."
+icon: bolt
+tag: "STATIC"
+keywords: ['JsonConstants', 'Microsoft.OData.Mcp.Core.Constants.JsonConstants', 'Microsoft.OData.Mcp.Core.Constants', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Constants
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Constants.JsonConstants
+```
+
+## Summary
+
+Provides centralized, reusable JsonSerializerOptions instances to improve memory efficiency and performance.
+
+## Remarks
+
+Creating new JsonSerializerOptions instances is expensive as each instance creates internal caches and converters.
+            By reusing these static instances, we significantly reduce memory allocations and improve performance.
+            These options are thread-safe and can be used concurrently across the application.
+

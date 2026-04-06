@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="2a8659e3528b4ab8807b9ea785d1acdc" Name="Diagram1">
+        <EntityTypeShape EntityType="EasyAFModel.Product" Width="1.75" PointX="3.125" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="EasyAFModel.ProductStatusType" Width="1.75" PointX="0.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="EasyAFModel.User" Width="1.75" PointX="0.75" PointY="4.375" IsExpanded="true" />
+        <AssociationConnector Association="EasyAFModel.FK_Products_ProductStatusTypes" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="EasyAFModel.Inquiry" Width="1.75" PointX="3.125" PointY="4.375" />
+        <EntityTypeShape EntityType="EasyAFModel.InquiryStateType" Width="2.125" PointX="2.875" PointY="8" />
+        <AssociationConnector Association="EasyAFModel.FK_Inquiries_InquiryStateTypes" />
+        <AssociationConnector Association="EasyAFModel.FK_Inquiries_Users" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,217 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CloudNimble.EasyAF.Analyzers.EF6</name>
+    </assembly>
+    <members>
+        <member name="T:CloudNimble.EasyAF.CodeGen.EF6Configuration">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.CodeGen.EF6Configuration.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Analyzers.EF6.ProjectType">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.Analyzers.EF6.ProjectType.Api">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.Analyzers.EF6.ProjectType.Business">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.Analyzers.EF6.ProjectType.Core">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.Analyzers.EF6.ProjectType.Data">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.Analyzers.EF6.ProjectType.SimpleMessageBus">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.Analyzers.EF6.ProjectType.Unknown">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.ApiSourceGenerator">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.ApiSourceGenerator.#ctor(CloudNimble.EasyAF.CodeGen.EdmxLoader,CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorSettings)">
+            <summary>
+            
+            </summary>
+            <param name="edmxLoader"></param>
+            <param name="settings">The generator settings.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.ApiSourceGenerator.Generate(Microsoft.CodeAnalysis.SourceProductionContext)">
+            <summary>
+            Generates the entity classes.
+            </summary>
+            <param name="context">The source production context.</param>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.BusinessSourceGenerator">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.BusinessSourceGenerator.#ctor(CloudNimble.EasyAF.CodeGen.EdmxLoader,CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorSettings)">
+            <summary>
+            
+            </summary>
+            <param name="edmxLoader"></param>
+            <param name="settings">The generator settings.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.BusinessSourceGenerator.Generate(Microsoft.CodeAnalysis.SourceProductionContext)">
+            <summary>
+            Generates the entity classes.
+            </summary>
+            <param name="context">The source production context.</param>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.DataSourceGenerator">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.DataSourceGenerator.#ctor(CloudNimble.EasyAF.CodeGen.EdmxLoader,CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorSettings)">
+            <summary>
+            
+            </summary>
+            <param name="edmxLoader"></param>
+            <param name="settings">The generator settings.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.DataSourceGenerator.Generate(Microsoft.CodeAnalysis.SourceProductionContext)">
+            <summary>
+            Generates the entity classes.
+            </summary>
+            <param name="context">The source production context.</param>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.EasyAFIncrementalGenerator">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.EasyAFIncrementalGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext)">
+            <summary>
+            
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.EasyAFIncrementalGenerator.Execute(Microsoft.CodeAnalysis.SourceProductionContext,System.ValueTuple{System.ValueTuple{Microsoft.CodeAnalysis.Compilation,System.Collections.Immutable.ImmutableArray{Microsoft.CodeAnalysis.AdditionalText}},CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorSettings})">
+            <summary>
+            
+            </summary>
+            <param name="context"></param>
+            <param name="args"></param>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.EntitySourceGenerator">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.EntitySourceGenerator.#ctor(CloudNimble.EasyAF.CodeGen.EdmxLoader,CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorSettings)">
+            <summary>
+            
+            </summary>
+            <param name="edmxLoader"></param>
+            <param name="settings">The generator settings.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.EntitySourceGenerator.Generate(Microsoft.CodeAnalysis.SourceProductionContext)">
+            <summary>
+            Generates the entity classes.
+            </summary>
+            <param name="context">The source production context.</param>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorBase">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorBase.EdmxLoader">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorBase.Settings">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorBase.#ctor(CloudNimble.EasyAF.CodeGen.EdmxLoader,CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorSettings)">
+            <summary>
+            
+            </summary>
+            <param name="edmxLoader"></param>
+            <param name="settings">The generator settings.</param>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorSettings">
+            <summary>
+            Represents the settings for the EasyAF source generators.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorSettings.GenerateViews">
+            <summary>
+            Gets or sets a value indicating whether to generate EF Views.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorSettings.ProjectType">
+            <summary>
+            Gets or sets the type of the project (Entity, Data, Business, Api).
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorSettings.EasyAFNamespace">
+            <summary>
+            Gets or sets the namespace for the generated code.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorSettings.ProjectNamespace">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorSettings.ApiNamespace">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorSettings.BusinessNamespace">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorSettings.CoreNamespace">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorSettings.DataNamespace">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration.SourceGeneratorSettings.FromContext(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext)">
+            <summary>
+            Creates a new instance of SourceGeneratorSettings from the given GeneratorExecutionContext.
+            </summary>
+            <param name="context">The generator execution context.</param>
+            <returns>A new SourceGeneratorSettings instance.</returns>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,39 @@
+---
+title: ICreatedAuditable
+description: "An interface that implements the CloudNimble common pattern for tracking who created an Entity."
+icon: plug
+keywords: ['ICreatedAuditable', 'CloudNimble.EasyAF.Core.ICreatedAuditable', 'CloudNimble.EasyAF.Core', 'interface']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.ICreatedAuditable
+```
+
+## Summary
+
+An interface that implements the CloudNimble common pattern for tracking who created an Entity.
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DateCreated <Badge color="orange">Abstract</Badge>
+
+The unique identifier for the User that created this particular Entity.
+
+#### Syntax
+
+```csharp
+System.DateTimeOffset DateCreated { get; set; }
+```
+
+#### Property Value
+
+Type: `System.DateTimeOffset`
+

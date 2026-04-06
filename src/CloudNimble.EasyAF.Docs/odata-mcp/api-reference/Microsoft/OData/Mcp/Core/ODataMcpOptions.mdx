@@ -1,0 +1,497 @@
+---
+title: ODataMcpOptions
+description: "Configuration options for OData MCP integration."
+icon: file-brackets-curly
+keywords: ['ODataMcpOptions', 'Microsoft.OData.Mcp.Core.ODataMcpOptions', 'Microsoft.OData.Mcp.Core', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.ODataMcpOptions
+```
+
+## Summary
+
+Configuration options for OData MCP integration.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public ODataMcpOptions()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AllowedOrigins
+
+Gets or sets the allowed CORS origins.
+
+#### Syntax
+
+```csharp
+public string[] AllowedOrigins { get; set; }
+```
+
+#### Property Value
+
+Type: `string[]`
+An array of allowed origins. Default allows all origins ("*").
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AutoDiscoverMetadata
+
+Gets or sets whether to auto-discover metadata.
+
+#### Syntax
+
+```csharp
+public bool AutoDiscoverMetadata { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to auto-discover metadata; otherwise, `false`.
+            Default is `true`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AutoRegisterRoutes
+
+Gets or sets a value indicating whether to automatically register MCP endpoints 
+            for all OData routes.
+
+#### Syntax
+
+```csharp
+public bool AutoRegisterRoutes { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to automatically register MCP endpoints; otherwise, `false`.
+            Default is `true`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  BasePath
+
+Gets or sets the base path for MCP endpoints.
+
+#### Syntax
+
+```csharp
+public string BasePath { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The base path for MCP endpoints. Default is "/mcp".
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CacheDuration
+
+Gets or sets the cache duration for dynamic content.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan CacheDuration { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The duration to cache dynamic content. Default is 5 minutes.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DefaultPageSize
+
+Gets or sets the default page size for query operations.
+
+#### Syntax
+
+```csharp
+public int DefaultPageSize { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The default page size. Default is 100.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableCaching
+
+Gets or sets whether to enable caching.
+
+#### Syntax
+
+```csharp
+public bool EnableCaching { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable caching; otherwise, `false`.
+            Default is `true`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableCors
+
+Gets or sets a value indicating whether to enable CORS for MCP endpoints.
+
+#### Syntax
+
+```csharp
+public bool EnableCors { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable CORS; otherwise, `false`.
+            Default is `true`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Enabled
+
+Gets or sets whether to enable MCP endpoints.
+
+#### Syntax
+
+```csharp
+public bool Enabled { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable MCP endpoints; otherwise, `false`.
+            Default is `true`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableDetailedErrors
+
+Gets or sets whether to enable detailed error messages.
+
+#### Syntax
+
+```csharp
+public bool EnableDetailedErrors { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable detailed error messages; otherwise, `false`.
+            Default is `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableDynamicModels
+
+Gets or sets a value indicating whether to enable dynamic model updates.
+
+#### Syntax
+
+```csharp
+public bool EnableDynamicModels { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable dynamic models; otherwise, `false`.
+            Default is `false` for performance.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableRequestLogging
+
+Gets or sets a value indicating whether to enable request logging.
+
+#### Syntax
+
+```csharp
+public bool EnableRequestLogging { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable detailed request logging; otherwise, `false`.
+            Default is `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExcludeRoutes
+
+Gets or sets the routes to exclude from automatic MCP registration.
+
+#### Syntax
+
+```csharp
+public string[] ExcludeRoutes { get; set; }
+```
+
+#### Property Value
+
+Type: `string[]`
+An array of route names to exclude. Default is an empty array.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IncludeMetadata
+
+Gets or sets a value indicating whether to include metadata in tool descriptions.
+
+#### Syntax
+
+```csharp
+public bool IncludeMetadata { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to include detailed metadata; otherwise, `false`.
+            Default is `true`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxPageSize
+
+Gets or sets the maximum page size for query operations.
+
+#### Syntax
+
+```csharp
+public int MaxPageSize { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum page size. Default is 1000.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxRequestSize
+
+Gets or sets the maximum request size for tool execution.
+
+#### Syntax
+
+```csharp
+public long MaxRequestSize { get; set; }
+```
+
+#### Property Value
+
+Type: `long`
+The maximum request size in bytes. Default is 1MB (1,048,576 bytes).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxToolsPerEntity
+
+Gets or sets the maximum number of tools to generate per entity.
+
+#### Syntax
+
+```csharp
+public System.Nullable<int> MaxToolsPerEntity { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<int>`
+The maximum number of tools per entity, or `null` for unlimited.
+            Default is `null`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ModelRefreshInterval
+
+Gets or sets the interval for refreshing dynamic models.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan ModelRefreshInterval { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The interval for refreshing dynamic models. Default is 1 hour.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RequestTimeout
+
+Gets or sets the request timeout.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan RequestTimeout { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The request timeout. Default is 2 minutes.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToolNamingPattern
+
+Gets or sets the tool naming pattern.
+
+#### Syntax
+
+```csharp
+public string ToolNamingPattern { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The pattern for generating tool names. Default is "{route}.{entity}.{operation}".
+            Available placeholders: {route}, {entity}, {operation}.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  UseAggressiveCaching
+
+Gets or sets a value indicating whether to use aggressive caching.
+
+#### Syntax
+
+```csharp
+public bool UseAggressiveCaching { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to use aggressive caching with ETags and long expiration;
+            otherwise, `false`. Default is `true`.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

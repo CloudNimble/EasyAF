@@ -1,0 +1,41 @@
+---
+title: HookEventName
+description: "Represents the different types of hook events that can be triggered in Claude Code."
+icon: list-ol
+tag: "ENUM"
+keywords: ['HookEventName', 'CloudNimble.ClaudeEssentials.Hooks.Enums.HookEventName', 'CloudNimble.ClaudeEssentials.Hooks.Enums', 'class', 'System.Enum']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks.Enums
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.Enums.HookEventName
+```
+
+## Summary
+
+Represents the different types of hook events that can be triggered in Claude Code.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `PreToolUse` | 0 | Runs before tool calls are executed. Can be used to block or modify tool inputs. |
+| `PermissionRequest` | 1 | Runs when a permission dialog is shown. Can be used to automatically allow or deny permissions. |
+| `PostToolUse` | 2 | Runs after tool calls complete. Can be used to inspect results or provide additional context. |
+| `UserPromptSubmit` | 3 | Runs when the user submits a prompt, before Claude processes it. |
+| `Notification` | 4 | Runs when Claude Code sends notifications. |
+| `Stop` | 5 | Runs when Claude Code finishes responding. |
+| `SubagentStop` | 6 | Runs when subagent tasks complete. |
+| `PreCompact` | 7 | Runs before a compact operation. |
+| `SessionStart` | 8 | Runs when Claude Code starts a new session or resumes one. |
+| `SessionEnd` | 9 | Runs when a Claude Code session ends. |
+

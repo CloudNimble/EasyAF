@@ -1,0 +1,132 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [ main, dev ]
+    types: [opened, synchronize, reopened]
+    paths-ignore:
+      - 'src/CloudNimble.EasyAF.Docs/**'
+      - 'specs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+env:
+   DOTNET_VERSION: '10.0.x'
+   SOLUTION_FILE: 'src/CloudNimble.EasyAF.slnx'
+
+jobs:
+  validate:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0  # Full history for versioning
+        submodules: true
+
+    - name: Sparse checkout submodules (docs only)
+      shell: pwsh
+      run: |
+        # Parse .gitmodules to find all submodule paths
+        $content = Get-Content .gitmodules -Raw
+        $paths = [regex]::Matches($content, 'path\s*=\s*(.+)') | ForEach-Object { $_.Groups[1].Value.Trim() }
+
+        foreach ($subPath in $paths) {
+          if (-not (Test-Path $subPath)) { continue }
+          Push-Location $subPath
+
+          # Find the .docsproj folder inside src/
+          $docsProj = Get-ChildItem -Path "src" -Filter "*.docsproj" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($docsProj) {
+            $docsFolder = $docsProj.Directory.Name
+            Write-Host "Configuring sparse checkout for $subPath -> src/$docsFolder/"
+
+            git config core.sparseCheckout true
+            $sparseFile = Join-Path $env:GITHUB_WORKSPACE ".git/modules/$subPath/info/sparse-checkout"
+            @("/*", "!/*/", "/src/", "!/src/*/", "/src/$docsFolder/") | Set-Content $sparseFile
+            git read-tree -mu HEAD
+          } else {
+            Write-Host "No .docsproj found in $subPath, skipping sparse checkout"
+          }
+
+          Pop-Location
+        }
+
+    - name: Install .NET versions
+      shell: pwsh
+      run: |
+         Write-Host "Installing .NET versions..."
+         $versions = @("8.0", "9.0", "10.0")
+         foreach ($version in $versions) {
+           Write-Host "Installing .NET $version..."
+           Invoke-WebRequest -Uri "https://dot.net/v1/dotnet-install.ps1" -OutFile "dotnet-install.ps1"
+           ./dotnet-install.ps1 -Channel $version -InstallDir "$env:ProgramFiles\dotnet"
+         }
+
+         # Add to PATH for this job
+         echo "$env:ProgramFiles\dotnet" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+         # Verify installation
+         dotnet --list-sdks
+
+    - name: Get version variables
+      id: version
+      shell: pwsh
+      run: |
+        # Get version components from repository variables
+        $majorVersion = "${{ vars.VERSION_MAJOR }}"
+        if ([string]::IsNullOrEmpty($majorVersion)) { $majorVersion = "1" }
+
+        $minorVersion = "${{ vars.VERSION_MINOR }}"
+        if ([string]::IsNullOrEmpty($minorVersion)) { $minorVersion = "0" }
+
+        Write-Host "Version variables: MAJOR=$majorVersion, MINOR=$minorVersion"
+
+        # PR validation: always use CI versioning with timestamp (no version increment)
+        $timestamp = Get-Date -Format "yyyyMMdd-HHmmss" -AsUTC
+        $version = "$majorVersion.$minorVersion.0-CI-$timestamp"
+
+        Write-Host "PR validation version: $version"
+
+        # Output variables
+        echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+        echo "MAJOR_VERSION=$majorVersion" >> $env:GITHUB_OUTPUT
+        echo "MINOR_VERSION=$minorVersion" >> $env:GITHUB_OUTPUT
+
+        Write-Host "Final version: $version"
+
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.SOLUTION_FILE }}
+
+    - name: Build solution
+      # Note: not using --no-restore here. Solution-level restore can silently skip projects
+      # with analyzer ProjectReferences (e.g. Tests.Analyzers.EF6). Letting build handle
+      # restore for any missed projects only adds a few seconds since packages are already cached.
+      run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release /p:Version=${{ steps.version.outputs.VERSION }} /p:PackageVersion=${{ steps.version.outputs.VERSION }}
+
+    - name: Test
+      working-directory: src
+      run: dotnet test --configuration Release --no-build --filter "TestCategory!=RequiresDatabase"
+
+    - name: Pack
+      run: dotnet pack ${{ env.SOLUTION_FILE }} --configuration Release --no-build --output ./artifacts /p:PackageVersion=${{ steps.version.outputs.VERSION }}
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        name: nuget-packages-pr
+        path: ./artifacts/*.nupkg
+        retention-days: 7
+
+    - name: Validate packages
+      shell: pwsh
+      run: |
+        Write-Host "Validating NuGet packages..."
+        Get-ChildItem ./artifacts/*.nupkg | ForEach-Object {
+          Write-Host "Found package: $($_.Name)"
+        }
+        Write-Host "PR validation completed successfully"

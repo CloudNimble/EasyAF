@@ -1,0 +1,337 @@
+---
+title: ODataMcpTools
+description: "OData MCP tools using the official SDK attribute-based approach."
+icon: file-brackets-curly
+keywords: ['ODataMcpTools', 'Microsoft.OData.Mcp.Core.Server.ODataMcpTools', 'Microsoft.OData.Mcp.Core.Server', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Server
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Server.ODataMcpTools
+```
+
+## Summary
+
+OData MCP tools using the official SDK attribute-based approach.
+
+## Remarks
+
+This class provides MCP tools for interacting with OData services using the official
+            Model Context Protocol C# SDK patterns with attributes.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [ODataMcpTools](/odata-mcp/api-reference/Microsoft/OData/Mcp/Core/Server/ODataMcpTools) class.
+
+#### Syntax
+
+```csharp
+public ODataMcpTools(System.Net.Http.IHttpClientFactory httpClientFactory, Microsoft.Extensions.Options.IOptions<Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration> configuration, Microsoft.Extensions.Logging.ILogger<Microsoft.OData.Mcp.Core.Server.ODataMcpTools> logger)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `httpClientFactory` | `System.Net.Http.IHttpClientFactory` | The HTTP client factory. |
+| `configuration` | `Microsoft.Extensions.Options.IOptions<Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration>` | The server configuration. |
+| `logger` | `Microsoft.Extensions.Logging.ILogger<Microsoft.OData.Mcp.Core.Server.ODataMcpTools>` | The logger instance. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CreateEntity
+
+Creates a new entity in the specified OData entity set.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<string> CreateEntity(string entitySet, string entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySet` | `string` | The name of the entity set. |
+| `entity` | `string` | The entity data as JSON. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<string>`
+The created entity as JSON.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DeleteEntity
+
+Deletes an entity from the OData service.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<string> DeleteEntity(string entitySet, string key)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySet` | `string` | The entity set name. |
+| `key` | `string` | The entity key. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<string>`
+Success message.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetEntity
+
+Gets a single entity by its key from an OData service.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<string> GetEntity(string entitySet, string key, string select = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySet` | `string` | The name of the entity set. |
+| `key` | `string` | The entity key value as a string or number. |
+| `select` | `string?` | Optional comma-separated list of properties to select. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<string>`
+The entity data as JSON.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetMetadata
+
+Gets the OData service metadata document.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<string> GetMetadata()
+```
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<string>`
+The OData metadata as XML.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  NavigateRelationship
+
+Navigates from a source entity to related entities via a navigation property.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<string> NavigateRelationship(string entitySet, string key, string navigationProperty)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySet` | `string` | The source entity set name. |
+| `key` | `string` | The source entity key. |
+| `navigationProperty` | `string` | The navigation property name. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<string>`
+The related entities.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  QueryEntitySet
+
+Queries an OData entity set with optional filtering, sorting, and pagination.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<string> QueryEntitySet(string entitySet, string filter = null, string orderby = null, string select = null, System.Nullable<int> top = null, System.Nullable<int> skip = null, bool count = false)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySet` | `string` | The name of the entity set to query. |
+| `filter` | `string?` | Optional OData filter expression. |
+| `orderby` | `string?` | Optional OData orderby expression. |
+| `select` | `string?` | Optional comma-separated list of properties to select. |
+| `top` | `System.Nullable<int>?` | Optional maximum number of results to return. |
+| `skip` | `System.Nullable<int>?` | Optional number of results to skip for pagination. |
+| `count` | `bool` | Optional flag to include the total count of matching entities. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<string>`
+The query results as JSON.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  UpdateEntity
+
+Updates an existing entity in the OData service.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<string> UpdateEntity(string entitySet, string key, string entity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySet` | `string` | The entity set name. |
+| `key` | `string` | The entity key. |
+| `entity` | `string` | The updated entity data as JSON. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<string>`
+The updated entity.
+

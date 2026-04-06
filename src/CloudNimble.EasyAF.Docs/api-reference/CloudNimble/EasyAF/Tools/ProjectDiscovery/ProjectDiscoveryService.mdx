@@ -1,0 +1,235 @@
+---
+title: ProjectDiscoveryService
+description: "Service for discovering and analyzing .NET projects in a solution."
+icon: file-brackets-curly
+keywords: ['ProjectDiscoveryService', 'CloudNimble.EasyAF.Tools.ProjectDiscovery.ProjectDiscoveryService', 'CloudNimble.EasyAF.Tools.ProjectDiscovery', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.ProjectDiscovery
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.ProjectDiscovery.ProjectDiscoveryService
+```
+
+## Summary
+
+Service for discovering and analyzing .NET projects in a solution.
+
+## Remarks
+
+This service scans for solution files, project files, and analyzes their configurations
+to identify projects that are eligible for documentation generation. It handles
+multi-targeting scenarios and determines the best documentation files to use.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public ProjectDiscoveryService()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AnalyzeProject
+
+Analyzes a single project file to extract project information.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.Tools.ProjectDiscovery.ProjectInfo AnalyzeProject(string projectPath)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `projectPath` | `string` | The path to the project file. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.Tools.ProjectDiscovery.ProjectInfo`
+The project information, or null if the project cannot be analyzed.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DiscoverProjects
+
+Discovers all eligible projects in the specified directory.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<CloudNimble.EasyAF.Tools.ProjectDiscovery.ProjectInfo> DiscoverProjects(string rootDirectory, string specificProject = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `rootDirectory` | `string` | The root directory to search. |
+| `specificProject` | `string` | Optional specific project name to filter by. |
+
+#### Returns
+
+Type: `System.Collections.Generic.List<CloudNimble.EasyAF.Tools.ProjectDiscovery.ProjectInfo>`
+A collection of discovered project information.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> FindSolutionFile
+
+Finds the solution file in the specified directory.
+
+#### Syntax
+
+```csharp
+public string FindSolutionFile(string directory)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `directory` | `string` | The directory to search. |
+
+#### Returns
+
+Type: `string`
+The path to the solution file, or null if not found.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

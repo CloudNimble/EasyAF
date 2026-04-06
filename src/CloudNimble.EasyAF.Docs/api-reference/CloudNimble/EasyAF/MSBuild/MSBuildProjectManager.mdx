@@ -1,0 +1,553 @@
+---
+title: MSBuildProjectManager
+description: "Manages MSBuild project files (.csproj, Directory.Build.props, etc.) with formatting preservation capabilities."
+icon: file-brackets-curly
+keywords: ['MSBuildProjectManager', 'CloudNimble.EasyAF.MSBuild.MSBuildProjectManager', 'CloudNimble.EasyAF.MSBuild', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.MSBuild.dll
+
+**Namespace:** CloudNimble.EasyAF.MSBuild
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.MSBuild.MSBuildProjectManager
+```
+
+## Summary
+
+Manages MSBuild project files (.csproj, Directory.Build.props, etc.) with formatting preservation capabilities.
+
+## Remarks
+
+This class provides comprehensive support for loading, validating, and modifying MSBuild
+project files while preserving the original formatting (indentation, line breaks).
+It follows the same pattern as DocsJsonManager for consistency.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [MSBuildProjectManager](/api-reference/CloudNimble/EasyAF/MSBuild/MSBuildProjectManager) class.
+
+#### Syntax
+
+```csharp
+public MSBuildProjectManager()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [MSBuildProjectManager](/api-reference/CloudNimble/EasyAF/MSBuild/MSBuildProjectManager) class with the specified file path.
+
+#### Syntax
+
+```csharp
+public MSBuildProjectManager(string filePath)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `filePath` | `string` | The file path to the MSBuild project file. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when filePath is null or whitespace. |
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> FilePath
+
+Gets the file path of the loaded project.
+
+#### Syntax
+
+```csharp
+public string FilePath { get; private set; }
+```
+
+#### Property Value
+
+Type: `string`
+The absolute path to the project file that was loaded or will be saved to.
+Returns null if no file path has been specified.
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> IsLoaded
+
+Gets a value indicating whether a project is successfully loaded.
+
+#### Syntax
+
+```csharp
+public bool IsLoaded { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+True if a project is loaded and there are no errors; otherwise, false.
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PreserveFormatting
+
+Gets a value indicating whether formatting preservation is enabled.
+
+#### Syntax
+
+```csharp
+public bool PreserveFormatting { get; private set; }
+```
+
+#### Property Value
+
+Type: `bool`
+True if the project was loaded with formatting preservation; otherwise, false.
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Project
+
+Gets the loaded MSBuild project root element.
+
+#### Syntax
+
+```csharp
+public Microsoft.Build.Construction.ProjectRootElement Project { get; private set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.Build.Construction.ProjectRootElement`
+The [ProjectRootElement](https://learn.microsoft.com/dotnet/api/microsoft.build.construction.projectrootelement) instance loaded from the file system.
+Returns null if no project has been loaded or if loading failed.
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ProjectErrors
+
+Gets the collection of project loading and processing errors.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<System.CodeDom.Compiler.CompilerError> ProjectErrors { get; private set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<System.CodeDom.Compiler.CompilerError>`
+A list of [CompilerError](https://learn.microsoft.com/dotnet/api/system.codedom.compiler.compilererror) instances representing any errors
+encountered during project loading, validation, or processing operations.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AddItemGroup
+
+Adds an ItemGroup with the specified condition and configures it using the provided action.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.MSBuild.MSBuildProjectManager AddItemGroup(string condition, System.Action<CloudNimble.EasyAF.MSBuild.ItemGroupBuilder> configure)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `condition` | `string` | The condition for the ItemGroup. |
+| `configure` | `System.Action<CloudNimble.EasyAF.MSBuild.ItemGroupBuilder>` | An action to configure the ItemGroup. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.MSBuild.MSBuildProjectManager`
+The current instance for method chaining.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when configure is null. |
+| `InvalidOperationException` | Thrown when no project is loaded. |
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AddPackageReference
+
+Adds a PackageReference to the project.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.MSBuild.MSBuildProjectManager AddPackageReference(string packageId, string version, string condition = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `packageId` | `string` | The package ID. |
+| `version` | `string` | The package version. |
+| `condition` | `string` | Optional condition for the PackageReference. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.MSBuild.MSBuildProjectManager`
+The current instance for method chaining.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when packageId or version is null or whitespace. |
+| `InvalidOperationException` | Thrown when no project is loaded. |
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> CreateNew
+
+Creates a new MSBuild project file with default structure.
+
+#### Syntax
+
+```csharp
+public void CreateNew(string filePath, string targetFramework = "net8.0")
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `filePath` | `string` | The file path where the new project should be created. |
+| `targetFramework` | `string` | The target framework for the project (default: net8.0). |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when filePath is null or whitespace. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> EnsureMSBuildRegistered
+
+Ensures MSBuild is registered with the latest available version.
+
+#### Syntax
+
+```csharp
+public static void EnsureMSBuildRegistered()
+```
+
+#### Remarks
+
+This method should be called before any MSBuild operations to ensure the correct
+version of MSBuild is loaded. On .NET Core, QueryVisualStudioInstances() returns
+SDK instances (versions like 8.0.x, 9.0.x, 10.0.x), not Visual Studio instances.
+We explicitly select and register the latest available instance.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetPropertyValue
+
+Gets the value of a property from the project.
+
+#### Syntax
+
+```csharp
+public string GetPropertyValue(string name)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The property name. |
+
+#### Returns
+
+Type: `string`
+The property value, or null if the property does not exist.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when name is null or whitespace. |
+| `InvalidOperationException` | Thrown when no project is loaded. |
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Load
+
+Loads an existing MSBuild project file from the file path specified in the constructor.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.MSBuild.MSBuildProjectManager Load(bool preserveFormatting = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `preserveFormatting` | `bool` | Whether to preserve the original formatting of the project file. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.MSBuild.MSBuildProjectManager`
+The current instance for method chaining.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | Thrown when no file path has been specified. |
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Load
+
+Loads an existing MSBuild project file from the specified file path.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.MSBuild.MSBuildProjectManager Load(string filePath, bool preserveFormatting = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `filePath` | `string` | The file path to the MSBuild project file. |
+| `preserveFormatting` | `bool` | Whether to preserve the original formatting of the project file. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.MSBuild.MSBuildProjectManager`
+The current instance for method chaining.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when filePath is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> RemoveProperty
+
+Removes a property from the project.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.MSBuild.MSBuildProjectManager RemoveProperty(string name)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The property name to remove. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.MSBuild.MSBuildProjectManager`
+The current instance for method chaining.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when name is null or whitespace. |
+| `InvalidOperationException` | Thrown when no project is loaded. |
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Save
+
+Saves the current project to the file system using the original file path.
+
+#### Syntax
+
+```csharp
+public void Save()
+```
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | Thrown when no project is loaded or no file path is specified. |
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Save
+
+Saves the current project to the specified file path.
+
+#### Syntax
+
+```csharp
+public void Save(string filePath)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `filePath` | `string` | The file path where the project should be saved. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when filePath is null or whitespace. |
+| `InvalidOperationException` | Thrown when no project is loaded. |
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SetProperty
+
+Sets a property value in the project.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.MSBuild.MSBuildProjectManager SetProperty(string name, string value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The property name. |
+| `value` | `string` | The property value. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.MSBuild.MSBuildProjectManager`
+The current instance for method chaining.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when name or value is null or whitespace. |
+| `InvalidOperationException` | Thrown when no project is loaded. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

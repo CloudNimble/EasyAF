@@ -1,0 +1,307 @@
+---
+title: ODataAuthenticationConfiguration
+description: "Authentication configuration for connecting to OData services."
+icon: lock
+sidebarTitle: ODataAuthenticationConfiguration
+tag: "SEALED"
+keywords: ['ODataAuthenticationConfiguration', 'Microsoft.OData.Mcp.Core.Configuration.ODataAuthenticationConfiguration', 'Microsoft.OData.Mcp.Core.Configuration', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Configuration
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Configuration.ODataAuthenticationConfiguration
+```
+
+## Summary
+
+Authentication configuration for connecting to OData services.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public ODataAuthenticationConfiguration()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ApiKey
+
+Gets or sets the API key for API key authentication.
+
+#### Syntax
+
+```csharp
+public string ApiKey { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The API key value.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ApiKeyHeader
+
+Gets or sets the API key header name.
+
+#### Syntax
+
+```csharp
+public string ApiKeyHeader { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The name of the header to include the API key in.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  BasicAuth
+
+Gets or sets the basic authentication credentials.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.BasicAuthenticationCredentials BasicAuth { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.BasicAuthenticationCredentials?`
+The username and password for basic authentication.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  BearerToken
+
+Gets or sets the bearer token for bearer token authentication.
+
+#### Syntax
+
+```csharp
+public string BearerToken { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The bearer token value.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  OAuth2
+
+Gets or sets the OAuth2 configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.OAuth2Configuration OAuth2 { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.OAuth2Configuration?`
+Configuration for OAuth2 client credentials flow.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Type
+
+Gets or sets the authentication type for the OData service.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.ODataAuthenticationType Type { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.ODataAuthenticationType?`
+The type of authentication to use when connecting to the OData service.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a copy of this configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.ODataAuthenticationConfiguration Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.ODataAuthenticationConfiguration`
+A new instance with the same settings.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MergeWith
+
+Merges another configuration into this one.
+
+#### Syntax
+
+```csharp
+public void MergeWith(Microsoft.OData.Mcp.Core.Configuration.ODataAuthenticationConfiguration other)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `other` | `Microsoft.OData.Mcp.Core.Configuration.ODataAuthenticationConfiguration` | The configuration to merge. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the authentication configuration.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or empty if the configuration is valid.
+

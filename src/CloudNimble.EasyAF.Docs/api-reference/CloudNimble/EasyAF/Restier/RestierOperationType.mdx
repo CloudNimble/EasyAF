@@ -1,0 +1,39 @@
+---
+title: RestierOperationType
+description: "Specifies the type of operation being performed in Restier for logging and tracking purposes. Used by RestierHelpers to provide consistent operation logging ..."
+icon: list-ol
+tag: "ENUM"
+keywords: ['RestierOperationType', 'CloudNimble.EasyAF.Restier.RestierOperationType', 'CloudNimble.EasyAF.Restier', 'class', 'System.Enum']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Restier.dll
+
+**Namespace:** CloudNimble.EasyAF.Restier
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Restier.RestierOperationType
+```
+
+## Summary
+
+Specifies the type of operation being performed in Restier for logging and tracking purposes.
+Used by RestierHelpers to provide consistent operation logging across entity lifecycle events.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Filtered` | 1 | Indicates that entities have been filtered during query operations. |
+| `Inserting` | 2 | Indicates that an entity is currently being inserted (in progress). |
+| `Inserted` | 3 | Indicates that an entity has been successfully inserted (completed). |
+| `Updating` | 4 | Indicates that an entity is currently being updated (in progress). |
+| `Updated` | 5 | Indicates that an entity has been successfully updated (completed). |
+| `Deleting` | 6 | Indicates that an entity is currently being deleted (in progress). |
+| `Deleted` | 7 | Indicates that an entity has been successfully deleted (completed). |
+

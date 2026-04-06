@@ -1,0 +1,382 @@
+---
+title: ReadPostToolUsePayload
+description: "Represents the complete payload delivered to a PostToolUse hook after the Read tool has executed."
+icon: lock
+tag: "SEALED"
+keywords: ['ReadPostToolUsePayload', 'CloudNimble.ClaudeEssentials.Hooks.Tools.ReadPostToolUsePayload', 'CloudNimble.ClaudeEssentials.Hooks.Tools', 'class', 'CloudNimble.ClaudeEssentials.Hooks.Inputs.PostToolUseHookInput<CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs.ReadToolInput, CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.ReadToolResponse>']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks.Tools
+
+**Inheritance:** CloudNimble.ClaudeEssentials.Hooks.Inputs.PostToolUseHookInput&lt;CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs.ReadToolInput, CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.ReadToolResponse&gt;
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.Tools.ReadPostToolUsePayload
+```
+
+## Summary
+
+Represents the complete payload delivered to a PostToolUse hook after the Read tool has executed.
+
+## Remarks
+
+
+
+
+            This payload contains all context provided to your hook after Claude executes the Read tool,
+            including session information, the original tool input, and the tool's response. Use this
+            type for strongly-typed deserialization of PostToolUse hook payloads when `tool_name` is "Read".
+            
+
+
+
+
+            The Read tool reads files from the local filesystem. Your hook receives both the file path
+            that was requested and the content that was read, enabling logging, auditing, or post-processing.
+            
+
+
+
+
+  &lt;strong&gt;Terminology:&lt;/strong&gt;
+  
+
+
+
+
+
+## Examples
+
+```csharp
+var payload = JsonSerializer.Deserialize&lt;ReadPostToolUsePayload&gt;(json);
+Console.WriteLine($"Read {payload.ToolResponse.File?.NumLines} lines from {payload.ToolInput.FilePath}");
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public ReadPostToolUsePayload()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.PostToolUseHookInput<CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs.ReadToolInput, CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.ReadToolResponse>`</Note>
+
+#### Syntax
+
+```csharp
+public PostToolUseHookInput()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.ToolHookInputBase<CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs.ReadToolInput>`</Note>
+
+#### Syntax
+
+```csharp
+protected ToolHookInputBase()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.HookInputBase`</Note>
+
+#### Syntax
+
+```csharp
+protected HookInputBase()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CurrentWorkingDirectory <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.HookInputBase`</Note>
+
+Gets or sets the current working directory where Claude Code is running.
+
+#### Syntax
+
+```csharp
+public string CurrentWorkingDirectory { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> HookEventName <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.HookInputBase`</Note>
+
+Gets or sets the name of the hook event that triggered this input.
+
+#### Syntax
+
+```csharp
+public CloudNimble.ClaudeEssentials.Hooks.HookEventName HookEventName { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.ClaudeEssentials.Hooks.HookEventName`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PermissionMode <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.HookInputBase`</Note>
+
+Gets or sets the permission mode under which Claude Code is operating.
+
+#### Syntax
+
+```csharp
+public CloudNimble.ClaudeEssentials.Hooks.PermissionMode PermissionMode { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.ClaudeEssentials.Hooks.PermissionMode`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SessionId <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.HookInputBase`</Note>
+
+Gets or sets the unique identifier for the current Claude Code session.
+
+#### Syntax
+
+```csharp
+public string SessionId { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToolInput <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.ToolHookInputBase<CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs.ReadToolInput>`</Note>
+
+Gets or sets the input parameters for the tool.
+            The schema depends on the specific tool being invoked.
+
+#### Syntax
+
+```csharp
+public CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs.ReadToolInput ToolInput { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs.ReadToolInput?`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToolName <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.ToolHookInputBase<CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs.ReadToolInput>`</Note>
+
+Gets or sets the name of the tool being invoked.
+            Common tool names include: Write, Edit, Bash, Read, Grep, Glob, Task, WebFetch, WebSearch.
+            MCP tools follow the pattern: mcp__&lt;server&gt;__&lt;tool&gt;.
+
+#### Syntax
+
+```csharp
+public string ToolName { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToolResponse <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.PostToolUseHookInput<CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs.ReadToolInput, CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.ReadToolResponse>`</Note>
+
+Gets or sets the response data returned by the tool.
+            The schema depends on the specific tool that was invoked.
+
+#### Syntax
+
+```csharp
+public CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.ReadToolResponse ToolResponse { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.ReadToolResponse?`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToolUseId <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.ToolHookInputBase<CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs.ReadToolInput>`</Note>
+
+Gets or sets the unique identifier for this specific tool use instance.
+            Typically follows the pattern: toolu_01ABC123...
+
+#### Syntax
+
+```csharp
+public string ToolUseId { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TranscriptPath <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Inputs.HookInputBase`</Note>
+
+Gets or sets the file path to the transcript JSONL file for the current session.
+            This file contains the full conversation history.
+
+#### Syntax
+
+```csharp
+public string TranscriptPath { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

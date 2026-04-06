@@ -1,0 +1,484 @@
+---
+title: ClientCertificate
+description: "Configuration for client certificate authentication."
+icon: lock
+tag: "SEALED"
+keywords: ['ClientCertificate', 'Microsoft.OData.Mcp.Authentication.Models.ClientCertificate', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.ClientCertificate
+```
+
+## Summary
+
+Configuration for client certificate authentication.
+
+## Remarks
+
+Client certificates provide a secure method for authenticating the MCP server
+            to authorization servers and downstream services. They offer better security
+            than client secrets and support automatic rotation.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [ClientCertificate](/odata-mcp/api-reference/Microsoft/OData/Mcp/Authentication/Models/ClientCertificate) class.
+
+#### Syntax
+
+```csharp
+public ClientCertificate()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [ClientCertificate](/odata-mcp/api-reference/Microsoft/OData/Mcp/Authentication/Models/ClientCertificate) class for store-based lookup by thumbprint.
+
+#### Syntax
+
+```csharp
+public ClientCertificate(string thumbprint, System.Security.Cryptography.X509Certificates.StoreLocation storeLocation = 1, System.Security.Cryptography.X509Certificates.StoreName storeName = 5)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `thumbprint` | `string` | The certificate thumbprint. |
+| `storeLocation` | `System.Security.Cryptography.X509Certificates.StoreLocation` | The certificate store location. |
+| `storeName` | `System.Security.Cryptography.X509Certificates.StoreName` | The certificate store name. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *thumbprint* is null or whitespace. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [ClientCertificate](/odata-mcp/api-reference/Microsoft/OData/Mcp/Authentication/Models/ClientCertificate) class for file-based certificates.
+
+#### Syntax
+
+```csharp
+public ClientCertificate(string filePath, string password = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `filePath` | `string` | The path to the certificate file. |
+| `password` | `string?` | The password for encrypted files (optional). |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *filePath* is null or whitespace. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Base64Data
+
+Gets or sets the Base64-encoded certificate data.
+
+#### Syntax
+
+```csharp
+public string Base64Data { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The certificate data in Base64 format (used when Source is Base64).
+
+#### Remarks
+
+This allows certificates to be embedded directly in configuration.
+            While convenient for some scenarios, this method should be used
+            carefully to avoid exposing internal keys in configuration files.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CheckRevocation
+
+Gets or sets a value indicating whether to check certificate revocation.
+
+#### Syntax
+
+```csharp
+public bool CheckRevocation { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if certificate revocation should be checked; otherwise, `false`.
+
+#### Remarks
+
+Revocation checking ensures the certificate hasn't been revoked
+            by the issuing authority. This requires network access to
+            revocation services and may impact performance.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  FilePath
+
+Gets or sets the file path for file-based certificates.
+
+#### Syntax
+
+```csharp
+public string FilePath { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The path to the certificate file (used when Source is File).
+
+#### Remarks
+
+The file path can point to various certificate formats including
+            .pfx, .p12, .cer, and .crt files. Password-protected files require
+            the Password property to be set.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Password
+
+Gets or sets the password for encrypted certificate files.
+
+#### Syntax
+
+```csharp
+public string Password { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The password to decrypt the certificate file.
+
+#### Remarks
+
+This password is used when loading encrypted certificate files such
+            as .pfx or .p12 files. It should be stored securely and not logged.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Source
+
+Gets or sets the source of the client certificate.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.CertificateSource Source { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.CertificateSource?`
+The method used to locate and load the client certificate.
+
+#### Remarks
+
+Different certificate sources provide different levels of security and
+            management complexity. Store-based certificates are typically more secure
+            in production environments.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  StoreLocation
+
+Gets or sets the certificate store location.
+
+#### Syntax
+
+```csharp
+public System.Security.Cryptography.X509Certificates.StoreLocation StoreLocation { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Security.Cryptography.X509Certificates.StoreLocation?`
+The certificate store location (used when Source is Store).
+
+#### Remarks
+
+The store location determines which certificate store to search.
+            CurrentUser is typically used for development, while LocalMachine
+            is used for production services.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  StoreName
+
+Gets or sets the certificate store name.
+
+#### Syntax
+
+```csharp
+public System.Security.Cryptography.X509Certificates.StoreName StoreName { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Security.Cryptography.X509Certificates.StoreName?`
+The certificate store name (used when Source is Store).
+
+#### Remarks
+
+The store name determines which certificate store to search within
+            the specified location. "My" (Personal) is the most common store
+            for client certificates.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SubjectName
+
+Gets or sets the certificate subject name for store-based lookup.
+
+#### Syntax
+
+```csharp
+public string SubjectName { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The subject name of the certificate to locate.
+
+#### Remarks
+
+The subject name provides an alternative way to locate certificates
+            when the thumbprint is not known. It should match the certificate's
+            subject field exactly.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Thumbprint
+
+Gets or sets the certificate thumbprint for store-based lookup.
+
+#### Syntax
+
+```csharp
+public string Thumbprint { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The thumbprint (SHA-1 hash) of the certificate to locate.
+
+#### Remarks
+
+The thumbprint uniquely identifies a certificate within a store.
+            It should be specified without spaces or special characters.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ValidateChain
+
+Gets or sets a value indicating whether to validate the certificate chain.
+
+#### Syntax
+
+```csharp
+public bool ValidateChain { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the certificate chain should be validated; otherwise, `false`.
+
+#### Remarks
+
+Chain validation ensures the certificate is issued by a trusted
+            certificate authority. Disabling this should only be done in
+            development environments with self-signed certificates.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  LoadCertificate
+
+Loads the certificate based on the configured source.
+
+#### Syntax
+
+```csharp
+public System.Security.Cryptography.X509Certificates.X509Certificate2 LoadCertificate()
+```
+
+#### Returns
+
+Type: `System.Security.Cryptography.X509Certificates.X509Certificate2`
+The loaded X.509 certificate.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | Thrown when the certificate cannot be loaded. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the client certificate configuration.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A summary of the certificate configuration.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the client certificate configuration for consistency and completeness.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or an empty collection if the configuration is valid.
+

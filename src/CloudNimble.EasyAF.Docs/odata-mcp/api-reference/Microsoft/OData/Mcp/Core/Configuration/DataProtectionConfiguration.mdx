@@ -1,0 +1,299 @@
+---
+title: DataProtectionConfiguration
+description: "Configuration for data protection and encryption settings."
+icon: lock
+tag: "SEALED"
+keywords: ['DataProtectionConfiguration', 'Microsoft.OData.Mcp.Core.Configuration.DataProtectionConfiguration', 'Microsoft.OData.Mcp.Core.Configuration', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Configuration
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Configuration.DataProtectionConfiguration
+```
+
+## Summary
+
+Configuration for data protection and encryption settings.
+
+## Remarks
+
+Data protection configuration controls how sensitive data is encrypted
+            and protected within the MCP server. This includes encryption keys,
+            rotation periods, and encryption policies for different data types.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public DataProtectionConfiguration()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EncryptionKey
+
+Gets or sets the encryption key used for data protection.
+
+#### Syntax
+
+```csharp
+public string EncryptionKey { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The base64-encoded encryption key.
+
+#### Remarks
+
+This key is used for encrypting and decrypting sensitive data.
+            It should be a strong, randomly generated key and kept secure.
+            Consider using key management services in production environments.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EncryptSensitiveData
+
+Gets or sets a value indicating whether sensitive data should be encrypted.
+
+#### Syntax
+
+```csharp
+public bool EncryptSensitiveData { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to encrypt sensitive data; otherwise, `false`.
+
+#### Remarks
+
+When enabled, sensitive data such as authentication tokens, API keys,
+            and user credentials will be encrypted before storage or transmission.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  KeyRotationPeriod
+
+Gets or sets the period after which encryption keys should be rotated.
+
+#### Syntax
+
+```csharp
+public System.TimeSpan KeyRotationPeriod { get; set; }
+```
+
+#### Property Value
+
+Type: `System.TimeSpan`
+The time span between key rotations.
+
+#### Remarks
+
+Regular key rotation is a security best practice that limits the
+            exposure window if a key is compromised. Shorter rotation periods
+            provide better security but require more frequent key management.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a copy of this data protection configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.DataProtectionConfiguration Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.DataProtectionConfiguration`
+A new instance with the same settings.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ForProduction
+
+Creates a data protection configuration optimized for production environments.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.DataProtectionConfiguration ForProduction()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.DataProtectionConfiguration`
+A data protection configuration suitable for production use.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MergeWith
+
+Merges another data protection configuration into this one.
+
+#### Syntax
+
+```csharp
+public void MergeWith(Microsoft.OData.Mcp.Core.Configuration.DataProtectionConfiguration other)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `other` | `Microsoft.OData.Mcp.Core.Configuration.DataProtectionConfiguration` | The configuration to merge into this one. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the data protection configuration.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or empty if the configuration is valid.
+

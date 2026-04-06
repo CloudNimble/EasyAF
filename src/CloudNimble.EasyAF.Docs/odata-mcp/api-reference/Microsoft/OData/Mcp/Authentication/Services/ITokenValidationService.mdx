@@ -1,0 +1,227 @@
+---
+title: ITokenValidationService
+description: "Provides services for validating JWT tokens and extracting user context."
+icon: plug
+keywords: ['ITokenValidationService', 'Microsoft.OData.Mcp.Authentication.Services.ITokenValidationService', 'Microsoft.OData.Mcp.Authentication.Services', 'interface']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Services
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Services.ITokenValidationService
+```
+
+## Summary
+
+Provides services for validating JWT tokens and extracting user context.
+
+## Remarks
+
+This service handles the core token validation logic, including signature verification,
+            claim extraction, and scope validation. It provides a abstraction layer over the
+            underlying JWT validation mechanisms.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExtractUserContext <DocsBadge text="Abstract" variant="warning" />
+
+Extracts the user context from a validated claims principal.
+
+#### Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.UserContext ExtractUserContext(System.Security.Claims.ClaimsPrincipal principal)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The claims principal from a validated token. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.UserContext`
+The user context containing identity and authorization information.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *principal* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetAuthorizationMetadataAsync <DocsBadge text="Abstract" variant="warning" />
+
+Gets the authorization metadata from the JWT token for downstream services.
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.AuthorizationMetadata> GetAuthorizationMetadataAsync(string token)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `token` | `string` | The JWT token to extract metadata from. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.AuthorizationMetadata>`
+A task that represents the asynchronous operation. The task result contains the authorization metadata.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *token* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetTokenLifetime <DocsBadge text="Abstract" variant="warning" />
+
+Gets the remaining lifetime of a token.
+
+#### Syntax
+
+```csharp
+System.Nullable<System.TimeSpan> GetTokenLifetime(System.Security.Claims.ClaimsPrincipal principal)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The claims principal from a validated token. |
+
+#### Returns
+
+Type: `System.Nullable<System.TimeSpan>`
+The remaining time before the token expires, or null if the token has no expiration.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *principal* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasRequiredScopes <DocsBadge text="Abstract" variant="warning" />
+
+Checks if a user has the required scopes for a specific operation.
+
+#### Syntax
+
+```csharp
+bool HasRequiredScopes(Microsoft.OData.Mcp.Authentication.Models.UserContext userContext, System.Collections.Generic.IEnumerable<string> requiredScopes)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `userContext` | `Microsoft.OData.Mcp.Authentication.Models.UserContext` | The user context to check. |
+| `requiredScopes` | `System.Collections.Generic.IEnumerable<string>` | The scopes required for the operation. |
+
+#### Returns
+
+Type: `bool`
+`true` if the user has at least one of the required scopes; otherwise, `false`.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *userContext* or *requiredScopes* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsTokenExpired <DocsBadge text="Abstract" variant="warning" />
+
+Determines if a token is expired based on its claims.
+
+#### Syntax
+
+```csharp
+bool IsTokenExpired(System.Security.Claims.ClaimsPrincipal principal)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The claims principal from a validated token. |
+
+#### Returns
+
+Type: `bool`
+`true` if the token is expired; otherwise, `false`.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *principal* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ValidateTokenAsync <DocsBadge text="Abstract" variant="warning" />
+
+Validates a JWT token and returns the principal if valid.
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task<System.Security.Claims.ClaimsPrincipal> ValidateTokenAsync(string token, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `token` | `string` | The JWT token to validate. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A cancellation token to cancel the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Security.Claims.ClaimsPrincipal?>`
+A task that represents the asynchronous validation operation. The task result contains the claims principal if the token is valid, or null if invalid.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *token* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ValidateTokenAsync <DocsBadge text="Abstract" variant="warning" />
+
+Validates a JWT token with additional validation parameters.
+
+#### Syntax
+
+```csharp
+System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.TokenValidationResult> ValidateTokenAsync(string token, System.Collections.Generic.Dictionary<string, object> validationParameters, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `token` | `string` | The JWT token to validate. |
+| `validationParameters` | `System.Collections.Generic.Dictionary<string, object>` | Additional validation parameters to apply. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A cancellation token to cancel the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<Microsoft.OData.Mcp.Authentication.Models.TokenValidationResult>`
+A task that represents the asynchronous validation operation. The task result contains the validation result.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *token* is null or whitespace. |
+| `ArgumentNullException` | Thrown when *validationParameters* is null. |
+

@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net9.0;net8.0;net472</TargetFrameworks>
+        <Description>Provides MSBuild project management capabilities for the EasyAF framework, including project file manipulation and property management.</Description>
+        <PackageTags>CloudNimble;EasyAF;EasyApplicationFramework;MSBuild;ProjectManagement</PackageTags>
+        <DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
+        <NoWarn>$(NoWarn);CA1822;NU1605;NU1701;NU1608;</NoWarn>
+        <DisableMSBuildAssemblyCopyCheck>true</DisableMSBuildAssemblyCopyCheck>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- ExcludeAssets="runtime" - compile against NuGet packages, MSBuildLocator redirects to SDK at runtime -->
+        <PackageReference Include="Microsoft.Build" Version="17.14.*" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Framework" Version="17.14.*" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Locator" Version="1.*" />
+        <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.*" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.*" ExcludeAssets="runtime" />
+    </ItemGroup>
+
+    <!-- Include .targets file in NuGet package for consuming projects -->
+    <ItemGroup>
+        <None Include="build\**\*" Pack="true" PackagePath="build" />
+        <None Include="build\**\*" Pack="true" PackagePath="buildTransitive" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+        <PackageReference Include="System.CodeDom" Version="10.*" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' != 'net10.0'">
+        <PackageReference Include="System.CodeDom" Version="9.*" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CloudNimble.EasyAF.Core\CloudNimble.EasyAF.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="CloudNimble.EasyAF.Tools, $(StrongNamePublicKey)" />
+    </ItemGroup>
+
+</Project>

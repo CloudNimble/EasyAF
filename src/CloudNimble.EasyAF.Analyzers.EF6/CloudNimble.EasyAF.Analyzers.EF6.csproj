@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0</TargetFrameworks>
+        <DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <LangVersion>latest</LangVersion>
+        <IsRoslynComponent>true</IsRoslynComponent>
+        <AnalyzerLanguage>cs</AnalyzerLanguage>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+        <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+        <IsPackable>true</IsPackable>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.*" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.*-*" PrivateAssets="all" />
+        <PackageReference Include="System.Reflection.TypeExtensions" Version="4.*" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="4.*" PrivateAssets="all" />
+        <!-- Exclude unused transitive dependencies from analyzer package -->
+        <PackageReference Include="Humanizer.Core" Version="*" ExcludeAssets="all" PrivateAssets="all" />
+        <PackageReference Include="Ben.Demystifier" Version="*" ExcludeAssets="all" PrivateAssets="all" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CloudNimble.EasyAF.CodeGen\CloudNimble.EasyAF.CodeGen.csproj" PrivateAssets="all" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Package the generator in the analyzer directory of the nuget package -->
+        <None Include="$(OutputPath)\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="EasyAF.Analyzers.EF6.props" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="EasyAF.Analyzers.EF6.props" Pack="true" PackagePath="build">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="app.config">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+</Project>

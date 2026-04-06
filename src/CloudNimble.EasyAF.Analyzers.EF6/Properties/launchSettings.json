@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Roslyn": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\CloudNimble.EasyAF.Tests.Analyzers.EF6\\CloudNimble.EasyAF.Tests.Analyzers.EF6.csproj"
+    }
+  }
+}

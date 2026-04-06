@@ -1,0 +1,361 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- EF Runtime content -->
+    <edmx:Runtime>
+        <!-- SSDL content -->
+        <edmx:StorageModels>
+            <Schema Namespace="EasyAFModel.Store" Provider="Microsoft.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+                <EntityType Name="Inquiries">
+                    <Key>
+                        <PropertyRef Name="Id" />
+                    </Key>
+                    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+                    <Property Name="Subject" Type="nvarchar" MaxLength="200" />
+                    <Property Name="Message" Type="nvarchar" MaxLength="1000" />
+                    <Property Name="StateTypeId" Type="uniqueidentifier" Nullable="false" />
+                    <Property Name="CreatedById" Type="uniqueidentifier" Nullable="false" />
+                    <Property Name="DateCreated" Type="datetimeoffset" Precision="7" Nullable="false" />
+                    <Property Name="UpdatedById" Type="uniqueidentifier" />
+                    <Property Name="DateUpdated" Type="datetimeoffset" Precision="7" />
+                </EntityType>
+                <EntityType Name="InquiryStateTypes">
+                    <Key>
+                        <PropertyRef Name="Id" />
+                    </Key>
+                    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+                    <Property Name="DisplayName" Type="nvarchar" MaxLength="30" Nullable="false" />
+                    <Property Name="SortOrder" Type="int" Nullable="false" />
+                    <Property Name="InstructionText" Type="nvarchar" MaxLength="250" />
+                    <Property Name="PrimaryTargetSortOrder" Type="int" Nullable="false" />
+                    <Property Name="PrimaryTargetDisplayText" Type="nvarchar" MaxLength="50" />
+                    <Property Name="SecondaryTargetSortOrder" Type="int" Nullable="false" />
+                    <Property Name="SecondaryTargetDisplayText" Type="nvarchar" MaxLength="50" />
+                    <Property Name="IsActive" Type="bit" Nullable="false" />
+                    <Property Name="CreatedById" Type="uniqueidentifier" Nullable="false" />
+                    <Property Name="UpdatedById" Type="uniqueidentifier" />
+                    <Property Name="DateCreated" Type="datetimeoffset" Precision="7" Nullable="false" />
+                    <Property Name="DateUpdated" Type="datetimeoffset" Precision="7" />
+                </EntityType>
+                <EntityType Name="Products">
+                    <Key>
+                        <PropertyRef Name="Id" />
+                    </Key>
+                    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+                    <Property Name="DisplayName" Type="nvarchar" MaxLength="50" />
+                    <Property Name="StatusTypeId" Type="uniqueidentifier" Nullable="false" />
+                    <Property Name="CreatedById" Type="uniqueidentifier" Nullable="false" />
+                    <Property Name="DateCreated" Type="datetimeoffset" Precision="7" Nullable="false" />
+                    <Property Name="UpdatedById" Type="uniqueidentifier" />
+                    <Property Name="DateUpdated" Type="datetimeoffset" Precision="7" />
+                </EntityType>
+                <EntityType Name="ProductStatusTypes">
+                    <Key>
+                        <PropertyRef Name="Id" />
+                    </Key>
+                    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+                    <Property Name="DisplayName" Type="nvarchar" MaxLength="50" Nullable="false" />
+                    <Property Name="SortOrder" Type="int" Nullable="false" />
+                    <Property Name="IsActive" Type="bit" Nullable="false" />
+                    <Property Name="CreatedById" Type="uniqueidentifier" />
+                    <Property Name="DateCreated" Type="datetimeoffset" Precision="7" Nullable="false" />
+                    <Property Name="UpdatedById" Type="uniqueidentifier" />
+                    <Property Name="DateUpdated" Type="datetimeoffset" Precision="7" />
+                </EntityType>
+                <EntityType Name="Users">
+                    <Key>
+                        <PropertyRef Name="Id" />
+                    </Key>
+                    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+                    <Property Name="FirstName" Type="nvarchar" MaxLength="30" />
+                    <Property Name="LastName" Type="nvarchar" MaxLength="50" />
+                    <Property Name="CreatedById" Type="uniqueidentifier" Nullable="false" />
+                    <Property Name="DateCreated" Type="datetimeoffset" Precision="7" Nullable="false" />
+                </EntityType>
+                <Association Name="FK_Inquiries_InquiryStateTypes">
+                    <End Role="InquiryStateTypes" Type="Self.InquiryStateTypes" Multiplicity="1" />
+                    <End Role="Inquiries" Type="Self.Inquiries" Multiplicity="*" />
+                    <ReferentialConstraint>
+                        <Principal Role="InquiryStateTypes">
+                            <PropertyRef Name="Id" />
+                        </Principal>
+                        <Dependent Role="Inquiries">
+                            <PropertyRef Name="StateTypeId" />
+                        </Dependent>
+                    </ReferentialConstraint>
+                </Association>
+                <Association Name="FK_Inquiries_Users">
+                    <End Role="Users" Type="Self.Users" Multiplicity="1" />
+                    <End Role="Inquiries" Type="Self.Inquiries" Multiplicity="*" />
+                    <ReferentialConstraint>
+                        <Principal Role="Users">
+                            <PropertyRef Name="Id" />
+                        </Principal>
+                        <Dependent Role="Inquiries">
+                            <PropertyRef Name="CreatedById" />
+                        </Dependent>
+                    </ReferentialConstraint>
+                </Association>
+                <Association Name="FK_Products_ProductStatusTypes">
+                    <End Role="ProductStatusTypes" Type="Self.ProductStatusTypes" Multiplicity="1" />
+                    <End Role="Products" Type="Self.Products" Multiplicity="*" />
+                    <ReferentialConstraint>
+                        <Principal Role="ProductStatusTypes">
+                            <PropertyRef Name="Id" />
+                        </Principal>
+                        <Dependent Role="Products">
+                            <PropertyRef Name="StatusTypeId" />
+                        </Dependent>
+                    </ReferentialConstraint>
+                </Association>
+                <EntityContainer Name="EasyAFModelStoreContainer">
+                    <EntitySet Name="Inquiries" EntityType="Self.Inquiries" Schema="dbo" store:Type="Tables" />
+                    <EntitySet Name="InquiryStateTypes" EntityType="Self.InquiryStateTypes" Schema="dbo" store:Type="Tables" />
+                    <EntitySet Name="Products" EntityType="Self.Products" Schema="dbo" store:Type="Tables" />
+                    <EntitySet Name="ProductStatusTypes" EntityType="Self.ProductStatusTypes" Schema="dbo" store:Type="Tables" />
+                    <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+                    <AssociationSet Name="FK_Inquiries_InquiryStateTypes" Association="Self.FK_Inquiries_InquiryStateTypes">
+                        <End Role="InquiryStateTypes" EntitySet="InquiryStateTypes" />
+                        <End Role="Inquiries" EntitySet="Inquiries" />
+                    </AssociationSet>
+                    <AssociationSet Name="FK_Inquiries_Users" Association="Self.FK_Inquiries_Users">
+                        <End Role="Users" EntitySet="Users" />
+                        <End Role="Inquiries" EntitySet="Inquiries" />
+                    </AssociationSet>
+                    <AssociationSet Name="FK_Products_ProductStatusTypes" Association="Self.FK_Products_ProductStatusTypes">
+                        <End Role="ProductStatusTypes" EntitySet="ProductStatusTypes" />
+                        <End Role="Products" EntitySet="Products" />
+                    </AssociationSet>
+                </EntityContainer>
+            </Schema>
+        </edmx:StorageModels>
+        <!-- CSDL content -->
+        <edmx:ConceptualModels>
+            <Schema Namespace="EasyAFModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+                <EntityType Name="Product">
+                    <Key>
+                        <PropertyRef Name="Id" />
+                    </Key>
+                    <Property Name="Id" Type="Guid" Nullable="false" />
+                    <Property Name="DisplayName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+                    <Property Name="StatusTypeId" Type="Guid" Nullable="false" />
+                    <Property Name="CreatedById" Type="Guid" Nullable="false" />
+                    <Property Name="DateCreated" Type="DateTimeOffset" Nullable="false" Precision="7" />
+                    <Property Name="UpdatedById" Type="Guid" />
+                    <Property Name="DateUpdated" Type="DateTimeOffset" Precision="7" />
+                    <NavigationProperty Name="StatusType" Relationship="Self.FK_Products_ProductStatusTypes" FromRole="Products" ToRole="ProductStatusTypes" />
+                </EntityType>
+                <EntityType Name="ProductStatusType">
+                    <Key>
+                        <PropertyRef Name="Id" />
+                    </Key>
+                    <Property Name="Id" Type="Guid" Nullable="false" />
+                    <Property Name="DisplayName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+                    <Property Name="SortOrder" Type="Int32" Nullable="false" />
+                    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+                    <Property Name="CreatedById" Type="Guid" />
+                    <Property Name="DateCreated" Type="DateTimeOffset" Nullable="false" Precision="7" />
+                    <Property Name="UpdatedById" Type="Guid" />
+                    <Property Name="DateUpdated" Type="DateTimeOffset" Precision="7" />
+                    <NavigationProperty Name="Products" Relationship="Self.FK_Products_ProductStatusTypes" FromRole="ProductStatusTypes" ToRole="Products" />
+                </EntityType>
+                <EntityType Name="User">
+                    <Key>
+                        <PropertyRef Name="Id" />
+                    </Key>
+                    <Property Name="Id" Type="Guid" Nullable="false" />
+                    <Property Name="FirstName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+                    <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+                    <Property Name="CreatedById" Type="Guid" Nullable="false" />
+                    <Property Name="DateCreated" Type="DateTimeOffset" Nullable="false" Precision="7" />
+                    <NavigationProperty Name="Inquiries" Relationship="EasyAFModel.FK_Inquiries_Users" FromRole="User" ToRole="Inquiry" />
+                </EntityType>
+                <Association Name="FK_Products_ProductStatusTypes">
+                    <End Role="ProductStatusTypes" Type="Self.ProductStatusType" Multiplicity="1" />
+                    <End Role="Products" Type="Self.Product" Multiplicity="*" />
+                    <ReferentialConstraint>
+                        <Principal Role="ProductStatusTypes">
+                            <PropertyRef Name="Id" />
+                        </Principal>
+                        <Dependent Role="Products">
+                            <PropertyRef Name="StatusTypeId" />
+                        </Dependent>
+                    </ReferentialConstraint>
+                </Association>
+                <EntityContainer Name="EasyAFEntities" annotation:LazyLoadingEnabled="true">
+                    <EntitySet Name="Products" EntityType="Self.Product" />
+                    <EntitySet Name="ProductStatusTypes" EntityType="Self.ProductStatusType" />
+                    <EntitySet Name="Users" EntityType="Self.User" />
+                    <AssociationSet Name="FK_Products_ProductStatusTypes" Association="Self.FK_Products_ProductStatusTypes">
+                        <End Role="ProductStatusTypes" EntitySet="ProductStatusTypes" />
+                        <End Role="Products" EntitySet="Products" />
+                    </AssociationSet>
+                    <EntitySet Name="Inquiries" EntityType="EasyAFModel.Inquiry" />
+                    <EntitySet Name="InquiryStateTypes" EntityType="EasyAFModel.InquiryStateType" />
+                    <AssociationSet Name="FK_Inquiries_InquiryStateTypes" Association="EasyAFModel.FK_Inquiries_InquiryStateTypes">
+                        <End Role="InquiryStateType" EntitySet="InquiryStateTypes" />
+                        <End Role="Inquiry" EntitySet="Inquiries" />
+                    </AssociationSet>
+                    <AssociationSet Name="FK_Inquiries_Users" Association="EasyAFModel.FK_Inquiries_Users">
+                        <End Role="User" EntitySet="Users" />
+                        <End Role="Inquiry" EntitySet="Inquiries" />
+                    </AssociationSet>
+                </EntityContainer>
+                <EntityType Name="Inquiry">
+                    <Key>
+                        <PropertyRef Name="Id" />
+                    </Key>
+                    <Property Name="Id" Type="Guid" Nullable="false" />
+                    <Property Name="Subject" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+                    <Property Name="Message" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+                    <Property Name="StateTypeId" Type="Guid" Nullable="false" />
+                    <Property Name="CreatedById" Type="Guid" Nullable="false" />
+                    <Property Name="DateCreated" Type="DateTimeOffset" Nullable="false" Precision="7" />
+                    <Property Name="UpdatedById" Type="Guid" />
+                    <Property Name="DateUpdated" Type="DateTimeOffset" Precision="7" />
+                    <NavigationProperty Name="StateType" Relationship="EasyAFModel.FK_Inquiries_InquiryStateTypes" FromRole="Inquiry" ToRole="InquiryStateType" />
+                    <NavigationProperty Name="User" Relationship="EasyAFModel.FK_Inquiries_Users" FromRole="Inquiry" ToRole="User" />
+                </EntityType>
+                <EntityType Name="InquiryStateType">
+                    <Key>
+                        <PropertyRef Name="Id" />
+                    </Key>
+                    <Property Name="Id" Type="Guid" Nullable="false" />
+                    <Property Name="DisplayName" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+                    <Property Name="SortOrder" Type="Int32" Nullable="false" />
+                    <Property Name="InstructionText" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+                    <Property Name="PrimaryTargetSortOrder" Type="Int32" Nullable="false" />
+                    <Property Name="PrimaryTargetDisplayText" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+                    <Property Name="SecondaryTargetSortOrder" Type="Int32" Nullable="false" />
+                    <Property Name="SecondaryTargetDisplayText" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+                    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+                    <Property Name="CreatedById" Type="Guid" Nullable="false" />
+                    <Property Name="UpdatedById" Type="Guid" />
+                    <Property Name="DateCreated" Type="DateTimeOffset" Nullable="false" />
+                    <Property Name="DateUpdated" Type="DateTimeOffset" />
+                    <NavigationProperty Name="Inquiries" Relationship="EasyAFModel.FK_Inquiries_InquiryStateTypes" FromRole="InquiryStateType" ToRole="Inquiry" />
+                </EntityType>
+                <Association Name="FK_Inquiries_InquiryStateTypes">
+                    <End Type="EasyAFModel.InquiryStateType" Role="InquiryStateType" Multiplicity="1" />
+                    <End Type="EasyAFModel.Inquiry" Role="Inquiry" Multiplicity="*" />
+                    <ReferentialConstraint>
+                        <Principal Role="InquiryStateType">
+                            <PropertyRef Name="Id" />
+                        </Principal>
+                        <Dependent Role="Inquiry">
+                            <PropertyRef Name="StateTypeId" />
+                        </Dependent>
+                    </ReferentialConstraint>
+                </Association>
+                <Association Name="FK_Inquiries_Users">
+                    <End Type="EasyAFModel.User" Role="User" Multiplicity="1" />
+                    <End Type="EasyAFModel.Inquiry" Role="Inquiry" Multiplicity="*" />
+                    <ReferentialConstraint>
+                        <Principal Role="User">
+                            <PropertyRef Name="Id" />
+                        </Principal>
+                        <Dependent Role="Inquiry">
+                            <PropertyRef Name="CreatedById" />
+                        </Dependent>
+                    </ReferentialConstraint>
+                </Association>
+            </Schema>
+        </edmx:ConceptualModels>
+        <!-- C-S mapping content -->
+        <edmx:Mappings>
+            <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+                <EntityContainerMapping StorageEntityContainer="EasyAFModelStoreContainer" CdmEntityContainer="EasyAFEntities">
+                    <EntitySetMapping Name="Products">
+                        <EntityTypeMapping TypeName="EasyAFModel.Product">
+                            <MappingFragment StoreEntitySet="Products">
+                                <ScalarProperty Name="Id" ColumnName="Id" />
+                                <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+                                <ScalarProperty Name="StatusTypeId" ColumnName="StatusTypeId" />
+                                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                                <ScalarProperty Name="UpdatedById" ColumnName="UpdatedById" />
+                                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+                            </MappingFragment>
+                        </EntityTypeMapping>
+                    </EntitySetMapping>
+                    <EntitySetMapping Name="ProductStatusTypes">
+                        <EntityTypeMapping TypeName="EasyAFModel.ProductStatusType">
+                            <MappingFragment StoreEntitySet="ProductStatusTypes">
+                                <ScalarProperty Name="Id" ColumnName="Id" />
+                                <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+                                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                                <ScalarProperty Name="UpdatedById" ColumnName="UpdatedById" />
+                                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+                            </MappingFragment>
+                        </EntityTypeMapping>
+                    </EntitySetMapping>
+                    <EntitySetMapping Name="Users">
+                        <EntityTypeMapping TypeName="EasyAFModel.User">
+                            <MappingFragment StoreEntitySet="Users">
+                                <ScalarProperty Name="Id" ColumnName="Id" />
+                                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                            </MappingFragment>
+                        </EntityTypeMapping>
+                    </EntitySetMapping>
+                    <EntitySetMapping Name="Inquiries">
+                        <EntityTypeMapping TypeName="EasyAFModel.Inquiry">
+                            <MappingFragment StoreEntitySet="Inquiries">
+                                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+                                <ScalarProperty Name="UpdatedById" ColumnName="UpdatedById" />
+                                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                                <ScalarProperty Name="StateTypeId" ColumnName="StateTypeId" />
+                                <ScalarProperty Name="Message" ColumnName="Message" />
+                                <ScalarProperty Name="Subject" ColumnName="Subject" />
+                                <ScalarProperty Name="Id" ColumnName="Id" />
+                            </MappingFragment>
+                        </EntityTypeMapping>
+                    </EntitySetMapping>
+                    <EntitySetMapping Name="InquiryStateTypes">
+                        <EntityTypeMapping TypeName="EasyAFModel.InquiryStateType">
+                            <MappingFragment StoreEntitySet="InquiryStateTypes">
+                                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+                                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                                <ScalarProperty Name="UpdatedById" ColumnName="UpdatedById" />
+                                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                                <ScalarProperty Name="SecondaryTargetDisplayText" ColumnName="SecondaryTargetDisplayText" />
+                                <ScalarProperty Name="SecondaryTargetSortOrder" ColumnName="SecondaryTargetSortOrder" />
+                                <ScalarProperty Name="PrimaryTargetDisplayText" ColumnName="PrimaryTargetDisplayText" />
+                                <ScalarProperty Name="PrimaryTargetSortOrder" ColumnName="PrimaryTargetSortOrder" />
+                                <ScalarProperty Name="InstructionText" ColumnName="InstructionText" />
+                                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                                <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+                                <ScalarProperty Name="Id" ColumnName="Id" />
+                            </MappingFragment>
+                        </EntityTypeMapping>
+                    </EntitySetMapping>
+                </EntityContainerMapping>
+            </Mapping>
+        </edmx:Mappings>
+    </edmx:Runtime>
+    <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+    <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+        <Connection>
+            <DesignerInfoPropertySet>
+                <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+            </DesignerInfoPropertySet>
+        </Connection>
+        <Options>
+            <DesignerInfoPropertySet>
+                <DesignerProperty Name="ValidateOnBuild" Value="true" />
+                <DesignerProperty Name="EnablePluralization" Value="true" />
+                <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+                <DesignerProperty Name="UseLegacyProvider" Value="false" />
+                <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+            </DesignerInfoPropertySet>
+        </Options>
+        <!-- Diagram content (shape and connector positions) -->
+        <Diagrams></Diagrams>
+    </Designer>
+</edmx:Edmx>

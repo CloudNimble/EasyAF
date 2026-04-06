@@ -1,0 +1,958 @@
+---
+title: MoneyInterval
+description: "Represents a sum of money to be exchanged during a given interval."
+icon: code-branch
+keywords: ['MoneyInterval', 'CloudNimble.EasyAF.Core.MoneyInterval<T>', 'CloudNimble.EasyAF.Core', 'class', 'CloudNimble.EasyAF.Core.Interval<T>']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+**Inheritance:** CloudNimble.EasyAF.Core.Interval&lt;T&gt;
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.MoneyInterval<T>
+```
+
+## Summary
+
+Represents a sum of money to be exchanged during a given interval.
+
+## Remarks
+
+This has been broken up to allow for conversions (for example, converting $/month into $/day) to be self-contained. This should reduce duplication.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public MoneyInterval()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the `MoneyInterval`1` class with the specified interval value and type.
+
+#### Syntax
+
+```csharp
+public MoneyInterval(T value, CloudNimble.EasyAF.Core.IntervalType type)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `T` | The duration of the interval. |
+| `type` | `CloudNimble.EasyAF.Core.IntervalType` | The base unit that describes what the quantity of this interval references. |
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the `MoneyInterval`1` class with the specified money amount, interval value, and type.
+
+#### Syntax
+
+```csharp
+public MoneyInterval(System.Decimal money, T value, CloudNimble.EasyAF.Core.IntervalType type)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `money` | `System.Decimal` | The amount of money represented by the given interval. |
+| `value` | `T` | The duration of the interval. |
+| `type` | `CloudNimble.EasyAF.Core.IntervalType` | The base unit that describes what the quantity of this interval references. |
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.Interval<T>`</Note>
+
+Creates a new instance of the `Interval`1` class.
+
+#### Syntax
+
+```csharp
+public Interval()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.Interval<T>`</Note>
+
+Creates a new instance of the `Interval`1` class.
+
+#### Syntax
+
+```csharp
+public Interval(T value, CloudNimble.EasyAF.Core.IntervalType type)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `T` | The duration of the interval. |
+| `type` | `CloudNimble.EasyAF.Core.IntervalType` | The base unit that describes what the quantity of this Interval references. |
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Money
+
+The amount of money represented by the given [IntervalType](/api-reference/CloudNimble/EasyAF/Core/IntervalType)
+
+#### Syntax
+
+```csharp
+public System.Decimal Money { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Decimal`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Type <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.Interval<T>`</Note>
+
+The base unit that describes what the quantity of this Interval references.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.Core.IntervalType Type { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.EasyAF.Core.IntervalType`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Value <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.Interval<T>`</Note>
+
+The duration of the Interval.
+
+#### Syntax
+
+```csharp
+public T Value { get; set; }
+```
+
+#### Property Value
+
+Type: `T`
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerDay <Badge color="blue">Override</Badge>
+
+Calculates the monetary amount per day based on this money interval.
+
+#### Syntax
+
+```csharp
+public override System.Decimal PerDay()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The amount of money per day as a decimal value.
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerDay <Badge color="blue">Override</Badge>
+
+Calculates the total monetary amount per day based on this money interval and a quantity multiplier.
+
+#### Syntax
+
+```csharp
+public override System.Decimal PerDay(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity multiplier (e.g., hours worked, units sold). |
+
+#### Returns
+
+Type: `System.Decimal`
+The total amount of money per day as a decimal value.
+
+#### Examples
+
+```csharp
+// $25 per hour wage, calculate earnings for 8 hours of work per day
+var wage = new MoneyInterval&lt;double&gt;(25m, 1, IntervalType.Hours);
+decimal totalPerDay = wage.PerDay(8); // $4800 per day (25 * 24 * 8)
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerDay <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.Interval<T>`</Note>
+
+Given this `Interval`1` instance, calculates how many occurrences will happen per day.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerDay()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The number of occurrences per day as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerDay <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.Interval<T>`</Note>
+
+Given this `Interval`1` instance and a quantity, calculates the total output per day.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerDay(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total output per day as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+#### Examples
+
+```csharp
+// Widget production: 1 widget every 1.5 hours, total from 100 units of material per day
+var production = new Interval&lt;double&gt;(1.5, IntervalType.Hours);
+decimal totalPerDay = production.PerDay(100); // 1600 widgets per day (16 * 100)
+```
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerHour <Badge color="blue">Override</Badge>
+
+Calculates the monetary amount per hour based on this money interval.
+
+#### Syntax
+
+```csharp
+public override System.Decimal PerHour()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The amount of money per hour as a decimal value.
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerHour <Badge color="blue">Override</Badge>
+
+Calculates the total monetary amount per hour based on this money interval and a quantity multiplier.
+
+#### Syntax
+
+```csharp
+public override System.Decimal PerHour(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity multiplier (e.g., hours worked, units sold). |
+
+#### Returns
+
+Type: `System.Decimal`
+The total amount of money per hour as a decimal value.
+
+#### Examples
+
+```csharp
+// $25 per hour wage, calculate earnings for 8 hours of work per hour
+var wage = new MoneyInterval&lt;double&gt;(25m, 1, IntervalType.Hours);
+decimal totalPerHour = wage.PerHour(8); // $200 per hour (25 * 8)
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerHour <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.Interval<T>`</Note>
+
+Given this `Interval`1` instance, calculates how many occurrences will happen per hour.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerHour()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The number of occurrences per hour as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerHour <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.Interval<T>`</Note>
+
+Given this `Interval`1` instance and a quantity, calculates the total output per hour.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerHour(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total output per hour as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+#### Examples
+
+```csharp
+// Widget production: 1 widget every 1.5 hours, total from 100 units of material per hour
+var production = new Interval&lt;double&gt;(1.5, IntervalType.Hours);
+decimal totalPerHour = production.PerHour(100); // 66.67 widgets per hour (1/1.5 * 100)
+```
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerMinute <Badge color="blue">Override</Badge>
+
+Calculates the monetary amount per minute based on this money interval.
+
+#### Syntax
+
+```csharp
+public override System.Decimal PerMinute()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The amount of money per minute as a decimal value.
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerMinute <Badge color="blue">Override</Badge>
+
+Calculates the total monetary amount per minute based on this money interval and a quantity multiplier.
+
+#### Syntax
+
+```csharp
+public override System.Decimal PerMinute(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity multiplier (e.g., hours worked, units sold). |
+
+#### Returns
+
+Type: `System.Decimal`
+The total amount of money per minute as a decimal value.
+
+#### Examples
+
+```csharp
+// $25 per hour wage, calculate earnings for 8 hours of work per minute
+var wage = new MoneyInterval&lt;double&gt;(25m, 1, IntervalType.Hours);
+decimal totalPerMinute = wage.PerMinute(8); // $3.33 per minute (25 * 8 / 60)
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerMinute <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.Interval<T>`</Note>
+
+Given this `Interval`1` instance, calculates how many occurrences will happen per minute.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerMinute()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The number of occurrences per minute as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+#### Remarks
+
+If you need this as a whole number, wrap the result in [Decimal)](https://learn.microsoft.com/dotnet/api/system.math.floor(system.decimal)).
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerMinute <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.Interval<T>`</Note>
+
+Given this `Interval`1` instance and a quantity, calculates the total output per minute.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerMinute(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total output per minute as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+#### Examples
+
+```csharp
+// Widget production: 1 widget every 90 minutes, total from 100 units of material per minute
+var production = new Interval&lt;int&gt;(90, IntervalType.Minutes);
+decimal totalPerMinute = production.PerMinute(100); // 1.11 widgets per minute (1/90 * 100)
+```
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerMonth <Badge color="blue">Override</Badge>
+
+Calculates the monetary amount per month based on this money interval.
+
+#### Syntax
+
+```csharp
+public override System.Decimal PerMonth()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The amount of money per month as a decimal value.
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerMonth <Badge color="blue">Override</Badge>
+
+Calculates the total monetary amount per month based on this money interval and a quantity multiplier.
+
+#### Syntax
+
+```csharp
+public override System.Decimal PerMonth(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity multiplier (e.g., hours worked, units sold). |
+
+#### Returns
+
+Type: `System.Decimal`
+The total amount of money per month as a decimal value.
+
+#### Examples
+
+```csharp
+// $50 per day, calculate earnings for 20 working days per month
+var dailyRate = new MoneyInterval&lt;double&gt;(50m, 1, IntervalType.Days);
+decimal totalPerMonth = dailyRate.PerMonth(20); // $30,000 per month (50 * 30 * 20)
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerMonth <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.Interval<T>`</Note>
+
+Given this `Interval`1` instance, calculates how many occurrences will happen per month.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerMonth()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The number of occurrences per month as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerMonth <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.Interval<T>`</Note>
+
+Given this `Interval`1` instance and a quantity, calculates the total output per month.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerMonth(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total output per month as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+#### Examples
+
+```csharp
+// Widget production: 1 widget every 3 days, total from 200 units of material per month
+var production = new Interval&lt;int&gt;(3, IntervalType.Days);
+decimal totalPerMonth = production.PerMonth(200); // 2000 widgets per month (10 * 200)
+```
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerWeek <Badge color="blue">Override</Badge>
+
+Calculates the monetary amount per week based on this money interval.
+
+#### Syntax
+
+```csharp
+public override System.Decimal PerWeek()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The amount of money per week as a decimal value.
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerWeek <Badge color="blue">Override</Badge>
+
+Calculates the total monetary amount per week based on this money interval and a quantity multiplier.
+
+#### Syntax
+
+```csharp
+public override System.Decimal PerWeek(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity multiplier (e.g., hours worked, units sold). |
+
+#### Returns
+
+Type: `System.Decimal`
+The total amount of money per week as a decimal value.
+
+#### Examples
+
+```csharp
+// $150 every 2.5 hours, calculate earnings for 40 hours of work per week
+var freelance = new MoneyInterval&lt;double&gt;(150m, 2.5, IntervalType.Hours);
+decimal totalPerWeek = freelance.PerWeek(40); // $40,320 per week
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerWeek <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.Interval<T>`</Note>
+
+Given this `Interval`1` instance, calculates how many occurrences will happen per week.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerWeek()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The number of occurrences per week as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerWeek <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.Interval<T>`</Note>
+
+Given this `Interval`1` instance and a quantity, calculates the total output per week.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerWeek(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total output per week as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+#### Examples
+
+```csharp
+// Widget production: 1 widget every 2 days, total from 50 units of material per week
+var production = new Interval&lt;int&gt;(2, IntervalType.Days);
+decimal totalPerWeek = production.PerWeek(50); // 175 widgets per week (3.5 * 50)
+```
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerYear <Badge color="blue">Override</Badge>
+
+Calculates the monetary amount per year based on this money interval.
+
+#### Syntax
+
+```csharp
+public override System.Decimal PerYear()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The amount of money per year as a decimal value.
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerYear <Badge color="blue">Override</Badge>
+
+Calculates the total monetary amount per year based on this money interval and a quantity multiplier.
+
+#### Syntax
+
+```csharp
+public override System.Decimal PerYear(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity multiplier (e.g., hours worked, units sold). |
+
+#### Returns
+
+Type: `System.Decimal`
+The total amount of money per year as a decimal value.
+
+#### Examples
+
+```csharp
+// $75,000 annual salary, calculate total compensation with 1.2x multiplier
+var salary = new MoneyInterval&lt;double&gt;(75000m, 1, IntervalType.Years);
+decimal totalPerYear = salary.PerYear(1.2m); // $90,000 per year (75000 * 1.2)
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerYear <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.Interval<T>`</Note>
+
+Given this `Interval`1` instance, calculates how many occurrences will happen per year.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerYear()
+```
+
+#### Returns
+
+Type: `System.Decimal`
+The number of occurrences per year as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerYear <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.Interval<T>`</Note>
+
+Given this `Interval`1` instance and a quantity, calculates the total output per year.
+
+#### Syntax
+
+```csharp
+public virtual System.Decimal PerYear(System.Decimal quantity)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+
+#### Returns
+
+Type: `System.Decimal`
+The total output per year as a decimal value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidCastException` | Thrown if *T* is not convertible to a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal). |
+
+#### Examples
+
+```csharp
+// Widget production: 1 widget every 1 week, total from 500 units of material per year
+var production = new Interval&lt;int&gt;(1, IntervalType.Weeks);
+decimal totalPerYear = production.PerYear(500); // 26071 widgets per year (52.14 * 500)
+```
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="blue">Override</Badge>
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString
+
+Returns a string representation of the money interval with the specified number of decimal places for the currency value.
+
+#### Syntax
+
+```csharp
+public string ToString(int decimals)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `decimals` | `int` | The number of decimal places to display for the currency value. |
+
+#### Returns
+
+Type: `string`
+A formatted string showing the money amount per interval period.
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Core.Interval<T>`</Note>
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

@@ -1,0 +1,729 @@
+---
+title: McpToolDefinition
+description: "Represents a complete MCP tool definition with metadata and implementation details."
+icon: lock
+tag: "SEALED"
+keywords: ['McpToolDefinition', 'Microsoft.OData.Mcp.Core.Tools.McpToolDefinition', 'Microsoft.OData.Mcp.Core.Tools', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Tools
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Tools.McpToolDefinition
+```
+
+## Summary
+
+Represents a complete MCP tool definition with metadata and implementation details.
+
+## Remarks
+
+This class encapsulates all information needed to register and execute an MCP tool,
+            including its schema, parameters, authorization requirements, and execution context.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [McpToolDefinition](/odata-mcp/api-reference/Microsoft/OData/Mcp/Core/Tools/McpToolDefinition) class.
+
+#### Syntax
+
+```csharp
+public McpToolDefinition()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Category
+
+Gets or sets the tool category.
+
+#### Syntax
+
+```csharp
+public required string Category { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The category that groups related tools together.
+
+#### Remarks
+
+Common categories include "CRUD", "Query", "Navigation", and "Batch".
+            Categories help organize tools and can be used for filtering and authorization.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CreatedAt
+
+Gets or sets the time when this tool definition was created.
+
+#### Syntax
+
+```csharp
+public System.DateTime CreatedAt { get; set; }
+```
+
+#### Property Value
+
+Type: `System.DateTime`
+The UTC timestamp when the tool was generated.
+
+#### Remarks
+
+This timestamp is used for caching, versioning, and audit purposes.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DeprecationMessage
+
+Gets or sets the deprecation message for deprecated tools.
+
+#### Syntax
+
+```csharp
+public string DeprecationMessage { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+A message explaining why the tool is deprecated and what should be used instead.
+
+#### Remarks
+
+This message is shown to users when they attempt to use a deprecated tool,
+            guiding them to better alternatives.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Description
+
+Gets or sets the human-readable description of the tool.
+
+#### Syntax
+
+```csharp
+public required string Description { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+A description explaining what the tool does and how to use it.
+
+#### Remarks
+
+This description is used by AI models to understand the tool's purpose
+            and determine when it should be used.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Examples
+
+Gets or sets example usage scenarios for the tool.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Tools.McpToolExample> Examples { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<Microsoft.OData.Mcp.Core.Tools.McpToolExample>`
+A collection of example usage patterns.
+
+#### Remarks
+
+Examples help AI models understand how to use the tool effectively
+            and provide better assistance to users.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Handler
+
+Gets or sets the tool implementation handler.
+
+#### Syntax
+
+```csharp
+public required System.Func<Microsoft.OData.Mcp.Core.Tools.McpToolContext, System.Text.Json.JsonDocument, System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Tools.McpToolResult>> Handler { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Func<Microsoft.OData.Mcp.Core.Tools.McpToolContext, System.Text.Json.JsonDocument, System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Tools.McpToolResult>>`
+The function that executes the tool logic.
+
+#### Remarks
+
+This is the actual implementation that gets called when the tool
+            is invoked. It receives the tool context and parameters, and returns
+            the execution result.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  InputSchema
+
+Gets or sets the input schema for the tool parameters.
+
+#### Syntax
+
+```csharp
+public required System.Text.Json.JsonDocument InputSchema { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.JsonDocument`
+A JSON schema document defining the tool's input parameters.
+
+#### Remarks
+
+This schema is used by MCP clients to validate input and provide
+            type-safe parameter binding. It should follow JSON Schema specification.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsDeprecated
+
+Gets or sets a value indicating whether this tool is deprecated.
+
+#### Syntax
+
+```csharp
+public bool IsDeprecated { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the tool is deprecated; otherwise, `false`.
+
+#### Remarks
+
+Deprecated tools are still functional but should be avoided in favor
+            of newer alternatives. They may be removed in future versions.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Metadata
+
+Gets or sets additional metadata for the tool.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> Metadata { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of custom metadata key-value pairs.
+
+#### Remarks
+
+This can include information such as rate limits, caching behavior,
+            or other tool-specific configuration data.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Name
+
+Gets or sets the unique name of the tool.
+
+#### Syntax
+
+```csharp
+public required string Name { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The tool name as it will appear in the MCP protocol.
+
+#### Remarks
+
+Tool names must be unique within the MCP server and should follow naming
+            conventions that clearly indicate their purpose and target entity.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  OperationType
+
+Gets or sets the operation type for this tool.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Tools.McpToolOperationType OperationType { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolOperationType`
+The type of operation this tool performs.
+
+#### Remarks
+
+Operation types are used for authorization and auditing. They indicate
+            the level of data access and modification the tool performs.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  OutputSchema
+
+Gets or sets the output schema for the tool results.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.JsonDocument OutputSchema { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.JsonDocument?`
+A JSON schema document defining the tool's output format.
+
+#### Remarks
+
+This schema describes the structure of the tool's return value,
+            helping clients understand and process the results.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RequiredRoles
+
+Gets or sets the required roles for this tool.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> RequiredRoles { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of roles that users must have to use this tool.
+
+#### Remarks
+
+This provides role-based authorization control in addition to or
+            instead of scope-based authorization.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RequiredScopes
+
+Gets or sets the required OAuth2 scopes for this tool.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> RequiredScopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of OAuth2 scopes that users must have to use this tool.
+
+#### Remarks
+
+Users must have at least one of these scopes to execute the tool.
+            This provides fine-grained authorization control based on OAuth2 tokens.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SupportsBatch
+
+Gets or sets a value indicating whether this tool supports batch operations.
+
+#### Syntax
+
+```csharp
+public bool SupportsBatch { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if the tool can process multiple items in a single call; otherwise, `false`.
+
+#### Remarks
+
+Batch-enabled tools can improve performance by processing multiple
+            operations in a single request to the underlying OData service.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TargetEntitySet
+
+Gets or sets the target entity set for entity set-specific tools.
+
+#### Syntax
+
+```csharp
+public string TargetEntitySet { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The name of the target entity set, or null for entity type tools.
+
+#### Remarks
+
+This is used for tools that operate on specific entity sets, which
+            may have different permissions or configurations than the entity type.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  TargetEntityType
+
+Gets or sets the target entity type for entity-specific tools.
+
+#### Syntax
+
+```csharp
+public string TargetEntityType { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The fully qualified name of the target entity type, or null for general tools.
+
+#### Remarks
+
+This is used for entity-specific tools to identify which OData entity
+            type the tool operates on. General tools that work across entities
+            should leave this null.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Version
+
+Gets or sets the version of the tool.
+
+#### Syntax
+
+```csharp
+public string Version { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The version string for this tool definition.
+
+#### Remarks
+
+Tool versions help track changes and ensure compatibility. They should
+            follow semantic versioning principles.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddExample
+
+Adds an example to the tool definition.
+
+#### Syntax
+
+```csharp
+public void AddExample(string title, string description, System.Text.Json.JsonDocument input, System.Text.Json.JsonDocument expectedOutput = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `title` | `string` | The example title. |
+| `description` | `string` | The example description. |
+| `input` | `System.Text.Json.JsonDocument` | The example input parameters. |
+| `expectedOutput` | `System.Text.Json.JsonDocument?` | The expected output (optional). |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *title* is null or whitespace. |
+| `ArgumentNullException` | Thrown when *input* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddMetadata
+
+Adds metadata to the tool definition.
+
+#### Syntax
+
+```csharp
+public void AddMetadata(string key, object value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `key` | `string` | The metadata key. |
+| `value` | `object` | The metadata value. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *key* is null or whitespace. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CreateCrudTool
+
+Creates a basic CRUD tool definition.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Tools.McpToolDefinition CreateCrudTool(string name, string description, Microsoft.OData.Mcp.Core.Tools.McpToolOperationType operationType, string entityType, System.Text.Json.JsonDocument inputSchema, System.Func<Microsoft.OData.Mcp.Core.Tools.McpToolContext, System.Text.Json.JsonDocument, System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Tools.McpToolResult>> handler, string entitySet = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The tool name. |
+| `description` | `string` | The tool description. |
+| `operationType` | `Microsoft.OData.Mcp.Core.Tools.McpToolOperationType` | The operation type. |
+| `entityType` | `string` | The target entity type. |
+| `inputSchema` | `System.Text.Json.JsonDocument` | The input schema. |
+| `handler` | `System.Func<Microsoft.OData.Mcp.Core.Tools.McpToolContext, System.Text.Json.JsonDocument, System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Tools.McpToolResult>>` | The tool handler. |
+| `entitySet` | `string?` | The optional entity set name for the entity type. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolDefinition`
+A new tool definition for CRUD operations.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when required parameters are null or empty. |
+| `ArgumentNullException` | Thrown when *inputSchema* or *handler* is null. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CreateQueryTool
+
+Creates a query tool definition.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Tools.McpToolDefinition CreateQueryTool(string name, string description, System.Text.Json.JsonDocument inputSchema, System.Func<Microsoft.OData.Mcp.Core.Tools.McpToolContext, System.Text.Json.JsonDocument, System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Tools.McpToolResult>> handler)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The tool name. |
+| `description` | `string` | The tool description. |
+| `inputSchema` | `System.Text.Json.JsonDocument` | The input schema. |
+| `handler` | `System.Func<Microsoft.OData.Mcp.Core.Tools.McpToolContext, System.Text.Json.JsonDocument, System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Tools.McpToolResult>>` | The tool handler. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolDefinition`
+A new tool definition for query operations.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when required parameters are null or empty. |
+| `ArgumentNullException` | Thrown when *inputSchema* or *handler* is null. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetMetadata
+
+Gets metadata value by key.
+
+#### Syntax
+
+```csharp
+public T GetMetadata<T>(string key)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `key` | `string` | The metadata key. |
+
+#### Returns
+
+Type: `T?`
+The metadata value if found and of the correct type; otherwise, the default value.
+
+#### Type Parameters
+
+- `T` - The type of the metadata value.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsAuthorizedForUser
+
+Determines whether the tool is authorized for the specified user context.
+
+#### Syntax
+
+```csharp
+public bool IsAuthorizedForUser(System.Collections.Generic.IEnumerable<string> userScopes, System.Collections.Generic.IEnumerable<string> userRoles)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `userScopes` | `System.Collections.Generic.IEnumerable<string>` | The user's OAuth2 scopes. |
+| `userRoles` | `System.Collections.Generic.IEnumerable<string>` | The user's roles. |
+
+#### Returns
+
+Type: `bool`
+`true` if the user is authorized to use this tool; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the tool definition.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A summary of the tool definition.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the tool definition for completeness and correctness.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or empty if the tool is valid.
+

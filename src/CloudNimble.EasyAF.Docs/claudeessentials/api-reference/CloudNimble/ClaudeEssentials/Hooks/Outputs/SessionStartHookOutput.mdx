@@ -1,0 +1,266 @@
+---
+title: SessionStartHookOutput
+description: "Represents the complete output for a SessionStart hook.             Combines base output fields with SessionStart-specific output."
+icon: file-brackets-curly
+keywords: ['SessionStartHookOutput', 'CloudNimble.ClaudeEssentials.Hooks.Outputs.SessionStartHookOutput', 'CloudNimble.ClaudeEssentials.Hooks.Outputs', 'class', 'CloudNimble.ClaudeEssentials.Hooks.Outputs.HookOutputBase']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks.Outputs
+
+**Inheritance:** CloudNimble.ClaudeEssentials.Hooks.Outputs.HookOutputBase
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.Outputs.SessionStartHookOutput
+```
+
+## Summary
+
+Represents the complete output for a SessionStart hook.
+            Combines base output fields with SessionStart-specific output.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public SessionStartHookOutput()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Outputs.HookOutputBase`</Note>
+
+#### Syntax
+
+```csharp
+protected HookOutputBase()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Continue <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Outputs.HookOutputBase`</Note>
+
+Gets or sets a value indicating whether to continue with the operation.
+            When set to false, the operation will be stopped.
+            Defaults to true.
+
+#### Syntax
+
+```csharp
+public bool Continue { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+#### Remarks
+
+This property is always serialized to ensure explicit intent is communicated.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> HookSpecificOutput
+
+Gets or sets the hook-specific output containing additional context.
+
+#### Syntax
+
+```csharp
+public CloudNimble.ClaudeEssentials.Hooks.Outputs.SessionStartSpecificOutput HookSpecificOutput { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.ClaudeEssentials.Hooks.Outputs.SessionStartSpecificOutput?`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> StopReason <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Outputs.HookOutputBase`</Note>
+
+Gets or sets the reason message shown when [HookOutputBase.Continue](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Outputs/HookOutputBase#continue) is false.
+            This message is displayed to the user when the operation is stopped.
+
+#### Syntax
+
+```csharp
+public string StopReason { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SuppressOutput <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Outputs.HookOutputBase`</Note>
+
+Gets or sets a value indicating whether to suppress output from the transcript.
+            When true, the hook's output will not appear in the conversation transcript.
+            Defaults to false.
+
+#### Syntax
+
+```csharp
+public bool SuppressOutput { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SystemMessage <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.ClaudeEssentials.Hooks.Outputs.HookOutputBase`</Note>
+
+Gets or sets an optional warning message to include in the system context.
+            This message is shown to Claude as additional context.
+
+#### Syntax
+
+```csharp
+public string SystemMessage { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

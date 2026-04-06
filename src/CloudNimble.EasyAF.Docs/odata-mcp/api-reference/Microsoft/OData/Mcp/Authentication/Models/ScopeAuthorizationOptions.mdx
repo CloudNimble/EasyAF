@@ -1,0 +1,509 @@
+---
+title: ScopeAuthorizationOptions
+description: "Configuration options for OAuth2 scope-based authorization."
+icon: lock
+tag: "SEALED"
+keywords: ['ScopeAuthorizationOptions', 'Microsoft.OData.Mcp.Authentication.Models.ScopeAuthorizationOptions', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.ScopeAuthorizationOptions
+```
+
+## Summary
+
+Configuration options for OAuth2 scope-based authorization.
+
+## Remarks
+
+These options control how OAuth2 scopes are used to authorize access to
+            different MCP tools and operations. Scope-based authorization provides
+            fine-grained access control beyond basic authentication.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [ScopeAuthorizationOptions](/odata-mcp/api-reference/Microsoft/OData/Mcp/Authentication/Models/ScopeAuthorizationOptions) class.
+
+#### Syntax
+
+```csharp
+public ScopeAuthorizationOptions()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DefaultRequiredScopes
+
+Gets or sets the default scopes required when no specific requirement is defined.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> DefaultRequiredScopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of scopes required for operations without specific scope requirements.
+
+#### Remarks
+
+These scopes are used as a fallback when no specific scope requirements
+            are defined for an operation, tool, or entity. This ensures a baseline
+            level of access control.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Enabled
+
+Gets or sets a value indicating whether scope-based authorization is enabled.
+
+#### Syntax
+
+```csharp
+public bool Enabled { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if scope-based authorization is enabled; otherwise, `false`.
+
+#### Remarks
+
+When enabled, the MCP server will check token scopes before allowing
+            access to tools and operations. When disabled, all authenticated users
+            have access to all available tools.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnforcementBehavior
+
+Gets or sets the behavior when required scopes are missing.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.ScopeEnforcementBehavior EnforcementBehavior { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.ScopeEnforcementBehavior`
+The action to take when a user lacks required scopes.
+
+#### Remarks
+
+Different behaviors provide different user experiences and security
+            postures. Denying access is most secure, while filtering tools
+            provides a better user experience at the cost of complexity.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EntityScopes
+
+Gets or sets the entity-specific scope requirements.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, Microsoft.OData.Mcp.Authentication.Models.EntityScopeRequirements> EntityScopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, Microsoft.OData.Mcp.Authentication.Models.EntityScopeRequirements>`
+A mapping of entity types to their required scopes for different operations.
+
+#### Remarks
+
+This allows different entities to have different access requirements.
+            For example, sensitive entities might require higher-privilege scopes
+            than general-purpose entities.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  LogAuthorizationDecisions
+
+Gets or sets a value indicating whether to log scope authorization decisions.
+
+#### Syntax
+
+```csharp
+public bool LogAuthorizationDecisions { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if scope decisions should be logged; otherwise, `false`.
+
+#### Remarks
+
+Logging scope decisions helps with troubleshooting authorization issues
+            and provides audit trails for security compliance. However, it may
+            generate significant log volume in high-traffic scenarios.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RequiredScopes
+
+Gets or sets the required scopes for different MCP operations.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>> RequiredScopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>>`
+A mapping of operation types to their required scopes.
+
+#### Remarks
+
+This mapping defines which scopes are required for different types
+            of MCP operations. Users must have at least one of the required
+            scopes to perform the operation.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ScopeClaimName
+
+Gets or sets the claim name that contains the scopes in JWT tokens.
+
+#### Syntax
+
+```csharp
+public string ScopeClaimName { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The name of the claim that contains scope information.
+
+#### Remarks
+
+Different authorization servers use different claim names for scopes.
+            Common values include "scope", "scp", and "permissions". The claim
+            can contain a space-separated string or an array of scope values.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ScopeSeparator
+
+Gets or sets the scope separator character for space-separated scope claims.
+
+#### Syntax
+
+```csharp
+public char ScopeSeparator { get; set; }
+```
+
+#### Property Value
+
+Type: `char`
+The character used to separate multiple scopes in a single claim value.
+
+#### Remarks
+
+When scopes are provided as a space-separated string, this character
+            is used to split them into individual scope values. Space is the
+            standard separator according to OAuth2 specifications.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToolScopes
+
+Gets or sets the tool-specific scope requirements.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>> ToolScopes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>>`
+A mapping of tool names to their required scopes.
+
+#### Remarks
+
+This provides fine-grained control over individual MCP tools.
+            Tool-specific requirements override general operation requirements
+            for the specified tools.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetRequiredScopesForEntity
+
+Gets the required scopes for a specific entity and operation.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> GetRequiredScopesForEntity(string entityType, string operation)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entityType` | `string` | The entity type name. |
+| `operation` | `string` | The operation being performed on the entity. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+The required scopes, or the default scopes if no specific requirement exists.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetRequiredScopesForOperation
+
+Gets the required scopes for a specific operation.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> GetRequiredScopesForOperation(string operation)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `operation` | `string` | The operation name. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+The required scopes, or the default scopes if no specific requirement exists.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetRequiredScopesForTool
+
+Gets the required scopes for a specific tool.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> GetRequiredScopesForTool(string toolName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `toolName` | `string` | The tool name. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+The required scopes, or the default scopes if no specific requirement exists.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SetRequiredScopesForOperation
+
+Adds or updates scope requirements for an operation.
+
+#### Syntax
+
+```csharp
+public void SetRequiredScopesForOperation(string operation, System.Collections.Generic.IEnumerable<string> scopes)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `operation` | `string` | The operation name. |
+| `scopes` | `System.Collections.Generic.IEnumerable<string>` | The required scopes for the operation. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *operation* is null or whitespace. |
+| `ArgumentNullException` | Thrown when *scopes* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SetRequiredScopesForTool
+
+Adds or updates scope requirements for a tool.
+
+#### Syntax
+
+```csharp
+public void SetRequiredScopesForTool(string toolName, System.Collections.Generic.IEnumerable<string> scopes)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `toolName` | `string` | The tool name. |
+| `scopes` | `System.Collections.Generic.IEnumerable<string>` | The required scopes for the tool. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *toolName* is null or whitespace. |
+| `ArgumentNullException` | Thrown when *scopes* is null. |
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the scope authorization options.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A summary of the scope authorization configuration.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the scope authorization options for consistency and completeness.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or an empty collection if the options are valid.
+

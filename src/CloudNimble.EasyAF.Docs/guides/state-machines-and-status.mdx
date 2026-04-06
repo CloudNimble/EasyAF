@@ -1,0 +1,511 @@
+---
+title: 'State Machines & Status'
+sidebarTitle: 'State Machines'
+description: 'Sophisticated state machine and status management through database-driven enumerations'
+icon: 'diagram-project'
+---
+
+# State Machines and Status Enums Documentation
+
+## Overview
+
+EasyAF provides a sophisticated state machine and status management system through database-driven enumerations. This approach allows dynamic workflow configuration without code changes while maintaining type safety and data integrity.
+
+## Core Concepts
+
+### Database-Driven Enumerations
+
+Traditional enums are compile-time constants. EasyAF's database-driven approach provides:
+- **Runtime Configurability**: Add/modify states without recompiling
+- **Historical Integrity**: Old records maintain valid references
+- **Rich Metadata**: States include display text, instructions, and transitions
+- **Active/Inactive States**: Disable states without breaking existing data
+
+### Status vs State
+
+- **Status**: Simple categorization (e.g., Active, Inactive, Pending)
+- **State**: Complex workflow positions with transitions (e.g., Created → Processing → Completed)
+
+## Interface Hierarchy
+
+### Base Interfaces
+
+#### IDbEnum
+Foundation for all database enumerations:
+
+```csharp
+public interface IDbEnum : IIdentifiable<Guid>, IActiveTrackable, IHumanReadable, ISortable
+{
+    // Combines:
+    // - Guid Id (unique identifier)
+    // - bool IsActive (enabled/disabled)
+    // - string DisplayName (user-friendly text)
+    // - int SortOrder (ordering/progression)
+}
+```
+
+#### IActiveTrackable
+Controls availability:
+```csharp
+public interface IActiveTrackable
+{
+    bool IsActive { get; set; }  // False = hidden from new selections
+}
+```
+
+#### IHumanReadable
+User-facing text:
+```csharp
+public interface IHumanReadable
+{
+    string DisplayName { get; set; }  // "Pending Approval"
+}
+```
+
+#### ISortable
+Defines order and progression:
+```csharp
+public interface ISortable
+{
+    int SortOrder { get; set; }  // 0, 10, 20, etc.
+}
+```
+
+### Status Interfaces
+
+#### IDbStatusEnum
+Simple status enumeration:
+```csharp
+public interface IDbStatusEnum : IDbEnum
+{
+    // Inherits all IDbEnum properties
+    // No additional properties - simple categorization
+}
+```
+
+#### IHasStatus<T>
+Entities with status:
+```csharp
+public interface IHasStatus<T> : IIdentifiable<Guid> 
+    where T : class, IDbStatusEnum
+{
+    T StatusType { get; set; }        // Navigation property
+    Guid StatusTypeId { get; set; }   // Foreign key
+}
+```
+
+### State Machine Interfaces
+
+#### IDbStateEnum
+Rich state with transitions:
+```csharp
+public interface IDbStateEnum : IDbEnum
+{
+    // Instructions for current state
+    string InstructionText { get; set; }
+    
+    // Primary transition (success path)
+    string PrimaryTargetDisplayText { get; set; }   // "Approve"
+    int PrimaryTargetSortOrder { get; set; }        // Next state: 20
+    
+    // Secondary transition (alternate path)
+    string SecondaryTargetDisplayText { get; set; } // "Reject"
+    int SecondaryTargetSortOrder { get; set; }      // Alt state: 99
+}
+```
+
+#### IHasState<T>
+Entities in state machine:
+```csharp
+public interface IHasState<T> : IIdentifiable<Guid> 
+    where T : class, IDbStateEnum
+{
+    T StateType { get; set; }        // Navigation property
+    Guid StateTypeId { get; set; }   // Foreign key
+}
+```
+
+## Implementation Examples
+
+### Status Entity
+
+Simple status tracking for invoices:
+
+```csharp
+// Status type definition
+public class InvoiceStatus : DbObservableObject, IDbStatusEnum
+{
+    public Guid Id { get; set; }
+    public string DisplayName { get; set; }
+    public int SortOrder { get; set; }
+    public bool IsActive { get; set; }
+}
+
+// Entity using status
+public class Invoice : DbObservableObject, IHasStatus<InvoiceStatus>
+{
+    public Guid Id { get; set; }
+    public string InvoiceNumber { get; set; }
+    public decimal Amount { get; set; }
+    
+    // Status relationship
+    public Guid StatusTypeId { get; set; }
+    public InvoiceStatus StatusType { get; set; }
+}
+
+// Database seed data
+var statuses = new[]
+{
+    new InvoiceStatus { Id = Guid.NewGuid(), DisplayName = "Draft", SortOrder = 0, IsActive = true },
+    new InvoiceStatus { Id = Guid.NewGuid(), DisplayName = "Sent", SortOrder = 10, IsActive = true },
+    new InvoiceStatus { Id = Guid.NewGuid(), DisplayName = "Paid", SortOrder = 20, IsActive = true },
+    new InvoiceStatus { Id = Guid.NewGuid(), DisplayName = "Overdue", SortOrder = 30, IsActive = true },
+    new InvoiceStatus { Id = Guid.NewGuid(), DisplayName = "Cancelled", SortOrder = 99, IsActive = true }
+};
+```
+
+### State Machine Entity
+
+Complex workflow with transitions:
+
+```csharp
+// State type with transitions
+public class ApprovalState : DbObservableObject, IDbStateEnum
+{
+    public Guid Id { get; set; }
+    public string DisplayName { get; set; }
+    public int SortOrder { get; set; }
+    public bool IsActive { get; set; }
+    
+    // State machine specific
+    public string InstructionText { get; set; }
+    public string PrimaryTargetDisplayText { get; set; }
+    public int PrimaryTargetSortOrder { get; set; }
+    public string SecondaryTargetDisplayText { get; set; }
+    public int SecondaryTargetSortOrder { get; set; }
+}
+
+// Entity in workflow
+public class ApprovalRequest : DbObservableObject, IHasState<ApprovalState>
+{
+    public Guid Id { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    
+    // State relationship
+    public Guid StateTypeId { get; set; }
+    public ApprovalState StateType { get; set; }
+}
+
+// Database seed data with transitions
+var states = new[]
+{
+    new ApprovalState 
+    { 
+        Id = Guid.NewGuid(),
+        DisplayName = "Created",
+        SortOrder = 0,
+        IsActive = true,
+        InstructionText = "Request created and awaiting submission",
+        PrimaryTargetDisplayText = "Submit for Review",
+        PrimaryTargetSortOrder = 10,
+        SecondaryTargetDisplayText = "Cancel",
+        SecondaryTargetSortOrder = 98
+    },
+    new ApprovalState
+    {
+        Id = Guid.NewGuid(),
+        DisplayName = "Under Review",
+        SortOrder = 10,
+        IsActive = true,
+        InstructionText = "Request is being reviewed by approver",
+        PrimaryTargetDisplayText = "Approve",
+        PrimaryTargetSortOrder = 20,
+        SecondaryTargetDisplayText = "Reject",
+        SecondaryTargetSortOrder = 99
+    },
+    new ApprovalState
+    {
+        Id = Guid.NewGuid(),
+        DisplayName = "Approved",
+        SortOrder = 20,
+        IsActive = true,
+        InstructionText = "Request has been approved",
+        PrimaryTargetDisplayText = "Complete",
+        PrimaryTargetSortOrder = 100,
+        SecondaryTargetDisplayText = "Revert to Review",
+        SecondaryTargetSortOrder = 10
+    }
+};
+```
+
+## Manager Integration
+
+### StatusEntityManager Usage
+
+```csharp
+public class InvoiceManager : StatusEntityManager<AppContext, Invoice, Guid, InvoiceStatus>
+{
+    public InvoiceManager(AppContext context, IMessagePublisher publisher)
+        : base(context, publisher) 
+    {
+        Initialize();  // Load status types
+    }
+    
+    public async Task<bool> MarkAsPaid(Invoice invoice)
+    {
+        // Update to "Paid" status (sortOrder = 20)
+        var result = await UpdateStatusAsync(invoice, 20);
+        
+        if (result)
+        {
+            await MessagePublisher.PublishAsync(new InvoicePaidEvent 
+            { 
+                InvoiceId = invoice.Id 
+            });
+        }
+        
+        return result;
+    }
+    
+    public async Task<List<Invoice>> GetOverdueInvoices()
+    {
+        var overdueStatus = StatusTypes.First(s => s.DisplayName == "Overdue");
+        
+        return await DataContext.Invoices
+            .Where(i => i.StatusTypeId == overdueStatus.Id)
+            .ToListAsync();
+    }
+}
+```
+
+### StateMachineEntityManager Usage
+
+```csharp
+public class ApprovalManager : StateMachineEntityManager<AppContext, ApprovalRequest, Guid, ApprovalState>
+{
+    public ApprovalManager(AppContext context, IMessagePublisher publisher)
+        : base(context, publisher) 
+    {
+        Initialize();  // Load state types
+    }
+    
+    public async Task<bool> SubmitForReview(ApprovalRequest request)
+    {
+        // Validate current state
+        if (request.StateType.SortOrder != 0)
+            throw new InvalidOperationException("Can only submit from Created state");
+        
+        // Transition to "Under Review" (sortOrder = 10)
+        return await UpdateStateAsync(request, 10);
+    }
+    
+    public async Task<bool> Approve(ApprovalRequest request)
+    {
+        // Must be in review state
+        if (request.StateType.SortOrder != 10)
+            throw new InvalidOperationException("Can only approve from Under Review state");
+        
+        // Use primary transition from current state
+        var targetOrder = request.StateType.PrimaryTargetSortOrder;
+        return await UpdateStateAsync(request, targetOrder);
+    }
+    
+    public async Task<bool> Reject(ApprovalRequest request, string reason)
+    {
+        // Use secondary transition
+        var targetOrder = request.StateType.SecondaryTargetSortOrder;
+        
+        var result = await UpdateStateAsync(request, targetOrder);
+        
+        if (result)
+        {
+            // Log rejection reason
+            await LogRejection(request, reason);
+        }
+        
+        return result;
+    }
+}
+```
+
+## Standard State Machine Conventions
+
+### Sort Order Standards
+
+StateMachineEntityManager provides standard methods with conventional sort orders:
+
+- **0**: Created/Initial (SetCreatedAsync)
+- **1-97**: Custom intermediate states
+- **98**: Cancelled - Terminal state (SetCancelledAsync)
+- **99**: Failed - Terminal state with error (SetFailedAsync)
+- **100**: Completed - Success terminal state (SetCompletedAsync)
+
+### Terminal States
+
+States with sort orders 98-100 are considered terminal:
+- No outgoing transitions
+- Workflow ends
+- May allow reset to initial state
+
+## Advanced Patterns
+
+### Dynamic State Validation
+
+```csharp
+public bool CanTransitionTo(ApprovalState currentState, int targetSortOrder)
+{
+    // Check primary transition
+    if (currentState.PrimaryTargetSortOrder == targetSortOrder)
+        return true;
+    
+    // Check secondary transition
+    if (currentState.SecondaryTargetSortOrder == targetSortOrder)
+        return true;
+    
+    // Check if going backwards is allowed (custom logic)
+    if (targetSortOrder < currentState.SortOrder && AllowBackwardTransition)
+        return true;
+    
+    return false;
+}
+```
+
+### State History Tracking
+
+```csharp
+public class StateHistory : DbObservableObject
+{
+    public Guid Id { get; set; }
+    public Guid EntityId { get; set; }
+    public Guid FromStateId { get; set; }
+    public Guid ToStateId { get; set; }
+    public DateTimeOffset TransitionDate { get; set; }
+    public Guid TransitionedById { get; set; }
+    public string Notes { get; set; }
+}
+
+public override async Task<bool> UpdateStateAsync(TEntity entity, int sortOrder)
+{
+    var fromState = entity.StateTypeId;
+    var result = await base.UpdateStateAsync(entity, sortOrder);
+    
+    if (result)
+    {
+        // Record transition
+        await DataContext.StateHistories.AddAsync(new StateHistory
+        {
+            EntityId = entity.Id,
+            FromStateId = fromState,
+            ToStateId = entity.StateTypeId,
+            TransitionDate = DateTime.UtcNow,
+            TransitionedById = ClaimsPrincipal.Current.GetIdClaim()
+        });
+    }
+    
+    return result;
+}
+```
+
+### Conditional Transitions
+
+```csharp
+public async Task<bool> ProcessStateTransition(ApprovalRequest request)
+{
+    var currentState = request.StateType;
+    
+    // Evaluate conditions for primary path
+    if (await EvaluatePrimaryConditions(request))
+    {
+        return await UpdateStateAsync(request, currentState.PrimaryTargetSortOrder);
+    }
+    
+    // Fall back to secondary path
+    return await UpdateStateAsync(request, currentState.SecondaryTargetSortOrder);
+}
+
+private async Task<bool> EvaluatePrimaryConditions(ApprovalRequest request)
+{
+    // Business logic for transition conditions
+    return request.Amount < 10000 && request.Priority != "High";
+}
+```
+
+### Parallel States
+
+```csharp
+public interface IHasParallelStates<T> where T : class, IDbStateEnum
+{
+    Guid PrimaryStateTypeId { get; set; }
+    T PrimaryStateType { get; set; }
+    
+    Guid SecondaryStateTypeId { get; set; }
+    T SecondaryStateType { get; set; }
+}
+```
+
+## UI Integration
+
+### Display Current State
+
+```csharp
+@if (Model.StateType != null)
+{
+    <div class="state-display">
+        <h3>@Model.StateType.DisplayName</h3>
+        <p>@Model.StateType.InstructionText</p>
+        
+        @if (!string.IsNullOrWhiteSpace(Model.StateType.PrimaryTargetDisplayText))
+        {
+            <button onclick="@(() => TransitionPrimary())">
+                @Model.StateType.PrimaryTargetDisplayText
+            </button>
+        }
+        
+        @if (!string.IsNullOrWhiteSpace(Model.StateType.SecondaryTargetDisplayText))
+        {
+            <button onclick="@(() => TransitionSecondary())">
+                @Model.StateType.SecondaryTargetDisplayText
+            </button>
+        }
+    </div>
+}
+```
+
+### State Visualization
+
+```csharp
+public class StateVisualization
+{
+    public List<StateNode> GetWorkflowDiagram<T>() where T : class, IDbStateEnum
+    {
+        var states = DataContext.Set<T>()
+            .Where(s => s.IsActive)
+            .OrderBy(s => s.SortOrder)
+            .ToList();
+        
+        return states.Select(s => new StateNode
+        {
+            Id = s.Id,
+            Label = s.DisplayName,
+            Position = s.SortOrder,
+            PrimaryTarget = s.PrimaryTargetSortOrder,
+            SecondaryTarget = s.SecondaryTargetSortOrder,
+            IsTerminal = s.SortOrder >= 98
+        }).ToList();
+    }
+}
+```
+
+## Best Practices
+
+1. **Use SortOrder consistently**: Maintain gaps (0, 10, 20) for future states
+2. **Keep transitions simple**: Avoid complex branching when possible
+3. **Document state meanings**: Clear DisplayName and InstructionText
+4. **Validate transitions**: Check business rules before state changes
+5. **Track history**: Log all state transitions for audit
+6. **Handle concurrency**: Use optimistic locking for state updates
+7. **Cache state types**: Initialize() once, reuse cached values
+8. **Test edge cases**: Terminal states, backwards transitions
+9. **Provide clear UI**: Show available actions based on current state
+10. **Plan for inactive states**: Design migration path for deprecated states

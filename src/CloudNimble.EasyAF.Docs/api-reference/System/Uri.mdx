@@ -1,0 +1,64 @@
+---
+title: Uri
+description: "Extension methods for Uri from System.Runtime"
+icon: file-brackets-curly
+keywords: ['Uri', 'System.Uri', 'System', 'error']
+---
+
+## Definition
+
+**Assembly:** System.Runtime.dll
+
+**Namespace:** System
+
+## Syntax
+
+```csharp
+System.Uri
+```
+
+## Summary
+
+This type is defined in System.Runtime.
+
+## Remarks
+
+See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/system.uri) for more information about the rest of the API.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToODataUri <Badge color="green">Extension</Badge>
+
+<Note>Extension method from `System.EasyAF_Http_UriExtensions`</Note>
+
+Creates an properly-constructed OData Uri with the correct querystring values, if specified.
+
+#### Syntax
+
+```csharp
+public static System.Uri ToODataUri(System.Uri uri, bool dollarSign = true, string filter = null, System.Nullable<int> top = null, System.Nullable<int> skip = null, string orderby = null, string expand = null, string select = null, System.Nullable<bool> count = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `uri` | `System.Uri` | The [Uri](/api-reference/System/Uri) instance to extend. |
+| `dollarSign` | `bool` | Specifies whether or not the query string name should have a "$" in it. Defaults to [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). |
+| `filter` | `string` | The filter. |
+| `top` | `System.Nullable<int>` | An [Int32](https://learn.microsoft.com/dotnet/api/system.int32) representing the number of records to take. |
+| `skip` | `System.Nullable<int>` | An [Int32](https://learn.microsoft.com/dotnet/api/system.int32) representing the number of records to skip over. |
+| `orderby` | `string` | The orderby. |
+| `expand` | `string` | The expand. |
+| `select` | `string` | The select. |
+| `count` | `System.Nullable<bool>` | A [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) representing whether to return a count of the total number of records in the response. |
+
+#### Returns
+
+Type: `System.Uri`
+A new [Uri](/api-reference/System/Uri) instance with a properly-formatted OData-compatible query string.
+
+#### Remarks
+
+Inspired by https://github.com/radzenhq/radzen-blazor/blob/master/Radzen.Blazor/OData.cs#L235, but performs better.
+

@@ -1,0 +1,62 @@
+---
+title: IHasStatus
+description: "An interface that specifes an implementing Entity contains a child Entity of T that implements [IDbStatusEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStat..."
+icon: plug
+keywords: ['IHasStatus', 'CloudNimble.EasyAF.Core.IHasStatus<T>', 'CloudNimble.EasyAF.Core', 'interface', 'CloudNimble.EasyAF.Core.IIdentifiable<System.Guid>']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.IHasStatus<T>
+```
+
+## Summary
+
+An interface that specifes an implementing Entity contains a child Entity of T that implements [IDbStatusEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStatusEnum) and
+represents the Entity's current status.
+
+## Type Parameters
+
+- `T` - The type implementing [IDbStatusEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStatusEnum).
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> StatusType <Badge color="orange">Abstract</Badge>
+
+The populated instance of [IDbStatusEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStatusEnum).
+
+#### Syntax
+
+```csharp
+T StatusType { get; set; }
+```
+
+#### Property Value
+
+Type: `T`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> StatusTypeId <Badge color="orange">Abstract</Badge>
+
+The unique identifier for the SimpleStateMachine [IDbStatusEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStatusEnum).
+
+#### Syntax
+
+```csharp
+System.Guid StatusTypeId { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Guid`
+
+## Related APIs
+
+- CloudNimble.EasyAF.Core.IIdentifiable&lt;System.Guid&gt;
+

@@ -1,0 +1,45 @@
+---
+title: IMcpRouteConvention
+description: "Defines a contract for applying MCP conventions to OData routes."
+icon: plug
+keywords: ['IMcpRouteConvention', 'Microsoft.OData.Mcp.AspNetCore.Routing.IMcpRouteConvention', 'Microsoft.OData.Mcp.AspNetCore.Routing', 'interface']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.AspNetCore.dll
+
+**Namespace:** Microsoft.OData.Mcp.AspNetCore.Routing
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.AspNetCore.Routing.IMcpRouteConvention
+```
+
+## Summary
+
+Defines a contract for applying MCP conventions to OData routes.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ApplyConvention <DocsBadge text="Abstract" variant="warning" />
+
+Applies MCP conventions to the endpoint route builder.
+
+#### Syntax
+
+```csharp
+void ApplyConvention(Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpointRouteBuilder, string routePrefix, string routeName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `endpointRouteBuilder` | `Microsoft.AspNetCore.Routing.IEndpointRouteBuilder` | The endpoint route builder. |
+| `routePrefix` | `string` | The OData route prefix. |
+| `routeName` | `string` | The OData route name. |
+

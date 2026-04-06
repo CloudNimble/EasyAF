@@ -1,0 +1,18 @@
+{
+  "Id": "4df931b8-dea1-4ecf-88cc-bde5f12b752a",
+  "Organizer": {
+    "FirstName": "Robert",
+    "LastName": "McLaws"
+  },
+  "Attendees": [
+    {
+      "FirstName": "Miles",
+      "LastName": "Prowse"
+    },
+    {
+      "FirstName": "James",
+      "LastName": "Caldwell"
+    }
+  ],
+  "DateCreated": "2021-12-13T10:35:09.6786314-05:00"
+}

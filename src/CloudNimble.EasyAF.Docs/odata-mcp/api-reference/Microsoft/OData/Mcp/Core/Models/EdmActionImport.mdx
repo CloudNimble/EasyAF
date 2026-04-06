@@ -1,0 +1,381 @@
+---
+title: EdmActionImport
+description: "Represents an action import in an OData entity container."
+icon: lock
+tag: "SEALED"
+keywords: ['EdmActionImport', 'Microsoft.OData.Mcp.Core.Models.EdmActionImport', 'Microsoft.OData.Mcp.Core.Models', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Models
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Models.EdmActionImport
+```
+
+## Summary
+
+Represents an action import in an OData entity container.
+
+## Remarks
+
+Action imports expose actions as addressable resources in the OData service.
+            They allow actions to be called through the service interface, providing custom
+            operations that can have side effects. Actions are typically invoked using POST requests
+            and can modify the state of the service.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmActionImport](/odata-mcp/api-reference/Microsoft/OData/Mcp/Core/Models/EdmActionImport) class.
+
+#### Syntax
+
+```csharp
+public EdmActionImport()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [EdmActionImport](/odata-mcp/api-reference/Microsoft/OData/Mcp/Core/Models/EdmActionImport) class with the specified name and action.
+
+#### Syntax
+
+```csharp
+public EdmActionImport(string name, string action)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The name of the action import. |
+| `action` | `string` | The fully qualified name of the action being imported. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *name* or *action* is null or whitespace. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Action
+
+Gets or sets the fully qualified name of the action being imported.
+
+#### Syntax
+
+```csharp
+public required string Action { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The namespace and name of the action that this import exposes.
+
+#### Remarks
+
+This references an action defined elsewhere in the model. The action import
+            makes the action accessible as part of the entity container's interface.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Annotations
+
+Gets or sets the annotations for this action import.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> Annotations { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of annotations that provide additional metadata about the action import.
+
+#### Remarks
+
+Annotations can be used to specify additional behaviors, constraints, or metadata
+            that are not captured by the standard OData model elements.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EntitySet
+
+Gets or sets the entity set associated with this action import.
+
+#### Syntax
+
+```csharp
+public string EntitySet { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The name of the entity set, or `null` if the action doesn't return entities from a specific set.
+
+#### Remarks
+
+When the action returns entities, this property specifies which entity set
+            those entities belong to. This is important for establishing the correct context
+            for navigation properties and other operations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Name
+
+Gets or sets the name of the action import.
+
+#### Syntax
+
+```csharp
+public required string Name { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The name used to address this action import in OData URLs.
+
+#### Remarks
+
+The action import name appears in the URL path when invoking the action.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddAnnotation
+
+Adds an annotation to this action import.
+
+#### Syntax
+
+```csharp
+public void AddAnnotation(string term, object value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `term` | `string` | The annotation term. |
+| `value` | `object` | The annotation value. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *term* is null or whitespace. |
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Override" variant="info" />
+
+Determines whether the specified object is equal to the current action import.
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | The object to compare with the current action import. |
+
+#### Returns
+
+Type: `bool`
+`true` if the specified object is equal to the current action import; otherwise, `false`.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetAnnotation
+
+Gets an annotation value by term.
+
+#### Syntax
+
+```csharp
+public T GetAnnotation<T>(string term)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `term` | `string` | The annotation term. |
+
+#### Returns
+
+Type: `T?`
+The annotation value, or the default value of *T* if not found.
+
+#### Type Parameters
+
+- `T` - The type of the annotation value.
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Override" variant="info" />
+
+Returns a hash code for the current action import.
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+A hash code for the current action import.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the action import.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A string containing the action import name and action.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

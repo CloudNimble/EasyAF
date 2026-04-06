@@ -1,0 +1,154 @@
+---
+title: DateTimeOffset
+description: "Extension methods for DateTimeOffset from System.Runtime"
+icon: file-brackets-curly
+keywords: ['DateTimeOffset', 'System.DateTimeOffset', 'System', 'error']
+---
+
+## Definition
+
+**Assembly:** System.Runtime.dll
+
+**Namespace:** System
+
+## Syntax
+
+```csharp
+System.DateTimeOffset
+```
+
+## Summary
+
+This type is defined in System.Runtime.
+
+## Remarks
+
+See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/system.datetimeoffset) for more information about the rest of the API.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DaysInMonth <Badge color="green">Extension</Badge>
+
+<Note>Extension method from `System.EasyAF_DateTimeExtensions`</Note>
+
+#### Syntax
+
+```csharp
+public static int DaysInMonth(System.DateTimeOffset value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `System.DateTimeOffset` | - |
+
+#### Returns
+
+Type: `int`
+
+#### Remarks
+
+https://stackoverflow.com/questions/24245523/getting-the-first-and-last-day-of-a-month-using-a-given-datetime-object
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> FirstDayOfMonth <Badge color="green">Extension</Badge>
+
+<Note>Extension method from `System.EasyAF_DateTimeExtensions`</Note>
+
+#### Syntax
+
+```csharp
+public static System.DateTimeOffset FirstDayOfMonth(System.DateTimeOffset value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `System.DateTimeOffset` | - |
+
+#### Returns
+
+Type: `System.DateTimeOffset`
+
+#### Remarks
+
+https://stackoverflow.com/questions/24245523/getting-the-first-and-last-day-of-a-month-using-a-given-datetime-object
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetQuarter <Badge color="green">Extension</Badge>
+
+<Note>Extension method from `System.EasyAF_DateTimeExtensions`</Note>
+
+Calculates the quarter for the given [DateTimeOffset](/api-reference/System/DateTimeOffset), assuming a calendar-based fiscal year.
+
+#### Syntax
+
+```csharp
+public static int GetQuarter(System.DateTimeOffset date)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `date` | `System.DateTimeOffset` | The [DateTimeOffset](/api-reference/System/DateTimeOffset) to use in the calculation. |
+
+#### Returns
+
+Type: `int`
+
+#### Remarks
+
+From https://stackoverflow.com/questions/8698303/how-do-i-discover-the-quarter-of-a-given-date
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetQuarter <Badge color="green">Extension</Badge>
+
+<Note>Extension method from `System.EasyAF_DateTimeExtensions`</Note>
+
+Calculates the quarter for the given [DateTimeOffset](/api-reference/System/DateTimeOffset), assuming a the provided fiscal year begin date.
+
+#### Syntax
+
+```csharp
+public static int GetQuarter(System.DateTimeOffset date, System.DateTimeOffset fiscalYearStart)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `date` | `System.DateTimeOffset` | The [DateTimeOffset](/api-reference/System/DateTimeOffset) to use in the calculation. |
+| `fiscalYearStart` | `System.DateTimeOffset` | The [DateTime](/api-reference/System/DateTime) representing the start day of the fiscal year to use in calculation. |
+
+#### Returns
+
+Type: `int`
+
+#### Remarks
+
+From https://stackoverflow.com/questions/8698303/how-do-i-discover-the-quarter-of-a-given-date
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> LastDayOfMonth <Badge color="green">Extension</Badge>
+
+<Note>Extension method from `System.EasyAF_DateTimeExtensions`</Note>
+
+#### Syntax
+
+```csharp
+public static System.DateTimeOffset LastDayOfMonth(System.DateTimeOffset value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `System.DateTimeOffset` | - |
+
+#### Returns
+
+Type: `System.DateTimeOffset`
+
+#### Remarks
+
+https://stackoverflow.com/questions/24245523/getting-the-first-and-last-day-of-a-month-using-a-given-datetime-object
+

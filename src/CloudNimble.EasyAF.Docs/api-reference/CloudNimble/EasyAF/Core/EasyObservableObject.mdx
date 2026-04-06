@@ -1,0 +1,242 @@
+---
+title: EasyObservableObject
+description: "A base class for objects to implement [INotifyPropertyChanged](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged). Provides..."
+icon: file-brackets-curly
+keywords: ['EasyObservableObject', 'CloudNimble.EasyAF.Core.EasyObservableObject', 'CloudNimble.EasyAF.Core', 'class', 'System.Object', 'System.ComponentModel.INotifyPropertyChanged', 'System.IDisposable']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.EasyObservableObject
+```
+
+## Summary
+
+A base class for objects to implement [INotifyPropertyChanged](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged).
+Provides strongly-typed property change notifications and automatic property setting with change detection.
+
+## Examples
+
+```csharp
+public class Person : EasyObservableObject
+{
+    private string _name;
+    private int _age;
+
+    public string Name
+    {
+        get =&gt; _name;
+        set =&gt; Set(nameof(Name), ref _name, value);
+    }
+
+    public int Age
+    {
+        get =&gt; _age;
+        set =&gt; Set(() =&gt; Age, ref _age, value);
+    }
+}
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [EasyObservableObject](/api-reference/CloudNimble/EasyAF/Core/EasyObservableObject) class.
+
+#### Syntax
+
+```csharp
+public EasyObservableObject()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Clone
+
+Creates a deep copy of the current object using JSON serialization.
+
+#### Syntax
+
+```csharp
+public T Clone<T>() where T : CloudNimble.EasyAF.Core.EasyObservableObject
+```
+
+#### Returns
+
+Type: `T`
+A new instance of type *T* that is a deep copy of the current object.
+
+#### Type Parameters
+
+- `T` - The type of object to clone. Must inherit from [EasyObservableObject](/api-reference/CloudNimble/EasyAF/Core/EasyObservableObject).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `JsonException` | Thrown when the object cannot be serialized or deserialized. |
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Dispose
+
+Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+
+#### Syntax
+
+```csharp
+public void Dispose()
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Events
+
+### <Icon icon="bell" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PropertyChanged
+
+Occurs when a property value changes.
+
+#### Syntax
+
+```csharp
+public System.ComponentModel.PropertyChangedEventHandler PropertyChanged
+```
+
+## Related APIs
+
+- System.ComponentModel.INotifyPropertyChanged
+- System.IDisposable
+

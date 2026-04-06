@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net9.0;net8.0;</TargetFrameworks>
+        <DefineConstants>$(DefineConstants)TRACE;NEWTONSOFT</DefineConstants>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Breakdance.Assemblies" Version="*-*" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.*" />
+        <PackageReference Include="System.Text.Json" Version="9.*" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.*" />
+        <PackageReference Include="System.text.Json" Version="8.*" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CloudNimble.EasyAF.Http.SystemTextJson\CloudNimble.EasyAF.Http.SystemTextJson.csproj" />
+        <ProjectReference Include="..\CloudNimble.EasyAF.Http\CloudNimble.EasyAF.Http.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\CloudNimble.EasyAF.Tests.Http.NewtonsoftJson\HttpResponseMessageExtensionsTests.cs" Link="HttpResponseMessageExtensionsTests.cs" />
+        <Compile Include="..\CloudNimble.EasyAF.Tests.Http.NewtonsoftJson\Models\Book.cs" Link="Models\Book.cs" />
+        <Compile Include="..\CloudNimble.EasyAF.Tests.Http.NewtonsoftJson\Models\Person.cs" Link="Models\Person.cs" />
+        <Compile Include="..\CloudNimble.EasyAF.Tests.Http.NewtonsoftJson\Models\Publisher.cs" Link="Models\Publisher.cs" />
+    </ItemGroup>
+
+</Project>

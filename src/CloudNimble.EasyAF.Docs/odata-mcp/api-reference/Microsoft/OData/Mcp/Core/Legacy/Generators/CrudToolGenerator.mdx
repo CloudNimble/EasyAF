@@ -1,0 +1,302 @@
+---
+title: CrudToolGenerator
+description: "Generates CRUD (Create, Read, Update, Delete) MCP tools from OData entity types."
+icon: lock
+tag: "SEALED"
+keywords: ['CrudToolGenerator', 'Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerator', 'Microsoft.OData.Mcp.Core.Legacy.Generators', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Legacy.Generators
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerator
+```
+
+## Summary
+
+Generates CRUD (Create, Read, Update, Delete) MCP tools from OData entity types.
+
+## Remarks
+
+This generator creates MCP tools that allow AI models to perform basic data operations
+            on OData entities. It generates separate tools for each CRUD operation, with proper
+            validation, documentation, and parameter handling.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [CrudToolGenerator](/odata-mcp/api-reference/Microsoft/OData/Mcp/Core/Legacy/Generators/CrudToolGenerator) class.
+
+#### Syntax
+
+```csharp
+public CrudToolGenerator(Microsoft.Extensions.Logging.ILogger<Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerator> logger)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `logger` | `Microsoft.Extensions.Logging.ILogger<Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerator>` | The logger instance. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateAllCrudToolsAsync
+
+Generates all CRUD tools for the specified entity set.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Legacy.McpTool>> GenerateAllCrudToolsAsync(Microsoft.OData.Mcp.Core.Models.EdmEntitySet entitySet, Microsoft.OData.Mcp.Core.Models.EdmEntityType entityType, Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions options, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySet` | `Microsoft.OData.Mcp.Core.Models.EdmEntitySet` | The entity set to generate tools for. |
+| `entityType` | `Microsoft.OData.Mcp.Core.Models.EdmEntityType` | The entity type definition. |
+| `options` | `Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions` | Options controlling tool generation behavior. |
+| `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token for the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.OData.Mcp.Core.Legacy.McpTool>>`
+A collection of generated MCP tools for CRUD operations.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateCreateToolAsync
+
+Generates a CREATE tool for the specified entity type.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Legacy.McpTool> GenerateCreateToolAsync(Microsoft.OData.Mcp.Core.Models.EdmEntitySet entitySet, Microsoft.OData.Mcp.Core.Models.EdmEntityType entityType, Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions options, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySet` | `Microsoft.OData.Mcp.Core.Models.EdmEntitySet` | The entity set to create entities in. |
+| `entityType` | `Microsoft.OData.Mcp.Core.Models.EdmEntityType` | The entity type definition. |
+| `options` | `Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions` | Options controlling tool generation behavior. |
+| `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token for the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Legacy.McpTool>`
+A CREATE MCP tool for the entity type.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateDeleteToolAsync
+
+Generates a DELETE tool for the specified entity type.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Legacy.McpTool> GenerateDeleteToolAsync(Microsoft.OData.Mcp.Core.Models.EdmEntitySet entitySet, Microsoft.OData.Mcp.Core.Models.EdmEntityType entityType, Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions options, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySet` | `Microsoft.OData.Mcp.Core.Models.EdmEntitySet` | The entity set containing entities to delete. |
+| `entityType` | `Microsoft.OData.Mcp.Core.Models.EdmEntityType` | The entity type definition. |
+| `options` | `Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions` | Options controlling tool generation behavior. |
+| `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token for the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Legacy.McpTool>`
+A DELETE MCP tool for the entity type.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateReadToolAsync
+
+Generates a READ tool for the specified entity type.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Legacy.McpTool> GenerateReadToolAsync(Microsoft.OData.Mcp.Core.Models.EdmEntitySet entitySet, Microsoft.OData.Mcp.Core.Models.EdmEntityType entityType, Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions options, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySet` | `Microsoft.OData.Mcp.Core.Models.EdmEntitySet` | The entity set to read entities from. |
+| `entityType` | `Microsoft.OData.Mcp.Core.Models.EdmEntityType` | The entity type definition. |
+| `options` | `Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions` | Options controlling tool generation behavior. |
+| `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token for the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Legacy.McpTool>`
+A READ MCP tool for the entity type.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateUpdateToolAsync
+
+Generates an UPDATE tool for the specified entity type.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Legacy.McpTool> GenerateUpdateToolAsync(Microsoft.OData.Mcp.Core.Models.EdmEntitySet entitySet, Microsoft.OData.Mcp.Core.Models.EdmEntityType entityType, Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions options, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `entitySet` | `Microsoft.OData.Mcp.Core.Models.EdmEntitySet` | The entity set containing entities to update. |
+| `entityType` | `Microsoft.OData.Mcp.Core.Models.EdmEntityType` | The entity type definition. |
+| `options` | `Microsoft.OData.Mcp.Core.Legacy.Generators.CrudToolGenerationOptions` | Options controlling tool generation behavior. |
+| `cancellationToken` | `System.Threading.CancellationToken` | Cancellation token for the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<Microsoft.OData.Mcp.Core.Legacy.McpTool>`
+An UPDATE MCP tool for the entity type.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

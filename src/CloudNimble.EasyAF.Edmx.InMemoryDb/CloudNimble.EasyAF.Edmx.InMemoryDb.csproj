@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;</TargetFrameworks>
+        <DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
+        <DefineConstants>TRACE;EFCLASSIC</DefineConstants>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CSharp" Version="4.*" />
+        <PackageReference Include="NMemory" Version="3.*" />
+        <PackageReference Include="System.Reflection.Emit" Version="4.*" />
+        <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.*" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="$(MSBuildThisFileDirectory)EffortProviderManifest.xml">
+            <LogicalName>CloudNimble.EasyAF.Edmx.InMemoryDb.Provider.EffortProviderManifest.xml</LogicalName>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="**\*.Designer.cs">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>$([System.String]::Copy('%(FileName)').Replace('.Designer', '.resx'))</DependentUpon>
+        </Compile>
+        <EmbeddedResource Update="**\*.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>$([System.String]::Copy('%(FileName)')).Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CloudNimble.EasyAF.Edmx\CloudNimble.EasyAF.Edmx.csproj" />
+    </ItemGroup>
+
+</Project>

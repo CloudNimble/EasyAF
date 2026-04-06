@@ -1,0 +1,333 @@
+---
+title: NotebookEditToolResponse
+description: "Represents the response payload returned by the Claude Code NotebookEdit tool after             modifying a Jupyter notebook cell."
+icon: file-brackets-curly
+keywords: ['NotebookEditToolResponse', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.NotebookEditToolResponse', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks.Tools.Responses
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.NotebookEditToolResponse
+```
+
+## Summary
+
+Represents the response payload returned by the Claude Code NotebookEdit tool after
+            modifying a Jupyter notebook cell.
+
+## Remarks
+
+
+
+
+            The NotebookEdit tool modifies Jupyter notebook (.ipynb) files by replacing, inserting,
+            or deleting cells. Jupyter notebooks are interactive documents that combine code, text,
+            and visualizations, commonly used for data analysis and scientific computing.
+            This response is received in the [NotebookEditPostToolUsePayload](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/NotebookEditPostToolUsePayload)
+            when the `tool_name` is "NotebookEdit".
+            
+
+
+
+
+            Supported edit operations:
+            
+- `replace` - Replaces the content of an existing cell
+- `insert` - Adds a new cell at a specified position
+- `delete` - Removes a cell from the notebook
+
+
+
+
+
+            Example JSON payload:
+            ```csharp
+{
+  "notebookPath": "C:\\Projects\\Analysis\\data_exploration.ipynb",
+  "cellId": "cell_abc123",
+  "editMode": "replace",
+  "success": true
+}
+```
+
+
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public NotebookEditToolResponse()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CellId
+
+Gets or sets the identifier of the cell that was edited, inserted, or deleted.
+
+#### Syntax
+
+```csharp
+public string CellId { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+
+#### Remarks
+
+
+
+
+            Cell IDs are unique identifiers within a notebook that persist across edits.
+            For insert operations, this is the ID of the newly created cell.
+            For delete operations, this is the ID of the cell that was removed.
+            
+
+
+
+
+            May be `null` if the operation did not involve a specific cell or if
+            the cell was identified by index rather than ID.
+            
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> EditMode
+
+Gets or sets the type of edit operation that was performed.
+
+#### Syntax
+
+```csharp
+public string EditMode { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+
+#### Remarks
+
+
+
+
+            Indicates which operation was executed:
+            
+- `"replace"` - The cell's source content was replaced
+- `"insert"` - A new cell was added to the notebook
+- `"delete"` - A cell was removed from the notebook
+
+
+
+
+
+            This should match the [NotebookEditToolInput.EditMode](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Inputs/NotebookEditToolInput#editmode) that was
+            specified in the input, defaulting to `"replace"` if not specified.
+            
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NotebookPath
+
+Gets or sets the absolute path to the Jupyter notebook that was edited.
+
+#### Syntax
+
+```csharp
+public string NotebookPath { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Examples
+
+```csharp
+"C:\\Users\\Developer\\Projects\\Analysis\\data_exploration.ipynb"
+```
+
+#### Remarks
+
+This is always an absolute path, regardless of whether the original request
+            used a relative or absolute path. The file extension will be `.ipynb`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Success
+
+Gets or sets a value indicating whether the notebook edit was successful.
+
+#### Syntax
+
+```csharp
+public bool Success { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+#### Remarks
+
+
+
+
+            When `true`, the notebook was successfully modified and saved.
+            
+
+
+
+
+            When `false`, the edit operation failed. Common failure reasons include:
+            
+- The specified cell ID or index does not exist
+- The notebook file could not be written (permissions, disk space)
+- The notebook format is invalid or corrupted
+- Required parameters were missing or invalid
+
+
+
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

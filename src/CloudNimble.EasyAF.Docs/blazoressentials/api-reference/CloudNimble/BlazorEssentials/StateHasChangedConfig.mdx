@@ -1,0 +1,302 @@
+---
+title: StateHasChangedConfig
+icon: file-brackets-curly
+keywords: ['StateHasChangedConfig', 'CloudNimble.BlazorEssentials.StateHasChangedConfig', 'CloudNimble.BlazorEssentials', 'class', 'System.Object', 'System.IDisposable']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.BlazorEssentials.dll
+
+**Namespace:** CloudNimble.BlazorEssentials
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.BlazorEssentials.StateHasChangedConfig
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public StateHasChangedConfig()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Action
+
+Allows the current Blazor container to pass the StateHasChanged action back to the BlazorObservable so ViewModel operations can 
+            trigger state changes.
+
+#### Syntax
+
+```csharp
+public System.Action Action { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Action`
+
+#### Remarks
+
+Will optionally drop intermediate StateHasChanged calls in a rapidly-updating environment, based on [StateHasChangedConfig.DelayMode](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedConfig#delaymode) 
+            and [StateHasChangedConfig.DelayInterval](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedConfig#delayinterval).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> BlazorObservableType
+
+The [BlazorObservable](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/BlazorObservable)[Type](https://learn.microsoft.com/dotnet/api/system.type) associated with this Configuration instance.
+
+#### Syntax
+
+```csharp
+public System.Type BlazorObservableType { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Type`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Count
+
+#### Syntax
+
+```csharp
+public int Count { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+#### Remarks
+
+This is public so
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DebugMode
+
+Flag for whether or not the render count and helpful debug feedback/warnings should be logged to the [Console](https://learn.microsoft.com/dotnet/api/system.console).
+            Default is [StateHasChangedDebugMode.Off](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedDebugMode#off).
+
+#### Syntax
+
+```csharp
+public CloudNimble.BlazorEssentials.StateHasChangedDebugMode DebugMode { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.BlazorEssentials.StateHasChangedDebugMode`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DelayInterval
+
+An [Int32](https://learn.microsoft.com/dotnet/api/system.int32) specifying the number of milliseconds this BlazorObservable should wait between 
+            [StateHasChangedConfig.Action](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedConfig#action) calls. Default is 100 milliseconds.
+
+#### Syntax
+
+```csharp
+public int DelayInterval { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+#### Remarks
+
+[StateHasChangedConfig.DelayMode](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedConfig#delaymode) must be set to [StateHasChangedDelayMode.Debounce](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedDelayMode#debounce) or 
+            [StateHasChangedDelayMode.Throttle](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedDelayMode#throttle) for this setting to take effect.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DelayMode
+
+A [StateHasChangedConfig.DelayMode](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedConfig#delaymode) indicating whether or not this BlazorObservable should reduce the number of times
+            [StateHasChangedConfig.Action](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedConfig#action) should be called in a given [StateHasChangedConfig.DelayInterval](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedConfig#delayinterval)
+            Default is [StateHasChangedDelayMode.Off](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedDelayMode#off).
+
+#### Syntax
+
+```csharp
+public CloudNimble.BlazorEssentials.StateHasChangedDelayMode DelayMode { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.BlazorEssentials.StateHasChangedDelayMode`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Clone
+
+Copies the values from this [StateHasChangedConfig](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedConfig) instance into a new one.
+
+#### Syntax
+
+```csharp
+public CloudNimble.BlazorEssentials.StateHasChangedConfig Clone(CloudNimble.BlazorEssentials.BlazorObservable observable)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `observable` | `CloudNimble.BlazorEssentials.BlazorObservable` | The [BlazorObservable](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/BlazorObservable) instance the new [StateHasChangedConfig](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedConfig) instance will be used for. |
+
+#### Returns
+
+Type: `CloudNimble.BlazorEssentials.StateHasChangedConfig`
+A new [StateHasChangedConfig](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedConfig) instance with the values populated from this instance.
+
+#### Remarks
+
+This is required because if we used DI to inject a [StateHasChangedConfig](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedConfig) instance, we wouldn't be able to
+            have different configurations per `ViewModelBase`2`, AND we would end up overwriting the
+            [StateHasChangedConfig.Action](/blazoressentials/api-reference/CloudNimble/BlazorEssentials/StateHasChangedConfig#action)Actions&lt;/see&gt; from other Pages when the value was set.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Dispose
+
+#### Syntax
+
+```csharp
+public void Dispose()
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- System.IDisposable
+

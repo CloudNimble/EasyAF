@@ -1,0 +1,147 @@
+---
+title: Quickstart
+sidebarTitle: Quickstart
+description: Build a Claude Code hook processor in minutes
+icon: play
+---
+
+<Steps>
+  <Step title="Install the Package">
+    Add ClaudeEssentials to your project:
+
+    <CodeGroup>
+    ```bash .NET CLI
+    dotnet add package ClaudeEssentials
+    ```
+
+    ```powershell Package Manager
+    Install-Package ClaudeEssentials
+    ```
+    </CodeGroup>
+
+    <Tip>
+      For AOT publishing, ensure your project targets .NET 8+ and has `PublishAot` enabled.
+    </Tip>
+  </Step>
+
+  <Step title="Create a Hook Processor">
+    Create a console app that reads JSON from stdin and writes the response to stdout:
+
+    ```csharp Program.cs
+    using CloudNimble.ClaudeEssentials.Hooks;
+    using CloudNimble.ClaudeEssentials.Hooks.Enums;
+    using CloudNimble.ClaudeEssentials.Hooks.Outputs;
+
+    // Read hook input from stdin
+    var inputJson = Console.In.ReadToEnd();
+
+    // Deserialize the input
+    var input = ClaudeHooksSerializer.DeserializePreToolUseInput(inputJson);
+
+    // Create your response
+    var output = new PreToolUseHookOutput<object>
+    {
+        Continue = true,
+        HookSpecificOutput = new PreToolUseSpecificOutput<object>
+        {
+            PermissionDecision = PermissionDecision.Allow,
+            PermissionDecisionReason = "Auto-approved by policy"
+        }
+    };
+
+    // Write JSON to stdout
+    Console.WriteLine(ClaudeHooksSerializer.SerializePreToolUseOutput(output));
+    ```
+  </Step>
+
+  <Step title="Configure Claude Code">
+    Add your hook to Claude Code's `settings.json`:
+
+    ```json settings.json
+    {
+      "hooks": {
+        "PreToolUse": [{
+          "command": "dotnet run --project /path/to/your/project"
+        }]
+      }
+    }
+    ```
+
+    <Note>
+      For production, publish your app as a native executable for faster startup:
+      ```bash
+      dotnet publish -c Release
+      ```
+    </Note>
+  </Step>
+
+  <Step title="Test It Out">
+    Start a Claude Code session. Your hook will now intercept tool calls and apply your custom logic.
+
+    <Check>
+      You're ready to customize Claude's behavior with strongly-typed C# code!
+    </Check>
+  </Step>
+</Steps>
+
+## Common Patterns
+
+<AccordionGroup>
+  <Accordion title="Auto-approve safe tools">
+    ```csharp
+    if (input.ToolName is "Read" or "Glob" or "Grep")
+    {
+        return new PreToolUseHookOutput<object>
+        {
+            Continue = true,
+            HookSpecificOutput = new PreToolUseSpecificOutput<object>
+            {
+                PermissionDecision = PermissionDecision.Allow
+            }
+        };
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Block dangerous commands">
+    ```csharp
+    var command = input.ToolInput?.ToString() ?? "";
+    if (command.Contains("rm -rf"))
+    {
+        return new PreToolUseHookOutput<object>
+        {
+            Continue = true,
+            HookSpecificOutput = new PreToolUseSpecificOutput<object>
+            {
+                PermissionDecision = PermissionDecision.Deny,
+                PermissionDecisionReason = "Dangerous command blocked"
+            }
+        };
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Add context after tool execution">
+    ```csharp
+    return new PostToolUseHookOutput
+    {
+        Continue = true,
+        HookSpecificOutput = new PostToolUseSpecificOutput
+        {
+            AdditionalContext = "Remember to run tests after making changes."
+        }
+    };
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="API Reference" icon="code" href="/claudeessentials/api-reference">
+    Explore all available types and methods
+  </Card>
+  <Card title="Hook Inputs" icon="arrow-right-to-bracket" href="/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Inputs">
+    Learn about input models for each hook type
+  </Card>
+</CardGroup>

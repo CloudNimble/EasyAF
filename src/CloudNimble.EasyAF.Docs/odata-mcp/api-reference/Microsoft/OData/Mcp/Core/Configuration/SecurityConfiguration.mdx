@@ -1,0 +1,601 @@
+---
+title: SecurityConfiguration
+description: "Configuration for security policies and restrictions."
+icon: lock
+tag: "SEALED"
+keywords: ['SecurityConfiguration', 'Microsoft.OData.Mcp.Core.Configuration.SecurityConfiguration', 'Microsoft.OData.Mcp.Core.Configuration', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Configuration
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Configuration.SecurityConfiguration
+```
+
+## Summary
+
+Configuration for security policies and restrictions.
+
+## Remarks
+
+Security configuration includes CORS policies, rate limiting, request size limits,
+            and other security-related settings to protect the MCP server from various threats.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [SecurityConfiguration](/odata-mcp/api-reference/Microsoft/OData/Mcp/Core/Configuration/SecurityConfiguration) class.
+
+#### Syntax
+
+```csharp
+public SecurityConfiguration()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AllowedHosts
+
+Gets or sets the allowed hosts.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> AllowedHosts { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A list of hosts that are allowed to make requests to the server.
+
+#### Remarks
+
+Host restrictions help prevent host header injection attacks
+            and ensure requests are only accepted from legitimate sources.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AllowedHttpMethods
+
+Gets or sets the allowed HTTP methods.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> AllowedHttpMethods { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A list of HTTP methods that are allowed for requests.
+
+#### Remarks
+
+Method restrictions limit the attack surface by only allowing
+            necessary HTTP methods for the application's functionality.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ContentSecurityPolicy
+
+Gets or sets the content security policy.
+
+#### Syntax
+
+```csharp
+public string ContentSecurityPolicy { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The Content Security Policy (CSP) header value.
+
+#### Remarks
+
+CSP helps prevent XSS attacks by controlling which resources
+            the browser is allowed to load for the page.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CustomProperties
+
+Gets or sets custom security properties.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> CustomProperties { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of custom security configuration values.
+
+#### Remarks
+
+Custom properties allow extending the configuration with security
+            settings specific to particular deployment environments or requirements.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DataProtection
+
+Gets or sets the data protection configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.DataProtectionConfiguration DataProtection { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.DataProtectionConfiguration`
+Configuration for protecting sensitive data.
+
+#### Remarks
+
+Data protection configuration specifies how sensitive data should be
+            encrypted, hashed, or otherwise protected both in transit and at rest.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableDetailedErrors
+
+Gets or sets a value indicating whether to include detailed error information in responses.
+
+#### Syntax
+
+```csharp
+public bool EnableDetailedErrors { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to include detailed errors; otherwise, `false`.
+
+#### Remarks
+
+Detailed error information is useful for debugging but can expose sensitive
+            information to attackers. This should be disabled in production.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  EnableRateLimiting
+
+Gets or sets a value indicating whether rate limiting is enabled.
+
+#### Syntax
+
+```csharp
+public bool EnableRateLimiting { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to enable rate limiting; otherwise, `false`.
+
+#### Remarks
+
+Rate limiting protects against denial-of-service attacks and abuse
+            by limiting the number of requests from individual clients.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  InputValidation
+
+Gets or sets the input validation configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.InputValidationConfiguration InputValidation { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.InputValidationConfiguration`
+Configuration for validating user input.
+
+#### Remarks
+
+Input validation helps prevent injection attacks and ensures
+            data integrity by validating all user-provided data.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IpRestrictions
+
+Gets or sets the IP address restrictions.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.IpRestrictionConfiguration IpRestrictions { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.IpRestrictionConfiguration`
+Configuration for IP-based access control.
+
+#### Remarks
+
+IP restrictions provide network-level access control by allowing
+            or denying requests based on client IP addresses.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxQueryParameters
+
+Gets or sets the maximum number of query string parameters.
+
+#### Syntax
+
+```csharp
+public int MaxQueryParameters { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum number of parameters allowed in query strings.
+
+#### Remarks
+
+Parameter count limits prevent parsing-based attacks and ensure
+            predictable request processing performance.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxQueryStringLength
+
+Gets or sets the maximum query string length.
+
+#### Syntax
+
+```csharp
+public int MaxQueryStringLength { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum length allowed for query strings.
+
+#### Remarks
+
+Query string length limits prevent URL-based attacks and ensure
+            compatibility with various web servers and proxies.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxRequestSize
+
+Gets or sets the maximum request size in bytes.
+
+#### Syntax
+
+```csharp
+public long MaxRequestSize { get; set; }
+```
+
+#### Property Value
+
+Type: `long`
+The maximum size allowed for HTTP request bodies.
+
+#### Remarks
+
+Request size limits prevent memory exhaustion attacks and ensure
+            predictable resource usage.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RateLimiting
+
+Gets or sets the rate limiting configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.RateLimitingConfiguration RateLimiting { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.RateLimitingConfiguration`
+Configuration for request rate limiting.
+
+#### Remarks
+
+Rate limiting configuration specifies the limits, time windows,
+            and policies for controlling request rates.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RequireHttps
+
+Gets or sets a value indicating whether HTTPS is required.
+
+#### Syntax
+
+```csharp
+public bool RequireHttps { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to require HTTPS for all requests; otherwise, `false`.
+
+#### Remarks
+
+HTTPS should be required in production environments to protect data in transit.
+            Development environments may disable this for convenience.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SecurityHeaders
+
+Gets or sets the security headers configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.SecurityHeadersConfiguration SecurityHeaders { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.SecurityHeadersConfiguration`
+Configuration for security-related HTTP headers.
+
+#### Remarks
+
+Security headers provide additional protection against various
+            web-based attacks like XSS, clickjacking, and MIME sniffing.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a copy of this configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.SecurityConfiguration Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.SecurityConfiguration`
+A new instance with the same settings.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ForDevelopment
+
+Creates a configuration optimized for development environments.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.SecurityConfiguration ForDevelopment()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.SecurityConfiguration`
+A security configuration suitable for development.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ForProduction
+
+Creates a configuration optimized for production environments.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.SecurityConfiguration ForProduction()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.SecurityConfiguration`
+A security configuration suitable for production.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsHostAllowed
+
+Determines whether the specified host is allowed.
+
+#### Syntax
+
+```csharp
+public bool IsHostAllowed(string host)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `host` | `string` | The host to check. |
+
+#### Returns
+
+Type: `bool`
+`true` if the host is allowed; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IsHttpMethodAllowed
+
+Determines whether the specified HTTP method is allowed.
+
+#### Syntax
+
+```csharp
+public bool IsHttpMethodAllowed(string method)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `method` | `string` | The HTTP method to check. |
+
+#### Returns
+
+Type: `bool`
+`true` if the method is allowed; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MergeWith
+
+Merges another configuration into this one, with the other configuration taking precedence.
+
+#### Syntax
+
+```csharp
+public void MergeWith(Microsoft.OData.Mcp.Core.Configuration.SecurityConfiguration other)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `other` | `Microsoft.OData.Mcp.Core.Configuration.SecurityConfiguration` | The configuration to merge into this one. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *other* is null. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the security configuration.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or empty if the configuration is valid.
+

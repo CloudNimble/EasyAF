@@ -1,0 +1,286 @@
+---
+title: 'Business Layer'
+sidebarTitle: 'Business Layer'
+description: 'Encapsulate business logic, data operations, and entity lifecycle management with manager classes'
+icon: 'layer-group'
+---
+
+# Business Layer Documentation
+
+## Overview
+
+The Business namespace provides a hierarchy of manager classes that encapsulate business logic, data operations, and entity lifecycle management. These managers integrate with Entity Framework, provide automatic audit trail support, and include hooks for custom business logic.
+
+## Class Hierarchy
+
+```
+ManagerBase<TContext>
+    └── EntityManager<TContext, TEntity>
+            └── IdentifiableEntityManager<TContext, TEntity, TId>
+                    ├── StatusEntityManager<TContext, TEntity, TId, TStatusType>
+                    └── StateMachineEntityManager<TContext, TEntity, TId, TStateType>
+```
+
+## ManagerBase
+
+The foundation class providing database context and message publishing capabilities.
+
+### Properties
+- **DataContext**: The Entity Framework DbContext for database operations
+- **MessagePublisher**: IMessagePublisher for event-driven architecture
+
+### Usage
+```csharp
+public class CustomManager : ManagerBase<MyDbContext>
+{
+    public CustomManager(MyDbContext context, IMessagePublisher publisher) 
+        : base(context, publisher) { }
+    
+    public async Task PerformBusinessOperation()
+    {
+        // Access DataContext for queries
+        var data = await DataContext.Customers.ToListAsync();
+        
+        // Publish events
+        await MessagePublisher.PublishAsync(new CustomerEvent());
+    }
+}
+```
+
+## EntityManager
+
+Core manager providing CRUD operations with automatic audit trail support and lifecycle hooks.
+
+### Key Features
+
+- **Automatic Audit Fields**: Populates created/updated timestamps and user IDs
+- **Lifecycle Hooks**: Virtual methods for pre/post operation business logic
+- **Batch Operations**: Efficient handling of multiple entities
+- **Direct Operations**: Bypass entity loading for performance-critical updates/deletes
+- **Interface Caching**: Performance optimization using TypeDictionary
+
+### Lifecycle Hooks
+
+Each CRUD operation provides pre and post hooks:
+
+```csharp
+public class ProductManager : EntityManager<AppContext, Product>
+{
+    public override async Task OnInsertingAsync(Product entity)
+    {
+        await base.OnInsertingAsync(entity);  // Handles audit fields
+        
+        // Custom validation
+        if (string.IsNullOrWhiteSpace(entity.SKU))
+            entity.SKU = GenerateSKU();
+    }
+    
+    public override async Task<bool> OnInsertedAsync(Product entity)
+    {
+        // Send notification
+        await MessagePublisher.PublishAsync(new ProductCreatedEvent 
+        { 
+            ProductId = entity.Id 
+        });
+        
+        return await base.OnInsertedAsync(entity);
+    }
+}
+```
+
+### Audit Field Population
+
+Automatically handles interfaces:
+- **ICreatorTrackable<T>**: Sets CreatedById from ClaimsPrincipal.Current
+- **ICreatedAuditable**: Sets DateCreated to DateTime.UtcNow
+- **IUpdaterTrackable<T>**: Sets UpdatedById from ClaimsPrincipal.Current
+- **IUpdatedAuditable**: Sets DateUpdated to DateTime.UtcNow
+
+### CRUD Operations
+
+#### Insert Operations
+```csharp
+// Single entity
+await manager.InsertAsync(entity, save: true);
+
+// Multiple entities (batch)
+await manager.InsertAsync(entities, save: true);
+
+// With custom context
+await manager.InsertAsync(entity, customContext, save: true);
+```
+
+#### Update Operations
+```csharp
+// Single entity
+await manager.UpdateAsync(entity, save: true);
+
+// Multiple entities
+await manager.UpdateAsync(entities, save: true);
+
+// Direct update without loading entities
+await manager.DirectUpdateAsync(
+    e => e.Status == "Pending",
+    e => new Product { Status = "Active" }
+);
+```
+
+#### Delete Operations
+```csharp
+// Single entity
+await manager.DeleteAsync(entity, save: true);
+
+// Multiple entities
+await manager.DeleteAsync(entities, save: true);
+
+// Direct delete without loading
+await manager.DirectDeleteAsync(e => e.IsDeleted == true);
+```
+
+### Performance Features
+
+- **Deferred Save**: Pass `save: false` to batch multiple operations
+- **Direct Operations**: Update/delete without loading entities into context
+- **Interface Caching**: Static dictionary prevents repeated reflection
+
+## IdentifiableEntityManager
+
+Extends EntityManager for entities with ID properties (implementing IIdentifiable<TId>).
+
+### Key Feature
+- **Automatic GUID Generation**: Creates new GUIDs for entities with empty IDs during insertion
+
+### Example
+```csharp
+public class OrderManager : IdentifiableEntityManager<AppContext, Order, Guid>
+{
+    public override async Task OnInsertingAsync(Order entity)
+    {
+        // ID is automatically set if empty
+        await base.OnInsertingAsync(entity);
+        
+        // Custom logic
+        entity.OrderNumber = GenerateOrderNumber();
+    }
+}
+```
+
+## StatusEntityManager
+
+Manages entities with status tracking (implementing IHasStatus<TStatusType>).
+
+### Features
+- **Status Type Management**: Loads and caches available status types
+- **Status Updates**: Type-safe status transitions with logging
+
+### Properties
+- **StatusTypes**: Collection of available TStatusType instances
+
+### Methods
+```csharp
+// Initialize status types from database
+manager.Initialize();
+
+// Update entity status by sort order
+await manager.UpdateStatusAsync(entity, sortOrder: 10);
+```
+
+### Example Implementation
+```csharp
+public class InvoiceManager : StatusEntityManager<AppContext, Invoice, Guid, InvoiceStatus>
+{
+    public async Task MarkAsPaid(Invoice invoice)
+    {
+        // Update to "Paid" status (assuming sortOrder 50)
+        await UpdateStatusAsync(invoice, 50);
+        
+        // Additional business logic
+        await SendPaymentConfirmation(invoice);
+    }
+}
+```
+
+## StateMachineEntityManager
+
+Manages entities with state machine workflows (implementing IHasState<TStateType>).
+
+### Features
+- **State Type Management**: Loads and caches available state types
+- **Predefined State Transitions**: Common workflow states with standard sort orders
+- **State Update Logging**: Automatic tracing of state transitions
+
+### Properties
+- **StateTypes**: Collection of available TStateType instances
+
+### Standard State Methods
+```csharp
+// Standard workflow states
+await manager.SetCreatedAsync(entity);      // sortOrder: 0
+await manager.SetCancelledAsync(entity);    // sortOrder: 98
+await manager.SetFailedAsync(entity);       // sortOrder: 99
+await manager.SetCompletedAsync(entity);    // sortOrder: 100
+
+// Custom state by sort order
+await manager.UpdateStateAsync(entity, sortOrder: 25);
+```
+
+### State Machine Convention
+- **0**: Created/Initial state
+- **1-97**: Custom intermediate states
+- **98**: Cancelled (terminal state)
+- **99**: Failed (terminal state)
+- **100**: Completed (terminal state)
+
+### Example Workflow
+```csharp
+public class WorkflowManager : StateMachineEntityManager<AppContext, WorkflowItem, Guid, WorkflowState>
+{
+    public async Task ProcessWorkflow(WorkflowItem item)
+    {
+        // Start workflow
+        await SetCreatedAsync(item);
+        
+        try
+        {
+            // Move through states
+            await UpdateStateAsync(item, 10);  // "In Review"
+            await UpdateStateAsync(item, 20);  // "Approved"
+            await UpdateStateAsync(item, 30);  // "Processing"
+            
+            // Complete
+            await SetCompletedAsync(item);
+        }
+        catch (Exception ex)
+        {
+            // Handle failure
+            await SetFailedAsync(item, ex.Message, ex.ToString());
+        }
+    }
+}
+```
+
+## Best Practices
+
+1. **Inherit from Appropriate Manager**: Choose the most specific manager for your needs
+2. **Override Hooks Sparingly**: Only override what you need; call base implementations
+3. **Use Direct Operations for Bulk**: DirectUpdate/DirectDelete for performance
+4. **Initialize Collections Early**: Call Initialize() in manager constructors for status/state
+5. **Leverage Deferred Save**: Batch operations with `save: false` then SaveChangesAsync()
+6. **Handle Exceptions in Hooks**: Ensure robust error handling in lifecycle methods
+7. **Use Message Publishing**: Publish events for downstream systems in OnInserted/OnUpdated
+
+## Integration with Interfaces
+
+The managers automatically detect and handle these interfaces:
+- **IIdentifiable<T>**: Entity has an ID property
+- **ICreatedAuditable**: Track creation timestamp
+- **IUpdatedAuditable**: Track update timestamp  
+- **ICreatorTrackable<T>**: Track user who created
+- **IUpdaterTrackable<T>**: Track user who updated
+- **IHasStatus<T>**: Entity has status type
+- **IHasState<T>**: Entity participates in state machine
+
+## Thread Safety
+
+- **Static Interface Dictionary**: Thread-safe type caching
+- **Instance Methods**: Not thread-safe; use separate manager instances per request/scope

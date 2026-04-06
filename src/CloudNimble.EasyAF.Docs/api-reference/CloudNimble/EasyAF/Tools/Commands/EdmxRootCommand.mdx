@@ -1,0 +1,251 @@
+---
+title: EdmxRootCommand
+description: "Root command for EDMX file utilities."
+icon: file-brackets-curly
+keywords: ['EdmxRootCommand', 'CloudNimble.EasyAF.Tools.Commands.EdmxRootCommand', 'CloudNimble.EasyAF.Tools.Commands', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Commands
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Commands.EdmxRootCommand
+```
+
+## Summary
+
+Root command for EDMX file utilities.
+
+## Remarks
+
+This command serves as the entry point for all EDMX-related subcommands, such as generate, swap, and watch.
+It provides shared utility methods for locating project folders and EDMX files.
+
+## Examples
+
+```csharp
+dotnet easyaf edmx --help
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public EdmxRootCommand()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> FindDataFolder
+
+Attempts to find the .Data folder in the given root directory.
+
+#### Syntax
+
+```csharp
+public static string FindDataFolder(string rootFolder)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `rootFolder` | `string` | The root directory to search. |
+
+#### Returns
+
+Type: `string`
+The path to the .Data folder, or `null` if not found.
+
+#### Examples
+
+```csharp
+var dataFolder = EdmxRootCommand.FindDataFolder("C:\\MySolution");
+```
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> FindEdmxFile
+
+Attempts to find the first EDMX file in the given folder.
+
+#### Syntax
+
+```csharp
+public static string FindEdmxFile(string folder)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `folder` | `string` | The folder to search for EDMX files. |
+
+#### Returns
+
+Type: `string`
+The path to the first EDMX file found, or `null` if none found.
+
+#### Examples
+
+```csharp
+var edmxFile = EdmxRootCommand.FindEdmxFile("C:\\MySolution\\MyProject.Data");
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> OnExecute
+
+Shows help for the edmx command.
+
+#### Syntax
+
+```csharp
+public int OnExecute(McMaster.Extensions.CommandLineUtils.CommandLineApplication app)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `app` | `McMaster.Extensions.CommandLineUtils.CommandLineApplication` | The command line application. |
+
+#### Returns
+
+Type: `int`
+Exit code 1.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

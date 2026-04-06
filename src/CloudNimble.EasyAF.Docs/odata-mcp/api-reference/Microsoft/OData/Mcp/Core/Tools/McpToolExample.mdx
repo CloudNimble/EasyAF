@@ -1,0 +1,656 @@
+---
+title: McpToolExample
+description: "Represents an example usage pattern for an MCP tool."
+icon: lock
+tag: "SEALED"
+keywords: ['McpToolExample', 'Microsoft.OData.Mcp.Core.Tools.McpToolExample', 'Microsoft.OData.Mcp.Core.Tools', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Tools
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Tools.McpToolExample
+```
+
+## Summary
+
+Represents an example usage pattern for an MCP tool.
+
+## Remarks
+
+Examples help AI models understand how to use tools effectively and provide
+            better assistance to users by demonstrating common usage patterns.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [McpToolExample](/odata-mcp/api-reference/Microsoft/OData/Mcp/Core/Tools/McpToolExample) class.
+
+#### Syntax
+
+```csharp
+public McpToolExample()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [McpToolExample](/odata-mcp/api-reference/Microsoft/OData/Mcp/Core/Tools/McpToolExample) class with basic information.
+
+#### Syntax
+
+```csharp
+public McpToolExample(string title, System.Text.Json.JsonDocument input)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `title` | `string` | The example title. |
+| `input` | `System.Text.Json.JsonDocument` | The example input parameters. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *title* is null or whitespace. |
+| `ArgumentNullException` | Thrown when *input* is null. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Category
+
+Gets or sets the scenario category for this example.
+
+#### Syntax
+
+```csharp
+public string Category { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The category that groups related examples together.
+
+#### Remarks
+
+Common categories include "Basic Usage", "Advanced Queries", "Error Handling",
+            "Performance Optimization", etc. This helps organize examples by complexity or purpose.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Description
+
+Gets or sets the description of the example.
+
+#### Syntax
+
+```csharp
+public string Description { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+A detailed description explaining the example's purpose and context.
+
+#### Remarks
+
+The description should provide context about when and why this
+            example would be useful, including any prerequisites or assumptions.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Difficulty
+
+Gets or sets the difficulty level of this example.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Tools.McpToolExampleDifficulty Difficulty { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolExampleDifficulty`
+The complexity level of the example.
+
+#### Remarks
+
+Difficulty levels help users and AI models choose appropriate examples
+            based on their experience and needs.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExpectedExecutionTime
+
+Gets or sets the expected execution time for this example.
+
+#### Syntax
+
+```csharp
+public System.Nullable<System.TimeSpan> ExpectedExecutionTime { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Nullable<System.TimeSpan>`
+The approximate time this example should take to execute.
+
+#### Remarks
+
+This helps set expectations and can be used for performance monitoring
+            and timeout configuration.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExpectedOutput
+
+Gets or sets the expected output for this example.
+
+#### Syntax
+
+```csharp
+public System.Text.Json.JsonDocument ExpectedOutput { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.JsonDocument?`
+A JSON document showing the expected result, or null if not provided.
+
+#### Remarks
+
+Expected output helps users understand what to expect from the tool
+            and can be used for testing and validation purposes.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Input
+
+Gets or sets the example input parameters.
+
+#### Syntax
+
+```csharp
+public required System.Text.Json.JsonDocument Input { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Text.Json.JsonDocument`
+A JSON document containing the example input parameters.
+
+#### Remarks
+
+The input should be a complete, valid example that demonstrates
+            the tool's parameter schema and typical usage patterns.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Notes
+
+Gets or sets additional notes about this example.
+
+#### Syntax
+
+```csharp
+public string Notes { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+Free-form notes providing additional context or warnings.
+
+#### Remarks
+
+Notes can include tips, warnings about edge cases, performance considerations,
+            or links to related documentation.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Prerequisites
+
+Gets or sets the prerequisites for this example.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> Prerequisites { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A list of conditions that must be met for this example to work.
+
+#### Remarks
+
+Prerequisites might include required permissions, data setup,
+            configuration settings, or other dependencies.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  RequiresAuthentication
+
+Gets or sets a value indicating whether this example requires authentication.
+
+#### Syntax
+
+```csharp
+public bool RequiresAuthentication { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` if authentication is required; otherwise, `false`.
+
+#### Remarks
+
+This flag helps users and AI models understand whether they need
+            to provide authentication credentials to use this example.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Tags
+
+Gets or sets the tags associated with this example.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> Tags { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+A collection of tags for categorizing and searching examples.
+
+#### Remarks
+
+Tags provide flexible categorization beyond the main category,
+            allowing for cross-cutting concerns like "authentication", "pagination", "bulk-operations", etc.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Title
+
+Gets or sets the title of the example.
+
+#### Syntax
+
+```csharp
+public required string Title { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+A brief, descriptive title for the example.
+
+#### Remarks
+
+The title should clearly indicate what the example demonstrates,
+            such as "Create a new customer" or "Query products by category".
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddPrerequisite
+
+Adds a prerequisite to this example.
+
+#### Syntax
+
+```csharp
+public void AddPrerequisite(string prerequisite)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `prerequisite` | `string` | The prerequisite to add. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *prerequisite* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddTag
+
+Adds a tag to this example.
+
+#### Syntax
+
+```csharp
+public void AddTag(string tag)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `tag` | `string` | The tag to add. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *tag* is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  AddTags
+
+Adds multiple tags to this example.
+
+#### Syntax
+
+```csharp
+public void AddTags(params string[] tags)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `tags` | `string[]` | The tags to add. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *tags* is null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a deep copy of this example.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Tools.McpToolExample Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolExample`
+A new instance that is a copy of this example.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Create
+
+Creates a basic example with the specified title and input.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Tools.McpToolExample Create(string title, object input, string description = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `title` | `string` | The example title. |
+| `input` | `object` | The input object to serialize to JSON. |
+| `description` | `string?` | Optional description of the example. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolExample`
+A new tool example.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *title* is null or whitespace. |
+| `ArgumentNullException` | Thrown when *input* is null. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CreateWithOutput
+
+Creates an example with expected output.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Tools.McpToolExample CreateWithOutput(string title, object input, object expectedOutput, string description = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `title` | `string` | The example title. |
+| `input` | `object` | The input object to serialize to JSON. |
+| `expectedOutput` | `object` | The expected output object to serialize to JSON. |
+| `description` | `string?` | Optional description of the example. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolExample`
+A new tool example with expected output.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *title* is null or whitespace. |
+| `ArgumentNullException` | Thrown when *input* or *expectedOutput* is null. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetExpectedOutputJson
+
+Gets the expected output as a formatted JSON string.
+
+#### Syntax
+
+```csharp
+public string GetExpectedOutputJson(bool indent = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `indent` | `bool` | Whether to indent the JSON for readability. |
+
+#### Returns
+
+Type: `string?`
+The expected output as a JSON string, or null if no expected output is defined.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetInputJson
+
+Gets the input as a formatted JSON string.
+
+#### Syntax
+
+```csharp
+public string GetInputJson(bool indent = true)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `indent` | `bool` | Whether to indent the JSON for readability. |
+
+#### Returns
+
+Type: `string`
+The input parameters as a JSON string.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasTag
+
+Determines whether this example has the specified tag.
+
+#### Syntax
+
+```csharp
+public bool HasTag(string tag)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `tag` | `string` | The tag to check for. |
+
+#### Returns
+
+Type: `bool`
+`true` if the example has the specified tag; otherwise, `false`.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Override" variant="info" />
+
+Returns a string representation of the example.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+A summary of the example.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the example for completeness and correctness.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or empty if the example is valid.
+

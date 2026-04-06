@@ -1,0 +1,45 @@
+---
+title: CacheProviderType
+description: "Defines the cache provider types."
+icon: list-ol
+tag: "ENUM"
+keywords: ['CacheProviderType', 'Microsoft.OData.Mcp.Core.Configuration.CacheProviderType', 'Microsoft.OData.Mcp.Core.Configuration', 'class', 'System.Enum']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Configuration
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Configuration.CacheProviderType
+```
+
+## Summary
+
+Defines the cache provider types.
+
+## Remarks
+
+Cache provider types determine the underlying storage mechanism
+            and distribution characteristics of the caching system. Each type
+            offers different trade-offs between performance, persistence,
+            and scalability.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Memory` | 0 | In-memory cache within the application process. |
+| `Distributed` | 1 | Distributed cache shared across multiple application instances. |
+| `Redis` | 2 | Redis-based distributed cache. |
+| `SqlServer` | 3 | SQL Server-based distributed cache. |
+| `Custom` | 4 | Custom cache provider implementation. |
+

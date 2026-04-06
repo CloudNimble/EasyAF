@@ -1,0 +1,1211 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CloudNimble.EasyAF.Core</name>
+    </assembly>
+    <members>
+        <member name="T:CloudNimble.EasyAF.Core.Converters.IgnoreAuditFieldsJsonConverter`1">
+            <summary>
+            A <see cref="T:System.Text.Json.Serialization.JsonConverter`1"/> that ignores certain properties on a <see cref="T:CloudNimble.EasyAF.Core.DbObservableObject"/>.
+            </summary>
+            <remarks>
+            This converter also honors <see cref="T:System.Text.Json.Serialization.JsonIgnoreAttribute" /> decorations on properties.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.Converters.IgnoreAuditFieldsJsonConverter`1.HandleNull">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.Converters.IgnoreAuditFieldsJsonConverter`1.#ctor(System.Text.Json.JsonSerializerOptions)">
+            <summary>
+            
+            </summary>
+            <param name="options"></param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.Converters.IgnoreAuditFieldsJsonConverter`1.Read(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)">
+            <summary>
+            
+            </summary>
+            <param name="reader"></param>
+            <param name="typeToConvert"></param>
+            <param name="options"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.Converters.IgnoreAuditFieldsJsonConverter`1.Write(System.Text.Json.Utf8JsonWriter,`0,System.Text.Json.JsonSerializerOptions)">
+            <summary>
+            
+            </summary>
+            <param name="writer"></param>
+            <param name="value"></param>
+            <param name="options"></param>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.Converters.IgnoreAuditFieldsJsonConverterFactory">
+            <summary>
+            
+            </summary>
+            <summary>
+            <para>
+            The converter we create needs to know the exact type we're converting, otherwise you would only get base object properties every
+            time. Therefore it has to be generic. So the Factory creates the right Converter instance type for the object and sends it on its' way.
+            </para>
+            <para>
+            For more details, 
+            <see href="https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to?pivots=dotnet-6-0">see Microsoft's converter documentation.</see>
+            </para>
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.Converters.IgnoreAuditFieldsJsonConverterFactory.CanConvert(System.Type)">
+            <summary>
+            
+            </summary>
+            <param name="typeToConvert"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.Converters.IgnoreAuditFieldsJsonConverterFactory.CreateConverter(System.Type,System.Text.Json.JsonSerializerOptions)">
+            <summary>
+            
+            </summary>
+            <param name="typeToConvert"></param>
+            <param name="options"></param>
+            <returns></returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.DbObservableObject">
+            <summary>
+            A base class for Entity Framework objects to implement <see cref="T:System.ComponentModel.INotifyPropertyChanged" />, <see cref="T:System.ComponentModel.IChangeTracking" />, 
+            and <see cref="T:System.ComponentModel.IRevertibleChangeTracking" /> in front-end development.
+            </summary>
+            <remarks>
+            https://stackoverflow.com/questions/2363801/what-would-be-the-best-way-to-implement-change-tracking-on-an-object
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.DbObservableObject.IsChanged">
+            <summary>
+            Specifies whether or not the object has changed.
+            </summary>
+            <remarks>
+            Setting this manually allows you to override the default behavior in case your app needs it.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.DbObservableObject.IsGraphChanged">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.DbObservableObject.OriginalValues">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.DbObservableObject.ShouldTrackChanges">
+            <summary>
+            Specifies whether or not property value changes should be tracked.
+            </summary>
+            <remarks>
+            To track changes, call <see cref="M:CloudNimble.EasyAF.Core.DbObservableObject.TrackChanges(System.Boolean)" />. PropertyChanged events will still be fired, regardless of this setting.
+            </remarks>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.DbObservableObject.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.DbObservableObject.AcceptChanges">
+            <summary>
+            Clears the <see cref="P:CloudNimble.EasyAF.Core.DbObservableObject.OriginalValues"/> list and sets <see cref="P:CloudNimble.EasyAF.Core.DbObservableObject.IsChanged"/> to <see langword="false"/>.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.DbObservableObject.AcceptChanges(System.Boolean)">
+            <summary>
+            Clears the <see cref="P:CloudNimble.EasyAF.Core.DbObservableObject.OriginalValues"/> list and sets <see cref="P:CloudNimble.EasyAF.Core.DbObservableObject.IsChanged"/> to <see langword="false"/>, and optionally traverses the object graph to call <see cref="M:CloudNimble.EasyAF.Core.DbObservableObject.AcceptChanges"/> on any children.
+            </summary>
+            <param name="goDeep"></param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.DbObservableObject.ClearRelationships">
+            <summary>
+            Sets any child relationships (0..1:1 or 1:*) to null.
+            </summary>
+            <remarks>This is typically used to clean an entity before it is POSTed or PUT over an OData API.</remarks>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.DbObservableObject.GetRelatedEntityProperties">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.DbObservableObject.GetRelatedEntityCollectionProperties">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.DbObservableObject.RejectChanges">
+            <summary>
+            Loops through the <see cref="P:CloudNimble.EasyAF.Core.DbObservableObject.OriginalValues"/> list, sets any property that has changed back to the value it had when <see cref="M:CloudNimble.EasyAF.Core.DbObservableObject.TrackChanges(System.Boolean)"/> was called,
+            clears the <see cref="P:CloudNimble.EasyAF.Core.DbObservableObject.OriginalValues"/> list, and sets <see cref="P:CloudNimble.EasyAF.Core.DbObservableObject.IsChanged"/> to <see langword="false"/>.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.DbObservableObject.RejectChanges(System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="goDeep"></param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.DbObservableObject.Set``1(System.String,``0@,``0)">
+            <summary>
+            Assigns a new value to the property. Then, raises the PropertyChanged event if needed. 
+            </summary>
+            <typeparam name="T">The type of the property that changed.</typeparam>
+            <param name="propertyName">The name of the property that changed.</param>
+            <param name="field">The field storing the property's value.</param>
+            <param name="newValue">The property's value after the change occurred.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.DbObservableObject.ToDeltaPayload(System.Boolean)">
+            <summary>
+            Loops through the keys in the <see cref="P:CloudNimble.EasyAF.Core.DbObservableObject.OriginalValues"/> list and returns an <see cref="T:System.Dynamic.ExpandoObject"/> containing JUST the new values for the properties that changed.
+            </summary>
+            <param name="deepTracking"></param>
+            <returns>An <see cref="T:System.Dynamic.ExpandoObject"/> containing JUST the new values for the properties that changed.</returns>
+            <remarks>If the object implements <see cref="T:CloudNimble.EasyAF.Core.IIdentifiable`1"/>, then the payload will always include the ID.</remarks>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.DbObservableObject.TrackChanges(System.Boolean)">
+            <summary>
+            Starts tracking property value changes for every property, optionally activating this behavior for the entire object graph.
+            </summary>
+            <param name="deepTracking">
+            When <see langword="true"/>, loops recursively through the object graph and calls <see cref="M:CloudNimble.EasyAF.Core.DbObservableObject.TrackChanges(System.Boolean)"/> on every object that 
+            inherits from <see cref="T:CloudNimble.EasyAF.Core.EasyObservableObject"/>.
+            </param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.DbObservableObject.ToDeltaPayloadInternal(CloudNimble.EasyAF.Core.DbObservableObject,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="deepTracking"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.DbObservableObject.RecurseGraphInternal(CloudNimble.EasyAF.Core.DbObservableObject,System.Action{CloudNimble.EasyAF.Core.DbObservableObject},System.Boolean,System.Collections.Generic.HashSet{CloudNimble.EasyAF.Core.DbObservableObject})">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="action"></param>
+            <param name="goDeep"></param>
+            <param name="visited"></param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.DbObservableObject.RecurseGraphInternal``1(CloudNimble.EasyAF.Core.DbObservableObject,System.Func{CloudNimble.EasyAF.Core.DbObservableObject,``0},System.Boolean,System.Collections.Generic.HashSet{CloudNimble.EasyAF.Core.DbObservableObject})">
+            <summary>
+            </summary>
+            <param name="obj"></param>
+            <param name="func"></param>
+            <param name="goDeep"></param>
+            <param name="visited"></param>
+            <remarks>
+            if you want these results to be in a "proper" order, you may need to run a "Reverse" on the resulting enumerable.
+            </remarks>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.EasyObservableObject">
+            <summary>
+            A base class for objects to implement <see cref="T:System.ComponentModel.INotifyPropertyChanged" />.
+            </summary>
+        </member>
+        <member name="E:CloudNimble.EasyAF.Core.EasyObservableObject.PropertyChanged">
+            <summary>
+            Occurs when a property value changes.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.EasyObservableObject.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.EasyObservableObject.Clone``1">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.EasyObservableObject.PropertyChangedHandler">
+            <summary>
+            Provides access to the PropertyChanged event handler to derived classes.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.EasyObservableObject.RaisePropertyChanged(System.String)">
+            <summary>
+            Raises the PropertyChanged event if needed.
+            </summary>
+            <remarks>
+            If the propertyName parameter does not correspond to an existing property on the current class, an exception is thrown in DEBUG configuration only.
+            </remarks>
+            <param name="propertyName">The name of the property that changed.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.EasyObservableObject.RaisePropertyChanged``1(System.Linq.Expressions.Expression{System.Func{``0}})">
+            <summary>
+            Raises the PropertyChanged event if needed.
+            </summary>
+            <typeparam name="T">The type of the property that changed.</typeparam>
+            <param name="propertyExpression">An expression identifying the property that changed.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.EasyObservableObject.Set``1(System.Linq.Expressions.Expression{System.Func{``0}},``0@,``0)">
+            <summary>
+            Assigns a new value to the property. Then, raises the PropertyChanged event if needed. 
+            </summary>
+            <typeparam name="T">The type of the property that changed.</typeparam>
+            <param name="propertyExpression">An expression identifying the property that changed.</param>
+            <param name="field">The field storing the property's value.</param>
+            <param name="newValue">The property's value after the change occurred.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.EasyObservableObject.Set``1(System.String,``0@,``0)">
+            <summary>
+            Assigns a new value to the property. Then, raises the PropertyChanged event if needed. 
+            </summary>
+            <typeparam name="T">The type of the property that changed.</typeparam>
+            <param name="propertyName">The name of the property that changed.</param>
+            <param name="field">The field storing the property's value.</param>
+            <param name="newValue">The property's value after the change occurred.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.EasyObservableObject.Dispose(System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.EasyObservableObject.Dispose">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.Ensure">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.Ensure.ArgumentNotNull(System.Object,System.String)">
+            <summary>
+            Ensures that the specified argument is not null.
+            </summary>
+            <param name="argumentName">Name of the argument.</param>
+            <param name="argument">The argument.</param>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.HttpHandlerMode">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.Core.HttpHandlerMode.None">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.Core.HttpHandlerMode.Add">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.Core.HttpHandlerMode.Replace">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.IIdentifiableEqualityComparer`1">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.IIdentifiableEqualityComparer`1.Equals(CloudNimble.EasyAF.Core.IIdentifiable{`0},CloudNimble.EasyAF.Core.IIdentifiable{`0})">
+            <summary>
+            
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.IIdentifiableEqualityComparer`1.GetHashCode(CloudNimble.EasyAF.Core.IIdentifiable{`0})">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.IActiveTrackable">
+            <summary>
+            An interface that implements the CloudNimble common pattern for tracking who created an Entity.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.IActiveTrackable.IsActive">
+            <summary>
+            The unique identifier for the User that created this particular Entity.
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.ICreatedAuditable">
+            <summary>
+            An interface that implements the CloudNimble common pattern for tracking who created an Entity.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.ICreatedAuditable.DateCreated">
+            <summary>
+            The unique identifier for the User that created this particular Entity.
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.ICreatorTrackable`1">
+            <summary>
+            An interface that implements the CloudNimble common pattern for tracking who created an Entity.
+            </summary>
+            <typeparam name="T">The type for the identifier.</typeparam>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.ICreatorTrackable`1.CreatedById">
+            <summary>
+            The unique identifier for the User that created this particular Entity.
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.IDbEnum">
+            <summary>
+            An interface that represents the CloudNimble database-driven enumeration pattern that lets you update the Enum as processes change
+            without changing the meaning of Entities that are linked to the older enums.
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.IDbStateEnum">
+            <summary>
+            An interface that identifies this Entity as being the enumeration details for the SimpleStateMachine.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.IDbStateEnum.InstructionText">
+            <summary>
+            Text to display to the user regarding the current state, and what needs to happen next.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.IDbStateEnum.PrimaryTargetDisplayText">
+            <summary>
+            A string that describes the next action in the SimpleStateMachine, usually displayed on a button or link.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.IDbStateEnum.PrimaryTargetSortOrder">
+            <summary>
+            An integer that represents the State the Entity should be moved to once this action completes successfully.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.IDbStateEnum.SecondaryTargetDisplayText">
+            <summary>
+            A string that describes an alternate action in the SimpleStateMachine. This action could skip States moving forward, or return the Entity to a previous State. This text is usually displayed on a button or link.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.IDbStateEnum.SecondaryTargetSortOrder">
+            <summary>
+            An integer that represents an alternate State the Entity should be moved to once this action is finished.
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.IDbStatusEnum">
+            <summary>
+            An interface that identifies this Entity as being the enumeration details for the SimpleStateMachine.
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.IHasState`1">
+            <summary>
+            An interface that specifes an implementing Entity changes State as part of the SimpleStateMachine.
+            </summary>
+            <typeparam name="T">The type implementing <see cref="T:CloudNimble.EasyAF.Core.IDbStateEnum"/> that represents States for this Entity.</typeparam>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.IHasState`1.StateType">
+            <summary>
+            The populated instance of <see cref="T:CloudNimble.EasyAF.Core.IDbStateEnum"/>.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.IHasState`1.StateTypeId">
+            <summary>
+            The unique identifier for the SimpleStateMachine <see cref="T:CloudNimble.EasyAF.Core.IDbStateEnum"/>.
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.IHasStatus`1">
+            <summary>
+            An interface that specifes an implementing Entity contains a child Entity of T that implements <see cref="T:CloudNimble.EasyAF.Core.IDbStatusEnum"/> and
+            represents the Entity's current status.
+            </summary>
+            <typeparam name="T">The type implementing <see cref="T:CloudNimble.EasyAF.Core.IDbStatusEnum"/>.</typeparam>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.IHasStatus`1.StatusType">
+            <summary>
+            The populated instance of <see cref="T:CloudNimble.EasyAF.Core.IDbStatusEnum"/>.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.IHasStatus`1.StatusTypeId">
+            <summary>
+            The unique identifier for the SimpleStateMachine <see cref="T:CloudNimble.EasyAF.Core.IDbStatusEnum"/>.
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.IHumanReadable">
+            <summary>
+            An interface that specifies the implementing Entity displays text to the user.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.IHumanReadable.DisplayName">
+            <summary>
+            The text to be displayed to the user.
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.IIdentifiable`1">
+            <summary>
+            An interface that guarantees a particular Entity contains an "Id" property with a type <typeparamref name="T"/>.
+            </summary>
+            <typeparam name="T">The type for the identifier.</typeparam>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.IIdentifiable`1.Id">
+            <summary>
+            The unique identifier for this particular Entity.
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.ISortable">
+            <summary>
+            An interface that specifies the implementing Entity can be contains an <see cref="T:System.Int32"/> that tracks the order items should be displayed in a list.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.ISortable.SortOrder">
+            <summary>
+            The order this entity should be displayed in a list.
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.IUpdatedAuditable">
+            <summary>
+            An interface that implements the CloudNimble common pattern for tracking who created an Entity.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.IUpdatedAuditable.DateUpdated">
+            <summary>
+            The unique identifier for the User that created this particular Entity.
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.IUpdaterTrackable`1">
+            <summary>
+            An interface that implements the CloudNimble common pattern for tracking who updated an Entity.
+            </summary>
+            <typeparam name="T">The type for the identifier.</typeparam>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.IUpdaterTrackable`1.UpdatedById">
+            <summary>
+            The unique identifier for the User that updated this particular Entity.
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.Interval`1">
+            <summary>
+            Describes an interval of time to be used in time-based calculations.
+            </summary>
+            <typeparam name="T">The data type for the interval value.</typeparam>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.Interval`1.Type">
+            <summary>
+            The base unit that describes what the quantity of this Interval references.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.Interval`1.Value">
+            <summary>
+            The duration of the Interval.
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.Interval`1.DebuggerDisplay">
+            <summary>
+            Returns a string suitable for display in the debugger. Ensures such strings are compiled by the runtime and not interpreted by the currently-executing language.
+            </summary>
+            <remarks>http://blogs.msdn.com/b/jaredpar/archive/2011/03/18/debuggerdisplay-attribute-best-practices.aspx</remarks>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.Interval`1.#ctor">
+            <summary>
+            Creates a new instance of the <see cref="T:CloudNimble.EasyAF.Core.Interval`1"/> class.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.Interval`1.#ctor(`0,CloudNimble.EasyAF.Core.IntervalType)">
+            <summary>
+            Creates a new instance of the <see cref="T:CloudNimble.EasyAF.Core.Interval`1"/> class.
+            </summary>
+            <param name="value">The duration of the interval.</param>
+            <param name="type">he base unit that describes what the quantity of this Interval references.</param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.Interval`1.PerMinute">
+            <summary>
+            Given this <see cref="T:CloudNimble.EasyAF.Core.Interval`1"/> instance, how many of X will happen per minute?
+            </summary>
+            <returns></returns>
+            <exception cref="T:System.InvalidCastException">Thrown if <typeparamref name="T"/> is not convertible to a <see cref="T:System.Decimal"/>.</exception>
+            <remarks>If you need this as a whole number, wrap the result in <see cref="M:System.Math.Floor(System.Decimal)"/>.</remarks>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.Interval`1.PerHour">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+            <exception cref="T:System.InvalidCastException">Thrown if <typeparamref name="T"/> is not convertible to a <see cref="T:System.Decimal"/>.</exception>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.Interval`1.PerDay">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+            <exception cref="T:System.InvalidCastException">Thrown if <typeparamref name="T"/> is not convertible to a <see cref="T:System.Decimal"/>.</exception>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.Interval`1.PerWeek">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+            <exception cref="T:System.InvalidCastException">Thrown if <typeparamref name="T"/> is not convertible to a <see cref="T:System.Decimal"/>.</exception>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.Interval`1.PerMonth">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+            <exception cref="T:System.InvalidCastException">Thrown if <typeparamref name="T"/> is not convertible to a <see cref="T:System.Decimal"/>.</exception>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.Interval`1.PerYear">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+            <exception cref="T:System.InvalidCastException">Thrown if <typeparamref name="T"/> is not convertible to a <see cref="T:System.Decimal"/>.</exception>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.Interval`1.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.IntervalType">
+            <summary>
+            Specifies the type of interval duration.
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.Core.IntervalType.Minutes">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.Core.IntervalType.Hours">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.Core.IntervalType.Days">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.Core.IntervalType.Weeks">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.Core.IntervalType.Months">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.Core.IntervalType.Quarters">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CloudNimble.EasyAF.Core.IntervalType.Years">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.MoneyInterval`1">
+            <summary>
+            Represents a sum of money to be exchanged during a given interval.
+            </summary>
+            <remarks>
+            This has been broken up to allow for conversions (for example, converting $/month into $/day) to be self-contained. This should reduce duplication.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.MoneyInterval`1.Money">
+            <summary>
+            The amount of money represented by the given <see cref="T:CloudNimble.EasyAF.Core.IntervalType"/>
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.MoneyInterval`1.DebuggerDisplay">
+            <summary>
+            Returns a string suitable for display in the debugger. Ensures such strings are compiled by the runtime and not interpreted by the currently-executing language.
+            </summary>
+            <remarks>http://blogs.msdn.com/b/jaredpar/archive/2011/03/18/debuggerdisplay-attribute-best-practices.aspx</remarks>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.MoneyInterval`1.#ctor">
+            <summary>
+            The default constructor for a MoneyInterval instance.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.MoneyInterval`1.#ctor(`0,CloudNimble.EasyAF.Core.IntervalType)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+            <param name="type"></param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.MoneyInterval`1.#ctor(System.Decimal,`0,CloudNimble.EasyAF.Core.IntervalType)">
+            <summary>
+            
+            </summary>
+            <param name="money"></param>
+            <param name="value"></param>
+            <param name="type"></param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.MoneyInterval`1.PerMinute">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.MoneyInterval`1.PerHour">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.MoneyInterval`1.PerDay">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.MoneyInterval`1.PerWeek">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.MoneyInterval`1.PerMonth">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.MoneyInterval`1.PerYear">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.MoneyInterval`1.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.MoneyInterval`1.ToString(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.NameOf">
+            <summary>
+            Fills a gap in <see langword="nameof" /> by allowing you to use deep name references instead of local name references.
+            </summary>
+            <remarks>
+            Solution modified from <see href="https://stackoverflow.com/a/58190566/403765" />.
+            </remarks>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.NameOf.Full``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.String)">
+            <summary>
+            
+            </summary>
+            <typeparam name="TSource"></typeparam>
+            <param name="expression"></param>
+            <param name="separator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.NameOf.Full``1(System.String,System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.String)">
+            <summary>
+            Allows you to create a source name expression when you need to have a prefixing variable in the result.
+            </summary>
+            <typeparam name="TSource"></typeparam>
+            <param name="sourceFieldName"></param>
+            <param name="expression"></param>
+            <param name="separator">The characters used to separate the from the result.</param>
+            <returns></returns>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.PercentageInterval`1">
+            <summary>
+            Represents a sum of money to be exchanged during a given interval.
+            </summary>
+            <remarks>
+            This has been broken up to allow for conversions (for example, converting $/month into $/day) to be self-contained. This should reduce duplication.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.PercentageInterval`1.Rate">
+            <summary>
+            The amount of money represented by the given <see cref="T:CloudNimble.EasyAF.Core.IntervalType"/>
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.PercentageInterval`1.DebuggerDisplay">
+            <summary>
+            Returns a string suitable for display in the debugger. Ensures such strings are compiled by the runtime and not interpreted by the currently-executing language.
+            </summary>
+            <remarks>http://blogs.msdn.com/b/jaredpar/archive/2011/03/18/debuggerdisplay-attribute-best-practices.aspx</remarks>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.PercentageInterval`1.#ctor">
+            <summary>
+            The default constructor for a MoneyInterval instance.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.PercentageInterval`1.#ctor(`0,CloudNimble.EasyAF.Core.IntervalType)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+            <param name="type"></param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.PercentageInterval`1.#ctor(System.Decimal,`0,CloudNimble.EasyAF.Core.IntervalType)">
+            <summary>
+            
+            </summary>
+            <param name="money"></param>
+            <param name="value"></param>
+            <param name="type"></param>
+        </member>
+        <member name="T:CloudNimble.EasyAF.Core.RatioInterval`1">
+            <summary>
+            Represents a decimal value calculated over a given interval. Could be a dollar value or a ratio, depending on the situation.
+            </summary>
+            <remarks>
+            This has been broken up to allow for conversions (for example, converting $/month into $/day) to be self-contained. This should reduce duplication.
+            </remarks>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.RatioInterval`1.Ratio">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:CloudNimble.EasyAF.Core.RatioInterval`1.DebuggerDisplay">
+            <summary>
+            Returns a string suitable for display in the debugger. Ensures such strings are compiled by the runtime and not interpreted by the currently-executing language.
+            </summary>
+            <remarks>http://blogs.msdn.com/b/jaredpar/archive/2011/03/18/debuggerdisplay-attribute-best-practices.aspx</remarks>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.RatioInterval`1.#ctor">
+            <summary>
+            The default constructor for a MoneyInterval instance.
+            </summary>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.RatioInterval`1.#ctor(`0,CloudNimble.EasyAF.Core.IntervalType)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+            <param name="type"></param>
+        </member>
+        <member name="M:CloudNimble.EasyAF.Core.RatioInterval`1.#ctor(System.Decimal,`0,CloudNimble.EasyAF.Core.IntervalType)">
+            <summary>
+            
+            </summary>
+            <param name="ratio"></param>
+            <param name="value"></param>
+            <param name="type"></param>
+        </member>
+        <member name="T:System.Collections.Generic.EasyAF_ClaimsExtensions">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:System.Collections.Generic.EasyAF_ClaimsExtensions.GetStandardizedClaims(System.Collections.Generic.IEnumerable{System.Security.Claims.Claim})">
+            <summary>
+            Translates a set of generic Claims (like the ones returned from Auth0) to a set of Claims from the
+            <see cref="T:System.Security.Claims.ClaimTypes"/> constants wherever possible.
+            </summary>
+            <param name="claims"></param>
+        </member>
+        <member name="M:System.Collections.Generic.EasyAF_ClaimsExtensions.GetClaimType(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="T:System.Collections.Generic.EasyAF_CollectionExtensions">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:System.Collections.Generic.EasyAF_CollectionExtensions.TryAdd``2(System.Collections.Generic.IDictionary{``0,``1},``0,``1)">
+            <summary>
+            
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="dictionary"></param>
+            <param name="key"></param>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="T:System.Collections.Generic.EasyAF_IEnumerableExtensions">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:System.Collections.Generic.EasyAF_IEnumerableExtensions.AcceptChanges``1(System.Collections.Generic.IEnumerable{``0},System.Boolean)">
+            <summary>
+            Loops through the entries in a given <see cref="T:System.Collections.Generic.IEnumerable`1"/> and accepts all current changes for each entry.
+            </summary>
+            <param name="enumerable"></param>
+            <param name="goDeep"></param>
+        </member>
+        <member name="M:System.Collections.Generic.EasyAF_IEnumerableExtensions.ChangedCount``1(System.Collections.Generic.IEnumerable{``0},System.Boolean)">
+            <summary>
+            Returns a <see cref="T:System.Int32"/> representing the number of objects in the enumerable that have changes.
+            </summary>
+            <param name="enumerable"></param>
+            <param name="checkGraph"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Collections.Generic.EasyAF_IEnumerableExtensions.ContainsId``2(System.Collections.Generic.IEnumerable{``0},``1)">
+            <summary>
+            Returns a <see cref="T:System.Boolean" /> if a list of <see cref="P:CloudNimble.EasyAF.Core.IIdentifiable`1.Id"/>s from the given <see cref="T:System.Collections.Generic.IEnumerable`1"/> contains
+            the specified value.
+            </summary>
+            <param name="list">The <see cref="T:System.Collections.Generic.List`1"/> to check for the given ID value.</param>
+            <param name="idValue">The value to check for.</param>
+        </member>
+        <member name="M:System.Collections.Generic.EasyAF_IEnumerableExtensions.ContentsAreChanged``1(System.Collections.Generic.IEnumerable{``0},System.Boolean)">
+            <summary>
+            Returns a <see cref="T:System.Boolean"/> if any <see cref="T:CloudNimble.EasyAF.Core.DbObservableObject" /> in the <see cref="T:System.Collections.Generic.IEnumerable`1"/> has changes.
+            </summary>
+            <param name="enumerable"></param>
+            <param name="checkGraph"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Collections.Generic.EasyAF_IEnumerableExtensions.ContentsAreChanged``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean},System.Boolean)">
+            <summary>
+            Returns a <see cref="T:System.Boolean"/> if any <see cref="T:CloudNimble.EasyAF.Core.DbObservableObject" /> in the <see cref="T:System.Collections.Generic.IEnumerable`1"/> has changes.
+            </summary>
+            <param name="enumerable"></param>
+            <param name="predicate"></param>
+            <param name="checkGraph"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Collections.Generic.EasyAF_IEnumerableExtensions.ContentsAreChanged``3(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``1},System.Func{``0,``2},System.Boolean)">
+            <summary>
+            Returns a <see cref="T:System.Boolean"/> if any <see cref="T:CloudNimble.EasyAF.Core.DbObservableObject" /> in the <see cref="T:System.Collections.Generic.IEnumerable`1"/> has changes.
+            </summary>
+            <param name="enumerable"></param>
+            <param name="foreignList">The list of related objects that we want to filter the <paramref name="enumerable"/> down to.</param>
+            <param name="foreignIdFunc">
+            The property from the <paramref name="enumerable"/> that points to the <see cref="P:CloudNimble.EasyAF.Core.IIdentifiable`1.Id"/> for the objects in <paramref name="foreignList"/>.
+            </param>
+            <param name="checkGraph"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Collections.Generic.EasyAF_IEnumerableExtensions.FilterForChanges``3(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``1},System.Func{``0,``2})">
+            <summary>
+            For a given <see cref="T:System.Collections.Generic.IEnumerable`1"/>, filter down the result to the changed items in <paramref name="enumerable"/> 
+            whose foreign keys appear in the <paramref name="foreignList"/>.
+            </summary>
+            <param name="enumerable">The list we want to check for changes in.</param>
+            <param name="foreignList">The list of related objects that we want to filter the <paramref name="enumerable"/> down to.</param>
+            <param name="foreignIdFunc">
+            The property from the <paramref name="enumerable"/> that points to the <see cref="P:CloudNimble.EasyAF.Core.IIdentifiable`1.Id"/> for the objects in <paramref name="foreignList"/>.
+            </param>
+        </member>
+        <member name="M:System.Collections.Generic.EasyAF_IEnumerableExtensions.None``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns a <see cref="T:System.Boolean"/> specifying whether or not the <see cref="T:System.Collections.Generic.IEnumerable`1"/> has any items in it.
+            </summary>
+            <typeparam name="T">The type of the items inside the <see cref="T:System.Collections.IEnumerable"/>.</typeparam>
+            <param name="source">The <see cref="T:System.Collections.Generic.IEnumerable`1"/> to check.</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Collections.Generic.EasyAF_IEnumerableExtensions.None``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Returns a <see cref="T:System.Boolean" /> specifying whether or not the <see cref="T:System.Collections.Generic.IEnumerable`1"/> has any items in it.
+            </summary>
+            <typeparam name="T">The type of the items inside the <see cref="T:System.Collections.IEnumerable"/>.</typeparam>
+            <param name="source">The <see cref="T:System.Collections.Generic.IEnumerable`1"/> to check.</param>
+            <param name="predicate">A set of additional parameters to check against.</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Collections.Generic.EasyAF_IEnumerableExtensions.RejectChanges``1(System.Collections.Generic.IEnumerable{``0},System.Boolean)">
+            <summary>
+            Loops through the entries in a given <see cref="T:System.Collections.Generic.IEnumerable`1" /> and clears all current changes for each entry.
+            </summary>
+            <param name="enumerable"></param>
+            <param name="goDeep"></param>
+        </member>
+        <member name="M:System.Collections.Generic.EasyAF_IEnumerableExtensions.ToTrackedList``1(System.Collections.Generic.IEnumerable{``0},System.Boolean)">
+            <summary>
+            Returns a <see cref="T:System.Collections.Generic.List`1" /> where the <see cref="T:CloudNimble.EasyAF.Core.DbObservableObject">DbObservableObjects</see> have <see cref="M:CloudNimble.EasyAF.Core.DbObservableObject.TrackChanges(System.Boolean)"/> turned on.
+            </summary>
+            <param name="enumerable">The list of objects to turn change tracking on for.</param>
+            <param name="deepTracking"></param>
+            <returns></returns>
+        </member>
+        <member name="T:System.Collections.Generic.EasyAF_ListExtensions">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:System.Collections.Generic.EasyAF_ListExtensions.ReplaceTracked``1(System.Collections.Generic.IList{``0},``0,``0)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="list"></param>
+            <param name="oldInstance"></param>
+            <param name="newInstance"></param>
+            <returns></returns>
+        </member>
+        <member name="T:System.Security.Claims.EasyAF_ClaimsIdentityExtensions">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:System.Security.Claims.EasyAF_ClaimsIdentityExtensions.StandardizeClaims(System.Security.Claims.ClaimsIdentity)">
+            <summary>
+            
+            </summary>
+            <param name="identity"></param>
+        </member>
+        <member name="T:System.Security.Claims.EasyAF_ClaimsPrincipalExtensions">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:System.Security.Claims.EasyAF_ClaimsPrincipalExtensions.SetSchemaUri(System.String)">
+            <summary>
+            Sets the SchemaUrl used <see langword="async"/>the basis for all custom claims.
+            </summary>
+            <param name="schemaUri"></param>
+        </member>
+        <member name="M:System.Security.Claims.EasyAF_ClaimsPrincipalExtensions.SetIdClaimName(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="idClaimName"></param>
+        </member>
+        <member name="M:System.Security.Claims.EasyAF_ClaimsPrincipalExtensions.Initialize">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:System.Security.Claims.EasyAF_ClaimsPrincipalExtensions.Initialize(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="schemaUri"></param>
+            <param name="idClaimName"></param>
+        </member>
+        <member name="P:System.Security.Claims.EasyAF_ClaimsPrincipalExtensions.NameClaimType">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:System.Security.Claims.EasyAF_ClaimsPrincipalExtensions.RoleClaimType">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:System.Security.Claims.EasyAF_ClaimsPrincipalExtensions.GetAllClaims(System.Security.Claims.ClaimsPrincipal,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="claimsPrincipal">The ClaimsPrincipal instance to check for Claims. Should be <see cref="P:System.Security.Claims.ClaimsPrincipal.Current"/>, except in unit testing.</param>
+            <param name="claimType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Security.Claims.EasyAF_ClaimsPrincipalExtensions.GetClaimGuid(System.Security.Claims.ClaimsPrincipal,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="claimsPrincipal"></param>
+            <param name="claimType"></param>
+            <returns></returns>
+            <exception cref="T:System.FormatException">
+            If the <paramref name="claimType"/> is not formatted like a Guid (32 characters with 4 dashes), this exception will be thrown.
+            </exception>
+        </member>
+        <member name="M:System.Security.Claims.EasyAF_ClaimsPrincipalExtensions.GetClaimValue(System.Security.Claims.ClaimsPrincipal,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="claimsPrincipal">The ClaimsPrincipal instance to check for Claims. Should be <see cref="P:System.Security.Claims.ClaimsPrincipal.Current"/>, except in unit testing.</param>
+            <param name="claimType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Security.Claims.EasyAF_ClaimsPrincipalExtensions.GetIdClaim(System.Security.Claims.ClaimsPrincipal)">
+            <summary>
+            A shortcut for returning the AppUserProfileId for the current User.
+            </summary>
+            <param name="principal">The ClaimsPrincipal instance we're extending.</param>
+            <returns></returns>
+        </member>
+        <member name="T:System.EasyAF_DateTimeExtensions">
+            <summary>
+            Extensions on <see cref="T:System.DateTime"/> and <see cref="T:System.DateTimeOffset"/>.
+            </summary>
+        </member>
+        <member name="M:System.EasyAF_DateTimeExtensions.GetQuarter(System.DateTime)">
+            <summary>
+            Calculates the quarter for the given <see cref="T:System.DateTime"/>, assuming a calendar-based fiscal year.
+            </summary>
+            <param name="date">The <see cref="T:System.DateTime"/> to use in the calculation.</param>
+            <returns></returns>
+            <remarks>
+            From https://stackoverflow.com/questions/8698303/how-do-i-discover-the-quarter-of-a-given-date
+            </remarks>
+        </member>
+        <member name="M:System.EasyAF_DateTimeExtensions.GetQuarter(System.DateTime,System.DateTime)">
+            <summary>
+            Calculates the quarter for the given <see cref="T:System.DateTime"/>, assuming a the provided fiscal year begin date.
+            </summary>
+            <param name="date">The <see cref="T:System.DateTime"/> to use in the calculation.</param>
+            <param name="fiscalYearStart">The <see cref="T:System.DateTime"/> representing the start day of the fiscal year to use in calculation.</param>
+            <returns></returns>
+            <remarks>
+            From https://stackoverflow.com/questions/8698303/how-do-i-discover-the-quarter-of-a-given-date
+            </remarks>
+        </member>
+        <member name="M:System.EasyAF_DateTimeExtensions.GetQuarter(System.DateTimeOffset)">
+            <summary>
+            Calculates the quarter for the given <see cref="T:System.DateTimeOffset"/>, assuming a calendar-based fiscal year.
+            </summary>
+            <param name="date">The <see cref="T:System.DateTimeOffset"/> to use in the calculation.</param>
+            <returns></returns>
+            <remarks>
+            From https://stackoverflow.com/questions/8698303/how-do-i-discover-the-quarter-of-a-given-date
+            </remarks>
+        </member>
+        <member name="M:System.EasyAF_DateTimeExtensions.GetQuarter(System.DateTimeOffset,System.DateTimeOffset)">
+            <summary>
+            Calculates the quarter for the given <see cref="T:System.DateTimeOffset"/>, assuming a the provided fiscal year begin date.
+            </summary>
+            <param name="date">The <see cref="T:System.DateTimeOffset"/> to use in the calculation.</param>
+            <param name="fiscalYearStart">The <see cref="T:System.DateTime"/> representing the start day of the fiscal year to use in calculation.</param>
+            <returns></returns>
+            <remarks>
+            From https://stackoverflow.com/questions/8698303/how-do-i-discover-the-quarter-of-a-given-date
+            </remarks>
+        </member>
+        <member name="M:System.EasyAF_DateTimeExtensions.FirstDayOfMonth(System.DateTime)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+            <remarks>
+            https://stackoverflow.com/questions/24245523/getting-the-first-and-last-day-of-a-month-using-a-given-datetime-object
+            </remarks>
+        </member>
+        <member name="M:System.EasyAF_DateTimeExtensions.FirstDayOfMonth(System.DateTimeOffset)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+            <remarks>
+            https://stackoverflow.com/questions/24245523/getting-the-first-and-last-day-of-a-month-using-a-given-datetime-object
+            </remarks>
+        </member>
+        <member name="M:System.EasyAF_DateTimeExtensions.DaysInMonth(System.DateTime)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+            <remarks>
+            https://stackoverflow.com/questions/24245523/getting-the-first-and-last-day-of-a-month-using-a-given-datetime-object
+            </remarks>
+        </member>
+        <member name="M:System.EasyAF_DateTimeExtensions.DaysInMonth(System.DateTimeOffset)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+            <remarks>
+            https://stackoverflow.com/questions/24245523/getting-the-first-and-last-day-of-a-month-using-a-given-datetime-object
+            </remarks>
+        </member>
+        <member name="M:System.EasyAF_DateTimeExtensions.LastDayOfMonth(System.DateTime)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+            <remarks>
+            https://stackoverflow.com/questions/24245523/getting-the-first-and-last-day-of-a-month-using-a-given-datetime-object
+            </remarks>
+        </member>
+        <member name="M:System.EasyAF_DateTimeExtensions.LastDayOfMonth(System.DateTimeOffset)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+            <remarks>
+            https://stackoverflow.com/questions/24245523/getting-the-first-and-last-day-of-a-month-using-a-given-datetime-object
+            </remarks>
+        </member>
+        <member name="T:System.EasyAF_ExceptionExtensions">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:System.EasyAF_ExceptionExtensions.TraceDemystifiedException(System.Exception,System.String)">
+            <summary>
+            Demystifies the Exception and writes it to <see cref="M:System.Diagnostics.Trace.TraceError(System.String,System.Object[])"/>.
+            </summary>
+            <param name="ex">The exception instance to manipulate.</param>
+            <param name="logPrefix">A string that will be prepended to the log entry. Defaults to the calling function name.</param>
+            <returns>The Demystified exception.</returns>
+        </member>
+        <member name="T:System.EasyAF_GuidExtensions">
+            <summary>
+            Methods to extend <see cref="T:System.Guid"/> in useful ways.
+            </summary>
+        </member>
+        <member name="M:System.EasyAF_GuidExtensions.ToComparableString(System.Guid)">
+            <summary>
+            A little syntactical sugar to make sure GUIDs are outputted to a format that ensures accurate string comparisons.
+            </summary>
+            <param name="instance">The Guid to convert.</param>
+            <returns>An upper-case string representing the GUID instance to be compared.</returns>
+            <remarks>
+            See https://msdn.microsoft.com/en-us/library/bb386042.aspx for more details.
+            </remarks>
+        </member>
+        <member name="M:System.EasyAF_GuidExtensions.IsNullOrEmpty(System.Nullable{System.Guid})">
+            <summary>
+            A sweet little extension to check if a Nullable Guid has a real value or not.
+            </summary>
+            <param name="instance"></param>
+            <returns>A <see cref="T:System.Boolean"/> indicating whether or not the Guid is null or empty.</returns>
+        </member>
+        <member name="T:MoreLinq.MoreEnumerable">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MoreLinq.MoreEnumerable.DistinctBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            Returns all distinct elements of the given source, where "distinctness"
+            is determined via a projection and the default equality comparer for the projected type.
+            </summary>
+            <remarks>
+            This operator uses deferred execution and streams the results, although
+            a set of already-seen keys is retained. If a key is seen multiple times,
+            only the first element with that key is returned.
+            </remarks>
+            <typeparam name="TSource">Type of the source sequence</typeparam>
+            <typeparam name="TKey">Type of the projected element</typeparam>
+            <param name="source">Source sequence</param>
+            <param name="keySelector">Projection for determining "distinctness"</param>
+            <returns>A sequence consisting of distinct elements from the source sequence,
+            comparing them by the specified key projection.</returns>
+        </member>
+        <member name="M:MoreLinq.MoreEnumerable.DistinctBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Collections.Generic.IEqualityComparer{``1})">
+            <summary>
+            Returns all distinct elements of the given source, where "distinctness"
+            is determined via a projection and the specified comparer for the projected type.
+            </summary>
+            <remarks>
+            This operator uses deferred execution and streams the results, although
+            a set of already-seen keys is retained. If a key is seen multiple times,
+            only the first element with that key is returned.
+            </remarks>
+            <typeparam name="TSource">Type of the source sequence</typeparam>
+            <typeparam name="TKey">Type of the projected element</typeparam>
+            <param name="source">Source sequence</param>
+            <param name="keySelector">Projection for determining "distinctness"</param>
+            <param name="comparer">The equality comparer to use to determine whether or not keys are equal.
+            If null, the default equality comparer for <c>TSource</c> is used.</param>
+            <returns>A sequence consisting of distinct elements from the source sequence,
+            comparing them by the specified key projection.</returns>
+        </member>
+    </members>
+</doc>

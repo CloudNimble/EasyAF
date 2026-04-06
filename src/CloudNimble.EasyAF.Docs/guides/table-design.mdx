@@ -1,0 +1,861 @@
+---
+title: 'Table Design Patterns'
+sidebarTitle: 'Table Design'
+description: "Understanding EasyAF's opinionated database design structure through composable interfaces"
+icon: 'table'
+---
+
+# Overview
+
+EasyAF enforces an opinionated database design structure that promotes consistency, maintainability, and reduces boilerplate code. By implementing a set of composable interfaces, your entities automatically gain common functionality that works seamlessly with Entity Framework Core and OData Restier.
+
+## Core Concepts
+
+The EasyAF framework uses **interface composition** to build database entities with common patterns. Rather than inheriting from a base class, you implement specific interfaces that add the functionality you need. This approach provides flexibility while maintaining consistency across your data model.
+
+### Benefits of the Interface-Based Approach
+
+- **Composability**: Mix and match interfaces to get exactly the functionality you need
+- **Consistency**: Common patterns across all tables
+- **Code Generation**: Automatic handling of audit fields, state management, and more
+- **Type Safety**: Generic interfaces ensure compile-time type checking
+- **OData Integration**: Seamless integration with OData queries and filters
+
+## Naming Conventions and Design Principles
+
+EasyAF enforces specific naming conventions that enhance code generation, improve IntelliSense experiences, and create predictable patterns across your codebase.
+
+### Primary Keys: Always "Id"
+
+Primary key properties are **always** named `Id`, never prefixed with the table name.
+
+```csharp
+// Correct
+public class Product : IIdentifiable<Guid>
+{
+    public Guid Id { get; set; }
+}
+
+// Incorrect - Don't do this
+public class Product : IIdentifiable<Guid>
+{
+    public Guid ProductId { get; set; }
+}
+```
+
+**Why?**
+- **Serialization efficiency**: Shorter property names reduce payload size
+- **Predictability**: `Id` is always the primary key, `{TableName}Id` is always a foreign key
+- **Consistency**: Universal pattern across all entities
+
+### Foreign Keys: {TableName}Id
+
+Foreign key properties follow the pattern `{TableName}Id` to clearly indicate relationships.
+
+```csharp
+public class OrderItem : IIdentifiable<Guid>
+{
+    public Guid Id { get; set; }
+
+    // Foreign key relationships
+    public Guid OrderId { get; set; }
+    public Order Order { get; set; }
+
+    public Guid ProductId { get; set; }
+    public Product Product { get; set; }
+}
+```
+
+#### Exception: Semantic Naming for Clarity
+
+Use more descriptive names when the relationship role needs clarification:
+
+```csharp
+// Self-referencing hierarchy
+public class Category : IIdentifiable<Guid>
+{
+    public Guid Id { get; set; }
+    public Guid? ParentId { get; set; }  // More clear than CategoryId
+    public Category Parent { get; set; }
+}
+
+// Multiple relationships to the same entity
+public class Conversation : IIdentifiable<Guid>
+{
+    public Guid Id { get; set; }
+
+    public Guid SenderId { get; set; }      // More clear than UserId
+    public User Sender { get; set; }
+
+    public Guid RecipientId { get; set; }   // More clear than UserId
+    public User Recipient { get; set; }
+}
+
+// Audit tracking with semantic meaning
+public class Document : IIdentifiable<Guid>,
+                       ICreatorTrackable<Guid>,
+                       IUpdaterTrackable<Guid>
+{
+    public Guid Id { get; set; }
+
+    // Semantic names clarify intent
+    public Guid CreatedById { get; set; }   // Better than UserId
+    public Guid? UpdatedById { get; set; }  // Clarifies which user action
+}
+```
+
+<Warning>
+**Never create direct foreign keys to User tables in business entities.** This pollutes object models and creates unnecessary coupling. Use filtering in queries instead:
+
+```csharp
+// Good: Filter in query
+var userOrders = await _context.Orders
+    .Where(o => o.CreatedById == currentUser.Id)
+    .ToListAsync();
+
+// Bad: Direct foreign key
+public class Order
+{
+    public Guid UserId { get; set; }  // Don't do this
+    public User User { get; set; }    // Pollutes the model
+}
+```
+</Warning>
+
+### Date Properties: Prefix with "Date"
+
+All date/time properties should be prefixed with `Date` followed by the semantic meaning.
+
+```csharp
+public class Subscription : IIdentifiable<Guid>,
+                           ICreatedAuditable,
+                           IUpdatedAuditable
+{
+    public Guid Id { get; set; }
+
+    // Standard audit dates
+    public DateTimeOffset DateCreated { get; set; }
+    public DateTimeOffset? DateUpdated { get; set; }
+
+    // Business dates
+    public DateTimeOffset DateStarted { get; set; }
+    public DateTimeOffset? DateExpired { get; set; }
+    public DateTimeOffset? DateCancelled { get; set; }
+    public DateTimeOffset? DateRenewed { get; set; }
+}
+```
+
+**Benefits:**
+- **Code generation**: Tools can easily identify and process date fields
+- **IntelliSense grouping**: All date properties appear together in autocomplete lists
+- **Consistency**: Predictable naming across the entire codebase
+- **Clarity**: Immediately clear what the property represents
+
+### Boolean Properties: "Is" or "Has" Prefix
+
+Boolean properties must be prefixed with `Is` or `Has` to indicate state or possession, typically in present tense.
+
+```csharp
+public class Feature : IIdentifiable<Guid>, IActiveTrackable
+{
+    public Guid Id { get; set; }
+
+    // State indicators (Is)
+    public bool IsActive { get; set; }
+    public bool IsVisible { get; set; }
+    public bool IsEnabled { get; set; }
+    public bool IsDeleted { get; set; }
+    public bool IsPremium { get; set; }
+
+    // Possession indicators (Has)
+    public bool HasOptions { get; set; }
+    public bool HasChildren { get; set; }
+    public bool HasExpired { get; set; }
+}
+```
+
+**Guidelines:**
+- Use `Is` for state: `IsActive`, `IsVisible`, `IsEnabled`, `IsPublished`
+- Use `Has` for possession or capability: `HasOptions`, `HasChildren`, `HasAccess`
+- Present tense preferred: `IsActive` over `WasActive`
+- Positive phrasing preferred: `IsVisible` over `IsHidden` (when practical)
+
+### DisplayName: UI-Focused Property
+
+The `DisplayName` property (from `IHumanReadable`) is **always** the primary user-facing text representation of an entity.
+
+```csharp
+public class Company : IIdentifiable<Guid>, IHumanReadable
+{
+    public Guid Id { get; set; }
+
+    // Primary display value for UI
+    public string DisplayName { get; set; }  // "Acme Corporation"
+
+    // Other name properties for specific purposes
+    public string LegalName { get; set; }    // "Acme Corporation, Inc."
+    public string TradeName { get; set; }    // "ACME"
+    public string InternalCode { get; set; } // "ACME-001"
+}
+```
+
+**Rules:**
+- `DisplayName` is what appears in dropdowns, lists, and labels
+- Other "name" properties can exist for specific purposes (`LegalName`, `CompanyName`, etc.)
+- If showing users a single text value, use `DisplayName`
+
+```csharp
+// In UI code
+<select>
+    @foreach (var company in companies)
+    {
+        <option value="@company.Id">@company.DisplayName</option>
+    }
+</select>
+```
+
+### Database Enums and SortOrder
+
+The `SortOrder` property in `IDbEnum` serves a dual purpose: UI ordering and C# enum mapping.
+
+```csharp
+public class Priority : IDbEnum
+{
+    public Guid Id { get; set; }
+    public string DisplayName { get; set; }
+    public int SortOrder { get; set; }  // Critical for enum mapping
+    public bool IsActive { get; set; }
+}
+
+// C# enum for compile-time safety
+public enum PriorityEnum
+{
+    Low = 1,
+    Medium = 2,
+    High = 3,
+    Critical = 4
+}
+
+// Mapping between C# enum and database
+public static class PriorityExtensions
+{
+    public static PriorityEnum ToEnum(this Priority priority)
+    {
+        return (PriorityEnum)priority.SortOrder;
+    }
+
+    public static async Task<Priority> ToDbEnum(
+        this PriorityEnum enumValue,
+        DbContext context)
+    {
+        return await context.Set<Priority>()
+            .FirstAsync(p => p.SortOrder == (int)enumValue);
+    }
+}
+```
+
+**Benefits:**
+- Avoids complex EF Core enum mapping configuration
+- Maintains type safety in business logic via C# enums
+- Provides flexibility to change display text without code changes
+- Works reliably with OData (which has inconsistent enum support)
+
+```csharp
+// Usage in business logic
+public async Task AssignPriority(Guid taskId)
+{
+    var task = await _context.Tasks.FindAsync(taskId);
+
+    // Use C# enum for logic
+    if (task.IsUrgent)
+    {
+        var priority = await PriorityEnum.Critical.ToDbEnum(_context);
+        task.PriorityId = priority.Id;
+    }
+
+    await _context.SaveChangesAsync();
+}
+
+// Query by enum value
+var highPriorityTasks = await _context.Tasks
+    .Include(t => t.Priority)
+    .Where(t => t.Priority.SortOrder >= (int)PriorityEnum.High)
+    .ToListAsync();
+```
+
+<Tip>
+Use `SortOrder` as the bridge between compile-time C# enums and runtime database enums. This gives you the best of both worlds: type safety in code and flexibility in data.
+</Tip>
+
+## Entity Identification
+
+### IIdentifiable&lt;T&gt;
+
+The foundation of every entity in EasyAF. This interface ensures your entity has a unique identifier.
+
+```csharp
+public interface IIdentifiable<T> where T : struct
+{
+    T Id { get; set; }
+}
+```
+
+**Common Usage:**
+
+```csharp
+// Guid-based identity (recommended)
+public class Product : IIdentifiable<Guid>
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+}
+
+// Integer-based identity
+public class Category : IIdentifiable<int>
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+```
+
+<Note>
+EasyAF recommends using `Guid` as the identifier type for most entities to avoid identity conflicts in distributed systems and simplify data synchronization.
+</Note>
+
+## Audit Tracking
+
+Track when entities are created and updated, and by whom.
+
+### ICreatedAuditable
+
+Tracks when an entity was created.
+
+```csharp
+public interface ICreatedAuditable
+{
+    DateTimeOffset DateCreated { get; set; }
+}
+```
+
+### IUpdatedAuditable
+
+Tracks when an entity was last updated.
+
+```csharp
+public interface IUpdatedAuditable
+{
+    DateTimeOffset? DateUpdated { get; set; }
+}
+```
+
+<Info>
+`DateUpdated` is nullable because it's only set after the first update, not on creation.
+</Info>
+
+### ICreatorTrackable&lt;T&gt;
+
+Tracks which user created the entity.
+
+```csharp
+public interface ICreatorTrackable<T> where T : struct
+{
+    T CreatedById { get; set; }
+}
+```
+
+### IUpdaterTrackable&lt;T&gt;
+
+Tracks which user last updated the entity.
+
+```csharp
+public interface IUpdaterTrackable<T> where T : struct
+{
+    T? UpdatedById { get; set; }
+}
+```
+
+**Complete Audit Example:**
+
+```csharp
+public class Order : IIdentifiable<Guid>,
+                     ICreatedAuditable,
+                     IUpdatedAuditable,
+                     ICreatorTrackable<Guid>,
+                     IUpdaterTrackable<Guid>
+{
+    public Guid Id { get; set; }
+    public DateTimeOffset DateCreated { get; set; }
+    public DateTimeOffset? DateUpdated { get; set; }
+    public Guid CreatedById { get; set; }
+    public Guid? UpdatedById { get; set; }
+
+    // Business properties
+    public string OrderNumber { get; set; }
+    public decimal TotalAmount { get; set; }
+}
+```
+
+## Active/Inactive Tracking
+
+### IActiveTrackable
+
+Implements soft delete functionality by tracking whether an entity is active or inactive.
+
+```csharp
+public interface IActiveTrackable
+{
+    bool IsActive { get; set; }
+}
+```
+
+**Usage:**
+
+```csharp
+public class Customer : IIdentifiable<Guid>, IActiveTrackable
+{
+    public Guid Id { get; set; }
+    public bool IsActive { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+}
+
+// In your repository/service
+public async Task DeactivateCustomer(Guid customerId)
+{
+    var customer = await _context.Customers.FindAsync(customerId);
+    customer.IsActive = false; // Soft delete
+    await _context.SaveChangesAsync();
+}
+```
+
+<Tip>
+Use `IActiveTrackable` instead of hard deletes to maintain data integrity and enable historical reporting.
+</Tip>
+
+## User-Friendly Display
+
+### IHumanReadable
+
+Provides a consistent property for displaying entity names to users.
+
+```csharp
+public interface IHumanReadable
+{
+    string DisplayName { get; set; }
+}
+```
+
+**Usage:**
+
+```csharp
+public class ProductCategory : IIdentifiable<Guid>, IHumanReadable
+{
+    public Guid Id { get; set; }
+    public string DisplayName { get; set; }
+    public string InternalCode { get; set; }
+}
+
+// In your UI
+<select>
+    @foreach (var category in categories)
+    {
+        <option value="@category.Id">@category.DisplayName</option>
+    }
+</select>
+```
+
+## Ordering and Sorting
+
+### ISortable
+
+Enables manual ordering of entities in lists and dropdowns.
+
+```csharp
+public interface ISortable
+{
+    int SortOrder { get; set; }
+}
+```
+
+**Usage:**
+
+```csharp
+public class MenuSection : IIdentifiable<Guid>, IHumanReadable, ISortable
+{
+    public Guid Id { get; set; }
+    public string DisplayName { get; set; }
+    public int SortOrder { get; set; }
+}
+
+// Query with ordering
+var sections = await _context.MenuSections
+    .Where(s => s.IsActive)
+    .OrderBy(s => s.SortOrder)
+    .ToListAsync();
+```
+
+## Database-Driven Enumerations
+
+Traditional enums in code can cause problems when business logic changes. EasyAF provides a pattern for database-driven enumerations that can be updated without code changes.
+
+### IDbEnum
+
+The base interface for all database enumerations.
+
+```csharp
+public interface IDbEnum : IIdentifiable<Guid>,
+                          IActiveTrackable,
+                          IHumanReadable,
+                          ISortable
+{
+}
+```
+
+<Note>
+`IDbEnum` combines multiple interfaces, giving you identity, active tracking, human-readable display, and sorting in one declaration.
+</Note>
+
+**Usage:**
+
+```csharp
+public class Priority : IDbEnum
+{
+    public Guid Id { get; set; }
+    public bool IsActive { get; set; }
+    public string DisplayName { get; set; }
+    public int SortOrder { get; set; }
+}
+
+// Seeded data
+public class PrioritySeeder
+{
+    public static List<Priority> GetPriorities()
+    {
+        return new List<Priority>
+        {
+            new Priority
+            {
+                Id = Guid.Parse("..."),
+                DisplayName = "Low",
+                SortOrder = 1,
+                IsActive = true
+            },
+            new Priority
+            {
+                Id = Guid.Parse("..."),
+                DisplayName = "Medium",
+                SortOrder = 2,
+                IsActive = true
+            },
+            new Priority
+            {
+                Id = Guid.Parse("..."),
+                DisplayName = "High",
+                SortOrder = 3,
+                IsActive = true
+            }
+        };
+    }
+}
+```
+
+### IDbStatusEnum
+
+Specialized enumeration for tracking entity status.
+
+```csharp
+public interface IDbStatusEnum : IDbEnum
+{
+}
+```
+
+**Usage:**
+
+```csharp
+public class OrderStatus : IDbStatusEnum
+{
+    public Guid Id { get; set; }
+    public bool IsActive { get; set; }
+    public string DisplayName { get; set; }
+    public int SortOrder { get; set; }
+}
+
+// Seeded statuses: Draft, Pending, Approved, Rejected, etc.
+```
+
+### IDbStateEnum
+
+Advanced enumeration for state machine workflows, providing navigation between states.
+
+```csharp
+public interface IDbStateEnum : IDbEnum
+{
+    string InstructionText { get; set; }
+    string PrimaryTargetDisplayText { get; set; }
+    int PrimaryTargetSortOrder { get; set; }
+    string SecondaryTargetDisplayText { get; set; }
+    int SecondaryTargetSortOrder { get; set; }
+}
+```
+
+**Usage:**
+
+```csharp
+public class ApprovalState : IDbStateEnum
+{
+    public Guid Id { get; set; }
+    public bool IsActive { get; set; }
+    public string DisplayName { get; set; }
+    public int SortOrder { get; set; }
+
+    // State machine properties
+    public string InstructionText { get; set; }
+    public string PrimaryTargetDisplayText { get; set; }
+    public int PrimaryTargetSortOrder { get; set; }
+    public string SecondaryTargetDisplayText { get; set; }
+    public int SecondaryTargetSortOrder { get; set; }
+}
+
+// Example state: "Pending Review"
+// InstructionText: "This request is awaiting manager approval"
+// PrimaryTargetDisplayText: "Approve"
+// PrimaryTargetSortOrder: 3 (points to "Approved" state)
+// SecondaryTargetDisplayText: "Reject"
+// SecondaryTargetSortOrder: 4 (points to "Rejected" state)
+```
+
+## Linking Entities to Enumerations
+
+### IHasStatus&lt;T&gt;
+
+Links an entity to a status enumeration.
+
+```csharp
+public interface IHasStatus<T> : IIdentifiable<Guid>
+    where T : class, IDbStatusEnum
+{
+    T StatusType { get; set; }
+    Guid StatusTypeId { get; set; }
+}
+```
+
+**Usage:**
+
+```csharp
+public class PurchaseOrder : IIdentifiable<Guid>,
+                            IHasStatus<OrderStatus>
+{
+    public Guid Id { get; set; }
+    public string OrderNumber { get; set; }
+
+    // Status relationship
+    public Guid StatusTypeId { get; set; }
+    public OrderStatus StatusType { get; set; }
+}
+
+// Query with status
+var pendingOrders = await _context.PurchaseOrders
+    .Include(o => o.StatusType)
+    .Where(o => o.StatusType.DisplayName == "Pending")
+    .ToListAsync();
+```
+
+### IHasState&lt;T&gt;
+
+Links an entity to a state enumeration for workflow management.
+
+```csharp
+public interface IHasState<T> : IIdentifiable<Guid>
+    where T : class, IDbStateEnum
+{
+    T StateType { get; set; }
+    Guid StateTypeId { get; set; }
+}
+```
+
+**Usage:**
+
+```csharp
+public class ExpenseReport : IIdentifiable<Guid>,
+                            IHasState<ApprovalState>
+{
+    public Guid Id { get; set; }
+    public decimal Amount { get; set; }
+
+    // State relationship
+    public Guid StateTypeId { get; set; }
+    public ApprovalState StateType { get; set; }
+}
+
+// State machine logic
+public async Task AdvanceToNextState(Guid expenseReportId, bool usePrimary = true)
+{
+    var report = await _context.ExpenseReports
+        .Include(r => r.StateType)
+        .FirstAsync(r => r.Id == expenseReportId);
+
+    var nextSortOrder = usePrimary
+        ? report.StateType.PrimaryTargetSortOrder
+        : report.StateType.SecondaryTargetSortOrder;
+
+    var nextState = await _context.ApprovalStates
+        .FirstAsync(s => s.SortOrder == nextSortOrder);
+
+    report.StateTypeId = nextState.Id;
+    await _context.SaveChangesAsync();
+}
+```
+
+## Complete Entity Example
+
+Here's a comprehensive example combining multiple interfaces:
+
+```csharp
+public class Employee : IIdentifiable<Guid>,
+                       ICreatedAuditable,
+                       IUpdatedAuditable,
+                       ICreatorTrackable<Guid>,
+                       IUpdaterTrackable<Guid>,
+                       IActiveTrackable,
+                       IHumanReadable,
+                       IHasStatus<EmploymentStatus>
+{
+    // IIdentifiable
+    public Guid Id { get; set; }
+
+    // Audit tracking
+    public DateTimeOffset DateCreated { get; set; }
+    public DateTimeOffset? DateUpdated { get; set; }
+    public Guid CreatedById { get; set; }
+    public Guid? UpdatedById { get; set; }
+
+    // Active tracking
+    public bool IsActive { get; set; }
+
+    // Human readable
+    public string DisplayName { get; set; }
+
+    // Status relationship
+    public Guid StatusTypeId { get; set; }
+    public EmploymentStatus StatusType { get; set; }
+
+    // Business properties
+    public string Email { get; set; }
+    public string Department { get; set; }
+    public DateTimeOffset HireDate { get; set; }
+}
+```
+
+## Best Practices
+
+### 1. Start with the Basics
+
+Always implement `IIdentifiable<Guid>` as your foundation:
+
+```csharp
+public class MyEntity : IIdentifiable<Guid>
+{
+    public Guid Id { get; set; }
+    // Add more interfaces as needed
+}
+```
+
+### 2. Add Audit Tracking for Business Entities
+
+For entities that track business operations, implement full audit tracking:
+
+```csharp
+public class Invoice : IIdentifiable<Guid>,
+                      ICreatedAuditable,
+                      ICreatorTrackable<Guid>,
+                      IUpdatedAuditable,
+                      IUpdaterTrackable<Guid>
+{
+    // Interface implementations...
+}
+```
+
+### 3. Use Soft Deletes
+
+Prefer `IActiveTrackable` over hard deletes:
+
+```csharp
+// Good: Soft delete
+customer.IsActive = false;
+
+// Avoid: Hard delete
+_context.Customers.Remove(customer);
+```
+
+### 4. Leverage Database Enumerations
+
+Replace code enums with database enumerations for flexibility:
+
+```csharp
+// Instead of this:
+public enum OrderStatus { Draft, Pending, Approved }
+
+// Use this:
+public class OrderStatus : IDbStatusEnum { /* ... */ }
+```
+
+### 5. Consistent Interface Ordering
+
+Use a consistent order when implementing multiple interfaces for better readability:
+
+1. `IIdentifiable<T>`
+2. Audit interfaces (`ICreatedAuditable`, etc.)
+3. `IActiveTrackable`
+4. `IHumanReadable`
+5. `ISortable`
+6. Status/State interfaces
+7. Custom interfaces
+
+## Integration with Entity Framework Core
+
+Configure your DbContext to respect these interfaces:
+
+```csharp
+public class ApplicationDbContext : DbContext
+{
+    public DbSet<Employee> Employees { get; set; }
+    public DbSet<EmploymentStatus> EmploymentStatuses { get; set; }
+
+    public override Task<int> SaveChangesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        // Auto-set audit fields
+        var entries = ChangeTracker.Entries()
+            .Where(e => e.State == EntityState.Added ||
+                       e.State == EntityState.Modified);
+
+        foreach (var entry in entries)
+        {
+            if (entry.Entity is IUpdatedAuditable updatable)
+            {
+                updatable.DateUpdated = DateTimeOffset.UtcNow;
+            }
+
+            if (entry.State == EntityState.Added &&
+                entry.Entity is ICreatedAuditable creatable)
+            {
+                creatable.DateCreated = DateTimeOffset.UtcNow;
+            }
+        }
+
+        return base.SaveChangesAsync(cancellationToken);
+    }
+}
+```
+
+## Summary
+
+EasyAF's interface-based table design provides:
+
+- **Consistency**: Common patterns across all entities
+- **Flexibility**: Compose interfaces to match your needs
+- **Maintainability**: Centralized definitions reduce duplication
+- **Integration**: Seamless OData and EF Core support
+- **Scalability**: Database-driven enumerations adapt to changing business requirements
+
+By following these patterns, you'll create a robust, maintainable data model that works seamlessly with the EasyAF framework and reduces boilerplate throughout your application.

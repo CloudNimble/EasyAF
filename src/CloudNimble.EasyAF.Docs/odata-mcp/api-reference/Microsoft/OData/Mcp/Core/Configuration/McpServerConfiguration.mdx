@@ -1,0 +1,571 @@
+---
+title: McpServerConfiguration
+description: "Unified configuration for MCP servers supporting both sidecar and middleware deployment modes."
+icon: lock
+tag: "SEALED"
+keywords: ['McpServerConfiguration', 'Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration', 'Microsoft.OData.Mcp.Core.Configuration', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Configuration
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration
+```
+
+## Summary
+
+Unified configuration for MCP servers supporting both sidecar and middleware deployment modes.
+
+## Remarks
+
+This configuration provides a single, unified interface for configuring MCP servers
+            regardless of deployment mode. It supports both standalone (sidecar) and embedded
+            (middleware) deployment patterns with appropriate defaults for each scenario.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+Initializes a new instance of the [McpServerConfiguration](/odata-mcp/api-reference/Microsoft/OData/Mcp/Core/Configuration/McpServerConfiguration) class.
+
+#### Syntax
+
+```csharp
+public McpServerConfiguration()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Authentication
+
+Gets or sets the authentication configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Authentication.Models.McpAuthenticationOptions Authentication { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Authentication.Models.McpAuthenticationOptions`
+Configuration for user authentication and token validation.
+
+#### Remarks
+
+Authentication configuration controls how users are authenticated and
+            how tokens are validated and forwarded to the underlying OData service.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Caching
+
+Gets or sets the caching configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.CachingConfiguration Caching { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.CachingConfiguration`
+Configuration for metadata and tool caching behavior.
+
+#### Remarks
+
+Caching configuration controls how long metadata and generated tools are cached
+            to improve performance and reduce load on the underlying OData service.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CustomProperties
+
+Gets or sets custom configuration properties.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> CustomProperties { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of custom configuration values.
+
+#### Remarks
+
+Custom properties allow extending the configuration with application-specific
+            settings that don't fit into the standard configuration categories.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DeploymentMode
+
+Gets or sets the deployment mode for the MCP server.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.McpDeploymentMode DeploymentMode { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.McpDeploymentMode`
+The deployment mode determining how the server operates.
+
+#### Remarks
+
+The deployment mode affects how the server discovers metadata, handles authentication,
+            and exposes endpoints. Each mode has different configuration requirements and behaviors.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  FeatureFlags
+
+Gets or sets the feature flags configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.FeatureFlagsConfiguration FeatureFlags { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.FeatureFlagsConfiguration`
+Configuration for enabling/disabling specific features.
+
+#### Remarks
+
+Feature flags allow selective enabling of functionality for gradual rollouts,
+            A/B testing, or environment-specific configurations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Monitoring
+
+Gets or sets the logging and monitoring configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.MonitoringConfiguration Monitoring { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.MonitoringConfiguration`
+Configuration for logging, metrics, and health monitoring.
+
+#### Remarks
+
+Monitoring configuration controls what information is logged, how metrics
+            are collected, and what health checks are performed.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Network
+
+Gets or sets the network and transport configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.NetworkConfiguration Network { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.NetworkConfiguration`
+Configuration for network endpoints, ports, and transport protocols.
+
+#### Remarks
+
+Network configuration specifies how the MCP server exposes its endpoints
+            and communicates with clients and the underlying OData service.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ODataService
+
+Gets or sets the OData service configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.ODataServiceConfiguration ODataService { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.ODataServiceConfiguration`
+Configuration for connecting to and interacting with OData services.
+
+#### Remarks
+
+This configuration specifies how the MCP server discovers and communicates
+            with the underlying OData service, including metadata endpoints and authentication.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Security
+
+Gets or sets the security configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.SecurityConfiguration Security { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.SecurityConfiguration`
+Configuration for security policies and restrictions.
+
+#### Remarks
+
+Security configuration includes CORS policies, rate limiting, request size limits,
+            and other security-related settings.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ServerInfo
+
+Gets or sets the server information.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.McpServerInfo ServerInfo { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.McpServerInfo`
+Basic information about the MCP server instance.
+
+#### Remarks
+
+This information is exposed through the server info endpoint and helps
+            clients understand the capabilities and version of the server.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToolGeneration
+
+Gets or sets the tool generation configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions ToolGeneration { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Tools.McpToolGenerationOptions`
+Options controlling how MCP tools are generated from OData metadata.
+
+#### Remarks
+
+Tool generation options determine which operations are exposed as MCP tools,
+            how they are named, and what authorization requirements they have.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ApplyEnvironmentOverrides
+
+Applies environment-specific overrides to the configuration.
+
+#### Syntax
+
+```csharp
+public void ApplyEnvironmentOverrides(string environment)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `environment` | `string` | The environment name (e.g., "Development", "Production"). |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Clone
+
+Creates a deep copy of this configuration.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration Clone()
+```
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration`
+A new configuration instance with the same settings.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ForDevelopment
+
+Creates a configuration optimized for development environments.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration ForDevelopment(Microsoft.OData.Mcp.Core.Configuration.McpDeploymentMode deploymentMode = 1)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `deploymentMode` | `Microsoft.OData.Mcp.Core.Configuration.McpDeploymentMode` | The deployment mode for development. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration`
+A configuration instance with development-friendly settings.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ForMiddleware
+
+Creates a configuration optimized for middleware deployment.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration ForMiddleware(string basePath = "/mcp")
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `basePath` | `string` | The base path for MCP endpoints within the host application. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration`
+A configuration instance optimized for middleware deployment.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ForProduction
+
+Creates a configuration optimized for production environments.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration ForProduction(Microsoft.OData.Mcp.Core.Configuration.McpDeploymentMode deploymentMode = 0)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `deploymentMode` | `Microsoft.OData.Mcp.Core.Configuration.McpDeploymentMode` | The deployment mode for production. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration`
+A configuration instance with production-optimized settings.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ForSidecar
+
+Creates a configuration optimized for sidecar deployment.
+
+#### Syntax
+
+```csharp
+public static Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration ForSidecar(string odataServiceUrl)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `odataServiceUrl` | `string` | The URL of the OData service to integrate with. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration`
+A configuration instance optimized for sidecar deployment.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *odataServiceUrl* is null or whitespace. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetStatistics
+
+Gets configuration statistics for monitoring and diagnostics.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> GetStatistics()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary containing configuration statistics.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MergeWith
+
+Merges another configuration into this one, with the other configuration taking precedence.
+
+#### Syntax
+
+```csharp
+public void MergeWith(Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration other)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `other` | `Microsoft.OData.Mcp.Core.Configuration.McpServerConfiguration` | The configuration to merge into this one. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *other* is null. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Validate
+
+Validates the configuration for completeness and consistency.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerable<string> Validate()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of validation errors, or empty if the configuration is valid.
+

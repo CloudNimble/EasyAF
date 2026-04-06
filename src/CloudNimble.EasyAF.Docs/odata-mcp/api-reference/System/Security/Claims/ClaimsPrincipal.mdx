@@ -1,0 +1,239 @@
+---
+title: ClaimsPrincipal
+description: "Extension methods for ClaimsPrincipal from System.Security.Claims"
+icon: file-brackets-curly
+keywords: ['ClaimsPrincipal', 'System.Security.Claims.ClaimsPrincipal', 'System.Security.Claims', 'error']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** System.Security.Claims.dll
+
+**Namespace:** System.Security.Claims
+
+## Syntax
+
+```csharp
+System.Security.Claims.ClaimsPrincipal
+```
+
+## Summary
+
+This type is defined in System.Security.Claims.
+
+## Remarks
+
+See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/system.security.claims.claimsprincipal) for more information about the rest of the API.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetUserEmail <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.Security.Claims.McpAuthentication_ClaimsPrincipalExtensions`</Note>
+
+Gets the user email from the claims principal.
+
+#### Syntax
+
+```csharp
+public static string GetUserEmail(System.Security.Claims.ClaimsPrincipal principal)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The claims principal to extract the email from. |
+
+#### Returns
+
+Type: `string?`
+The user email, or null if not found.
+
+#### Remarks
+
+This method looks for the email in common claim types used by
+            different authentication providers.
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetUserId <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.Security.Claims.McpAuthentication_ClaimsPrincipalExtensions`</Note>
+
+Gets the user identifier from the claims principal.
+
+#### Syntax
+
+```csharp
+public static string GetUserId(System.Security.Claims.ClaimsPrincipal principal)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The claims principal to extract the user ID from. |
+
+#### Returns
+
+Type: `string?`
+The user identifier, or null if not found.
+
+#### Remarks
+
+This method looks for the user identifier in common claim types used by
+            different authentication providers.
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetUserName <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.Security.Claims.McpAuthentication_ClaimsPrincipalExtensions`</Note>
+
+Gets the username from the claims principal.
+
+#### Syntax
+
+```csharp
+public static string GetUserName(System.Security.Claims.ClaimsPrincipal principal)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The claims principal to extract the username from. |
+
+#### Returns
+
+Type: `string?`
+The username, or null if not found.
+
+#### Remarks
+
+This method looks for the username in common claim types used by
+            different authentication providers.
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetUserRoles <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.Security.Claims.McpAuthentication_ClaimsPrincipalExtensions`</Note>
+
+Gets the user roles from the claims principal.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IEnumerable<string> GetUserRoles(System.Security.Claims.ClaimsPrincipal principal)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The claims principal to extract roles from. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of user roles, or empty if no roles are found.
+
+#### Examples
+
+```csharp
+var userRoles = User.GetUserRoles();
+if (userRoles.Contains("Administrator"))
+{
+    // User has administrator role
+}
+```
+
+#### Remarks
+
+This method looks for roles in various claim types commonly used by different
+            authentication providers. Roles can be in individual claims or comma-separated values.
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetUserScopes <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.Security.Claims.McpAuthentication_ClaimsPrincipalExtensions`</Note>
+
+Gets the user scopes from the claims principal.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IEnumerable<string> GetUserScopes(System.Security.Claims.ClaimsPrincipal principal)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The claims principal to extract scopes from. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerable<string>`
+A collection of user scopes, or empty if no scopes are found.
+
+#### Examples
+
+```csharp
+var userScopes = User.GetUserScopes();
+if (userScopes.Contains("read:users"))
+{
+    // User has permission to read users
+}
+```
+
+#### Remarks
+
+This method looks for scopes in various claim types commonly used by different
+            authentication providers. Scopes are typically space-separated values in a single claim.
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasRole <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.Security.Claims.McpAuthentication_ClaimsPrincipalExtensions`</Note>
+
+Determines whether the user has the specified role.
+
+#### Syntax
+
+```csharp
+public static bool HasRole(System.Security.Claims.ClaimsPrincipal principal, string role)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The claims principal to check. |
+| `role` | `string` | The role to check for. |
+
+#### Returns
+
+Type: `bool`
+`true` if the user has the specified role; otherwise, `false`.
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  HasScope <DocsBadge text="Extension" variant="success" />
+
+<Note>Extension method from `System.Security.Claims.McpAuthentication_ClaimsPrincipalExtensions`</Note>
+
+Determines whether the user has the specified scope.
+
+#### Syntax
+
+```csharp
+public static bool HasScope(System.Security.Claims.ClaimsPrincipal principal, string scope)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The claims principal to check. |
+| `scope` | `string` | The scope to check for. |
+
+#### Returns
+
+Type: `bool`
+`true` if the user has the specified scope; otherwise, `false`.
+

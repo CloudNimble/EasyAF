@@ -1,0 +1,330 @@
+---
+title: GlobToolResponse
+description: "Represents the response payload returned by the Claude Code Glob tool after searching             for files matching a pattern."
+icon: file-brackets-curly
+keywords: ['GlobToolResponse', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.GlobToolResponse', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks.Tools.Responses
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.GlobToolResponse
+```
+
+## Summary
+
+Represents the response payload returned by the Claude Code Glob tool after searching
+            for files matching a pattern.
+
+## Remarks
+
+
+
+
+            The Glob tool performs fast file pattern matching across codebases of any size.
+            It supports standard glob patterns like `"**/*.js"` or `"src/**/*.ts"`.
+            This response is received in the [GlobPostToolUsePayload](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/GlobPostToolUsePayload)
+            when the `tool_name` is "Glob".
+            
+
+
+
+
+            Results are sorted by modification time (most recently modified first), making it
+            easy to find recently changed files matching a pattern.
+            
+
+
+
+
+            Example JSON payload:
+            ```csharp
+{
+  "filenames": [
+    "C:\\Projects\\MyApp\\src\\Program.cs",
+    "C:\\Projects\\MyApp\\src\\Utilities.cs",
+    "C:\\Projects\\MyApp\\tests\\ProgramTests.cs"
+  ],
+  "durationMs": 150,
+  "numFiles": 3,
+  "truncated": false
+}
+```
+
+
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public GlobToolResponse()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DurationMs
+
+Gets or sets the duration of the glob operation in milliseconds.
+
+#### Syntax
+
+```csharp
+public int DurationMs { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+#### Remarks
+
+This indicates how long the file system search took to complete. Large codebases
+            or complex patterns may take longer. The Glob tool is optimized for performance
+            and typically completes quickly even on large codebases.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Filenames
+
+Gets or sets the list of absolute file paths matching the glob pattern.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<string> Filenames { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<string>`
+
+#### Remarks
+
+
+
+
+            All paths are absolute and sorted by modification time, with the most recently
+            modified files appearing first in the list.
+            
+
+
+
+
+            On Windows, paths will use backslash separators. The paths can be used directly
+            with other tools like [ReadToolInput](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Inputs/ReadToolInput) to read the matched files.
+            
+
+
+
+
+            If [GlobToolResponse.Truncated](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/GlobToolResponse#truncated) is `true`, not all matching files are included
+            in this list due to result limits.
+            
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NumFiles
+
+Gets or sets the number of files found matching the pattern.
+
+#### Syntax
+
+```csharp
+public int NumFiles { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+#### Remarks
+
+
+
+
+            This is the count of files in [GlobToolResponse.Filenames](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/GlobToolResponse#filenames). If [GlobToolResponse.Truncated](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/GlobToolResponse#truncated)
+            is `true`, this represents only the number of files returned, not the total
+            number of matches.
+            
+
+
+
+
+            A value of 0 indicates no files matched the specified pattern in the search directory.
+            
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Truncated
+
+Gets or sets a value indicating whether the results were truncated due to
+            exceeding the maximum result limit.
+
+#### Syntax
+
+```csharp
+public bool Truncated { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+#### Remarks
+
+
+
+
+            When `true`, more files matched the pattern than could be returned.
+            Consider using a more specific pattern to narrow down the results, or use
+            the [GlobToolInput.Path](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Inputs/GlobToolInput#path) parameter to search a more specific directory.
+            
+
+
+
+
+            When results are truncated, the returned files are still sorted by modification
+            time, so the most recently modified matches are included.
+            
+
+
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

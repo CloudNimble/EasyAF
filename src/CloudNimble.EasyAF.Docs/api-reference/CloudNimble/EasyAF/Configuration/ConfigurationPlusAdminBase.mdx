@@ -1,0 +1,364 @@
+---
+title: ConfigurationPlusAdminBase
+description: "An extended configuration class that includes both public and administrative endpoint configuration. Inherits from [ConfigurationBase](/api-reference/CloudNi..."
+icon: file-brackets-curly
+keywords: ['ConfigurationPlusAdminBase', 'CloudNimble.EasyAF.Configuration.ConfigurationPlusAdminBase', 'CloudNimble.EasyAF.Configuration', 'class', 'CloudNimble.EasyAF.Configuration.ConfigurationBase']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Configuration.dll
+
+**Namespace:** CloudNimble.EasyAF.Configuration
+
+**Inheritance:** CloudNimble.EasyAF.Configuration.ConfigurationBase
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Configuration.ConfigurationPlusAdminBase
+```
+
+## Summary
+
+An extended configuration class that includes both public and administrative endpoint configuration.
+Inherits from [ConfigurationBase](/api-reference/CloudNimble/EasyAF/Configuration/ConfigurationBase) and adds support for administrative APIs and applications.
+
+## Remarks
+
+This configuration class should be used for applications that need both customer-facing and 
+administrative functionality, such as multi-tenant applications with separate admin interfaces
+or applications that need to communicate with both public and private APIs.
+
+## Examples
+
+```csharp
+// In Program.cs or Startup.cs
+builder.Services.AddConfigurationBase&lt;MyAdminConfiguration&gt;(builder.Configuration, "AppSettings");
+
+// Example configuration in appsettings.json
+{
+  "AppSettings": {
+    "ApiRoot": "https://api.mycompany.com",
+    "AppRoot": "https://myapp.mycompany.com",
+    "AdminApiRoot": "https://admin-api.mycompany.com",
+    "AdminAppRoot": "https://admin.mycompany.com",
+    "HttpHandlerMode": "Add"
+  }
+}
+
+// Usage in administrative components
+[Inject] public MyAdminConfiguration Config { get; set; }
+
+private async Task CallAdminApi()
+{
+    var adminClient = HttpClientFactory.CreateClient(Config.AdminApiClientName);
+    var response = await adminClient.GetAsync($"{Config.AdminApiRoot}/admin/users");
+}
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public ConfigurationPlusAdminBase()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Configuration.ConfigurationBase`</Note>
+
+#### Syntax
+
+```csharp
+public ConfigurationBase()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AdminApiClientName
+
+The name of the HttpClient that will be used to hit the Admin (Private) API.
+
+#### Syntax
+
+```csharp
+public string AdminApiClientName { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AdminApiRoot
+
+The root of the Admin (Private) API.
+
+#### Syntax
+
+```csharp
+public string AdminApiRoot { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Remarks
+
+Most Blazor apps will call at least one API. If you need to call more than one, just inherit from ConfigurationBase and add your own properties.
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AdminAppClientName
+
+The name of the HttpClient that will be used to hit the Admin Blazor Controllers.
+
+#### Syntax
+
+```csharp
+public string AdminAppClientName { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AdminAppRoot
+
+The website your Administrative Blazor app is being served from.
+
+#### Syntax
+
+```csharp
+public string AdminAppRoot { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Remarks
+
+Sometimes you will need to get information about the app's deployment before it has been fully-initialized in Program.cs. This is the place to do it.
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ApiClientName <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Configuration.ConfigurationBase`</Note>
+
+The name of the HttpClient that will be used to hit the app's Public API.
+
+#### Syntax
+
+```csharp
+public string ApiClientName { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ApiRoot <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Configuration.ConfigurationBase`</Note>
+
+The root of the API that your Blazor app will call.
+
+#### Syntax
+
+```csharp
+public string ApiRoot { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Remarks
+
+Most Blazor apps will call at least one API. If you need to call more than one, just inherit from ConfigurationBase and add your own properties.
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AppClientName <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Configuration.ConfigurationBase`</Note>
+
+The name of the HttpClient that will be used to hit the Blazor App's Controllers.
+
+#### Syntax
+
+```csharp
+public string AppClientName { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AppRoot <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Configuration.ConfigurationBase`</Note>
+
+The website your Blazor app is being served from.
+
+#### Syntax
+
+```csharp
+public string AppRoot { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Remarks
+
+Sometimes you will need to get information about the app's deployment before it has been fully-initialized in Program.cs. This is the place to do it.
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> HttpHandlerMode <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.EasyAF.Configuration.ConfigurationBase`</Note>
+
+Determines how HttpClient message handlers are configured when registering HTTP clients.
+Controls whether handlers are added to existing handlers or replace them entirely.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.Core.HttpHandlerMode HttpHandlerMode { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.EasyAF.Core.HttpHandlerMode`
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

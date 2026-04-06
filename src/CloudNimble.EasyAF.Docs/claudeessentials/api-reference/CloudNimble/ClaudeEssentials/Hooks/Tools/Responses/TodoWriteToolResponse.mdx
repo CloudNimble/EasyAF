@@ -1,0 +1,286 @@
+---
+title: TodoWriteToolResponse
+description: "Represents the response payload returned by the Claude Code TodoWrite tool after             updating the task list."
+icon: file-brackets-curly
+keywords: ['TodoWriteToolResponse', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.TodoWriteToolResponse', 'CloudNimble.ClaudeEssentials.Hooks.Tools.Responses', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.ClaudeEssentials.dll
+
+**Namespace:** CloudNimble.ClaudeEssentials.Hooks.Tools.Responses
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.ClaudeEssentials.Hooks.Tools.Responses.TodoWriteToolResponse
+```
+
+## Summary
+
+Represents the response payload returned by the Claude Code TodoWrite tool after
+            updating the task list.
+
+## Remarks
+
+
+
+
+            The TodoWrite tool creates and manages a structured task list for the current coding
+            session. It helps Claude track progress, organize complex tasks, and demonstrate
+            thoroughness to the user. This response is received in the
+            [TodoWritePostToolUsePayload](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/TodoWritePostToolUsePayload) when the
+            `tool_name` is "TodoWrite".
+            
+
+
+
+
+            The response includes both the previous state ([TodoWriteToolResponse.OldTodos](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/TodoWriteToolResponse#oldtodos)) and the new
+            state ([TodoWriteToolResponse.NewTodos](/claudeessentials/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/TodoWriteToolResponse#newtodos)) of the todo list, enabling hooks to track what changed.
+            
+
+
+
+
+            Use cases for the TodoWrite tool include:
+            
+- Complex multi-step tasks requiring 3 or more distinct steps
+- Tasks that require careful planning
+- When the user provides multiple tasks to complete
+- Tracking progress through large implementations
+
+
+
+
+
+            Example JSON payload:
+            ```csharp
+{
+  "oldTodos": [
+    { "content": "Run the build", "status": "completed", "activeForm": "Running the build" },
+    { "content": "Fix type errors", "status": "in_progress", "activeForm": "Fixing type errors" }
+  ],
+  "newTodos": [
+    { "content": "Run the build", "status": "completed", "activeForm": "Running the build" },
+    { "content": "Fix type errors", "status": "completed", "activeForm": "Fixing type errors" },
+    { "content": "Run tests", "status": "pending", "activeForm": "Running tests" }
+  ]
+}
+```
+
+
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public TodoWriteToolResponse()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NewTodos
+
+Gets or sets the new state of the todo list after this update.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs.TodoItem> NewTodos { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs.TodoItem>`
+
+#### Remarks
+
+
+
+
+            This contains the complete todo list after the TodoWrite operation.
+            It reflects all additions, removals, and status changes that were made.
+            
+
+
+
+
+            Each [TodoItem](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Inputs/TodoItem) includes:
+            
+- `Content` - The task description (imperative form)
+- `Status` - Current state: pending, in_progress, or completed
+- `ActiveForm` - Present continuous form for display during execution
+
+
+
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> OldTodos
+
+Gets or sets the previous state of the todo list before this update.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs.TodoItem> OldTodos { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<CloudNimble.ClaudeEssentials.Hooks.Tools.Inputs.TodoItem>`
+
+#### Remarks
+
+
+
+
+            This contains the complete todo list as it existed before the TodoWrite
+            operation was performed. Comparing this with [TodoWriteToolResponse.NewTodos](/api-reference/CloudNimble/ClaudeEssentials/Hooks/Tools/Responses/TodoWriteToolResponse#newtodos) allows
+            hooks to determine exactly what changed.
+            
+
+
+
+
+            This will be an empty list if no todos existed before this operation
+            (i.e., this is the first TodoWrite in the session).
+            
+
+
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

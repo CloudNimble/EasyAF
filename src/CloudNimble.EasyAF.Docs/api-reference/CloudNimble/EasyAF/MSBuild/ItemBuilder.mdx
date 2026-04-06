@@ -1,0 +1,264 @@
+---
+title: ItemBuilder
+description: "Builder class for configuring individual MSBuild items in a fluent manner."
+icon: file-brackets-curly
+keywords: ['ItemBuilder', 'CloudNimble.EasyAF.MSBuild.ItemBuilder', 'CloudNimble.EasyAF.MSBuild', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.MSBuild.dll
+
+**Namespace:** CloudNimble.EasyAF.MSBuild
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.MSBuild.ItemBuilder
+```
+
+## Summary
+
+Builder class for configuring individual MSBuild items in a fluent manner.
+
+## Remarks
+
+This class provides a fluent API for adding metadata to MSBuild items.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AddMetadata
+
+Adds metadata to the item.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.MSBuild.ItemBuilder AddMetadata(string name, string value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The metadata name. |
+| `value` | `string` | The metadata value. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.MSBuild.ItemBuilder`
+The current instance for method chaining.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when name or value is null or whitespace. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SetLink
+
+Sets the Link metadata for the item (commonly used with AdditionalFiles).
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.MSBuild.ItemBuilder SetLink(string value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `string` | The Link value. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.MSBuild.ItemBuilder`
+The current instance for method chaining.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when value is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SetPrivateAssets
+
+Sets the PrivateAssets metadata for the item (commonly used with PackageReference).
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.MSBuild.ItemBuilder SetPrivateAssets(string value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `string` | The PrivateAssets value (e.g., "all", "runtime", "compile"). |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.MSBuild.ItemBuilder`
+The current instance for method chaining.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when value is null or whitespace. |
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SetVisible
+
+Sets the Visible metadata for the item.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.MSBuild.ItemBuilder SetVisible(bool visible)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `visible` | `bool` | Whether the item should be visible. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.MSBuild.ItemBuilder`
+The current instance for method chaining.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

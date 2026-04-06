@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CloudNimble.EasyAF.Data.EF6\CloudNimble.EasyAF.Data.EF6.csproj" />
+        <ProjectReference Include="..\CloudNimble.EasyAF.Tests.Shared\CloudNimble.EasyAF.Tests.Shared.csproj" />
+    </ItemGroup>
+
+</Project>

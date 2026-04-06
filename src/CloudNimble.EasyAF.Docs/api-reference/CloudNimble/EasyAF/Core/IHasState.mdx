@@ -1,0 +1,61 @@
+---
+title: IHasState
+description: "An interface that specifes an implementing Entity changes State as part of the SimpleStateMachine."
+icon: plug
+keywords: ['IHasState', 'CloudNimble.EasyAF.Core.IHasState<T>', 'CloudNimble.EasyAF.Core', 'interface', 'CloudNimble.EasyAF.Core.IIdentifiable<System.Guid>']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.IHasState<T>
+```
+
+## Summary
+
+An interface that specifes an implementing Entity changes State as part of the SimpleStateMachine.
+
+## Type Parameters
+
+- `T` - The type implementing [IDbStateEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStateEnum) that represents States for this Entity.
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> StateType <Badge color="orange">Abstract</Badge>
+
+The populated instance of [IDbStateEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStateEnum).
+
+#### Syntax
+
+```csharp
+T StateType { get; set; }
+```
+
+#### Property Value
+
+Type: `T`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> StateTypeId <Badge color="orange">Abstract</Badge>
+
+The unique identifier for the SimpleStateMachine [IDbStateEnum](/api-reference/CloudNimble/EasyAF/Core/IDbStateEnum).
+
+#### Syntax
+
+```csharp
+System.Guid StateTypeId { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Guid`
+
+## Related APIs
+
+- CloudNimble.EasyAF.Core.IIdentifiable&lt;System.Guid&gt;
+

@@ -1,0 +1,49 @@
+{
+  "profiles": {
+    "Init": {
+      "commandName": "Project",
+      "commandLineArgs": "init -c \"TestConnectionString\" -x \"TestDbContext\" -p \"SqlServer\"",
+      "workingDirectory": "D:\\Scratch\\EasyAF\\CloudNimble.Test"
+    },
+    "Database.Generate": {
+      "commandName": "Project",
+      "commandLineArgs": "database generate --solution-folder \"D:\\Scratch\\Sustainment.ToDo\""
+    },
+    "Code.Generate.All": {
+      "commandName": "Project",
+      "commandLineArgs": "code generate all --path \"D:\\Scratch\\Sustainment.ToDo\""
+    }
+    //"Mintlify.Init": {
+    //  "commandName": "Project",
+    //  "commandLineArgs": "mintlify init --name \"EasyAF\"",
+    //  "workingDirectory": "D:\\Work\\EasyAF\\Dev"
+    //},
+    //"Mintlify.Generate": {
+    //  "commandName": "Project",
+    //  "commandLineArgs": "mintlify generate --clean --exclude \"*Analyzers.EF6*,*Edmx*,*CodeGen\" --verbose",
+    //  //"commandLineArgs": "mintlify generate --clean --exclude \"*Analyzers.EF6*,*Edmx*,*CodeGen\"",
+    //  //"commandLineArgs": "mintlify generate --config-only",
+    //  "workingDirectory": "D:\\Work\\EasyAF\\Dev"
+    //},
+    //"Mintlify.Generate.BlazorEssentials": {
+    //  "commandName": "Project",
+    //  "commandLineArgs": "mintlify generate --clean",
+    //  "workingDirectory": "D:\\GitHub\\BlazorEssentials"
+    //},
+    //"Mintlify.Generate.Breakdance": {
+    //  "commandName": "Project",
+    //  "commandLineArgs": "mintlify generate --clean",
+    //  "workingDirectory": "D:\\GitHub\\Breakdance"
+    //},
+    //"Mintlify.Generate.EasyAFDocs": {
+    //  "commandName": "Project",
+    //  "commandLineArgs": "mintlify generate",
+    //  "workingDirectory": "D:\\GitHub\\EasyAF.Docs"
+    //},
+    //"Mintlify.Generate.SimpleMessageBus": {
+    //  "commandName": "Project",
+    //  "commandLineArgs": "mintlify generate --clean",
+    //  "workingDirectory": "D:\\GitHub\\SimpleMessageBus"
+    //}
+  }
+}

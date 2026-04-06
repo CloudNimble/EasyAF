@@ -1,0 +1,70 @@
+---
+title: IgnoreAuditFieldsJsonConverterFactory
+icon: file-brackets-curly
+sidebarTitle: IgnoreAuditFieldsJsonConverterFactory
+keywords: ['IgnoreAuditFieldsJsonConverterFactory', 'CloudNimble.EasyAF.Core.Converters.IgnoreAuditFieldsJsonConverterFactory', 'CloudNimble.EasyAF.Core.Converters', 'class', 'System.Text.Json.Serialization.JsonConverterFactory']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Core.dll
+
+**Namespace:** CloudNimble.EasyAF.Core.Converters
+
+**Inheritance:** System.Text.Json.Serialization.JsonConverterFactory
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Core.Converters.IgnoreAuditFieldsJsonConverterFactory
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public IgnoreAuditFieldsJsonConverterFactory()
+```
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> CanConvert <Badge color="blue">Override</Badge>
+
+#### Syntax
+
+```csharp
+public override bool CanConvert(System.Type typeToConvert)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `typeToConvert` | `System.Type` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> CreateConverter <Badge color="blue">Override</Badge>
+
+#### Syntax
+
+```csharp
+public override System.Text.Json.Serialization.JsonConverter CreateConverter(System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `typeToConvert` | `System.Type` | - |
+| `options` | `System.Text.Json.JsonSerializerOptions` | - |
+
+#### Returns
+
+Type: `System.Text.Json.Serialization.JsonConverter`
+

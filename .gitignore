@@ -416,3 +416,5 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+/.playwright-mcp
+/.claude/settings.local.json

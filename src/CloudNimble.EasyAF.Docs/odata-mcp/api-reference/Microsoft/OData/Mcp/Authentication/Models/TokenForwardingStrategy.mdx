@@ -1,0 +1,36 @@
+---
+title: TokenForwardingStrategy
+description: "Defines the strategies for forwarding tokens to downstream services."
+icon: list-ol
+tag: "ENUM"
+keywords: ['TokenForwardingStrategy', 'Microsoft.OData.Mcp.Authentication.Models.TokenForwardingStrategy', 'Microsoft.OData.Mcp.Authentication.Models', 'class', 'System.Enum']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Authentication.dll
+
+**Namespace:** Microsoft.OData.Mcp.Authentication.Models
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Authentication.Models.TokenForwardingStrategy
+```
+
+## Summary
+
+Defines the strategies for forwarding tokens to downstream services.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `PassThrough` | 0 | Forward the original token without modification. |
+| `Exchange` | 1 | Exchange the token for a new one using OAuth2 token exchange. |
+| `OnBehalfOf` | 2 | Use OAuth2 on-behalf-of flow to obtain a token for the downstream service. |
+

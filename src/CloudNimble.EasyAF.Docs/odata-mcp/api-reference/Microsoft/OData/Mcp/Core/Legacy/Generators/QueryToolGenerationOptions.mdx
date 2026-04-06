@@ -1,0 +1,460 @@
+---
+title: QueryToolGenerationOptions
+description: "Options for controlling query tool generation behavior."
+icon: lock
+tag: "SEALED"
+keywords: ['QueryToolGenerationOptions', 'Microsoft.OData.Mcp.Core.Legacy.Generators.QueryToolGenerationOptions', 'Microsoft.OData.Mcp.Core.Legacy.Generators', 'class', 'System.Object']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Legacy.Generators
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Legacy.Generators.QueryToolGenerationOptions
+```
+
+## Summary
+
+Options for controlling query tool generation behavior.
+
+## Remarks
+
+These options allow fine-grained control over which query features are enabled
+            and how they behave, including OData query options and result formatting.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor
+
+#### Syntax
+
+```csharp
+public QueryToolGenerationOptions()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  .ctor <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  CustomProperties
+
+Gets or sets custom properties that can be used by specific generators.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, object> CustomProperties { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, object>`
+A dictionary of custom properties for generator-specific configuration.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  DefaultPageSize
+
+Gets or sets the default page size for query results.
+
+#### Syntax
+
+```csharp
+public int DefaultPageSize { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The default number of entities to return in a single page.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExcludedEntityTypes
+
+Gets or sets the list of entity types to exclude from tool generation.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.HashSet<string> ExcludedEntityTypes { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.HashSet<string>`
+A collection of entity type names to exclude.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ExcludedProperties
+
+Gets or sets the list of properties to exclude from filtering and sorting.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<string>> ExcludedProperties { get; set; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<string>>`
+A dictionary mapping entity type names to lists of excluded properties.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateCountTools
+
+Gets or sets a value indicating whether to generate count tools.
+
+#### Syntax
+
+```csharp
+public bool GenerateCountTools { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to generate count tools; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateDetailedDescriptions
+
+Gets or sets a value indicating whether to generate detailed descriptions for tools.
+
+#### Syntax
+
+```csharp
+public bool GenerateDetailedDescriptions { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to generate detailed descriptions; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateListTools
+
+Gets or sets a value indicating whether to generate list tools.
+
+#### Syntax
+
+```csharp
+public bool GenerateListTools { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to generate list tools; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GenerateSearchTools
+
+Gets or sets a value indicating whether to generate search tools.
+
+#### Syntax
+
+```csharp
+public bool GenerateSearchTools { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to generate search tools; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  IncludeExamples
+
+Gets or sets a value indicating whether to include examples in tool descriptions.
+
+#### Syntax
+
+```csharp
+public bool IncludeExamples { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to include examples; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MaxPageSize
+
+Gets or sets the maximum page size allowed for queries.
+
+#### Syntax
+
+```csharp
+public int MaxPageSize { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum number of entities that can be requested in a single page.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  NamingConvention
+
+Gets or sets the naming convention to use for generated tool names.
+
+#### Syntax
+
+```csharp
+public Microsoft.OData.Mcp.Core.Legacy.Generators.ToolNamingConvention NamingConvention { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.OData.Mcp.Core.Legacy.Generators.ToolNamingConvention`
+The naming convention for tool names.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SupportExpand
+
+Gets or sets a value indicating whether to support $expand query option.
+
+#### Syntax
+
+```csharp
+public bool SupportExpand { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to support expansion; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SupportFilter
+
+Gets or sets a value indicating whether to support $filter query option.
+
+#### Syntax
+
+```csharp
+public bool SupportFilter { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to support filtering; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SupportOrderBy
+
+Gets or sets a value indicating whether to support $orderby query option.
+
+#### Syntax
+
+```csharp
+public bool SupportOrderBy { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to support ordering; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SupportSearch
+
+Gets or sets a value indicating whether to support $search query option.
+
+#### Syntax
+
+```csharp
+public bool SupportSearch { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to support full-text search; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SupportSelect
+
+Gets or sets a value indicating whether to support $select query option.
+
+#### Syntax
+
+```csharp
+public bool SupportSelect { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to support projection; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SupportSkip
+
+Gets or sets a value indicating whether to support $skip query option.
+
+#### Syntax
+
+```csharp
+public bool SupportSkip { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to support skipping results; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  SupportTop
+
+Gets or sets a value indicating whether to support $top query option.
+
+#### Syntax
+
+```csharp
+public bool SupportTop { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to support top results; otherwise, `false`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  UseSchemaDescriptions
+
+Gets or sets a value indicating whether to use schema descriptions for tool documentation.
+
+#### Syntax
+
+```csharp
+public bool UseSchemaDescriptions { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+`true` to use schema descriptions; otherwise, `false`.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  Equals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetHashCode <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  GetType <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  MemberwiseClone <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ReferenceEquals <DocsBadge text="Inherited" variant="neutral" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ToString <DocsBadge text="Inherited" variant="neutral" /> <DocsBadge text="Virtual" variant="warning" />
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

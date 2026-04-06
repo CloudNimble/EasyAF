@@ -1,0 +1,121 @@
+---
+title: ICsdlMetadataParser
+description: "Interface for parsing OData CSDL (Conceptual Schema Definition Language) XML documents into EDM models."
+icon: plug
+keywords: ['ICsdlMetadataParser', 'Microsoft.OData.Mcp.Core.Parsing.ICsdlMetadataParser', 'Microsoft.OData.Mcp.Core.Parsing', 'interface']
+---
+
+import { DocsBadge } from '/snippets/odata-mcp/DocsBadge.jsx';
+
+## Definition
+
+**Assembly:** Microsoft.OData.Mcp.Core.dll
+
+**Namespace:** Microsoft.OData.Mcp.Core.Parsing
+
+## Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Parsing.ICsdlMetadataParser
+```
+
+## Summary
+
+Interface for parsing OData CSDL (Conceptual Schema Definition Language) XML documents into EDM models.
+
+## Remarks
+
+This interface abstracts the parsing of CSDL XML documents that describe the structure of OData services,
+            including entity types, complex types, entity containers, and their relationships.
+            It supports OData specification versions 4.0 and later.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ParseFromFile <DocsBadge text="Abstract" variant="warning" />
+
+Parses a CSDL XML document from a file.
+
+#### Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Models.EdmModel ParseFromFile(string filePath)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `filePath` | `string` | The path to the file containing the CSDL XML content. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Models.EdmModel`
+The parsed EDM model.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *filePath* is null or whitespace. |
+| `FileNotFoundException` | Thrown when the file does not exist. |
+| `XmlException` | Thrown when the XML is malformed. |
+| `InvalidOperationException` | Thrown when the CSDL structure is invalid. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ParseFromStream <DocsBadge text="Abstract" variant="warning" />
+
+Parses a CSDL XML document from a stream.
+
+#### Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Models.EdmModel ParseFromStream(System.IO.Stream stream)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `stream` | `System.IO.Stream` | The stream containing the CSDL XML content. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Models.EdmModel`
+The parsed EDM model.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *stream* is null. |
+| `XmlException` | Thrown when the XML is malformed. |
+| `InvalidOperationException` | Thrown when the CSDL structure is invalid. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} />  ParseFromString <DocsBadge text="Abstract" variant="warning" />
+
+Parses a CSDL XML document from a string.
+
+#### Syntax
+
+```csharp
+Microsoft.OData.Mcp.Core.Models.EdmModel ParseFromString(string csdlXml)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `csdlXml` | `string` | The CSDL XML content as a string. |
+
+#### Returns
+
+Type: `Microsoft.OData.Mcp.Core.Models.EdmModel`
+The parsed EDM model.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when *csdlXml* is null or whitespace. |
+| `XmlException` | Thrown when the XML is malformed. |
+| `InvalidOperationException` | Thrown when the CSDL structure is invalid. |
+
