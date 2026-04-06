@@ -13,6 +13,7 @@ using Z.EntityFramework.Plus;
 namespace CloudNimble.EasyAF.Tests.Business
 {
     [TestClass]
+    [TestCategory("RequiresDatabase")]
     public class EntityManagerTests : EasyAFBusinessTestBase
     {
 

@@ -8,6 +8,7 @@ namespace CloudNimble.EasyAF.Tests.Data.EF6
 {
 
     [TestClass]
+    [TestCategory("RequiresDatabase")]
     public class EntityFramework6Tests
     {
 

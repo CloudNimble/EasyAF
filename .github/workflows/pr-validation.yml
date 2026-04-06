@@ -110,7 +110,7 @@ jobs:
 
     - name: Test
       working-directory: src
-      run: dotnet test --configuration Release --no-build
+      run: dotnet test --configuration Release --no-build --filter "TestCategory!=RequiresDatabase"
 
     - name: Pack
       run: dotnet pack ${{ env.SOLUTION_FILE }} --configuration Release --no-build --output ./artifacts /p:PackageVersion=${{ steps.version.outputs.VERSION }}
