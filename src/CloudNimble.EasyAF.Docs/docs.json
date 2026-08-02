@@ -42,8 +42,7 @@
               "guides/state-machines-and-status",
               "guides/interval-calculations",
               "guides/property-name-overrides",
-              "guides/MSBuild/dotnet-10-changes",
-              "guides/clarification-needed"
+              "guides/MSBuild/dotnet-10-changes"
             ]
           },
           {
