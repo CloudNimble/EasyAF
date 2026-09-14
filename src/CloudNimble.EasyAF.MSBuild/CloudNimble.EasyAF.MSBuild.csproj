@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net10.0;net9.0;net8.0;net472</TargetFrameworks>
+        <TargetFrameworks>net11.0;net10.0;net9.0;net8.0;net472</TargetFrameworks>
         <Description>Provides MSBuild project management capabilities for the EasyAF framework, including project file manipulation and property management.</Description>
         <PackageTags>CloudNimble;EasyAF;EasyApplicationFramework;MSBuild;ProjectManagement</PackageTags>
         <DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
@@ -18,18 +18,25 @@
         <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.*" ExcludeAssets="runtime" />
     </ItemGroup>
 
-    <!-- Include .targets file in NuGet package for consuming projects -->
-    <ItemGroup>
-        <None Include="build\**\*" Pack="true" PackagePath="build" />
-        <None Include="build\**\*" Pack="true" PackagePath="buildTransitive" />
+    <ItemGroup Condition="'$(TargetFramework)' == 'net11.0'">
+        <PackageReference Include="System.CodeDom" Version="11.*-*" />
+        <PackageReference Include="System.Security.Cryptography.Xml" Version="11.*-*" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
         <PackageReference Include="System.CodeDom" Version="10.*" />
+        <PackageReference Include="System.Security.Cryptography.Xml" Version="10.*" />
     </ItemGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' != 'net10.0'">
+    <ItemGroup Condition="'$(TargetFramework)' != 'net11.0' AND '$(TargetFramework)' != 'net10.0'">
         <PackageReference Include="System.CodeDom" Version="9.*" />
+        <PackageReference Include="System.Security.Cryptography.Xml" Version="9.*" />
+    </ItemGroup>
+
+    <!-- Include .targets file in NuGet package for consuming projects -->
+    <ItemGroup>
+        <None Include="build\**\*" Pack="true" PackagePath="build" />
+        <None Include="build\**\*" Pack="true" PackagePath="buildTransitive" />
     </ItemGroup>
 
     <ItemGroup>

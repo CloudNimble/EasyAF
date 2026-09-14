@@ -60,7 +60,7 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
             Header();
             WriteUsings();
             NamespaceBegin(Namespace);
-            ClassBegin(CodeGenerationTools.DbContextClassDeclaration(EntityContainer), MetadataTools.Comment(EntityContainer));
+            ClassBegin(CodeGenerationTools.DbContextClassDeclaration(EntityContainer), MetadataTools.ToXmlDoc(EntityContainer));
             WriteProperties();
             WriteConstructors();
             WriteOverrides();
@@ -194,9 +194,7 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
             RegionBegin("Public Properties");
             foreach (var entitySet in EntityContainer.BaseEntitySets.OfType<EntitySet>().OrderBy(c => c.Name))
             {
-                _writer.WriteLine("/// <summary>");
-                _writer.WriteLine($"/// {MetadataTools.Comment(entitySet)}");
-                _writer.WriteLine("/// </summary>");
+                WriteXmlDocs(MetadataTools.ToXmlDoc(entitySet));
                 _writer.WriteLine(CodeGenerationTools.DbSet(entitySet));
                 _writer.WriteLine();
             }

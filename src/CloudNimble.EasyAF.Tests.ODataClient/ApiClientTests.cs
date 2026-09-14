@@ -36,7 +36,7 @@ namespace CloudNimble.EasyAF.Tests.OData
         /// </summary>
         public ApiClientTests()
         {
-            TestHostBuilder.ConfigureServices(services =>
+            TestHostBuilder.ConfigureServices((_, services) =>
             {
                 // we need to use a delegate function here because the TestServer does not exist at the time the services are configured.
                 services.AddSingleton<IHttpClientFactory>(new FakeHttpClientFactory(() =>

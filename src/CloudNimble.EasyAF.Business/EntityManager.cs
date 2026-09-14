@@ -459,7 +459,12 @@ namespace CloudNimble.EasyAF.Business
         {
             Ensure.ArgumentNotNull(predicate, nameof(predicate));
 
+#if NET11_0 && EFCORE
+            Console.WriteLine("DirectUpdateAsync is not currently available on .NET 11.");
+            return await Task.FromResult(0).ConfigureAwait(false);
+#else
             return await DataContext.Set<TEntity>().Where(predicate).UpdateFromQueryAsync(updateExpression).ConfigureAwait(false);
+#endif
         }
 
         /// <summary>
@@ -476,7 +481,12 @@ namespace CloudNimble.EasyAF.Business
         {
             Ensure.ArgumentNotNull(predicate, nameof(predicate));
 
+#if NET11_0 && EFCORE
+            Console.WriteLine("DirectUpdate is not currently available on .NET 11.");
+            return 0;
+#else
             return DataContext.Set<TEntity>().Where(predicate).UpdateFromQuery(updateExpression);
+#endif
         }
 
         #endregion
@@ -566,7 +576,12 @@ namespace CloudNimble.EasyAF.Business
         {
             Ensure.ArgumentNotNull(predicate, nameof(predicate));
 
+#if NET11_0 && EFCORE
+            Console.WriteLine("DirectDeleteAsync is not currently available on .NET 11.");
+            return await Task.FromResult(0).ConfigureAwait(false);
+#else
             return await DataContext.Set<TEntity>().Where(predicate).DeleteFromQueryAsync().ConfigureAwait(false);
+#endif
         }
 
         /// <summary>
@@ -582,7 +597,12 @@ namespace CloudNimble.EasyAF.Business
         {
             Ensure.ArgumentNotNull(predicate, nameof(predicate));
 
+#if NET11_0 && EFCORE
+            Console.WriteLine("DirectDelete is not currently available on .NET 11.");
+            return 0;
+#else
             return DataContext.Set<TEntity>().Where(predicate).DeleteFromQuery();
+#endif
         }
 
         #endregion

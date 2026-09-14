@@ -145,6 +145,33 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
         #region Private Methods
 
         /// <summary>
+        /// Builds a CSDL/SSDL Documentation element. LongDescription is CSDL-only.
+        /// Summary-only does not emit an empty LongDescription.
+        /// </summary>
+        internal static XElement CreateDocumentationElement(XNamespace ns, string summary, string longDescription, bool includeLongDescription)
+        {
+            var hasSummary = !string.IsNullOrWhiteSpace(summary);
+            var hasLong = includeLongDescription && !string.IsNullOrWhiteSpace(longDescription);
+            if (!hasSummary && !hasLong)
+            {
+                return null;
+            }
+
+            var element = new XElement(ns + "Documentation");
+            if (hasSummary)
+            {
+                element.Add(new XElement(ns + "Summary", summary));
+            }
+
+            if (hasLong)
+            {
+                element.Add(new XElement(ns + "LongDescription", longDescription));
+            }
+
+            return element;
+        }
+
+        /// <summary>
         /// Creates EF Core's design-time pluralization service.
         /// </summary>
         /// <returns>An instance of <see cref="IPluralizer"/>.</returns>
@@ -227,12 +254,10 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
                 new XAttribute("Name", entityType.Name) // Keep as singular
             );
 
-            // Add documentation if available
-            if (!string.IsNullOrWhiteSpace(entityType.Documentation))
+            var documentation = CreateDocumentationElement(_edmNs, entityType.Documentation, entityType.LongDescription, includeLongDescription: true);
+            if (documentation is not null)
             {
-                element.Add(new XElement(_edmNs + "Documentation",
-                    new XElement(_edmNs + "Summary", entityType.Documentation)
-                ));
+                element.Add(documentation);
             }
 
             // Add keys
@@ -320,12 +345,10 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
                 element.Add(new XAttribute("DefaultValue", property.DefaultValue));
             }
 
-            // Add documentation if available
-            if (!string.IsNullOrWhiteSpace(property.Documentation))
+            var documentation = CreateDocumentationElement(_edmNs, property.Documentation, property.LongDescription, includeLongDescription: true);
+            if (documentation is not null)
             {
-                element.Add(new XElement(_edmNs + "Documentation",
-                    new XElement(_edmNs + "Summary", property.Documentation)
-                ));
+                element.Add(documentation);
             }
 
             return element;
@@ -523,12 +546,10 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
                 new XAttribute("Name", pluralEntityTypeName)
             );
 
-            // Add documentation if available
-            if (!string.IsNullOrWhiteSpace(entityType.Documentation))
+            var documentation = CreateDocumentationElement(_ssdlNs, entityType.Documentation, entityType.LongDescription, includeLongDescription: false);
+            if (documentation is not null)
             {
-                element.Add(new XElement(_ssdlNs + "Documentation",
-                    new XElement(_ssdlNs + "Summary", entityType.Documentation)
-                ));
+                element.Add(documentation);
             }
 
             // Add key - need to map key names to their store column names

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net10.0;net9.0;net8.0;</TargetFrameworks>
+        <TargetFrameworks>net11.0;net10.0;net9.0;net8.0;</TargetFrameworks>
         <IsPackable>false</IsPackable>
         <NoWarn>$(NoWarn);CS1705</NoWarn>
     </PropertyGroup>
@@ -15,6 +15,11 @@
         <PackageReference Include="Microsoft.Restier.EntityFramework" Version="1.*" />
         <PackageReference Include="SimpleMessageBus.Publish" Version="6.*-*" />
         <PackageReference Include="Simple.OData.V4.Client" Version="6.*-*" NoWarn="NU1608" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)'=='net11.0'">
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.*-*" NoWarn="NU1608" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="11.*-*" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)'=='net10.0'">

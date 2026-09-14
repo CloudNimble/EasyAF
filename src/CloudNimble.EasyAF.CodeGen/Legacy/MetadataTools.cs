@@ -7,6 +7,49 @@ using System.Security;
 
 namespace CloudNimble.EasyAF.CodeGen.Legacy
 {
+
+    /// <summary>
+    /// CSDL documentation mapped onto C# XML doc tags: Summary → <c>summary</c>, LongDescription → <c>remarks</c>.
+    /// </summary>
+    public readonly struct XmlDocComment
+    {
+        /// <summary>
+        /// Initializes a new <see cref="XmlDocComment"/>.
+        /// </summary>
+        /// <param name="summary">The summary text.</param>
+        /// <param name="remarks">The remarks text.</param>
+        public XmlDocComment(string summary, string remarks)
+        {
+            Summary = summary;
+            Remarks = remarks;
+        }
+
+        /// <summary>
+        /// Gets the summary text.
+        /// </summary>
+        public string Summary { get; }
+
+        /// <summary>
+        /// Gets the remarks text.
+        /// </summary>
+        public string Remarks { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether <see cref="Summary"/> is present.
+        /// </summary>
+        public bool HasSummary => !string.IsNullOrEmpty(Summary);
+
+        /// <summary>
+        /// Gets a value indicating whether <see cref="Remarks"/> is present.
+        /// </summary>
+        public bool HasRemarks => !string.IsNullOrEmpty(Remarks);
+
+        /// <summary>
+        /// Gets a value indicating whether both fields are empty.
+        /// </summary>
+        public bool IsEmpty => !HasSummary && !HasRemarks;
+    }
+
     /// <summary>
     /// Responsible for making the Entity Framework Metadata more accessible for code generation.
     /// </summary>
@@ -26,103 +69,64 @@ namespace CloudNimble.EasyAF.CodeGen.Legacy
         }
 
         /// <summary>
-        /// Gets the documentation comment for an EDM type.
+        /// Maps CSDL documentation onto C# XML doc tags. Summary → <c>summary</c>, LongDescription → <c>remarks</c>.
+        /// Empty strings are treated as missing. LongDescription is never copied into Summary.
         /// </summary>
-        /// <param name="edmType">The EDM type.</param>
-        /// <returns>The documentation comment, preferring LongDescription over Summary.</returns>
-        public static string Comment(EdmType edmType)
+        public static XmlDocComment ToXmlDoc(Documentation documentation)
+        {
+            if (documentation is null)
+            {
+                return default;
+            }
+
+            var summary = string.IsNullOrEmpty(documentation.Summary) ? null : SanitizeXmlComment(documentation.Summary);
+            var remarks = string.IsNullOrEmpty(documentation.LongDescription) ? null : SanitizeXmlComment(documentation.LongDescription);
+            return new XmlDocComment(summary, remarks);
+        }
+
+        /// <summary>
+        /// Gets the XML documentation for an EDM type.
+        /// </summary>
+        public static XmlDocComment ToXmlDoc(EdmType edmType)
         {
             Ensure.ArgumentNotNull(edmType, nameof(edmType));
-            var doc = edmType.Documentation;
-            if (doc is null) return string.Empty;
-
-            // Prefer LongDescription over Summary, but check for empty strings
-            // since Documentation properties default to "" not null
-            if (!string.IsNullOrEmpty(doc.LongDescription))
-                return SanitizeXmlComment(doc.LongDescription);
-            if (!string.IsNullOrEmpty(doc.Summary))
-                return SanitizeXmlComment(doc.Summary);
-            return string.Empty;
+            return ToXmlDoc(edmType.Documentation);
         }
 
         /// <summary>
-        /// Gets the documentation comment for an EDM property.
+        /// Gets the XML documentation for an EDM property.
         /// </summary>
-        /// <param name="edmProperty">The EDM property.</param>
-        /// <returns>The documentation comment, preferring LongDescription over Summary.</returns>
-        public static string Comment(EdmProperty edmProperty)
+        public static XmlDocComment ToXmlDoc(EdmProperty edmProperty)
         {
             Ensure.ArgumentNotNull(edmProperty, nameof(edmProperty));
-            var doc = edmProperty.Documentation;
-            if (doc is null) return string.Empty;
-
-            // Prefer LongDescription over Summary, but check for empty strings
-            // since Documentation properties default to "" not null
-            if (!string.IsNullOrEmpty(doc.LongDescription))
-                return SanitizeXmlComment(doc.LongDescription);
-            if (!string.IsNullOrEmpty(doc.Summary))
-                return SanitizeXmlComment(doc.Summary);
-            return string.Empty;
+            return ToXmlDoc(edmProperty.Documentation);
         }
 
         /// <summary>
-        /// Gets the documentation comment for a navigation property.
+        /// Gets the XML documentation for a navigation property.
         /// </summary>
-        /// <param name="navigationProperty">The navigation property.</param>
-        /// <returns>The documentation comment, preferring LongDescription over Summary.</returns>
-        public static string Comment(NavigationProperty navigationProperty)
+        public static XmlDocComment ToXmlDoc(NavigationProperty navigationProperty)
         {
             Ensure.ArgumentNotNull(navigationProperty, nameof(navigationProperty));
-            var doc = navigationProperty.Documentation;
-            if (doc is null) return string.Empty;
-
-            // Prefer LongDescription over Summary, but check for empty strings
-            // since Documentation properties default to "" not null
-            if (!string.IsNullOrEmpty(doc.LongDescription))
-                return SanitizeXmlComment(doc.LongDescription);
-            if (!string.IsNullOrEmpty(doc.Summary))
-                return SanitizeXmlComment(doc.Summary);
-            return string.Empty;
+            return ToXmlDoc(navigationProperty.Documentation);
         }
 
         /// <summary>
-        /// Gets the documentation comment for an entity container.
+        /// Gets the XML documentation for an entity container.
         /// </summary>
-        /// <param name="container">The entity container.</param>
-        /// <returns>The documentation comment, preferring LongDescription over Summary.</returns>
-        public static string Comment(EntityContainer container)
+        public static XmlDocComment ToXmlDoc(EntityContainer container)
         {
             Ensure.ArgumentNotNull(container, nameof(container));
-            var doc = container.Documentation;
-            if (doc is null) return string.Empty;
-
-            // Prefer LongDescription over Summary, but check for empty strings
-            // since Documentation properties default to "" not null
-            if (!string.IsNullOrEmpty(doc.LongDescription))
-                return SanitizeXmlComment(doc.LongDescription);
-            if (!string.IsNullOrEmpty(doc.Summary))
-                return SanitizeXmlComment(doc.Summary);
-            return string.Empty;
+            return ToXmlDoc(container.Documentation);
         }
 
         /// <summary>
-        /// Gets the documentation comment for an entity set.
+        /// Gets the XML documentation for an entity set.
         /// </summary>
-        /// <param name="entitySet">The entity set.</param>
-        /// <returns>The documentation comment, preferring LongDescription over Summary.</returns>
-        public static string Comment(EntitySet entitySet)
+        public static XmlDocComment ToXmlDoc(EntitySet entitySet)
         {
             Ensure.ArgumentNotNull(entitySet, nameof(entitySet));
-            var doc = entitySet.Documentation;
-            if (doc is null) return string.Empty;
-
-            // Prefer LongDescription over Summary, but check for empty strings
-            // since Documentation properties default to "" not null
-            if (!string.IsNullOrEmpty(doc.LongDescription))
-                return SanitizeXmlComment(doc.LongDescription);
-            if (!string.IsNullOrEmpty(doc.Summary))
-                return SanitizeXmlComment(doc.Summary);
-            return string.Empty;
+            return ToXmlDoc(entitySet.Documentation);
         }
 
         /// <summary>

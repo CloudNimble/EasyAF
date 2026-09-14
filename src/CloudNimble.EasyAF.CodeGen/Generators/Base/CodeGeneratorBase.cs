@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CloudNimble.EasyAF.CodeGen.Legacy;
+using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
@@ -74,10 +75,10 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Base
         #region Public Methods
 
         /// <summary>
-        /// Sets the Indent to 1, writes the Summary tag, the Class declaration, and then the opening bracket.
+        /// Sets the Indent to 1, writes XML docs when present, the Class declaration, and then the opening bracket.
         /// </summary>
         /// <param name="declaration">The full Class declaration string.</param>
-        /// <param name="summaryText">The test to put inside the &lt;summary&gt; tag.</param>
+        /// <param name="summaryText">The text to put inside the &lt;summary&gt; tag.</param>
         public void ClassBegin(string declaration, string summaryText)
         {
             _writer.Indent = 1;
@@ -85,6 +86,43 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Base
             _writer.WriteLine($"/// {summaryText}");
             _writer.WriteLine("/// </summary>");
             SectionBegin(declaration, 1);
+        }
+
+        /// <summary>
+        /// Sets the Indent to 1, writes XML docs when present, the Class declaration, and then the opening bracket.
+        /// </summary>
+        /// <param name="declaration">The full Class declaration string.</param>
+        /// <param name="docs">CSDL documentation mapped to <c>summary</c> / <c>remarks</c>. Empty docs emit no XML comment block.</param>
+        public void ClassBegin(string declaration, XmlDocComment docs)
+        {
+            _writer.Indent = 1;
+            WriteXmlDocs(docs);
+            SectionBegin(declaration, 1);
+        }
+
+        /// <summary>
+        /// Writes C# XML documentation tags for the supplied comment. Emits nothing when both fields are empty.
+        /// </summary>
+        protected void WriteXmlDocs(XmlDocComment docs)
+        {
+            if (docs.IsEmpty)
+            {
+                return;
+            }
+
+            if (docs.HasSummary)
+            {
+                _writer.WriteLine("/// <summary>");
+                _writer.WriteLine($"/// {docs.Summary}");
+                _writer.WriteLine("/// </summary>");
+            }
+
+            if (docs.HasRemarks)
+            {
+                _writer.WriteLine("/// <remarks>");
+                _writer.WriteLine($"/// {docs.Remarks}");
+                _writer.WriteLine("/// </remarks>");
+            }
         }
 
         /// <summary>
