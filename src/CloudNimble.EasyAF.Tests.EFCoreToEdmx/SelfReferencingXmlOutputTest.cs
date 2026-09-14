@@ -36,10 +36,19 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
             Console.WriteLine("=== End EDMX Content ===");
 
             // Also save to a file for easier analysis
-            var outputPath = Path.Combine(Path.GetTempPath(), $"SelfReferencingTest_{DateTime.Now:yyyyMMdd_HHmmss}.edmx");
-            await File.WriteAllTextAsync(outputPath, result.EdmxContent);
-            
-            Console.WriteLine($"\nEDMX saved to: {outputPath}");
+            var outputPath = Path.Combine(Path.GetTempPath(), $"SelfReferencingTest_{Guid.NewGuid():N}.edmx");
+            try
+            {
+                await File.WriteAllTextAsync(outputPath, result.EdmxContent);
+                Console.WriteLine($"\nEDMX saved to: {outputPath}");
+            }
+            finally
+            {
+                if (File.Exists(outputPath))
+                {
+                    File.Delete(outputPath);
+                }
+            }
 
             // Verify it contains our Part entity
             result.EdmxContent.Should().Contain("Part", "EDMX should contain Part entity");
