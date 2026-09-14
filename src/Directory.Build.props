@@ -52,6 +52,8 @@
         <NoWarn>$(NoWarn);NU5125;NU5048;NU5128;</NoWarn>
         <!-- Suppress warnings about using SemVer 2.0. -->
         <NoWarn>$(NoWarn);NU5105</NoWarn>
+        <!-- net11 RC dependencies in an otherwise stable package version. -->
+        <NoWarn>$(NoWarn);NU5104</NoWarn>
         <!-- Suppress package version conflicts for .NET 10 until dependencies are updated -->
         <NoWarn>$(NoWarn);NU1608;NU1107</NoWarn>
 
