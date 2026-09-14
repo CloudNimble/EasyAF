@@ -184,6 +184,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v5
 
+    - name: Install .NET SDK
+      shell: pwsh
+      run: |
+         # Checkout brings global.json, so `dotnet nuget push` needs the 11.0.1xx SDK.
+         Invoke-WebRequest -Uri "https://dot.net/v1/dotnet-install.ps1" -OutFile "dotnet-install.ps1"
+         $installDir = "$env:ProgramFiles\dotnet"
+         ./dotnet-install.ps1 -Channel 11.0.1xx -Quality preview -InstallDir $installDir
+         echo $installDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+         dotnet --list-sdks
+
     - name: Download artifacts
       uses: actions/download-artifact@v8
       with:
