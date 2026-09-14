@@ -39,7 +39,7 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
             Header();
             WriteUsings();
             NamespaceBegin(Namespace);
-            ClassBegin(CodeGenerationTools.EntityClassDeclaration(Entity), MetadataTools.Comment(Entity.EntityType));
+            ClassBegin(CodeGenerationTools.EntityClassDeclaration(Entity), MetadataTools.ToXmlDoc(Entity.EntityType));
             WriteFields();
             WriteProperties();
             WriteConstructors();
@@ -65,9 +65,7 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
         {
             RegionBegin("Constructors");
 
-            _writer.WriteLine("/// <summary>");
-            _writer.WriteLine($"/// {MetadataTools.Comment(Entity.EntityType)}");
-            _writer.WriteLine("/// </summary>");
+            WriteXmlDocs(MetadataTools.ToXmlDoc(Entity.EntityType));
             _writer.WriteLine($"public {CodeGenerationTools.Escape(Entity.EntityType)}()");
             _writer.WriteLine("{");
             _writer.WriteLine("}");
@@ -116,7 +114,7 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
                           CodeGenerationTools.Escape(property),
                           CodeGenerationTools.FieldName(property),
                           CodeGenerationTools.GetTypeName(property.TypeUsage).Replace("System.", ""),
-                          MetadataTools.Comment(property),
+                          MetadataTools.ToXmlDoc(property),
                           property.TypeUsage.Facets.ToList());
         }
 
@@ -126,15 +124,13 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
                           CodeGenerationTools.Escape(property),
                           CodeGenerationTools.FieldName(property),
                           CodeGenerationTools.GetTypeName(property.TypeUsage).Replace("System.", ""),
-                          MetadataTools.Comment(property),
+                          MetadataTools.ToXmlDoc(property),
                           property.TypeUsage.Facets.ToList());
         }
 
-        internal void WriteProperty(string accessibility, string propertyName, string fieldName, string type, string comment, List<Facet> facets)
+        internal void WriteProperty(string accessibility, string propertyName, string fieldName, string type, XmlDocComment docs, List<Facet> facets)
         {
-            _writer.WriteLine("/// <summary>");
-            _writer.WriteLine($"/// {comment}");
-            _writer.WriteLine("/// </summary>");
+            WriteXmlDocs(docs);
 
             var facet = facets.FirstOrDefault(c => c.Name == "MaxLength" && c.Value is not null && c.IsUnbounded == false);
             if (facet is not null)

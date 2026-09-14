@@ -1,17 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net10.0;net9.0;net8.0;</TargetFrameworks>
+        <TargetFrameworks>net11.0;net10.0;net9.0;net8.0;</TargetFrameworks>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Breakdance.Assemblies" Version="7.*-*" />
-        <PackageReference Include="Breakdance.AspNetCore" Version="7.*-*" />
+        <PackageReference Include="Breakdance.Assemblies" Version="8.*-*" />
+        <PackageReference Include="Breakdance.AspNetCore" Version="8.*-*" />
         <PackageReference Include="Microsoft.AspNetCore.OData" Version="7.*" />
         <PackageReference Include="Microsoft.OData.Core" Version="7.*" />
         <PackageReference Include="Microsoft.Restier.Breakdance" Version="1.*-*" />
         <PackageReference Include="Microsoft.Restier.EntityFrameworkCore" Version="1.*-*" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)'=='net11.0'">
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.*-*" NoWarn="NU1608" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.*-*" />
+        <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="11.*-*" NoWarn="NU1608" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="11.*-*" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="11.*-*" NoWarn="NU1608" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)'=='net10.0'">
@@ -20,7 +28,6 @@
         <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="10.*" NoWarn="NU1608" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.*" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.*" NoWarn="NU1608" />
-        <PackageReference Include="System.Text.Json" Version="10.*" NoWarn="NU1608" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)'=='net9.0'">
@@ -29,7 +36,6 @@
         <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="9.*" NoWarn="NU1608" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.*" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.*" NoWarn="NU1608" />
-        <PackageReference Include="System.Text.Json" Version="9.*" NoWarn="NU1608" />
     </ItemGroup>
     
     <ItemGroup Condition="'$(TargetFramework)'=='net8.0'">
@@ -38,7 +44,6 @@
         <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="8.*" NoWarn="NU1608" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.*" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.*" NoWarn="NU1608" />
-        <PackageReference Include="System.Text.Json" Version="8.*" NoWarn="NU1608" />
     </ItemGroup>
 
     <ItemGroup>

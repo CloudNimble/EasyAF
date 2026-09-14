@@ -39,21 +39,23 @@ namespace CloudNimble.EasyAF.Tests.CodeGen
             userEntity.Should().NotBeNull("User entity should exist in the EDMX");
 
             // Check entity-level documentation
-            var entityDoc = MetadataTools.Comment(userEntity.EntityType);
+            var entityDoc = MetadataTools.ToXmlDoc(userEntity.EntityType);
             Console.WriteLine($"User entity Documentation object: {userEntity.EntityType.Documentation}");
             Console.WriteLine($"User entity Documentation.Summary: {userEntity.EntityType.Documentation?.Summary}");
-            Console.WriteLine($"User entity documentation via MetadataTools: '{entityDoc}'");
-            entityDoc.Should().NotBeEmpty("User entity should have documentation from <Summary>YOUR LUMINARY! YOUR LIBERATOR! CLU!</Summary>");
+            Console.WriteLine($"User entity documentation via MetadataTools: '{entityDoc.Summary}'");
+            entityDoc.HasSummary.Should().BeTrue("User entity should have documentation from <Summary>YOUR LUMINARY! YOUR LIBERATOR! CLU!</Summary>");
+            entityDoc.Summary.Should().Contain("YOUR LUMINARY! YOUR LIBERATOR! CLU!");
 
             // Check property-level documentation (EmailAddress has documentation)
             var emailProperty = userEntity.EntityType.Properties.FirstOrDefault(p => p.Name == "EmailAddress");
             emailProperty.Should().NotBeNull("EmailAddress property should exist");
 
-            var propertyDoc = MetadataTools.Comment(emailProperty);
+            var propertyDoc = MetadataTools.ToXmlDoc(emailProperty);
             Console.WriteLine($"EmailAddress Documentation object: {emailProperty.Documentation}");
             Console.WriteLine($"EmailAddress Documentation.Summary: {emailProperty.Documentation?.Summary}");
-            Console.WriteLine($"EmailAddress documentation via MetadataTools: '{propertyDoc}'");
-            propertyDoc.Should().NotBeEmpty("EmailAddress property should have documentation from <Summary>You'd better find this you POS.</Summary>");
+            Console.WriteLine($"EmailAddress documentation via MetadataTools: '{propertyDoc.Summary}'");
+            propertyDoc.HasSummary.Should().BeTrue("EmailAddress property should have documentation from <Summary>You'd better find this you POS.</Summary>");
+            propertyDoc.Summary.Should().Contain("You&apos;d better find this you POS.");
         }
 
         /// <summary>
@@ -136,29 +138,30 @@ namespace CloudNimble.EasyAF.Tests.CodeGen
             userEntity.EntityType.Name.Should().Be("User");
 
             // Check entity documentation
-            var entityDoc = MetadataTools.Comment(userEntity.EntityType);
+            var entityDoc = MetadataTools.ToXmlDoc(userEntity.EntityType);
             Console.WriteLine($"User entity Documentation object: {userEntity.EntityType.Documentation}");
             Console.WriteLine($"User entity Documentation.Summary: {userEntity.EntityType.Documentation?.Summary}");
-            Console.WriteLine($"User entity documentation via MetadataTools: '{entityDoc}'");
-            entityDoc.Should().Be("A user in the system.", "Entity should have documentation");
+            Console.WriteLine($"User entity documentation via MetadataTools: '{entityDoc.Summary}'");
+            entityDoc.Summary.Should().Be("A user in the system.", "Entity should have documentation");
+            entityDoc.HasRemarks.Should().BeFalse();
 
             // Check property documentation
             var idProperty = userEntity.EntityType.Properties.FirstOrDefault(p => p.Name == "Id");
             idProperty.Should().NotBeNull();
-            var idDoc = MetadataTools.Comment(idProperty);
+            var idDoc = MetadataTools.ToXmlDoc(idProperty);
             Console.WriteLine($"Id Documentation object: {idProperty.Documentation}");
             Console.WriteLine($"Id Documentation.Summary: {idProperty.Documentation?.Summary}");
-            Console.WriteLine($"Id documentation via MetadataTools: '{idDoc}'");
-            idDoc.Should().Be("The unique identifier.", "Id property should have documentation");
+            Console.WriteLine($"Id documentation via MetadataTools: '{idDoc.Summary}'");
+            idDoc.Summary.Should().Be("The unique identifier.", "Id property should have documentation");
 
             var nameProperty = userEntity.EntityType.Properties.FirstOrDefault(p => p.Name == "Name");
             nameProperty.Should().NotBeNull();
-            var nameDoc = MetadataTools.Comment(nameProperty);
+            var nameDoc = MetadataTools.ToXmlDoc(nameProperty);
             Console.WriteLine($"Name Documentation object: {nameProperty.Documentation}");
             Console.WriteLine($"Name Documentation.Summary: {nameProperty.Documentation?.Summary}");
-            Console.WriteLine($"Name documentation via MetadataTools: '{nameDoc}'");
+            Console.WriteLine($"Name documentation via MetadataTools: '{nameDoc.Summary}'");
             // Note: Apostrophes are escaped for XML compatibility
-            nameDoc.Should().Be("The user&apos;s display name.", "Name property should have documentation (with escaped apostrophe)");
+            nameDoc.Summary.Should().Be("The user&apos;s display name.", "Name property should have documentation (with escaped apostrophe)");
         }
 
         /// <summary>
@@ -178,22 +181,23 @@ namespace CloudNimble.EasyAF.Tests.CodeGen
 
             foreach (var entity in loader.Entities.OrderBy(e => e.EntityType.Name))
             {
-                var entityDoc = MetadataTools.Comment(entity.EntityType);
+                var entityDoc = MetadataTools.ToXmlDoc(entity.EntityType);
                 Console.WriteLine($"Entity: {entity.EntityType.Name}");
                 Console.WriteLine($"  Documentation object: {entity.EntityType.Documentation}");
                 Console.WriteLine($"  Documentation.Summary: {entity.EntityType.Documentation?.Summary ?? "(null)"}");
-                Console.WriteLine($"  MetadataTools.Comment: '{entityDoc}'");
+                Console.WriteLine($"  MetadataTools.ToXmlDoc.Summary: '{entityDoc.Summary}'");
+                Console.WriteLine($"  MetadataTools.ToXmlDoc.Remarks: '{entityDoc.Remarks}'");
                 Console.WriteLine();
 
                 foreach (var prop in entity.EntityType.Properties.OrderBy(p => p.Name))
                 {
-                    var propDoc = MetadataTools.Comment(prop);
-                    if (!string.IsNullOrEmpty(propDoc) || prop.Documentation != null)
+                    var propDoc = MetadataTools.ToXmlDoc(prop);
+                    if (!propDoc.IsEmpty || prop.Documentation != null)
                     {
                         Console.WriteLine($"  Property: {prop.Name}");
                         Console.WriteLine($"    Documentation object: {prop.Documentation}");
                         Console.WriteLine($"    Documentation.Summary: {prop.Documentation?.Summary ?? "(null)"}");
-                        Console.WriteLine($"    MetadataTools.Comment: '{propDoc}'");
+                        Console.WriteLine($"    MetadataTools.ToXmlDoc.Summary: '{propDoc.Summary}'");
                     }
                 }
                 Console.WriteLine();
@@ -225,9 +229,10 @@ namespace CloudNimble.EasyAF.Tests.CodeGen
             Console.WriteLine(generatedCode);
             Console.WriteLine("=== END GENERATED CODE ===");
 
-            // Entity class documentation
-            generatedCode.Should().Contain("YOUR LUMINARY! YOUR LIBERATOR! CLU!",
-                "User entity documentation should appear in generated code");
+            generatedCode.Should().Contain("/// <summary>");
+            generatedCode.Should().Contain("/// YOUR LUMINARY! YOUR LIBERATOR! CLU!");
+            generatedCode.Should().Contain("/// </summary>");
+            generatedCode.Should().NotContain("/// <remarks>");
 
             // Property documentation - EmailAddress (apostrophe is escaped for XML)
             generatedCode.Should().Contain("You&apos;d better find this you POS.",
@@ -236,6 +241,215 @@ namespace CloudNimble.EasyAF.Tests.CodeGen
             // Property documentation - Id
             generatedCode.Should().Contain("The identifier for the record.",
                 "Id property documentation should appear in generated code");
+        }
+
+        /// <summary>
+        /// Maps CSDL Summary → summary and LongDescription → remarks without collapsing either field.
+        /// </summary>
+        [TestMethod]
+        public void ToXmlDoc_WithSummaryAndLongDescription_ShouldMapToSummaryAndRemarks()
+        {
+            var docs = MetadataTools.ToXmlDoc(new System.Data.Entity.Core.Metadata.Edm.Documentation(
+                "A user in the system.",
+                "Longer explanation of the user entity."));
+
+            docs.Summary.Should().Be("A user in the system.");
+            docs.Remarks.Should().Be("Longer explanation of the user entity.");
+            docs.HasSummary.Should().BeTrue();
+            docs.HasRemarks.Should().BeTrue();
+            docs.IsEmpty.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// LongDescription-only must not fall back into summary.
+        /// </summary>
+        [TestMethod]
+        public void ToXmlDoc_LongDescriptionOnly_ShouldNotFallBackToSummary()
+        {
+            var docs = MetadataTools.ToXmlDoc(new System.Data.Entity.Core.Metadata.Edm.Documentation(
+                "",
+                "Longer explanation of the user entity."));
+
+            docs.HasSummary.Should().BeFalse();
+            docs.Remarks.Should().Be("Longer explanation of the user entity.");
+        }
+
+        /// <summary>
+        /// Null / empty Documentation produces an empty comment (no XML doc block).
+        /// </summary>
+        [TestMethod]
+        public void ToXmlDoc_NullOrEmpty_ShouldBeEmpty()
+        {
+            MetadataTools.ToXmlDoc((System.Data.Entity.Core.Metadata.Edm.Documentation)null).IsEmpty.Should().BeTrue();
+            MetadataTools.ToXmlDoc(new System.Data.Entity.Core.Metadata.Edm.Documentation("", "")).IsEmpty.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Generated C# writes both tags when the EDMX has Summary and LongDescription.
+        /// </summary>
+        [TestMethod]
+        public void InlineEdmx_WithSummaryAndLongDescription_ShouldEmitSummaryAndRemarks()
+        {
+            var edmx = """
+                <?xml version="1.0" encoding="utf-8"?>
+                <edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+                    <edmx:Runtime>
+                        <edmx:StorageModels>
+                            <Schema Namespace="TestModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+                                <EntityType Name="Users">
+                                    <Key>
+                                        <PropertyRef Name="Id" />
+                                    </Key>
+                                    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+                                    <Property Name="Name" Type="nvarchar" Nullable="false" />
+                                </EntityType>
+                                <EntityContainer Name="TestModelStoreContainer">
+                                    <EntitySet Name="Users" EntityType="TestModel.Store.Users" />
+                                </EntityContainer>
+                            </Schema>
+                        </edmx:StorageModels>
+                        <edmx:ConceptualModels>
+                            <Schema Namespace="TestModel" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+                                <EntityType Name="User">
+                                    <Documentation>
+                                        <Summary>A user in the system.</Summary>
+                                        <LongDescription>Longer explanation of the user entity.</LongDescription>
+                                    </Documentation>
+                                    <Key>
+                                        <PropertyRef Name="Id" />
+                                    </Key>
+                                    <Property Name="Id" Type="Guid" Nullable="false">
+                                        <Documentation>
+                                            <Summary>The unique identifier.</Summary>
+                                            <LongDescription>Primary key for the user row.</LongDescription>
+                                        </Documentation>
+                                    </Property>
+                                    <Property Name="Name" Type="String" Nullable="false" />
+                                </EntityType>
+                                <EntityContainer Name="TestContext">
+                                    <EntitySet Name="Users" EntityType="Self.User" />
+                                </EntityContainer>
+                            </Schema>
+                        </edmx:ConceptualModels>
+                        <edmx:Mappings>
+                            <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+                                <EntityContainerMapping StorageEntityContainer="TestModelStoreContainer" CdmEntityContainer="TestContext">
+                                    <EntitySetMapping Name="Users">
+                                        <EntityTypeMapping TypeName="TestModel.User">
+                                            <MappingFragment StoreEntitySet="Users">
+                                                <ScalarProperty Name="Id" ColumnName="Id" />
+                                                <ScalarProperty Name="Name" ColumnName="Name" />
+                                            </MappingFragment>
+                                        </EntityTypeMapping>
+                                    </EntitySetMapping>
+                                </EntityContainerMapping>
+                            </Mapping>
+                        </edmx:Mappings>
+                    </edmx:Runtime>
+                </edmx:Edmx>
+                """;
+
+            var loader = new EdmxLoader();
+            loader.Load(edmx);
+            loader.EdmxSchemaErrors.Should().BeEmpty();
+
+            var userEntity = loader.Entities.First();
+            var entityDoc = MetadataTools.ToXmlDoc(userEntity.EntityType);
+            entityDoc.Summary.Should().Be("A user in the system.");
+            entityDoc.Remarks.Should().Be("Longer explanation of the user entity.");
+
+            var idDoc = MetadataTools.ToXmlDoc(userEntity.EntityType.Properties.First(p => p.Name == "Id"));
+            idDoc.Summary.Should().Be("The unique identifier.");
+            idDoc.Remarks.Should().Be("Primary key for the user row.");
+
+            var generator = new EntityGenerator(new List<string>(), "TestModel", userEntity);
+            generator.Generate();
+            var generatedCode = generator.ToString();
+
+            generatedCode.Should().Contain("/// A user in the system.");
+            generatedCode.Should().Contain("/// Longer explanation of the user entity.");
+            generatedCode.Should().Contain("/// The unique identifier.");
+            generatedCode.Should().Contain("/// Primary key for the user row.");
+            generatedCode.Should().Contain("/// <summary>");
+            generatedCode.Should().Contain("/// <remarks>");
+        }
+
+        /// <summary>
+        /// LongDescription-only EDMX emits remarks and no summary. Missing Documentation emits no empty summary block.
+        /// </summary>
+        [TestMethod]
+        public void InlineEdmx_LongDescriptionOnlyAndMissingDocs_ShouldNotEmitEmptySummary()
+        {
+            var edmx = """
+                <?xml version="1.0" encoding="utf-8"?>
+                <edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+                    <edmx:Runtime>
+                        <edmx:StorageModels>
+                            <Schema Namespace="TestModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+                                <EntityType Name="Users">
+                                    <Key>
+                                        <PropertyRef Name="Id" />
+                                    </Key>
+                                    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+                                    <Property Name="Name" Type="nvarchar" Nullable="false" />
+                                </EntityType>
+                                <EntityContainer Name="TestModelStoreContainer">
+                                    <EntitySet Name="Users" EntityType="TestModel.Store.Users" />
+                                </EntityContainer>
+                            </Schema>
+                        </edmx:StorageModels>
+                        <edmx:ConceptualModels>
+                            <Schema Namespace="TestModel" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+                                <EntityType Name="User">
+                                    <Documentation>
+                                        <LongDescription>Longer explanation of the user entity.</LongDescription>
+                                    </Documentation>
+                                    <Key>
+                                        <PropertyRef Name="Id" />
+                                    </Key>
+                                    <Property Name="Id" Type="Guid" Nullable="false" />
+                                    <Property Name="Name" Type="String" Nullable="false" />
+                                </EntityType>
+                                <EntityContainer Name="TestContext">
+                                    <EntitySet Name="Users" EntityType="Self.User" />
+                                </EntityContainer>
+                            </Schema>
+                        </edmx:ConceptualModels>
+                        <edmx:Mappings>
+                            <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+                                <EntityContainerMapping StorageEntityContainer="TestModelStoreContainer" CdmEntityContainer="TestContext">
+                                    <EntitySetMapping Name="Users">
+                                        <EntityTypeMapping TypeName="TestModel.User">
+                                            <MappingFragment StoreEntitySet="Users">
+                                                <ScalarProperty Name="Id" ColumnName="Id" />
+                                                <ScalarProperty Name="Name" ColumnName="Name" />
+                                            </MappingFragment>
+                                        </EntityTypeMapping>
+                                    </EntitySetMapping>
+                                </EntityContainerMapping>
+                            </Mapping>
+                        </edmx:Mappings>
+                    </edmx:Runtime>
+                </edmx:Edmx>
+                """;
+
+            var loader = new EdmxLoader();
+            loader.Load(edmx);
+            loader.EdmxSchemaErrors.Should().BeEmpty();
+
+            var userEntity = loader.Entities.First();
+            var entityDoc = MetadataTools.ToXmlDoc(userEntity.EntityType);
+            entityDoc.HasSummary.Should().BeFalse();
+            entityDoc.Remarks.Should().Be("Longer explanation of the user entity.");
+
+            var generator = new EntityGenerator(new List<string>(), "TestModel", userEntity);
+            generator.Generate();
+            var generatedCode = generator.ToString();
+
+            generatedCode.Should().Contain("/// <remarks>");
+            generatedCode.Should().Contain("/// Longer explanation of the user entity.");
+            generatedCode.Should().Contain("/// </remarks>");
+            generatedCode.Should().NotContain("<summary>");
         }
 
         #region SanitizeXmlComment Tests

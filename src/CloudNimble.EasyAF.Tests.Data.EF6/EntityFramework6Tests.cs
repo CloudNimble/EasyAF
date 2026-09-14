@@ -9,6 +9,7 @@ namespace CloudNimble.EasyAF.Tests.Data.EF6
 
     [TestClass]
     [TestCategory("RequiresDatabase")]
+    [DoNotParallelize]
     public class EntityFramework6Tests
     {
 

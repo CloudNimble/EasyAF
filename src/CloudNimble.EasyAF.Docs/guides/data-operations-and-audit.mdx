@@ -15,7 +15,7 @@ EasyAF provides comprehensive data operation management with automatic audit tra
 
 ### Identity Management
 
-#### IIdentifiable<T>
+#### `IIdentifiable<T>`
 Ensures entities have a unique identifier.
 
 ```csharp
@@ -53,7 +53,7 @@ public interface IUpdatedAuditable
 
 ### User Tracking Interfaces
 
-#### ICreatorTrackable<T>
+#### `ICreatorTrackable<T>`
 Tracks which user created an entity.
 
 ```csharp
@@ -63,7 +63,7 @@ public interface ICreatorTrackable<T> where T : struct
 }
 ```
 
-#### IUpdaterTrackable<T>
+#### `IUpdaterTrackable<T>`
 Tracks which user last updated an entity.
 
 ```csharp
@@ -157,9 +157,9 @@ public class AuditableEntity : DbObservableObject,
 1. **Client creates entity** → New instance with business data
 2. **Manager.InsertAsync() called** → Initiates insert operation
 3. **OnInsertingAsync() executed** → 
-   - ID generated (if IIdentifiable<Guid>)
-   - CreatedById set (if ICreatorTrackable)
-   - DateCreated set (if ICreatedAuditable)
+   - ID generated (if `IIdentifiable<Guid>`)
+   - CreatedById set (if `ICreatorTrackable`)
+   - DateCreated set (if `ICreatedAuditable`)
 4. **Entity added to context** → EntityState.Added
 5. **SaveChangesAsync()** → Database insert
 6. **OnInsertedAsync() executed** → Post-insert logic (events, notifications)
@@ -169,8 +169,8 @@ public class AuditableEntity : DbObservableObject,
 1. **Entity retrieved and modified** → Property changes tracked
 2. **Manager.UpdateAsync() called** → Initiates update operation
 3. **OnUpdatingAsync() executed** →
-   - UpdatedById set (if IUpdaterTrackable)
-   - DateUpdated set (if IUpdatedAuditable)
+   - UpdatedById set (if `IUpdaterTrackable`)
+   - DateUpdated set (if `IUpdatedAuditable`)
 4. **Entity marked modified** → EntityState.Modified
 5. **SaveChangesAsync()** → Database update
 6. **OnUpdatedAsync() executed** → Post-update logic

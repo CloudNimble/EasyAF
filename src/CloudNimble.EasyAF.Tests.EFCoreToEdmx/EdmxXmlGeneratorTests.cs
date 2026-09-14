@@ -845,6 +845,59 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
             documentation.Should().BeNull("Empty documentation elements should not be created");
         }
 
+        /// <summary>
+        /// CSDL emits both Summary and LongDescription; SSDL keeps Summary only.
+        /// </summary>
+        [TestMethod]
+        public void Generate_WithSummaryAndLongDescription_ShouldEmitBothInConceptualModel()
+        {
+            var model = CreateTestEdmxModelWithEntityDocumentation();
+            model.EntityTypes[0].LongDescription = "ClipId is optional. When IsFullEpisode is true, metrics go to EpisodeMetrics.";
+            model.EntityTypes[0].Properties.First(p => p.Name == "Name").LongDescription = "Display name used in the API.";
+
+            var result = new EdmxXmlGenerator(model, CloudNimble.EasyAF.EFCoreToEdmx.DatabaseProviderType.SqlServer).Generate();
+            var doc = XDocument.Parse(result);
+
+            var conceptualEntity = doc.Descendants()
+                .First(x => x.Name.LocalName == "Schema" && x.Attribute("Namespace")?.Value == "TestNamespace")
+                .Descendants()
+                .First(x => x.Name.LocalName == "EntityType" && x.Attribute("Name")?.Value == "DocumentedEntity");
+
+            var documentation = conceptualEntity.Elements().First(x => x.Name.LocalName == "Documentation");
+            documentation.Elements().First(x => x.Name.LocalName == "Summary").Value
+                .Should().Be("This entity represents a documented table with important business data");
+            documentation.Elements().First(x => x.Name.LocalName == "LongDescription").Value
+                .Should().Be("ClipId is optional. When IsFullEpisode is true, metrics go to EpisodeMetrics.");
+
+            var nameProperty = conceptualEntity.Elements().First(x => x.Name.LocalName == "Property" && x.Attribute("Name")?.Value == "Name");
+            var propertyDocs = nameProperty.Elements().First(x => x.Name.LocalName == "Documentation");
+            propertyDocs.Elements().First(x => x.Name.LocalName == "Summary").Value.Should().Be("The name property with its own documentation");
+            propertyDocs.Elements().First(x => x.Name.LocalName == "LongDescription").Value.Should().Be("Display name used in the API.");
+
+            var storageEntity = doc.Descendants()
+                .First(x => x.Name.LocalName == "Schema" && x.Attribute("Namespace")?.Value.Contains(".Store") == true)
+                .Descendants()
+                .First(x => x.Name.LocalName == "EntityType" && x.Attribute("Name")?.Value == "DocumentedEntities");
+            var storageDocs = storageEntity.Elements().First(x => x.Name.LocalName == "Documentation");
+            storageDocs.Elements().Any(x => x.Name.LocalName == "LongDescription").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Summary-only does not emit an empty LongDescription element.
+        /// </summary>
+        [TestMethod]
+        public void Generate_SummaryOnly_ShouldNotEmitEmptyLongDescription()
+        {
+            var model = CreateTestEdmxModelWithEntityDocumentation();
+            var result = new EdmxXmlGenerator(model, CloudNimble.EasyAF.EFCoreToEdmx.DatabaseProviderType.SqlServer).Generate();
+            var doc = XDocument.Parse(result);
+
+            var conceptualEntity = doc.Descendants()
+                .First(x => x.Name.LocalName == "EntityType" && x.Attribute("Name")?.Value == "DocumentedEntity");
+            var documentation = conceptualEntity.Elements().First(x => x.Name.LocalName == "Documentation");
+            documentation.Elements().Any(x => x.Name.LocalName == "LongDescription").Should().BeFalse();
+        }
+
         #endregion
 
         #region Documentation Tests

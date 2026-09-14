@@ -51,7 +51,7 @@ namespace CloudNimble.EasyAF.Tests.Core
         public void PerMinuteTests(double input, IntervalType intervalType, double output)
         {
             var interval = new Interval<decimal>(Convert.ToDecimal(input), intervalType);
-            Math.Round(interval.PerMinute(), 8).Should().Be(Convert.ToDecimal(output));
+            Math.Round(interval.PerMinute(), 8).Should().Be(Math.Round(Convert.ToDecimal(output), 8));
         }
 
         #endregion
@@ -97,7 +97,7 @@ namespace CloudNimble.EasyAF.Tests.Core
         public void PerHourTests(double input, IntervalType intervalType, double output)
         {
             var interval = new Interval<decimal>(Convert.ToDecimal(input), intervalType);
-            Math.Round(interval.PerHour(), 8).Should().Be(Convert.ToDecimal(output));
+            Math.Round(interval.PerHour(), 8).Should().Be(Math.Round(Convert.ToDecimal(output), 8));
         }
 
         #endregion
@@ -143,7 +143,7 @@ namespace CloudNimble.EasyAF.Tests.Core
         public void PerDayTests(double input, IntervalType intervalType, double output)
         {
             var interval = new Interval<decimal>(Convert.ToDecimal(input), intervalType);
-            Math.Round(interval.PerDay(), 8).Should().Be(Convert.ToDecimal(output));
+            Math.Round(interval.PerDay(), 8).Should().Be(Math.Round(Convert.ToDecimal(output), 8));
         }
 
         #endregion
@@ -189,7 +189,7 @@ namespace CloudNimble.EasyAF.Tests.Core
         public void PerWeekTests(double input, IntervalType intervalType, double output)
         {
             var interval = new Interval<decimal>(Convert.ToDecimal(input), intervalType);
-            Math.Round(interval.PerWeek(), 8).Should().Be(Convert.ToDecimal(output));
+            Math.Round(interval.PerWeek(), 8).Should().Be(Math.Round(Convert.ToDecimal(output), 8));
         }
 
         #endregion
@@ -235,7 +235,7 @@ namespace CloudNimble.EasyAF.Tests.Core
         public void PerMonthTests(double input, IntervalType intervalType, double output)
         {
             var interval = new Interval<decimal>(Convert.ToDecimal(input), intervalType);
-            Math.Round(interval.PerMonth(), 8).Should().Be(Convert.ToDecimal(output));
+            Math.Round(interval.PerMonth(), 8).Should().Be(Math.Round(Convert.ToDecimal(output), 8));
         }
 
         #endregion
@@ -281,7 +281,7 @@ namespace CloudNimble.EasyAF.Tests.Core
         public void PerYearTests(double input, IntervalType intervalType, double output)
         {
             var interval = new Interval<decimal>(Convert.ToDecimal(input), intervalType);
-            Math.Round(interval.PerYear(), 8).Should().Be(Convert.ToDecimal(output));
+            Math.Round(interval.PerYear(), 8).Should().Be(Math.Round(Convert.ToDecimal(output), 8));
         }
 
         #endregion

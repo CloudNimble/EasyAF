@@ -91,10 +91,10 @@ public class ProductManager : EntityManager<AppContext, Product>
 ### Audit Field Population
 
 Automatically handles interfaces:
-- **ICreatorTrackable<T>**: Sets CreatedById from ClaimsPrincipal.Current
-- **ICreatedAuditable**: Sets DateCreated to DateTime.UtcNow
-- **IUpdaterTrackable<T>**: Sets UpdatedById from ClaimsPrincipal.Current
-- **IUpdatedAuditable**: Sets DateUpdated to DateTime.UtcNow
+- **`ICreatorTrackable<T>`**: Sets CreatedById from ClaimsPrincipal.Current
+- **`ICreatedAuditable`**: Sets DateCreated to DateTime.UtcNow
+- **`IUpdaterTrackable<T>`**: Sets UpdatedById from ClaimsPrincipal.Current
+- **`IUpdatedAuditable`**: Sets DateUpdated to DateTime.UtcNow
 
 ### CRUD Operations
 
@@ -145,7 +145,7 @@ await manager.DirectDeleteAsync(e => e.IsDeleted == true);
 
 ## IdentifiableEntityManager
 
-Extends EntityManager for entities with ID properties (implementing IIdentifiable<TId>).
+Extends EntityManager for entities with ID properties (implementing `IIdentifiable<TId>`).
 
 ### Key Feature
 - **Automatic GUID Generation**: Creates new GUIDs for entities with empty IDs during insertion
@@ -167,7 +167,7 @@ public class OrderManager : IdentifiableEntityManager<AppContext, Order, Guid>
 
 ## StatusEntityManager
 
-Manages entities with status tracking (implementing IHasStatus<TStatusType>).
+Manages entities with status tracking (implementing `IHasStatus<TStatusType>`).
 
 ### Features
 - **Status Type Management**: Loads and caches available status types
@@ -202,7 +202,7 @@ public class InvoiceManager : StatusEntityManager<AppContext, Invoice, Guid, Inv
 
 ## StateMachineEntityManager
 
-Manages entities with state machine workflows (implementing IHasState<TStateType>).
+Manages entities with state machine workflows (implementing `IHasState<TStateType>`).
 
 ### Features
 - **State Type Management**: Loads and caches available state types
@@ -272,13 +272,13 @@ public class WorkflowManager : StateMachineEntityManager<AppContext, WorkflowIte
 ## Integration with Interfaces
 
 The managers automatically detect and handle these interfaces:
-- **IIdentifiable<T>**: Entity has an ID property
-- **ICreatedAuditable**: Track creation timestamp
-- **IUpdatedAuditable**: Track update timestamp  
-- **ICreatorTrackable<T>**: Track user who created
-- **IUpdaterTrackable<T>**: Track user who updated
-- **IHasStatus<T>**: Entity has status type
-- **IHasState<T>**: Entity participates in state machine
+- **`IIdentifiable<T>`**: Entity has an ID property
+- **`ICreatedAuditable`**: Track creation timestamp
+- **`IUpdatedAuditable`**: Track update timestamp
+- **`ICreatorTrackable<T>`**: Track user who created
+- **`IUpdaterTrackable<T>`**: Track user who updated
+- **`IHasStatus<T>`**: Entity has status type
+- **`IHasState<T>`**: Entity participates in state machine
 
 ## Thread Safety
 

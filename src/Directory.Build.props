@@ -8,7 +8,11 @@
         <IsSampleProject Condition="$(MSBuildProjectName.ToLower().Contains('.samples.'))">true</IsSampleProject>
         <IsTemplateProject Condition="$(MSBuildProjectName.ToLower().Contains('.templates.'))">true</IsTemplateProject>
         <IsTemplatePackageProject Condition="$(MSBuildProjectName.ToLower().Contains('.templates.package'))">true</IsTemplatePackageProject>
-        <IsNetCore Condition=" '$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net9.0' OR '$(TargetFramework)' == 'net10.0' ">true</IsNetCore>
+        <IsNetCore Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^net([8-9]|[1-3][0-9])\.'))">true</IsNetCore>
+        <DotNetMajor>$([System.Text.RegularExpressions.Regex]::Match('$(TargetFramework)', '^net(\d+)\.').Groups[1].Value)</DotNetMajor>
+        <!-- MSTest 4.4 CodeCoverage needs System.Text.Json >= 10.0.10. Floor net8/net9 tests there; net11 follows the TFM. -->
+        <TestSystemTextJsonVersion Condition="'$(DotNetMajor)' == '11'">11.*-*</TestSystemTextJsonVersion>
+        <TestSystemTextJsonVersion Condition="'$(DotNetMajor)' != '' AND '$(TestSystemTextJsonVersion)' == ''">10.*-*</TestSystemTextJsonVersion>
         <IsPrimaryProject Condition=" ('$(IsBenchmarkProject)' != 'true' And '$(IsTestProject)' != 'true' And '$(IsTestAssetProject)' != 'true' And '$(IsSampleProject)' != 'true' And '$(IsSampleProject)' != 'true') or '$(IsTemplatePackageProject)' == 'true' ">true</IsPrimaryProject>
         <IncludeReadmeFile Condition="Exists('$(MSBuildProjectDirectory)\readme.md')">true</IncludeReadmeFile>
 
@@ -37,7 +41,7 @@
         <Authors>CloudNimble</Authors>
         <Company>CloudNimble, Inc.</Company>
         <RpmPackageVendor>CloudNimble</RpmPackageVendor>
-        <Copyright>Copyright © 2020-2025 CloudNimble, Inc. All rights reserved.</Copyright>
+        <Copyright>Copyright © 2020-2026 CloudNimble, Inc. All rights reserved.</Copyright>
         <NeutralLanguage>en-US</NeutralLanguage>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile Condition="$(IncludeReadmeFile) == 'true'">readme.md</PackageReadmeFile>
@@ -82,7 +86,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <StandardTestTfms>net10.0;net9.0;net8.0</StandardTestTfms>
+        <StandardTestTfms>net11.0;net10.0;net9.0;net8.0</StandardTestTfms>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -133,10 +137,10 @@
     </ItemGroup>
 
     <ItemGroup Condition=" $(IsTestProject) == 'true' and $(IsSampleProject) != 'true' ">
-        <PackageReference Include="coverlet.collector" Version="6.*" PrivateAssets="All" />
         <PackageReference Include="FluentAssertions" Version="6.*" PrivateAssets="All" />
         <PackageReference Include="FluentAssertions.Analyzers" Version="0.*" PrivateAssets="All" />
         <PackageReference Include="MSTest" Version="4.*" />
+        <PackageReference Include="System.Text.Json" Version="$(TestSystemTextJsonVersion)" Condition="'$(TestSystemTextJsonVersion)' != ''" />
 
         <!-- Enable parallel test execution in MSTest 4 and later. -->
         <AssemblyAttribute Include="Microsoft.VisualStudio.TestTools.UnitTesting.Parallelize">

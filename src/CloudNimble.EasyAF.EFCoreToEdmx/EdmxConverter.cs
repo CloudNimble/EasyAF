@@ -239,6 +239,7 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
         /// </summary>
         /// <param name="configPath">The path to the .edmx.config file containing scaffolding settings.</param>
         /// <param name="projectPath">The path to the project directory containing configuration files.</param>
+        /// <param name="existingEdmx">Optional existing EDMX XML whose empty Summary / LongDescription fields are preserved when the catalog has no value.</param>
         /// <returns>A tuple containing the EDMX XML content and the extracted OnModelCreating method body.</returns>
         /// <exception cref="ArgumentNullException">Thrown when parameters are null or empty.</exception>
         /// <exception cref="FileNotFoundException">Thrown when the configuration file is not found.</exception>
@@ -255,7 +256,7 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
         /// var (edmxContent, onModelCreating) = await converter.ConvertFromDatabaseAsync("MyModel.edmx.config", @"C:\MyProject");
         /// </code>
         /// </example>
-        public async Task<(string EdmxContent, string OnModelCreatingBody)> ConvertFromDatabaseAsync(string configPath, string projectPath)
+        public async Task<(string EdmxContent, string OnModelCreatingBody)> ConvertFromDatabaseAsync(string configPath, string projectPath, string existingEdmx = null)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(configPath, nameof(configPath));
             ArgumentException.ThrowIfNullOrWhiteSpace(projectPath, nameof(projectPath));
@@ -291,6 +292,20 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
 
                 // Store the OnModelCreating body in the model
                 edmxModel.OnModelCreatingBody = scaffoldingResult.OnModelCreatingBody;
+
+                if (providerType == DatabaseProviderType.SqlServer)
+                {
+                    try
+                    {
+                        EasyAFLongDescription.ApplyFromConnection(edmxModel, scaffoldingResult.Context.Database.GetDbConnection());
+                    }
+                    catch (Exception)
+                    {
+                        // Catalog lookup is advisory; generate still succeeds without it.
+                    }
+                }
+
+                EasyAFLongDescription.PreserveExisting(edmxModel, existingEdmx);
 
                 // Generate the EDMX XML
                 var xmlGenerator = new EdmxXmlGenerator(edmxModel, providerType, tableInfos);
@@ -330,7 +345,8 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
             ArgumentException.ThrowIfNullOrWhiteSpace(projectPath, nameof(projectPath));
 
             var configPath = edmxPath + ".config";
-            return await ConvertFromDatabaseAsync(configPath, projectPath);
+            var existingEdmx = File.Exists(edmxPath) ? await File.ReadAllTextAsync(edmxPath) : null;
+            return await ConvertFromDatabaseAsync(configPath, projectPath, existingEdmx);
         }
 
         /// <summary>

@@ -130,45 +130,6 @@ namespace CloudNimble.EasyAF.Tests.CodeGen.Core
             result.Should().Contain($"namespace {customNamespace}");
         }
 
-        [TestMethod]
-        public void WriteSimpleMessageBusFiles()
-        {
-            var userEntity = EdmxLoader.Entities.FirstOrDefault(c => c.EntityType.Name == "User");
-            var outputDir = Path.Combine(ProjectPath, @"Baselines\SimpleMessageBus");
-
-            // Generate base class
-            using (var baseGenerator = new SimpleMessageBusGenerator(null, EdmxLoader.ModelNamespace, userEntity, "Base"))
-            {
-                baseGenerator.Generate();
-                var path = baseGenerator.WriteFile(outputDir);
-                File.Exists(path).Should().BeTrue();
-            }
-
-            // Generate created message
-            using (var createdGenerator = new SimpleMessageBusGenerator(null, EdmxLoader.ModelNamespace, userEntity, "Created"))
-            {
-                createdGenerator.Generate();
-                var path = createdGenerator.WriteFile(outputDir);
-                File.Exists(path).Should().BeTrue();
-            }
-
-            // Generate updated message
-            using (var updatedGenerator = new SimpleMessageBusGenerator(null, EdmxLoader.ModelNamespace, userEntity, "Updated"))
-            {
-                updatedGenerator.Generate();
-                var path = updatedGenerator.WriteFile(outputDir);
-                File.Exists(path).Should().BeTrue();
-            }
-
-            // Generate deleted message
-            using (var deletedGenerator = new SimpleMessageBusGenerator(null, EdmxLoader.ModelNamespace, userEntity, "Deleted"))
-            {
-                deletedGenerator.Generate();
-                var path = deletedGenerator.WriteFile(outputDir);
-                File.Exists(path).Should().BeTrue();
-            }
-        }
-
         //[DataRow(ProjectPath)]
         //[TestMethod]
         [BreakdanceManifestGenerator]

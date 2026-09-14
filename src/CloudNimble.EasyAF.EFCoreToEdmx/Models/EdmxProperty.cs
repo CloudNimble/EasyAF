@@ -52,9 +52,14 @@
         public bool? IsUnicode { get; set; }
 
         /// <summary>
-        /// Gets or sets the documentation comment for the property.
+        /// Gets or sets the CSDL Summary (from <c>MS_Description</c> / <c>HasComment</c>).
         /// </summary>
         public string Documentation { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the CSDL LongDescription (from the <c>EasyAF_LongDescription</c> extended property).
+        /// </summary>
+        public string LongDescription { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the default value for the property.
