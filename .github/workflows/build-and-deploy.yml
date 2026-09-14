@@ -24,7 +24,7 @@ permissions:
   id-token: write
 
 env:
-   DOTNET_VERSION: '10.0.x'
+   DOTNET_VERSION: '11.0.x'
    SOLUTION_FILE: 'src/CloudNimble.EasyAF.slnx'
 
 jobs:
@@ -72,17 +72,19 @@ jobs:
       shell: pwsh
       run: |
          Write-Host "Installing .NET versions..."
-         $versions = @("8.0", "9.0", "10.0")
-         foreach ($version in $versions) {
-           Write-Host "Installing .NET $version..."
-           Invoke-WebRequest -Uri "https://dot.net/v1/dotnet-install.ps1" -OutFile "dotnet-install.ps1"
-           ./dotnet-install.ps1 -Channel $version -InstallDir "$env:ProgramFiles\dotnet"
+         Invoke-WebRequest -Uri "https://dot.net/v1/dotnet-install.ps1" -OutFile "dotnet-install.ps1"
+         $installDir = "$env:ProgramFiles\dotnet"
+
+         foreach ($channel in @("8.0", "9.0", "10.0")) {
+           Write-Host "Installing .NET $channel..."
+           ./dotnet-install.ps1 -Channel $channel -InstallDir $installDir
          }
 
-         # Add to PATH for this job
-         echo "$env:ProgramFiles\dotnet" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+         # 11.0.1xx is the SDK feature band that contains 11.0.100-rc.1
+         Write-Host "Installing .NET 11.0.1xx (preview/RC)..."
+         ./dotnet-install.ps1 -Channel 11.0.1xx -Quality preview -InstallDir $installDir
 
-         # Verify installation
+         echo $installDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
          dotnet --list-sdks
 
     - name: Get version variables
