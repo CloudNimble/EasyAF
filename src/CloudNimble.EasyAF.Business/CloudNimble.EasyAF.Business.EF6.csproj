@@ -9,7 +9,7 @@
         <PackageReference Include="Ben.TypeDictionary" Version="[*, 2.0.0)" />
         <PackageReference Include="EntityFramework" Version="6.*" />
         <PackageReference Include="SimpleMessageBus.Publish" Version="[6.*-*, 7.0.0)" />
-        <PackageReference Include="Z.EntityFramework.Plus.EF6" Version="9.*" />
+        <PackageReference Include="Z.EntityFramework.Plus.EF6" Version="10.*" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net11.0'">
