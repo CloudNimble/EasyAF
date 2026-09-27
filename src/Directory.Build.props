@@ -10,8 +10,7 @@
         <IsTemplatePackageProject Condition="$(MSBuildProjectName.ToLower().Contains('.templates.package'))">true</IsTemplatePackageProject>
         <IsNetCore Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^net([8-9]|[1-3][0-9])\.'))">true</IsNetCore>
         <DotNetMajor>$([System.Text.RegularExpressions.Regex]::Match('$(TargetFramework)', '^net(\d+)\.').Groups[1].Value)</DotNetMajor>
-        <!-- MSTest 4.4 CodeCoverage needs System.Text.Json >= 10.0.10. Floor net8/net9 tests there; net11 follows the TFM. -->
-        <TestSystemTextJsonVersion Condition="'$(DotNetMajor)' == '11'">11.*-*</TestSystemTextJsonVersion>
+        <!-- MSTest 4.4 CodeCoverage needs System.Text.Json >= 10.0.10. Floor every test TFM there. -->
         <TestSystemTextJsonVersion Condition="'$(DotNetMajor)' != '' AND '$(TestSystemTextJsonVersion)' == ''">10.*-*</TestSystemTextJsonVersion>
         <IsPrimaryProject Condition=" ('$(IsBenchmarkProject)' != 'true' And '$(IsTestProject)' != 'true' And '$(IsTestAssetProject)' != 'true' And '$(IsSampleProject)' != 'true' And '$(IsSampleProject)' != 'true') or '$(IsTemplatePackageProject)' == 'true' ">true</IsPrimaryProject>
         <IncludeReadmeFile Condition="Exists('$(MSBuildProjectDirectory)\readme.md')">true</IncludeReadmeFile>
@@ -52,8 +51,6 @@
         <NoWarn>$(NoWarn);NU5125;NU5048;NU5128;</NoWarn>
         <!-- Suppress warnings about using SemVer 2.0. -->
         <NoWarn>$(NoWarn);NU5105</NoWarn>
-        <!-- net11 RC dependencies in an otherwise stable package version. -->
-        <NoWarn>$(NoWarn);NU5104</NoWarn>
         <!-- Suppress package version conflicts for .NET 10 until dependencies are updated -->
         <NoWarn>$(NoWarn);NU1608;NU1107</NoWarn>
 
@@ -88,7 +85,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <StandardTestTfms>net11.0;net10.0;net9.0;net8.0</StandardTestTfms>
+        <StandardTestTfms>net10.0;net9.0;net8.0</StandardTestTfms>
     </PropertyGroup>
 
     <PropertyGroup>

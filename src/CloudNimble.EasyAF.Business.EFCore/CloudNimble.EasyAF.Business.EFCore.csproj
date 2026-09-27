@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net11.0;net10.0;net9.0;net8.0;</TargetFrameworks>
+        <TargetFrameworks>net10.0;net9.0;net8.0;</TargetFrameworks>
         <DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
         <DefineConstants>EFCORE</DefineConstants>
     </PropertyGroup>
@@ -11,11 +11,6 @@
         <PackageReference Include="SimpleMessageBus.Publish" Version="[6.*-*, 7.0.0)" />
     </ItemGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' == 'net11.0'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[11.*-*, 12.0.0)" />
-        <PackageReference Include="System.Text.Json" Version="[11.*-*, 12.0.0)" />
-        <!-- Plus has no 11.x package yet. -->
-    </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[10.*, 12.0.0)" />

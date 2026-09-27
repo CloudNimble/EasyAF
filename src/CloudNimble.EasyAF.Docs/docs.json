@@ -132,6 +132,9 @@
                         "group": "Http",
                         "icon": "folder-tree",
                         "pages": [
+                          "api-reference/CloudNimble/EasyAF/Http/index",
+                          "api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor",
+                          "api-reference/CloudNimble/EasyAF/Http/InnerHttpContext",
                           {
                             "group": "OData",
                             "icon": "folder-tree",
