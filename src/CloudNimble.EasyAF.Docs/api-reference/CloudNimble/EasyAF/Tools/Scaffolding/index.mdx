@@ -1,0 +1,24 @@
+---
+title: Overview
+description: "Summary of the CloudNimble.EasyAF.Tools.Scaffolding Namespace"
+icon: folder-tree
+mode: wide
+keywords: ['CloudNimble.EasyAF.Tools.Scaffolding', 'namespace', 'EmbeddedResourceWriter', 'ProjectGraphConfigurator', 'ScaffoldLayout', 'ScaffoldOptions', 'ScaffoldPackage', 'ScaffoldProject', 'SdkTemplateHost', 'SolutionFileBuilder', 'TemplateNotFoundException']
+---
+
+## Types
+
+### <Icon icon="file-brackets-curly" iconType="duotone" color="#E0EC32" size={24} style={{ paddingRight: '8px' }} /> Classes
+
+| Name | Summary |
+| ---- | ------- |
+| [EmbeddedResourceWriter](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/EmbeddedResourceWriter) | Renders text files embedded in an assembly, replacing `{{Token}}` placeholders, and writes them to disk. |
+| [ProjectGraphConfigurator](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/ProjectGraphConfigurator) | Applies a [ScaffoldProject](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/ScaffoldProject) description to a project file freshly created from an SDK template. |
+| [ScaffoldLayout](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/ScaffoldLayout) | Defines the projects, references, and packages of a scaffolded EasyAF solution. |
+| [ScaffoldOptions](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/ScaffoldOptions) | The validated inputs for `dotnet easyaf new`: the solution namespace, target framework, and which optional  projects to include. |
+| [ScaffoldPackage](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/ScaffoldPackage) | A NuGet package reference for a scaffolded project. |
+| [ScaffoldProject](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/ScaffoldProject) | Describes one project in a scaffolded EasyAF solution: how it is created and how its project file is configured. |
+| [SdkTemplateHost](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/SdkTemplateHost) | Instantiates the .NET SDK's built-in C# project templates (`classlib`, `web`, `console`)  in-process through Microsoft.TemplateEngine, without spawning `dotnet new`. |
+| [SolutionFileBuilder](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/SolutionFileBuilder) | Builds a Visual Studio `.slnx` solution file in-process with  Microsoft.VisualStudio.SolutionPersistence, placing projects and solution items into solution folders. |
+| [TemplateNotFoundException](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/TemplateNotFoundException) | Thrown when a .NET SDK project template cannot be found in the installed SDK's templates folder. |
+

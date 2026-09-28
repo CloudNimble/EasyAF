@@ -12,6 +12,6 @@ keywords: ['CloudNimble.EasyAF.Core.Converters', 'namespace', 'IgnoreAuditFields
 
 | Name | Summary |
 | ---- | ------- |
-| [IgnoreAuditFieldsJsonConverter](/api-reference/CloudNimble/EasyAF/Core/Converters/IgnoreAuditFieldsJsonConverter) | A [JsonConverter`1](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonconverter-1) that ignores certain properties on a [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject). |
-| [IgnoreAuditFieldsJsonConverterFactory](/api-reference/CloudNimble/EasyAF/Core/Converters/IgnoreAuditFieldsJsonConverterFactory) |  |
+| [IgnoreAuditFieldsJsonConverter](/api-reference/CloudNimble/EasyAF/Core/Converters/IgnoreAuditFieldsJsonConverter) | A [JsonConverter`1](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonconverter-1) that ignores the audit properties on a [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject). |
+| [IgnoreAuditFieldsJsonConverterFactory](/api-reference/CloudNimble/EasyAF/Core/Converters/IgnoreAuditFieldsJsonConverterFactory) | The converter we create needs to know the exact type we're converting, otherwise you would only get base object properties every  time. Therefore it has to be generic. So the Factory creates the right Converter instance type for the object and sends it on its' way.  For more details,  [see Microsoft's converter documentation.](https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to?pivots=dotnet-6-0) |
 

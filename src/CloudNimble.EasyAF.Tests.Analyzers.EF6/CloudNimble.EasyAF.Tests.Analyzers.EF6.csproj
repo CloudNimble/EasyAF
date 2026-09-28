@@ -1,23 +1,22 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFrameworks>net10.0</TargetFrameworks>
-        <IsTestProject>false</IsTestProject>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
+    <!-- Consume the analyzer exactly like a Core project would, so a generator that fails to load fails this build. -->
     <PropertyGroup>
-        <EasyAFProjectType>Data</EasyAFProjectType>
+        <EasyAFProjectType>Core</EasyAFProjectType>
         <EasyAFNamespace>Testing.OneTwoThree</EasyAFNamespace>
         <RootNamespace>Testing.OneTwoThree.Four</RootNamespace>
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
         <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
-        <NoWarn>$(NoWarn);CS8784</NoWarn>
-    </PropertyGroup>   
-    
-    <ItemGroup>
-        <PackageReference Include="EntityFramework" Version="6.*" />
-    </ItemGroup>
+        <!-- CS8784: generator failed to initialize. CS8785: generator failed to generate. -->
+        <WarningsAsErrors>$(WarningsAsErrors);CS8784;CS8785</WarningsAsErrors>
+        <!-- EntityModel.edmx keeps a nullable ProductStatusType.CreatedById on purpose, so EASYAF005 must stay a visible warning here. -->
+        <WarningsNotAsErrors>$(WarningsNotAsErrors);EASYAF005</WarningsNotAsErrors>
+    </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\CloudNimble.EasyAF.Analyzers.EF6\CloudNimble.EasyAF.Analyzers.EF6.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
@@ -27,20 +26,19 @@
     <ItemGroup>
         <AdditionalFiles Include="..\CloudNimble.EasyAF.Tests.Shared\*.edmx" />
     </ItemGroup>
-    
+
+    <!-- Use the analyzer's own props, exactly as the NuGet package does, so every EasyAF* property is visible to the generator. -->
+    <Import Project="..\CloudNimble.EasyAF.Analyzers.EF6\EasyAF.Analyzers.EF6.props" />
+
+    <!-- The emitted copies are for inspection only; the compiler already includes the generated source. -->
     <ItemGroup>
-        <CompilerVisibleProperty Include="EasyAFProjectType" />
-        <CompilerVisibleProperty Include="EasyAFNamespace" />
+        <Compile Remove="Generated\**" />
     </ItemGroup>
-    
+
     <ItemGroup>
-      <None Update="app.config">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="Generated\" />
+        <None Update="app.config">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

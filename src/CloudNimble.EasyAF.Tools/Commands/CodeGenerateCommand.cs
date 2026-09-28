@@ -160,7 +160,7 @@ namespace CloudNimble.EasyAF.Tools.Commands
 
             if (mustExit)
             {
-                Console.WriteLine("Unable to generate files because one or more of the required projects were not found in this folder.  You should run 'dotnet new easyaf' in your solution folder first to generate the required projects.");
+                Console.WriteLine("Unable to generate files because one or more of the required projects were not found in this folder.  To create them, run 'dotnet easyaf new <name>'.");
                 return;
             }
 
@@ -302,6 +302,11 @@ namespace CloudNimble.EasyAF.Tools.Commands
                     {
                         if (type == "core" || isAll)
                         {
+                            if (composition.HasNullableCreatedById)
+                            {
+                                Console.WriteLine($"Warning: {string.Format(CodeGenConstants.NullableCreatedByIdWarning, composition.EntityType.Name)}");
+                            }
+
                             using var entities = new EntityGenerator(null, entityNamespace, composition);
                             generatedFileNames.Add(entities.WriteFile(entityFolder));
                             Console.WriteLine(generatedFileNames.Last());

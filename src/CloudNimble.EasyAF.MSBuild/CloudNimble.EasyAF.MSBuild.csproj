@@ -1,30 +1,45 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net10.0;net9.0;net8.0;net472</TargetFrameworks>
+        <TargetFrameworks>net11.0;net10.0;net472</TargetFrameworks>
         <Description>Provides MSBuild project management capabilities for the EasyAF framework, including project file manipulation and property management.</Description>
         <PackageTags>CloudNimble;EasyAF;EasyApplicationFramework;MSBuild;ProjectManagement</PackageTags>
-        <DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
         <NoWarn>$(NoWarn);CA1822;NU1605;NU1701;NU1608;</NoWarn>
         <DisableMSBuildAssemblyCopyCheck>true</DisableMSBuildAssemblyCopyCheck>
     </PropertyGroup>
 
+    <!--
+        Compile against the lowest MSBuild each TFM can load at runtime; ExcludeAssets="runtime" keeps these out of the output so
+        MSBuildLocator loads the SDK's (or Visual Studio's) copy. net11.0 → SDK 11 (MSBuild 18.10+); net10.0 → SDK 10 (18.9+);
+        net472 → Visual Studio 2026 (18.9+).
+    -->
     <ItemGroup>
-        <!-- ExcludeAssets="runtime" - compile against NuGet packages, MSBuildLocator redirects to SDK at runtime -->
-        <PackageReference Include="Microsoft.Build" Version="17.14.*" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.Build.Framework" Version="17.14.*" ExcludeAssets="runtime" />
         <PackageReference Include="Microsoft.Build.Locator" Version="1.*" />
-        <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.*" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.*" ExcludeAssets="runtime" />
     </ItemGroup>
 
+    <ItemGroup Condition="'$(TargetFramework)' == 'net11.0'">
+        <PackageReference Include="Microsoft.Build" Version="18.10.*" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Framework" Version="18.10.*" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Tasks.Core" Version="18.10.*" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="18.10.*" ExcludeAssets="runtime" />
+        <PackageReference Include="System.CodeDom" Version="11.*-*" />
+        <PackageReference Include="System.Security.Cryptography.Xml" Version="11.*-*" />
+    </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+        <PackageReference Include="Microsoft.Build" Version="18.9.*" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Framework" Version="18.9.*" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Tasks.Core" Version="18.9.*" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="18.9.*" ExcludeAssets="runtime" />
         <PackageReference Include="System.CodeDom" Version="10.*" />
         <PackageReference Include="System.Security.Cryptography.Xml" Version="10.*" />
     </ItemGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' != 'net10.0'">
+    <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+        <PackageReference Include="Microsoft.Build" Version="18.9.*" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Framework" Version="18.9.*" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Tasks.Core" Version="18.9.*" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="18.9.*" ExcludeAssets="runtime" />
         <PackageReference Include="System.CodeDom" Version="9.*" />
         <PackageReference Include="System.Security.Cryptography.Xml" Version="9.*" />
     </ItemGroup>

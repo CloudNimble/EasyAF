@@ -1,0 +1,337 @@
+---
+title: ScaffoldOptions
+description: "The validated inputs for `dotnet easyaf new`: the solution namespace, target framework, and which optional projects to include."
+icon: lock
+tag: "SEALED"
+keywords: ['ScaffoldOptions', 'CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldOptions', 'CloudNimble.EasyAF.Tools.Scaffolding', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Scaffolding
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldOptions
+```
+
+## Summary
+
+The validated inputs for `dotnet easyaf new`: the solution namespace, target framework, and which optional
+projects to include.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [ScaffoldOptions](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/ScaffoldOptions) class.
+
+#### Syntax
+
+```csharp
+public ScaffoldOptions(string namespace, string targetFramework = "net10.0", bool includeApi = true, bool includeMessageBus = true, bool includeRuntime = true, bool webJob = false)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `namespace` | `string` | The solution namespace; every dot-separated segment must be a C# identifier. |
+| `targetFramework` | `string` | The target framework: `net10.0` or `net11.0`. |
+| `includeApi` | `bool` | Whether to create the `.Api` project. |
+| `includeMessageBus` | `bool` | Whether to create the `.MessageBus.*` projects. |
+| `includeRuntime` | `bool` | Whether to create the `.MessageBus.Runtime` project. |
+| `webJob` | `bool` | Whether to stamp Azure WebJob publish metadata on the runtime. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when an argument is invalid or the flags conflict. |
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Company
+
+Gets the first namespace segment (for example `CloudNimble` for `CloudNimble.Contoso`), used for package metadata.
+
+#### Syntax
+
+```csharp
+public string Company { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> IncludeApi
+
+Gets a value indicating whether the `.Api` project (and its test project) is created.
+
+#### Syntax
+
+```csharp
+public bool IncludeApi { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> IncludeMessageBus
+
+Gets a value indicating whether the `.MessageBus.*` projects are created.
+
+#### Syntax
+
+```csharp
+public bool IncludeMessageBus { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> IncludeRuntime
+
+Gets a value indicating whether the `.MessageBus.Runtime` project is created. Always [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool)
+when [ScaffoldOptions.IncludeMessageBus](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/ScaffoldOptions#includemessagebus) is [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Syntax
+
+```csharp
+public bool IncludeRuntime { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MicrosoftPackageVersion
+
+Gets the version that Microsoft.Extensions and EF Core packages float to for [ScaffoldOptions.TargetFramework](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/ScaffoldOptions#targetframework).
+
+#### Syntax
+
+```csharp
+public string MicrosoftPackageVersion { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Namespace
+
+Gets the solution namespace (for example `CloudNimble.Contoso`); every project name starts with it.
+
+#### Syntax
+
+```csharp
+public string Namespace { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Product
+
+Gets the last namespace segment (for example `Contoso`), used in class, configuration, and WebJob names.
+
+#### Syntax
+
+```csharp
+public string Product { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> TargetFramework
+
+Gets the target framework moniker every project uses (for example `net10.0`).
+
+#### Syntax
+
+```csharp
+public string TargetFramework { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> WebJob
+
+Gets a value indicating whether Azure WebJob publish metadata is stamped on the `.MessageBus.Runtime` project.
+
+#### Syntax
+
+```csharp
+public bool WebJob { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> CreateTokens
+
+Creates the token values the embedded scaffold resources are rendered with.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IReadOnlyDictionary<string, string> CreateTokens(string sdkVersion, int year)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `sdkVersion` | `string` | The .NET SDK version to pin in `global.json`. |
+| `year` | `int` | The copyright year. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IReadOnlyDictionary<string, string>`
+The tokens keyed by placeholder name.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

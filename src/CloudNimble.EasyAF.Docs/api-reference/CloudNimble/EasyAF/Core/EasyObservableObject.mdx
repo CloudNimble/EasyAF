@@ -41,7 +41,7 @@ public class Person : EasyObservableObject
     public int Age
     {
         get =&gt; _age;
-        set =&gt; Set(() =&gt; Age, ref _age, value);
+        set =&gt; Set(nameof(Age), ref _age, value);
     }
 }
 ```

@@ -18,7 +18,7 @@ namespace CloudNimble.EasyAF.Tools.Commands.Root
     /// </code>
     /// </example>
     [Command(Description = "EasyAF 3.0 CLI Tools.\nBy CloudNimble. https://nimbleapps.cloud")]
-    [Subcommand(typeof(InitCommand), typeof(SetupCommand), typeof(CleanupCommand), typeof(CodeRootCommand), typeof(DatabaseRootCommand), typeof(EdmxRootCommand))]
+    [Subcommand(typeof(NewCommand), typeof(InitCommand), typeof(SetupCommand), typeof(CleanupCommand), typeof(CodeRootCommand), typeof(DatabaseRootCommand), typeof(EdmxRootCommand))]
     public class EasyAFRootCommand
     {
 

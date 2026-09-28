@@ -19,6 +19,18 @@ namespace CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration
         public bool GenerateViews { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether the project still sets the legacy <c>GenerateViews</c> MSBuild property instead of
+        /// <c>EasyAFGenerateViews</c>.
+        /// </summary>
+        public bool UsesLegacyGenerateViews { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the generator asks to attach a debugger when it runs. Set the
+        /// <c>EasyAFLaunchDebugger</c> MSBuild property to <c>true</c> to enable it.
+        /// </summary>
+        public bool LaunchDebugger { get; set; }
+
+        /// <summary>
         /// Gets or sets the type of the project (Entity, Data, Business, Api).
         /// </summary>
         public ProjectType ProjectType { get; set; }
@@ -126,10 +138,23 @@ namespace CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration
                     {
                         settings.EasyAFNamespace = ns;
                     }
-                    if (options.GlobalOptions.TryGetValue("build_property.GenerateViews", out var generateViews))
+                    // EasyAFGenerateViews wins. The legacy GenerateViews property is only honored when the new one isn't set, and is always reported.
+                    options.GlobalOptions.TryGetValue("build_property.GenerateViews", out var legacyGenerateViews);
+                    settings.UsesLegacyGenerateViews = !string.IsNullOrWhiteSpace(legacyGenerateViews);
+                    if (options.GlobalOptions.TryGetValue("build_property.EasyAFGenerateViews", out var generateViews) && !string.IsNullOrWhiteSpace(generateViews))
                     {
                         bool.TryParse(generateViews, out var value);
                         settings.GenerateViews = value;
+                    }
+                    else if (settings.UsesLegacyGenerateViews)
+                    {
+                        bool.TryParse(legacyGenerateViews, out var value);
+                        settings.GenerateViews = value;
+                    }
+                    if (options.GlobalOptions.TryGetValue("build_property.EasyAFLaunchDebugger", out var launchDebugger))
+                    {
+                        bool.TryParse(launchDebugger, out var value);
+                        settings.LaunchDebugger = value;
                     }
                     if (options.GlobalOptions.TryGetValue("build_property.RootNamespace", out var rootNs))
                     {

@@ -27,7 +27,8 @@
             "pages": [
               "index",
               "why-easyaf",
-              "quickstart"
+              "quickstart",
+              "release-notes"
             ]
           },
           {
@@ -221,6 +222,7 @@
                               "api-reference/CloudNimble/EasyAF/Tools/Commands/EdmxSwapCommand",
                               "api-reference/CloudNimble/EasyAF/Tools/Commands/EdmxWatchCommand",
                               "api-reference/CloudNimble/EasyAF/Tools/Commands/InitCommand",
+                              "api-reference/CloudNimble/EasyAF/Tools/Commands/NewCommand",
                               "api-reference/CloudNimble/EasyAF/Tools/Commands/SetupCommand",
                               {
                                 "group": "Root",
@@ -249,6 +251,22 @@
                               "api-reference/CloudNimble/EasyAF/Tools/ProjectDiscovery/index",
                               "api-reference/CloudNimble/EasyAF/Tools/ProjectDiscovery/ProjectDiscoveryService",
                               "api-reference/CloudNimble/EasyAF/Tools/ProjectDiscovery/ProjectInfo"
+                            ]
+                          },
+                          {
+                            "group": "Scaffolding",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "api-reference/CloudNimble/EasyAF/Tools/Scaffolding/index",
+                              "api-reference/CloudNimble/EasyAF/Tools/Scaffolding/EmbeddedResourceWriter",
+                              "api-reference/CloudNimble/EasyAF/Tools/Scaffolding/ProjectGraphConfigurator",
+                              "api-reference/CloudNimble/EasyAF/Tools/Scaffolding/ScaffoldLayout",
+                              "api-reference/CloudNimble/EasyAF/Tools/Scaffolding/ScaffoldOptions",
+                              "api-reference/CloudNimble/EasyAF/Tools/Scaffolding/ScaffoldPackage",
+                              "api-reference/CloudNimble/EasyAF/Tools/Scaffolding/ScaffoldProject",
+                              "api-reference/CloudNimble/EasyAF/Tools/Scaffolding/SdkTemplateHost",
+                              "api-reference/CloudNimble/EasyAF/Tools/Scaffolding/SolutionFileBuilder",
+                              "api-reference/CloudNimble/EasyAF/Tools/Scaffolding/TemplateNotFoundException"
                             ]
                           }
                         ]
@@ -418,6 +436,20 @@
                           "api-reference/System/Security/Claims/ClaimsIdentity",
                           "api-reference/System/Security/Claims/ClaimsPrincipal",
                           "api-reference/System/Security/Claims/EasyAF_ClaimsPrincipalExtensions"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Text",
+                    "icon": "folder-tree",
+                    "pages": [
+                      {
+                        "group": "Json",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "api-reference/System/Text/Json/index",
+                          "api-reference/System/Text/Json/JsonSerializerOptions"
                         ]
                       }
                     ]

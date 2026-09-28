@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net10.0;net9.0;net8.0;</TargetFrameworks>
+        <TargetFrameworks>net11.0;net10.0;</TargetFrameworks>
         <IsPackable>false</IsPackable>
         <NoWarn>$(NoWarn);CA1822;</NoWarn>
     </PropertyGroup>
@@ -10,8 +10,6 @@
         <PackageReference Include="Breakdance.Assemblies" Version="*-*" />
         <PackageReference Include="SimpleMessageBus.Publish.Azure" Version="*-*" />
     </ItemGroup>
-
-
 
     <ItemGroup>
         <ProjectReference Include="..\CloudNimble.EasyAF.Business\CloudNimble.EasyAF.Business.EF6.csproj" />

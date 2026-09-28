@@ -1,0 +1,316 @@
+---
+title: EmbeddedResourceWriter
+description: "Renders text files embedded in an assembly, replacing `{{Token}}` placeholders, and writes them to disk."
+icon: file-brackets-curly
+keywords: ['EmbeddedResourceWriter', 'CloudNimble.EasyAF.Tools.Scaffolding.EmbeddedResourceWriter', 'CloudNimble.EasyAF.Tools.Scaffolding', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Scaffolding
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Scaffolding.EmbeddedResourceWriter
+```
+
+## Summary
+
+Renders text files embedded in an assembly, replacing `{{Token}}` placeholders, and writes them to disk.
+
+## Remarks
+
+Resources are expected to use path-preserving logical names (for example `Resources/Api/Program.cs`) so that
+folder names containing dots are not confused with nested folders. Tokens are replaced in a single pass, so a token
+value that itself looks like a token is written literally. A placeholder with no matching token is an error rather
+than something to ship. Line endings are normalized to [NewLine](https://learn.microsoft.com/dotnet/api/system.environment.newline).
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [EmbeddedResourceWriter](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/EmbeddedResourceWriter) class that reads the EasyAF Tools
+assembly's `Resources/` folder.
+
+#### Syntax
+
+```csharp
+public EmbeddedResourceWriter(System.Collections.Generic.IReadOnlyDictionary<string, string> tokens)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `tokens` | `System.Collections.Generic.IReadOnlyDictionary<string, string>` | The tokens that replace `{{Name}}` placeholders. |
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [EmbeddedResourceWriter](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/EmbeddedResourceWriter) class.
+
+#### Syntax
+
+```csharp
+public EmbeddedResourceWriter(System.Collections.Generic.IReadOnlyDictionary<string, string> tokens, System.Reflection.Assembly assembly, string rootFolder)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `tokens` | `System.Collections.Generic.IReadOnlyDictionary<string, string>` | The tokens that replace `{{Name}}` placeholders. |
+| `assembly` | `System.Reflection.Assembly` | The assembly the resources are embedded in. |
+| `rootFolder` | `string` | The logical folder resource names are relative to. |
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Assembly
+
+Gets the assembly the resources are read from.
+
+#### Syntax
+
+```csharp
+public System.Reflection.Assembly Assembly { get; }
+```
+
+#### Property Value
+
+Type: `System.Reflection.Assembly`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ResourceNames
+
+Gets the names of the available resources, relative to [EmbeddedResourceWriter.RootFolder](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/EmbeddedResourceWriter#rootfolder), with forward slashes, sorted.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IReadOnlyList<string> ResourceNames { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.IReadOnlyList<string>`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> RootFolder
+
+Gets the logical folder that resource names are relative to (for example `Resources`).
+
+#### Syntax
+
+```csharp
+public string RootFolder { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Tokens
+
+Gets the tokens that replace `{{Name}}` placeholders.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IReadOnlyDictionary<string, string> Tokens { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.IReadOnlyDictionary<string, string>`
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Render
+
+Renders a resource with its tokens replaced.
+
+#### Syntax
+
+```csharp
+public string Render(string resourceName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `resourceName` | `string` | The resource name relative to [EmbeddedResourceWriter.RootFolder](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/EmbeddedResourceWriter#rootfolder), for example `Api/Program.cs`. |
+
+#### Returns
+
+Type: `string`
+The rendered text.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `FileNotFoundException` | Thrown when no resource with that name exists. |
+| `InvalidOperationException` | Thrown when the resource contains a placeholder with no matching token. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> WriteAsync
+
+Renders a resource and writes it to disk as UTF-8 without a byte order mark, creating parent directories and
+replacing any existing file.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<string> WriteAsync(string resourceName, string destinationPath, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `resourceName` | `string` | The resource name relative to [EmbeddedResourceWriter.RootFolder](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/EmbeddedResourceWriter#rootfolder). |
+| `destinationPath` | `string` | The file to write. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token to cancel the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<string>`
+The full path of the written file.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `FileNotFoundException` | Thrown when no resource with that name exists. |
+| `InvalidOperationException` | Thrown when the resource contains a placeholder with no matching token. Nothing is written. |
+

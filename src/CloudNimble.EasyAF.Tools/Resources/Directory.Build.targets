@@ -1,0 +1,11 @@
+<Project>
+
+    <!--
+        The documentation file is named after the assembly, and AssemblyName isn't set yet when Directory.Build.props is evaluated.
+        MSBuild imports this file after the SDK and the project file have set AssemblyName and TargetFramework, so it belongs here.
+    -->
+    <PropertyGroup Condition=" '$(IsPrimaryProject)' == 'true' And '$(IsWebProject)' != 'true' ">
+        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    </PropertyGroup>
+
+</Project>

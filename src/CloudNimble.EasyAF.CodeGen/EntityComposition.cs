@@ -83,6 +83,12 @@ namespace CloudNimble.EasyAF.CodeGen
         public EntityType EntityType { get; set; }
 
         /// <summary>
+        /// A boolean specifying whether or not this Entity has a CreatedById property that allows nulls. EasyAF requires
+        /// CreatedById to be non-nullable, so these Entities are not <see cref="IsCreatorTrackable"/>.
+        /// </summary>
+        public bool HasNullableCreatedById { get; private set; }
+
+        /// <summary>
         /// A boolean specifying whether or not this Entity has StateType and StateTypeId properties.
         /// </summary>
         public bool HasState { get; private set; }
@@ -103,7 +109,7 @@ namespace CloudNimble.EasyAF.CodeGen
         public bool IsCreatedAuditable { get; private set; }
 
         /// <summary>
-        /// A boolean specifying whether or not this Entity has a CreatedById property.
+        /// A boolean specifying whether or not this Entity has a non-nullable CreatedById property.
         /// </summary>
         public bool IsCreatorTrackable { get; private set; }
 
@@ -197,7 +203,9 @@ namespace CloudNimble.EasyAF.CodeGen
             HasStatus = entity.Properties.Any(c => c.Name == StatusTypeId);
             IsActiveTrackable = entity.Properties.Any(c => c.Name == IsActive && c.TypeName.ToLower() == "boolean");
             IsCreatedAuditable = entity.Properties.Any(c => c.Name == DateCreated && c.TypeName.ToLower().Contains("datetime"));
-            IsCreatorTrackable = entity.Properties.Any(c => c.Name == CreatedById);
+            // RWM: A record always has a creator, so ICreatorTrackable<T> declares a non-nullable CreatedById. A nullable column can't implement it.
+            HasNullableCreatedById = entity.Properties.Any(c => c.Name == CreatedById && MetadataTools.IsNullable(c));
+            IsCreatorTrackable = entity.Properties.Any(c => c.Name == CreatedById) && !HasNullableCreatedById;
             IsDbStateEnum = _stateMachineProperties.All(c => entity.Properties.Any(d => d.Name == c));
             IsDbStatusEnum = entity.Name.EndsWith("StatusType");
             IsHumanReadable = entity.Properties.Any(c => c.Name == DisplayName);

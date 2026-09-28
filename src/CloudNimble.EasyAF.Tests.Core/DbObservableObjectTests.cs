@@ -46,7 +46,7 @@ namespace CloudNimble.EasyAF.Tests.Core
             var result = person.ToDeltaPayload();
             result.Should().NotBeEmpty()
                 .And.HaveCount(1)
-                .And.NotContainKey(nameof(IIdentifiable<Guid>.Id))
+                .And.NotContainKey(nameof(IIdentifiable<>.Id))
                 .And.Contain(new KeyValuePair<string, object>(nameof(Person.FirstName), "Victoria"));
         }
 
@@ -66,7 +66,7 @@ namespace CloudNimble.EasyAF.Tests.Core
             var result = employee.ToDeltaPayload(true);
             result.Should().NotBeEmpty()
                 .And.HaveCount(2)
-                .And.ContainKey(nameof(IIdentifiable<Guid>.Id))
+                .And.ContainKey(nameof(IIdentifiable<>.Id))
                 .And.ContainKey(nameof(Person));
 
             var innerChange = new Dictionary<string, object>(result)[nameof(Person)] as ExpandoObject;
@@ -91,10 +91,24 @@ namespace CloudNimble.EasyAF.Tests.Core
             var result = employee.ToDeltaPayload(true);
             result.Should().NotBeEmpty()
                 .And.HaveCount(2)
-                .And.ContainKey(nameof(IIdentifiable<Guid>.Id))
+                .And.ContainKey(nameof(IIdentifiable<>.Id))
                 .And.Contain(new KeyValuePair<string, object>(nameof(Employee.Title), "Chief Bullshit Officer"));
         }
 
+
+        [TestMethod]
+        public void DbObservableObject_ToDeltaPayload_IntIdentifiable_IncludesTheId()
+        {
+            var badge = new Badge { Id = 42, DisplayName = "Gold" };
+            badge.TrackChanges();
+            badge.DisplayName = "Platinum";
+
+            var result = badge.ToDeltaPayload();
+
+            result.Should().HaveCount(2)
+                .And.Contain(new KeyValuePair<string, object>(nameof(Badge.Id), 42))
+                .And.Contain(new KeyValuePair<string, object>(nameof(Badge.DisplayName), "Platinum"));
+        }
 
         [TestMethod]
         public void DbObservableObject_AcceptChangesRecursive_HitsAllObjects()
@@ -112,7 +126,7 @@ namespace CloudNimble.EasyAF.Tests.Core
             var result = employee.ToDeltaPayload(true);
             result.Should().NotBeEmpty()
                 .And.HaveCount(2)
-                .And.ContainKey(nameof(IIdentifiable<Guid>.Id))
+                .And.ContainKey(nameof(IIdentifiable<>.Id))
                 .And.Contain(new KeyValuePair<string, object>(nameof(Employee.Title), "Chief Bullshit Officer"));
         }
 

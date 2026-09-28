@@ -28,7 +28,7 @@ namespace CloudNimble.EasyAF.Core
     ///     public int Age
     ///     {
     ///         get => _age;
-    ///         set => Set(() => Age, ref _age, value);
+    ///         set => Set(nameof(Age), ref _age, value);
     ///     }
     /// }
     /// </code>

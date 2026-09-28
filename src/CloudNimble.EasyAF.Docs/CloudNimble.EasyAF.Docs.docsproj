@@ -43,7 +43,8 @@
                             <Pages>
                                 index;
                                 why-easyaf;
-                                quickstart
+                                quickstart;
+                                release-notes
                             </Pages>
                         </Group>
                         <Group Name="Guides" Icon="dog-leashed">

@@ -13,6 +13,26 @@
         <PackageReference Include="Z.Expressions.Eval" Version="6.*" NoWarn="NU1608" />
     </ItemGroup>
 
+    <!-- EF Core Design ships Microsoft.Build.Framework; keep it out of the output so MSBuildLocator loads the SDK's copy. -->
+    <ItemGroup Condition="'$(TargetFramework)' == 'net11.0'">
+        <PackageReference Include="Microsoft.Build.Framework" Version="18.10.*" ExcludeAssets="runtime" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+        <PackageReference Include="Microsoft.Build.Framework" Version="18.9.*" ExcludeAssets="runtime" />
+    </ItemGroup>
+
+    <!-- TemplateEngine ships NuGet.* 6.13; keep them out of the output so MSBuildLocator loads the SDK's copies, which MSBuild needs to evaluate SDK projects. -->
+    <ItemGroup>
+        <PackageReference Include="NuGet.Common" Version="6.13.*" ExcludeAssets="runtime" />
+        <PackageReference Include="NuGet.Configuration" Version="6.13.*" ExcludeAssets="runtime" />
+        <PackageReference Include="NuGet.Credentials" Version="6.13.*" ExcludeAssets="runtime" />
+        <PackageReference Include="NuGet.Frameworks" Version="6.13.*" ExcludeAssets="runtime" />
+        <PackageReference Include="NuGet.Packaging" Version="6.13.*" ExcludeAssets="runtime" />
+        <PackageReference Include="NuGet.Protocol" Version="6.13.*" ExcludeAssets="runtime" />
+        <PackageReference Include="NuGet.Versioning" Version="6.13.*" ExcludeAssets="runtime" />
+    </ItemGroup>
+
     <ItemGroup>
         <ProjectReference Include="..\CloudNimble.EasyAF.Core\CloudNimble.EasyAF.Core.csproj" />
         <ProjectReference Include="..\CloudNimble.EasyAF.CodeGen\CloudNimble.EasyAF.CodeGen.csproj" />
