@@ -277,7 +277,6 @@ namespace CloudNimble.EasyAF.Tests.Tools
         [TestMethod]
         [DataRow("Api", "Program.cs", "public static class Program")]
         [DataRow("MessageBus.Runtime", "Program.cs", "UseSimpleMessageBusLifetime")]
-        [DataRow("Business", @"Extensions\IServiceCollectionExtensions.cs", "Contoso_Business_IServiceCollectionExtensions")]
         [DataRow("Tests.Core", "PlaceholderTests.cs", "public class PlaceholderTests")]
         [DataRow("Tests.Business", "BusinessTestBase.cs", "public class BusinessTestBase")]
         public void Default_ShouldWriteEasyAFFilesOverTheTemplates(string suffix, string file, string expected)
@@ -288,7 +287,6 @@ namespace CloudNimble.EasyAF.Tests.Tools
         }
 
         [TestMethod]
-        [DataRow("Business")]
         [DataRow("Tests.Core")]
         [DataRow("Tests.Business")]
         public void Default_ShouldRemoveClass1WhereEasyAFAddsCode(string suffix)

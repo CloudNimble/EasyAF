@@ -88,7 +88,7 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
             _writer.WriteLine($"public static IServiceCollection Add{ProjectName}BusinessDependencies(this IServiceCollection services)");
             _writer.WriteLine("{");
             _writer.Indent++;
-            foreach (var entitySet in EntityContainer.BaseEntitySets.OfType<EntitySet>().OrderBy(c => c.Name))
+            foreach (var entitySet in EntityContainer?.BaseEntitySets.OfType<EntitySet>().OrderBy(c => c.Name) ?? Enumerable.Empty<EntitySet>())
             {
                 _writer.WriteLine($"services.AddScoped<{CodeGenerationTools.GetTypeName(entitySet.ElementType)}Manager>();");
             }

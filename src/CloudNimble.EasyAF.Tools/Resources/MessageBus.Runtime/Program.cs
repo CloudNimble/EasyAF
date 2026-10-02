@@ -36,7 +36,8 @@ namespace {{Namespace}}.MessageBus.Runtime
                     // TODO: Uncomment after `dotnet easyaf database generate` and `dotnet easyaf code generate` create {{Product}}Context.
                     //services.AddDbContext<{{Product}}Context>(options => options.UseSqlServer(context.Configuration.GetConnectionString("{{Product}}")));
 
-                    services.Add{{Product}}Business();
+                    // TODO: Uncomment after `dotnet easyaf code generate` creates the business managers.
+                    //services.Add{{Product}}BusinessDependencies();
 
                     // TODO: Register your IMessageHandler implementations from {{Namespace}}.MessageBus.Dispatch here.
                 });

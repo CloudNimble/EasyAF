@@ -353,7 +353,6 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
                 "Api/appsettings.json",
                 "Api/appsettings.PROD.json",
                 "Api/Program.cs",
-                "Business/Extensions/IServiceCollectionExtensions.cs",
                 "DEV.runsettings",
                 "Directory.Build.props",
                 "Directory.Build.targets",

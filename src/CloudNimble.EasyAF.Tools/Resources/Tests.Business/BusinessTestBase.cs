@@ -39,7 +39,8 @@ namespace {{Namespace}}.Tests.Business
 
                 // TODO: EasyAF managers require an IMessagePublisher. Register one (or a test double) here.
 
-                services.Add{{Product}}Business();
+                // TODO: Uncomment after `dotnet easyaf code generate` creates the business managers.
+                //services.Add{{Product}}BusinessDependencies();
             });
         }
 
