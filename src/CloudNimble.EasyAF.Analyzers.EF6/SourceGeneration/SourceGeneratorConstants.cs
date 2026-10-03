@@ -187,7 +187,7 @@ namespace CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration
         /// </summary>
         internal const string LegacyGenerateViewsMessage =
             "The GenerateViews MSBuild property is deprecated and will be removed in a future release. Rename it to EasyAFGenerateViews. " +
-            "Until then, EasyAF uses GenerateViews only when EasyAFGenerateViews is not set.";
+            "Until then, GenerateViews overrides EasyAFGenerateViews.";
 
         #endregion
 

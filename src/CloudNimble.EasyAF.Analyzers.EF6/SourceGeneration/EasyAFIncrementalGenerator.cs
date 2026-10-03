@@ -44,6 +44,23 @@ namespace CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration
             var compilationAndEdmxFiles = context.CompilationProvider.Combine(edmxFiles.Collect()).Combine(options);
 
             context.RegisterSourceOutput(compilationAndEdmxFiles, Execute);
+
+            var legacyGenerateViews = context.AnalyzerConfigOptionsProvider
+                .Select((provider, _) => provider.GlobalOptions.TryGetValue("build_property.GenerateViews", out var value) && !string.IsNullOrWhiteSpace(value));
+
+            context.RegisterSourceOutput(legacyGenerateViews, (sourceContext, isSet) =>
+            {
+                if (!isSet) return;
+                sourceContext.ReportDiagnostic(Diagnostic.Create(
+                    new DiagnosticDescriptor(
+                        SourceGeneratorConstants.LegacyGenerateViewsDiagnosticId,
+                        SourceGeneratorConstants.LegacyGenerateViewsTitle,
+                        SourceGeneratorConstants.LegacyGenerateViewsMessage,
+                        SourceGeneratorConstants.SourceGenerationCategory,
+                        DiagnosticSeverity.Warning,
+                        isEnabledByDefault: true),
+                    Location.None));
+            });
         }
 
         /// <summary>
@@ -66,19 +83,6 @@ namespace CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration
                 Debugger.Launch();
             }
 #endif
-
-            if (settings.UsesLegacyGenerateViews)
-            {
-                context.ReportDiagnostic(Diagnostic.Create(
-                    new DiagnosticDescriptor(
-                        SourceGeneratorConstants.LegacyGenerateViewsDiagnosticId,
-                        SourceGeneratorConstants.LegacyGenerateViewsTitle,
-                        SourceGeneratorConstants.LegacyGenerateViewsMessage,
-                        SourceGeneratorConstants.SourceGenerationCategory,
-                        DiagnosticSeverity.Warning,
-                        isEnabledByDefault: true),
-                    Location.None));
-            }
 
             if (settings.ProjectType is ProjectType.Unknown)
             {
