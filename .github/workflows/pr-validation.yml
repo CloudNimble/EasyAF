@@ -79,11 +79,16 @@ jobs:
       id: version
       shell: pwsh
       run: |
-        # Get version components from repository variables
-        $majorVersion = "${{ vars.VERSION_MAJOR }}"
+        # PRs into main build the current release line from VERSION_*; PRs into dev (and manual runs) build the next one from DEV_VERSION_*.
+        if ("${{ github.base_ref }}" -eq "main") {
+          $majorVersion = "${{ vars.VERSION_MAJOR }}"
+          $minorVersion = "${{ vars.VERSION_MINOR }}"
+        }
+        else {
+          $majorVersion = "${{ vars.DEV_VERSION_MAJOR }}"
+          $minorVersion = "${{ vars.DEV_VERSION_MINOR }}"
+        }
         if ([string]::IsNullOrEmpty($majorVersion)) { $majorVersion = "1" }
-
-        $minorVersion = "${{ vars.VERSION_MINOR }}"
         if ([string]::IsNullOrEmpty($minorVersion)) { $minorVersion = "0" }
 
         Write-Host "Version variables: MAJOR=$majorVersion, MINOR=$minorVersion"
