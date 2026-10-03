@@ -66,7 +66,13 @@ jobs:
           throw "Only CI builds can be published here. Not CI-versioned: $($notCi.Name -join ', ')"
         }
 
+        # dotnet nuget push sends each .snupkg along with the .nupkg of the same name.
+        $symbols = @(Get-ChildItem ./artifacts -Filter *.snupkg)
         $packages | ForEach-Object { Write-Host "Publishing $($_.Name)" }
+        $symbols | ForEach-Object { Write-Host "Publishing symbols $($_.Name)" }
+        if ($symbols.Count -lt $packages.Count) {
+          Write-Host "::warning::Only $($symbols.Count) of $($packages.Count) packages have a .snupkg; the rest publish without symbols."
+        }
 
     - name: NuGet login (Trusted Publishing)
       uses: nuget/login@v1

@@ -126,14 +126,16 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: nuget-packages-pr
-        path: ./artifacts/*.nupkg
+        path: |
+          ./artifacts/*.nupkg
+          ./artifacts/*.snupkg
         retention-days: 7
 
     - name: Validate packages
       shell: pwsh
       run: |
         Write-Host "Validating NuGet packages..."
-        Get-ChildItem ./artifacts/*.nupkg | ForEach-Object {
+        Get-ChildItem ./artifacts -Include *.nupkg, *.snupkg -File -Recurse | ForEach-Object {
           Write-Host "Found package: $($_.Name)"
         }
         Write-Host "PR validation completed successfully"
