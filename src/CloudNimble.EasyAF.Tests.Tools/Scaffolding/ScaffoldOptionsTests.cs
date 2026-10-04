@@ -16,11 +16,12 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         #region Constructor Tests
 
         [TestMethod]
-        public void Constructor_WithDefaults_ShouldIncludeEverythingOnNet10()
+        public void Constructor_WithDefaults_ShouldIncludeEverythingOnNet11()
         {
             var options = new ScaffoldOptions("CloudNimble.Contoso");
 
-            options.TargetFramework.Should().Be("net10.0");
+            options.DotNetVersion.Should().Be(11);
+            options.TargetFramework.Should().Be("net11.0");
             options.IncludeApi.Should().BeTrue();
             options.IncludeMessageBus.Should().BeTrue();
             options.IncludeRuntime.Should().BeTrue();
@@ -65,17 +66,27 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         }
 
         [TestMethod]
-        [DataRow("net472")]
-        [DataRow("netstandard2.0")]
-        [DataRow("garbage")]
-        [DataRow("net8.0")]
-        [DataRow("net9.0")]
-        [DataRow("net12.0")]
-        public void Constructor_WithUnsupportedTargetFramework_ShouldThrowArgumentException(string targetFramework)
+        [DataRow(-1)]
+        [DataRow(0)]
+        [DataRow(8)]
+        [DataRow(9)]
+        [DataRow(12)]
+        public void Constructor_WithUnsupportedDotNetVersion_ShouldThrowArgumentException(int dotNetVersion)
         {
-            Action act = () => new ScaffoldOptions("Contoso", targetFramework);
+            Action act = () => new ScaffoldOptions("Contoso", dotNetVersion);
 
-            act.Should().Throw<ArgumentException>().WithParameterName("targetFramework");
+            act.Should().Throw<ArgumentException>().WithParameterName("dotNetVersion").WithMessage($"*.NET {dotNetVersion}*");
+        }
+
+        [TestMethod]
+        [DataRow(10, "net10.0")]
+        [DataRow(11, "net11.0")]
+        public void Constructor_ShouldBuildTheTargetFrameworkFromTheDotNetVersion(int dotNetVersion, string expected)
+        {
+            var options = new ScaffoldOptions("Contoso", dotNetVersion);
+
+            options.DotNetVersion.Should().Be(dotNetVersion);
+            options.TargetFramework.Should().Be(expected);
         }
 
         [TestMethod]
@@ -133,11 +144,11 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         #region MicrosoftPackageVersion Tests
 
         [TestMethod]
-        [DataRow("net10.0", "10.*")]
-        [DataRow("net11.0", "11.*-*")]
-        public void MicrosoftPackageVersion_ShouldFloatByTargetFramework(string targetFramework, string expected)
+        [DataRow(10, "10.*")]
+        [DataRow(11, "11.*-*")]
+        public void MicrosoftPackageVersion_ShouldFloatByDotNetVersion(int dotNetVersion, string expected)
         {
-            var options = new ScaffoldOptions("Contoso", targetFramework);
+            var options = new ScaffoldOptions("Contoso", dotNetVersion);
 
             options.MicrosoftPackageVersion.Should().Be(expected);
         }

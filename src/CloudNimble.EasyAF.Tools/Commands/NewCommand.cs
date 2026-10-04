@@ -37,7 +37,7 @@ namespace CloudNimble.EasyAF.Tools.Commands
         private const string WebJobSettingsResource = "MessageBus.Runtime/Properties/webjobs-publish-settings.json";
 
         private static readonly string[] AdditionalBuildTypes = ["DEV", "BETA", "PROD"];
-        private static readonly string[] SolutionItems = ["Directory.Build.props", "Directory.Build.targets", "global.json", "nuget.config", "DEV.runsettings"];
+        private static readonly string[] SolutionItems = ["Directory.Build.props", "Directory.Build.targets", "global.json", "DEV.runsettings"];
 
         #endregion
 
@@ -51,9 +51,9 @@ namespace CloudNimble.EasyAF.Tools.Commands
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the folder to create the solution in. Defaults to <c>./{Name}</c>.
+        /// Gets or sets the folder to create the solution in. Defaults to the current folder.
         /// </summary>
-        [Option("-o|--output", Description = "The folder to create the solution in. Defaults to ./<name>.")]
+        [Option("-o|--output", Description = "The folder to create the solution in. Defaults to the current folder.")]
         public string OutputDirectory { get; set; }
 
         /// <summary>
@@ -63,10 +63,10 @@ namespace CloudNimble.EasyAF.Tools.Commands
         public string Namespace { get; set; }
 
         /// <summary>
-        /// Gets or sets the target framework: <c>net10.0</c> (the default) or <c>net11.0</c>.
+        /// Gets or sets the .NET major version to target: <c>10</c> or <c>11</c> (the default).
         /// </summary>
-        [Option("-f|--framework", Description = "The target framework: net10.0 (default) or net11.0.")]
-        public string Framework { get; set; } = "net10.0";
+        [Option("-f|--framework", Description = "The .NET version to target: 10 or 11 (default).")]
+        public int Framework { get; set; } = 11;
 
         /// <summary>
         /// Gets or sets whether to leave out the Api project and its tests.
@@ -136,7 +136,7 @@ namespace CloudNimble.EasyAF.Tools.Commands
                 return 1;
             }
 
-            var output = Path.GetFullPath(string.IsNullOrWhiteSpace(OutputDirectory) ? Path.Combine(Environment.CurrentDirectory, Name) : OutputDirectory);
+            var output = Path.GetFullPath(string.IsNullOrWhiteSpace(OutputDirectory) ? Environment.CurrentDirectory : OutputDirectory);
             var existingSolution = FindSolution(output);
             if (existingSolution is not null)
             {
@@ -154,7 +154,7 @@ namespace CloudNimble.EasyAF.Tools.Commands
                 if (missing.Count > 0)
                 {
                     WriteError($"The {string.Join(", ", missing)} C# project template(s) for {options.TargetFramework} were not found in '{host.TemplateFolder ?? host.TemplatesRoot}'. " +
-                        $"Install the .NET {SdkTemplateHost.GetMajorVersion(options.TargetFramework)} SDK, or set DOTNET_ROOT to a .NET installation that has it.");
+                        $"Install the .NET {options.DotNetVersion} SDK, or set DOTNET_ROOT to a .NET installation that has it.");
                     return 1;
                 }
 
@@ -196,7 +196,7 @@ namespace CloudNimble.EasyAF.Tools.Commands
             HashSet<string> overwrite, CancellationToken cancellationToken)
         {
             // RWM: global.json pins the SDK that supplied the templates. If it can't be read, the lowest feature band still rolls forward.
-            var sdkVersion = host.SdkVersion ?? $"{SdkTemplateHost.GetMajorVersion(options.TargetFramework)}.0.100";
+            var sdkVersion = host.SdkVersion ?? $"{options.DotNetVersion}.0.100";
             var writer = new EmbeddedResourceWriter(options.CreateTokens(sdkVersion, DateTime.Now.Year));
 
             Directory.CreateDirectory(output);
@@ -309,7 +309,10 @@ namespace CloudNimble.EasyAF.Tools.Commands
 
             Console.WriteLine();
             Console.WriteLine("Next steps:");
-            Console.WriteLine($"  cd \"{output}\"");
+            if (!string.Equals(Path.TrimEndingDirectorySeparator(output), Path.TrimEndingDirectorySeparator(Path.GetFullPath(Environment.CurrentDirectory)), StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine($"  cd \"{output}\"");
+            }
             Console.WriteLine("  When you're ready to connect a database, run 'dotnet easyaf init'.");
         }
 

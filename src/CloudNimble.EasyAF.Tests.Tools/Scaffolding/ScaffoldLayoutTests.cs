@@ -20,7 +20,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         /// <summary>
         /// Creates the layout for the given options and indexes it by project suffix.
         /// </summary>
-        /// <param name="options">The scaffold options; defaults to everything on net10.0.</param>
+        /// <param name="options">The scaffold options; defaults to everything on net11.0.</param>
         /// <returns>The projects keyed by suffix.</returns>
         private static Dictionary<string, ScaffoldProject> Layout(ScaffoldOptions options = null)
         {
@@ -164,11 +164,11 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         }
 
         [TestMethod]
-        [DataRow("net10.0", "10.*")]
-        [DataRow("net11.0", "11.*-*")]
-        public void Create_ShouldFloatMicrosoftPackagesByTargetFramework(string targetFramework, string expected)
+        [DataRow(10, "10.*")]
+        [DataRow(11, "11.*-*")]
+        public void Create_ShouldFloatMicrosoftPackagesByDotNetVersion(int dotNetVersion, string expected)
         {
-            var layout = Layout(new ScaffoldOptions("Contoso", targetFramework));
+            var layout = Layout(new ScaffoldOptions("Contoso", dotNetVersion));
 
             PackageVersion(layout["Data"], "Microsoft.EntityFrameworkCore.SqlServer").Should().Be(expected);
             PackageVersion(layout["Api"], "Microsoft.EntityFrameworkCore.SqlServer").Should().Be(expected);

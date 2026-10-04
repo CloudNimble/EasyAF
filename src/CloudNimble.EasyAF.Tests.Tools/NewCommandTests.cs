@@ -28,6 +28,11 @@ namespace CloudNimble.EasyAF.Tests.Tools
 
         private const string Namespace = "CloudNimble.Contoso";
 
+        /// <summary>
+        /// The .NET version <c>new</c> targets when <c>-f</c> isn't given.
+        /// </summary>
+        private const int DefaultDotNetVersion = 11;
+
         private static string _defaultRoot;
         private static int _defaultExitCode;
         private static string _defaultOutput;
@@ -48,7 +53,7 @@ namespace CloudNimble.EasyAF.Tests.Tools
         [ClassInitialize]
         public static async Task ClassInitialize(TestContext context)
         {
-            if (!TemplatesInstalled("net10.0"))
+            if (!TemplatesInstalled(DefaultDotNetVersion))
             {
                 return;
             }
@@ -127,7 +132,6 @@ namespace CloudNimble.EasyAF.Tests.Tools
         [DataRow("Directory.Build.props")]
         [DataRow("Directory.Build.targets")]
         [DataRow("global.json")]
-        [DataRow("nuget.config")]
         [DataRow("DEV.runsettings")]
         public async Task Default_ShouldWriteSolutionItems(string fileName)
         {
@@ -218,8 +222,8 @@ namespace CloudNimble.EasyAF.Tests.Tools
         }
 
         [TestMethod]
-        [DataRow("Core", @"bin\Debug\net10.0\CloudNimble.Contoso.Core.xml")]
-        [DataRow("MessageBus.Runtime", @"bin\Debug\net10.0\CloudNimble.Contoso.MessageBus.Runtime.xml")]
+        [DataRow("Core", @"bin\Debug\net11.0\CloudNimble.Contoso.Core.xml")]
+        [DataRow("MessageBus.Runtime", @"bin\Debug\net11.0\CloudNimble.Contoso.MessageBus.Runtime.xml")]
         [DataRow("Api", "")]
         [DataRow("Tests.Core", "")]
         public void Default_DocumentationFile_ShouldBeNamedAfterTheAssemblyByDirectoryBuildTargets(string suffix, string expected)
@@ -241,7 +245,7 @@ namespace CloudNimble.EasyAF.Tests.Tools
             using var collection = new ProjectCollection(new Dictionary<string, string> { ["AssemblyName"] = "Contoso.Renamed" });
             var project = collection.LoadProject(ProjectPath(DefaultSolution, "Core"));
 
-            project.GetPropertyValue("DocumentationFile").Should().Be(@"bin\Debug\net10.0\Contoso.Renamed.xml");
+            project.GetPropertyValue("DocumentationFile").Should().Be(@"bin\Debug\net11.0\Contoso.Renamed.xml");
         }
 
         [TestMethod]
@@ -249,7 +253,7 @@ namespace CloudNimble.EasyAF.Tests.Tools
         {
             RequireDefaultScaffold();
 
-            using var host = new SdkTemplateHost(SdkTemplateHost.FindTemplatesRoot(), "net10.0");
+            using var host = new SdkTemplateHost(SdkTemplateHost.FindTemplatesRoot(), $"net{DefaultDotNetVersion}.0");
             File.ReadAllText(Path.Combine(DefaultSolution, "global.json")).Should().Contain($"\"version\": \"{host.SdkVersion}\"");
         }
 
@@ -261,8 +265,8 @@ namespace CloudNimble.EasyAF.Tests.Tools
             var versions = LoadProject(DefaultSolution, "Data").Descendants("PackageReference")
                 .ToDictionary(p => (string)p.Attribute("Include"), p => (string)p.Attribute("Version"));
             versions["EasyAF.Data.EFCore"].Should().Be(ScaffoldOptions.EasyAFPackageVersion);
-            versions["Microsoft.EntityFrameworkCore.SqlServer"].Should().Be("10.*");
-            Property(DefaultSolution, "Data", "TargetFramework").Should().Be("net10.0");
+            versions["Microsoft.EntityFrameworkCore.SqlServer"].Should().Be("11.*-*");
+            Property(DefaultSolution, "Data", "TargetFramework").Should().Be("net11.0");
         }
 
         [TestMethod]
@@ -373,7 +377,7 @@ namespace CloudNimble.EasyAF.Tests.Tools
         [TestMethod]
         public async Task Namespace_ShouldNameTheProjectsWhileNameNamesTheFolder()
         {
-            RequireTemplates("net10.0");
+            RequireTemplates(DefaultDotNetVersion);
             var output = Path.Combine(_tempDir, "Contoso");
 
             var (exitCode, console) = await RunAsync(new NewCommand { Name = "Contoso", Namespace = Namespace, OutputDirectory = output });
@@ -384,22 +388,20 @@ namespace CloudNimble.EasyAF.Tests.Tools
         }
 
         [TestMethod]
-        public async Task Framework_Net11_ShouldTargetNet11AndFloatMicrosoftPackagesToPreviews()
+        public async Task Framework_10_ShouldTargetNet10AndFloatMicrosoftPackagesTo10()
         {
-            RequireTemplates("net11.0");
+            var output = await ScaffoldAsync(c => c.Framework = 10);
 
-            var output = await ScaffoldAsync(c => c.Framework = "net11.0");
-
-            Property(output, "Core", "TargetFramework").Should().Be("net11.0");
+            Property(output, "Core", "TargetFramework").Should().Be("net10.0");
             LoadProject(output, "Data").Descendants("PackageReference")
                 .Single(p => (string)p.Attribute("Include") == "Microsoft.EntityFrameworkCore.SqlServer")
-                .Attribute("Version").Value.Should().Be("11.*-*");
+                .Attribute("Version").Value.Should().Be("10.*");
         }
 
         [TestMethod]
-        public async Task OutputDirectory_WhenOmitted_ShouldBeTheNameUnderTheCurrentDirectory()
+        public async Task OutputDirectory_WhenOmitted_ShouldBeTheCurrentDirectory()
         {
-            RequireTemplates("net10.0");
+            RequireTemplates(DefaultDotNetVersion);
             var originalDirectory = Environment.CurrentDirectory;
             try
             {
@@ -408,7 +410,10 @@ namespace CloudNimble.EasyAF.Tests.Tools
                 var (exitCode, console) = await RunAsync(new NewCommand { Name = Namespace });
 
                 exitCode.Should().Be(0, because: console);
-                File.Exists(Path.Combine(_tempDir, Namespace, $"{Namespace}.slnx")).Should().BeTrue();
+                File.Exists(Path.Combine(_tempDir, $"{Namespace}.slnx")).Should().BeTrue();
+                File.Exists(ProjectPath(_tempDir, "Core")).Should().BeTrue();
+                Directory.Exists(Path.Combine(_tempDir, Namespace)).Should().BeFalse();
+                console.Should().NotContain("cd \"", because: "the solution is already in the current folder");
             }
             finally
             {
@@ -419,7 +424,7 @@ namespace CloudNimble.EasyAF.Tests.Tools
         [TestMethod]
         public async Task ExistingProjectDirectory_WhenAccepted_ShouldScaffoldOverIt()
         {
-            RequireTemplates("net10.0");
+            RequireTemplates(DefaultDotNetVersion);
             var output = Path.Combine(_tempDir, Namespace);
             var existing = Path.Combine(output, $"{Namespace}.Core");
             Directory.CreateDirectory(existing);
@@ -479,17 +484,17 @@ namespace CloudNimble.EasyAF.Tests.Tools
         }
 
         [TestMethod]
-        [DataRow("net8.0")]
-        [DataRow("net9.0")]
-        [DataRow("netstandard2.0")]
-        public async Task UnsupportedFramework_ShouldFailWithoutWritingAnything(string framework)
+        [DataRow(8)]
+        [DataRow(9)]
+        [DataRow(12)]
+        public async Task UnsupportedFramework_ShouldFailWithoutWritingAnything(int framework)
         {
             var output = Path.Combine(_tempDir, Namespace);
 
             var (exitCode, console) = await RunAsync(new NewCommand { Name = Namespace, OutputDirectory = output, Framework = framework });
 
             exitCode.Should().Be(1);
-            console.Should().Contain(framework);
+            console.Should().Contain($".NET {framework}");
             Directory.Exists(output).Should().BeFalse();
         }
 
@@ -526,7 +531,7 @@ namespace CloudNimble.EasyAF.Tests.Tools
         [TestMethod]
         public async Task ExistingProjectDirectory_WhenDeclined_ShouldFailAndLeaveItAlone()
         {
-            RequireTemplates("net10.0");
+            RequireTemplates(DefaultDotNetVersion);
             var output = Path.Combine(_tempDir, Namespace);
             var existing = Path.Combine(output, $"{Namespace}.Core");
             Directory.CreateDirectory(existing);
@@ -551,11 +556,11 @@ namespace CloudNimble.EasyAF.Tests.Tools
 
         #region Helpers
 
-        private static bool TemplatesInstalled(string framework)
+        private static bool TemplatesInstalled(int dotNetVersion)
         {
             try
             {
-                using var host = new SdkTemplateHost(SdkTemplateHost.FindTemplatesRoot(), framework);
+                using var host = new SdkTemplateHost(SdkTemplateHost.FindTemplatesRoot(), $"net{dotNetVersion}.0");
                 return host.TemplateFolder is not null;
             }
             catch (DirectoryNotFoundException)
@@ -564,25 +569,25 @@ namespace CloudNimble.EasyAF.Tests.Tools
             }
         }
 
-        private static void RequireTemplates(string framework)
+        private static void RequireTemplates(int dotNetVersion)
         {
-            if (!TemplatesInstalled(framework))
+            if (!TemplatesInstalled(dotNetVersion))
             {
-                Assert.Inconclusive($"No SDK templates for {framework} are installed on this machine.");
+                Assert.Inconclusive($"No SDK templates for .NET {dotNetVersion} are installed on this machine.");
             }
         }
 
         private static void RequireDefaultScaffold()
         {
-            RequireTemplates("net10.0");
+            RequireTemplates(DefaultDotNetVersion);
         }
 
         private async Task<string> ScaffoldAsync(Action<NewCommand> configure)
         {
-            RequireTemplates("net10.0");
             var output = Path.Combine(_tempDir, Namespace);
             var command = new NewCommand { Name = Namespace, OutputDirectory = output };
             configure(command);
+            RequireTemplates(command.Framework);
 
             var (exitCode, console) = await RunAsync(command);
 

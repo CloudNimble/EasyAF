@@ -365,7 +365,6 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
                 "MessageBus.Runtime/Program.cs",
                 "MessageBus.Runtime/Properties/launchSettings.json",
                 "MessageBus.Runtime/Properties/webjobs-publish-settings.json",
-                "nuget.config",
                 "Tests.Business/BusinessTestBase.cs",
                 "Tests.Core/PlaceholderTests.cs");
         }

@@ -73,14 +73,14 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         }
 
         /// <summary>
-        /// Gets a project from the default layout, optionally with WebJob metadata.
+        /// Gets a project from the .NET 10 layout, matching the templates these tests create projects from, optionally with WebJob metadata.
         /// </summary>
         /// <param name="suffix">The project suffix.</param>
         /// <param name="webJob">Whether to build the layout with <c>--webjob</c>.</param>
         /// <returns>The project description.</returns>
         private static ScaffoldProject LayoutProject(string suffix, bool webJob = false)
         {
-            return ScaffoldLayout.Create(new ScaffoldOptions(Namespace, webJob: webJob)).Single(p => p.Suffix == suffix);
+            return ScaffoldLayout.Create(new ScaffoldOptions(Namespace, 10, webJob: webJob)).Single(p => p.Suffix == suffix);
         }
 
         /// <summary>

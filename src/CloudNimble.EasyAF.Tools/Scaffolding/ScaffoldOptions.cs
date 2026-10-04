@@ -33,6 +33,11 @@ namespace CloudNimble.EasyAF.Tools.Scaffolding
         public string Company { get; }
 
         /// <summary>
+        /// Gets the .NET major version every project targets (for example <c>11</c>).
+        /// </summary>
+        public int DotNetVersion { get; }
+
+        /// <summary>
         /// Gets a value indicating whether the <c>.Api</c> project (and its test project) is created.
         /// </summary>
         public bool IncludeApi { get; }
@@ -64,7 +69,7 @@ namespace CloudNimble.EasyAF.Tools.Scaffolding
         public string Product { get; }
 
         /// <summary>
-        /// Gets the target framework moniker every project uses (for example <c>net10.0</c>).
+        /// Gets the target framework moniker every project uses (for example <c>net11.0</c>).
         /// </summary>
         public string TargetFramework { get; }
 
@@ -81,13 +86,13 @@ namespace CloudNimble.EasyAF.Tools.Scaffolding
         /// Initializes a new instance of the <see cref="ScaffoldOptions"/> class.
         /// </summary>
         /// <param name="namespace">The solution namespace; every dot-separated segment must be a C# identifier.</param>
-        /// <param name="targetFramework">The target framework: <c>net10.0</c> or <c>net11.0</c>.</param>
+        /// <param name="dotNetVersion">The .NET major version to target: <c>10</c> or <c>11</c>.</param>
         /// <param name="includeApi">Whether to create the <c>.Api</c> project.</param>
         /// <param name="includeMessageBus">Whether to create the <c>.MessageBus.*</c> projects.</param>
         /// <param name="includeRuntime">Whether to create the <c>.MessageBus.Runtime</c> project.</param>
         /// <param name="webJob">Whether to stamp Azure WebJob publish metadata on the runtime.</param>
         /// <exception cref="ArgumentException">Thrown when an argument is invalid or the flags conflict.</exception>
-        public ScaffoldOptions(string @namespace, string targetFramework = "net10.0", bool includeApi = true, bool includeMessageBus = true, bool includeRuntime = true, bool webJob = false)
+        public ScaffoldOptions(string @namespace, int dotNetVersion = 11, bool includeApi = true, bool includeMessageBus = true, bool includeRuntime = true, bool webJob = false)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(@namespace, nameof(@namespace));
 
@@ -95,10 +100,9 @@ namespace CloudNimble.EasyAF.Tools.Scaffolding
             var segments = Namespace.Split('.');
             ValidateNamespace(Namespace, segments);
 
-            var major = SdkTemplateHost.GetMajorVersion(targetFramework);
-            if (!SupportedMajorVersions.Contains(major))
+            if (!SupportedMajorVersions.Contains(dotNetVersion))
             {
-                throw new ArgumentException($"'{targetFramework}' is not supported. Use net10.0 or net11.0.", nameof(targetFramework));
+                throw new ArgumentException($".NET {dotNetVersion} is not supported. Use {string.Join(" or ", SupportedMajorVersions)}.", nameof(dotNetVersion));
             }
 
             IncludeRuntime = includeMessageBus && includeRuntime;
@@ -107,13 +111,14 @@ namespace CloudNimble.EasyAF.Tools.Scaffolding
                 throw new ArgumentException("--webjob stamps the MessageBus.Runtime project, so it cannot be combined with --no-runtime or --no-messagebus.", nameof(webJob));
             }
 
-            TargetFramework = targetFramework;
+            DotNetVersion = dotNetVersion;
+            TargetFramework = $"net{dotNetVersion}.0";
             IncludeApi = includeApi;
             IncludeMessageBus = includeMessageBus;
             WebJob = webJob;
             Company = segments[0];
             Product = segments[^1];
-            MicrosoftPackageVersion = major switch
+            MicrosoftPackageVersion = dotNetVersion switch
             {
                 11 => "11.*-*",
                 _ => "10.*",
