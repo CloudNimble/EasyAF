@@ -13,12 +13,26 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
     public class ScaffoldOptionsTests
     {
 
+        #region Fields
+
+        private static readonly Version ToolVersion = new(5, 0, 0);
+
+        #endregion
+
         #region Constructor Tests
+
+        [TestMethod]
+        public void Constructor_WithNullToolVersion_ShouldThrowArgumentNullException()
+        {
+            Action act = () => new ScaffoldOptions("Contoso", null);
+
+            act.Should().Throw<ArgumentNullException>().WithParameterName("toolVersion");
+        }
 
         [TestMethod]
         public void Constructor_WithDefaults_ShouldIncludeEverythingOnNet11()
         {
-            var options = new ScaffoldOptions("CloudNimble.Contoso");
+            var options = new ScaffoldOptions("CloudNimble.Contoso", ToolVersion);
 
             options.DotNetVersion.Should().Be(11);
             options.TargetFramework.Should().Be("net11.0");
@@ -34,7 +48,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [DataRow("   ")]
         public void Constructor_WithMissingNamespace_ShouldThrowArgumentException(string @namespace)
         {
-            Action act = () => new ScaffoldOptions(@namespace);
+            Action act = () => new ScaffoldOptions(@namespace, ToolVersion);
 
             act.Should().Throw<ArgumentException>().WithParameterName("namespace");
         }
@@ -49,7 +63,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [DataRow("Contoso App")]
         public void Constructor_WithInvalidNamespace_ShouldThrowNamingTheNamespace(string @namespace)
         {
-            Action act = () => new ScaffoldOptions(@namespace);
+            Action act = () => new ScaffoldOptions(@namespace, ToolVersion);
 
             act.Should().Throw<ArgumentException>().WithParameterName("namespace").WithMessage($"*'{@namespace}'*");
         }
@@ -60,7 +74,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [DataRow("TestCo.App")]
         public void Constructor_WithSegmentStartingWithTest_ShouldThrowBecauseProjectTypeDetectionWouldBreak(string @namespace)
         {
-            Action act = () => new ScaffoldOptions(@namespace);
+            Action act = () => new ScaffoldOptions(@namespace, ToolVersion);
 
             act.Should().Throw<ArgumentException>().WithParameterName("namespace").WithMessage("*Test*");
         }
@@ -73,7 +87,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [DataRow(12)]
         public void Constructor_WithUnsupportedDotNetVersion_ShouldThrowArgumentException(int dotNetVersion)
         {
-            Action act = () => new ScaffoldOptions("Contoso", dotNetVersion);
+            Action act = () => new ScaffoldOptions("Contoso", ToolVersion, dotNetVersion);
 
             act.Should().Throw<ArgumentException>().WithParameterName("dotNetVersion").WithMessage($"*.NET {dotNetVersion}*");
         }
@@ -83,7 +97,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [DataRow(11, "net11.0")]
         public void Constructor_ShouldBuildTheTargetFrameworkFromTheDotNetVersion(int dotNetVersion, string expected)
         {
-            var options = new ScaffoldOptions("Contoso", dotNetVersion);
+            var options = new ScaffoldOptions("Contoso", ToolVersion, dotNetVersion);
 
             options.DotNetVersion.Should().Be(dotNetVersion);
             options.TargetFramework.Should().Be(expected);
@@ -92,7 +106,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [TestMethod]
         public void Constructor_WithNoMessageBus_ShouldAlsoExcludeRuntime()
         {
-            var options = new ScaffoldOptions("Contoso", includeMessageBus: false);
+            var options = new ScaffoldOptions("Contoso", ToolVersion, includeMessageBus: false);
 
             options.IncludeMessageBus.Should().BeFalse();
             options.IncludeRuntime.Should().BeFalse();
@@ -101,7 +115,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [TestMethod]
         public void Constructor_WithWebJobAndNoRuntime_ShouldThrowArgumentException()
         {
-            Action act = () => new ScaffoldOptions("Contoso", includeRuntime: false, webJob: true);
+            Action act = () => new ScaffoldOptions("Contoso", ToolVersion, includeRuntime: false, webJob: true);
 
             act.Should().Throw<ArgumentException>().WithParameterName("webJob");
         }
@@ -109,7 +123,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [TestMethod]
         public void Constructor_WithWebJobAndNoMessageBus_ShouldThrowArgumentException()
         {
-            Action act = () => new ScaffoldOptions("Contoso", includeMessageBus: false, webJob: true);
+            Action act = () => new ScaffoldOptions("Contoso", ToolVersion, includeMessageBus: false, webJob: true);
 
             act.Should().Throw<ArgumentException>().WithParameterName("webJob");
         }
@@ -124,7 +138,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [DataRow("A.B.C", "C", "A")]
         public void Constructor_ShouldDeriveProductFromLastSegmentAndCompanyFromFirst(string @namespace, string product, string company)
         {
-            var options = new ScaffoldOptions(@namespace);
+            var options = new ScaffoldOptions(@namespace, ToolVersion);
 
             options.Namespace.Should().Be(@namespace);
             options.Product.Should().Be(product);
@@ -134,7 +148,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [TestMethod]
         public void Constructor_ShouldTrimSurroundingWhitespace()
         {
-            var options = new ScaffoldOptions("  CloudNimble.Contoso  ");
+            var options = new ScaffoldOptions("  CloudNimble.Contoso  ", ToolVersion);
 
             options.Namespace.Should().Be("CloudNimble.Contoso");
         }
@@ -148,9 +162,25 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [DataRow(11, "11.*-*")]
         public void MicrosoftPackageVersion_ShouldFloatByDotNetVersion(int dotNetVersion, string expected)
         {
-            var options = new ScaffoldOptions("Contoso", dotNetVersion);
+            var options = new ScaffoldOptions("Contoso", ToolVersion, dotNetVersion);
 
             options.MicrosoftPackageVersion.Should().Be(expected);
+        }
+
+        #endregion
+
+        #region EasyAFPackageVersion Tests
+
+        [TestMethod]
+        [DataRow("5.0.0", false, "5.*")]
+        [DataRow("5.0.0", true, "5.*-*")]
+        [DataRow("6.1.2", false, "6.*")]
+        [DataRow("6.1.2", true, "6.*-*")]
+        public void EasyAFPackageVersion_ShouldUseTheToolMajorAndFloatToPrereleasesOnlyForAPrereleaseTool(string toolVersion, bool toolIsPrerelease, string expected)
+        {
+            var options = new ScaffoldOptions("Contoso", Version.Parse(toolVersion), toolIsPrerelease: toolIsPrerelease);
+
+            options.EasyAFPackageVersion.Should().Be(expected);
         }
 
         #endregion
@@ -160,7 +190,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [TestMethod]
         public void CreateTokens_ShouldSupplyEveryScaffoldToken()
         {
-            var options = new ScaffoldOptions("CloudNimble.Contoso");
+            var options = new ScaffoldOptions("CloudNimble.Contoso", ToolVersion);
 
             var tokens = options.CreateTokens("10.0.401", 2026);
 
@@ -180,7 +210,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [DataRow("")]
         public void CreateTokens_WithMissingSdkVersion_ShouldThrowArgumentException(string sdkVersion)
         {
-            var options = new ScaffoldOptions("Contoso");
+            var options = new ScaffoldOptions("Contoso", ToolVersion);
 
             Action act = () => options.CreateTokens(sdkVersion, 2026);
 

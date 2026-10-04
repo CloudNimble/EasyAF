@@ -16,11 +16,6 @@ namespace CloudNimble.EasyAF.Tools.Scaffolding
 
         #region Fields
 
-        /// <summary>
-        /// The version range every EasyAF package reference in a new solution uses: the same major version as this tool.
-        /// </summary>
-        public const string EasyAFPackageVersion = "5.*";
-
         private static readonly int[] SupportedMajorVersions = [10, 11];
 
         #endregion
@@ -36,6 +31,12 @@ namespace CloudNimble.EasyAF.Tools.Scaffolding
         /// Gets the .NET major version every project targets (for example <c>11</c>).
         /// </summary>
         public int DotNetVersion { get; }
+
+        /// <summary>
+        /// Gets the version range every EasyAF package reference in a new solution uses: the tool's major version (<c>5.*</c>), floating
+        /// to prereleases (<c>5.*-*</c>) when the tool is a prerelease, so the solution restores the matching packages.
+        /// </summary>
+        public string EasyAFPackageVersion { get; }
 
         /// <summary>
         /// Gets a value indicating whether the <c>.Api</c> project (and its test project) is created.
@@ -86,15 +87,20 @@ namespace CloudNimble.EasyAF.Tools.Scaffolding
         /// Initializes a new instance of the <see cref="ScaffoldOptions"/> class.
         /// </summary>
         /// <param name="namespace">The solution namespace; every dot-separated segment must be a C# identifier.</param>
+        /// <param name="toolVersion">The version of the EasyAF tool creating the solution; its major version is the EasyAF version referenced.</param>
         /// <param name="dotNetVersion">The .NET major version to target: <c>10</c> or <c>11</c>.</param>
         /// <param name="includeApi">Whether to create the <c>.Api</c> project.</param>
         /// <param name="includeMessageBus">Whether to create the <c>.MessageBus.*</c> projects.</param>
         /// <param name="includeRuntime">Whether to create the <c>.MessageBus.Runtime</c> project.</param>
         /// <param name="webJob">Whether to stamp Azure WebJob publish metadata on the runtime.</param>
+        /// <param name="toolIsPrerelease">Whether the EasyAF tool is a prerelease, so EasyAF packages float to prereleases.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="toolVersion"/> is <see langword="null"/>.</exception>
         /// <exception cref="ArgumentException">Thrown when an argument is invalid or the flags conflict.</exception>
-        public ScaffoldOptions(string @namespace, int dotNetVersion = 11, bool includeApi = true, bool includeMessageBus = true, bool includeRuntime = true, bool webJob = false)
+        public ScaffoldOptions(string @namespace, Version toolVersion, int dotNetVersion = 11, bool includeApi = true, bool includeMessageBus = true, bool includeRuntime = true,
+            bool webJob = false, bool toolIsPrerelease = false)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(@namespace, nameof(@namespace));
+            ArgumentNullException.ThrowIfNull(toolVersion, nameof(toolVersion));
 
             Namespace = @namespace.Trim();
             var segments = Namespace.Split('.');
@@ -112,6 +118,7 @@ namespace CloudNimble.EasyAF.Tools.Scaffolding
             }
 
             DotNetVersion = dotNetVersion;
+            EasyAFPackageVersion = toolIsPrerelease ? $"{toolVersion.Major}.*-*" : $"{toolVersion.Major}.*";
             TargetFramework = $"net{dotNetVersion}.0";
             IncludeApi = includeApi;
             IncludeMessageBus = includeMessageBus;

@@ -1,3 +1,4 @@
+using CloudNimble.EasyAF.Tools.Commands.Root;
 using CloudNimble.EasyAF.Tools.Scaffolding;
 using McMaster.Extensions.CommandLineUtils;
 using System;
@@ -128,7 +129,8 @@ namespace CloudNimble.EasyAF.Tools.Commands
             ScaffoldOptions options;
             try
             {
-                options = new ScaffoldOptions(string.IsNullOrWhiteSpace(Namespace) ? Name : Namespace, Framework, !NoApi, !NoMessageBus, !NoRuntime, WebJob);
+                options = new ScaffoldOptions(string.IsNullOrWhiteSpace(Namespace) ? Name : Namespace, EasyAFRootCommand.Version, Framework, !NoApi, !NoMessageBus, !NoRuntime, WebJob,
+                    EasyAFRootCommand.IsPrerelease);
             }
             catch (ArgumentException ex)
             {

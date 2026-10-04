@@ -52,13 +52,13 @@ namespace CloudNimble.EasyAF.Tools.Scaffolding
             var projects = new List<ScaffoldProject>
             {
                 Project("Core", "classlib", "Core", "Core",
-                    [new("EasyAF.Core", ScaffoldOptions.EasyAFPackageVersion)],
+                    [new("EasyAF.Core", options.EasyAFPackageVersion)],
                     []),
                 Project("Data", "classlib", "Core", "Data",
-                    [new("EasyAF.Data.EFCore", ScaffoldOptions.EasyAFPackageVersion), new("Microsoft.EntityFrameworkCore.SqlServer", microsoft)],
+                    [new("EasyAF.Data.EFCore", options.EasyAFPackageVersion), new("Microsoft.EntityFrameworkCore.SqlServer", microsoft)],
                     ["Core"]),
                 Project("Business", "classlib", "Core", "Business",
-                    [new("EasyAF.Business.EFCore", ScaffoldOptions.EasyAFPackageVersion)],
+                    [new("EasyAF.Business.EFCore", options.EasyAFPackageVersion)],
                     ["Core", "Data"]),
             };
 
@@ -66,7 +66,7 @@ namespace CloudNimble.EasyAF.Tools.Scaffolding
             {
                 projects.Add(Project("Api", "web", "Web", "Api",
                     [
-                        new("EasyAF.Restier.EFCore", ScaffoldOptions.EasyAFPackageVersion),
+                        new("EasyAF.Restier.EFCore", options.EasyAFPackageVersion),
                         new("Microsoft.EntityFrameworkCore.SqlServer", microsoft),
                         new("Microsoft.OData.Mcp.AspNetCore", McpVersion),
                         new("Microsoft.Restier.AspNetCore", RestierVersion),

@@ -16,6 +16,12 @@ permissions:
 env:
    DOTNET_VERSION: '11.0.x'
    SOLUTION_FILE: 'src/CloudNimble.EasyAF.slnx'
+   # RWM: On Windows runners the C: OS drive is much slower than D:, where the workspace lives. Keep the SDK and the NuGet caches on D:.
+   #      (The runner context isn't available in env, so these are literal paths.)
+   DOTNET_INSTALL_DIR: 'D:\dotnet'
+   DOTNET_ROOT: 'D:\dotnet'
+   NUGET_PACKAGES: 'D:\nuget\packages'
+   NUGET_HTTP_CACHE_PATH: 'D:\nuget\http-cache'
 
 jobs:
   validate:
@@ -56,17 +62,23 @@ jobs:
           Pop-Location
         }
 
+    - name: Cache NuGet packages
+      uses: actions/cache@v6
+      with:
+        path: ${{ env.NUGET_PACKAGES }}
+        key: nuget-${{ runner.os }}-${{ hashFiles('src/**/*.csproj', 'src/**/Directory.Build.props', 'src/**/Directory.Build.targets', 'src/global.json') }}
+        restore-keys: |
+          nuget-${{ runner.os }}-
+
     - name: Install .NET versions
       shell: pwsh
       run: |
          Write-Host "Installing .NET versions..."
          Invoke-WebRequest -Uri "https://dot.net/v1/dotnet-install.ps1" -OutFile "dotnet-install.ps1"
-         $installDir = "$env:ProgramFiles\dotnet"
+         $installDir = $env:DOTNET_INSTALL_DIR
 
-         foreach ($channel in @("8.0", "9.0", "10.0")) {
-           Write-Host "Installing .NET $channel..."
-           ./dotnet-install.ps1 -Channel $channel -InstallDir $installDir
-         }
+         Write-Host "Installing .NET 10.0..."
+         ./dotnet-install.ps1 -Channel 10.0 -InstallDir $installDir
 
          # 11.0.1xx is the SDK feature band that contains 11.0.100-rc.1
          Write-Host "Installing .NET 11.0.1xx (preview/RC)..."

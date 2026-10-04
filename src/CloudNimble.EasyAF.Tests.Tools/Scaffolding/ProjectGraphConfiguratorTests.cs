@@ -23,6 +23,8 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
 
         private const string Namespace = "CloudNimble.Contoso";
 
+        private static readonly Version ToolVersion = new(5, 0, 0);
+
         private SdkTemplateHost _templateHost;
         private string _tempDir;
 
@@ -80,7 +82,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         /// <returns>The project description.</returns>
         private static ScaffoldProject LayoutProject(string suffix, bool webJob = false)
         {
-            return ScaffoldLayout.Create(new ScaffoldOptions(Namespace, 10, webJob: webJob)).Single(p => p.Suffix == suffix);
+            return ScaffoldLayout.Create(new ScaffoldOptions(Namespace, ToolVersion, 10, webJob: webJob)).Single(p => p.Suffix == suffix);
         }
 
         /// <summary>

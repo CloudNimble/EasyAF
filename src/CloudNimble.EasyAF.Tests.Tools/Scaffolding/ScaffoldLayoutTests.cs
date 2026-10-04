@@ -15,6 +15,12 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
     public class ScaffoldLayoutTests
     {
 
+        #region Fields
+
+        private static readonly Version ToolVersion = new(5, 0, 0);
+
+        #endregion
+
         #region Test Helpers
 
         /// <summary>
@@ -24,7 +30,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         /// <returns>The projects keyed by suffix.</returns>
         private static Dictionary<string, ScaffoldProject> Layout(ScaffoldOptions options = null)
         {
-            return ScaffoldLayout.Create(options ?? new ScaffoldOptions("CloudNimble.Contoso")).ToDictionary(p => p.Suffix);
+            return ScaffoldLayout.Create(options ?? new ScaffoldOptions("CloudNimble.Contoso", ToolVersion)).ToDictionary(p => p.Suffix);
         }
 
         /// <summary>
@@ -53,7 +59,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [TestMethod]
         public void Create_WithDefaults_ShouldProduceTheFullProjectSetInSolutionOrder()
         {
-            var projects = ScaffoldLayout.Create(new ScaffoldOptions("CloudNimble.Contoso"));
+            var projects = ScaffoldLayout.Create(new ScaffoldOptions("CloudNimble.Contoso", ToolVersion));
 
             projects.Select(p => p.Suffix).Should().Equal(
                 "Core", "Data", "Business",
@@ -128,10 +134,10 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         {
             foreach (var options in new[]
             {
-                new ScaffoldOptions("Contoso"),
-                new ScaffoldOptions("Contoso", includeApi: false),
-                new ScaffoldOptions("Contoso", includeMessageBus: false),
-                new ScaffoldOptions("Contoso", includeRuntime: false),
+                new ScaffoldOptions("Contoso", ToolVersion),
+                new ScaffoldOptions("Contoso", ToolVersion, includeApi: false),
+                new ScaffoldOptions("Contoso", ToolVersion, includeMessageBus: false),
+                new ScaffoldOptions("Contoso", ToolVersion, includeRuntime: false),
             })
             {
                 var layout = Layout(options);
@@ -168,7 +174,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [DataRow(11, "11.*-*")]
         public void Create_ShouldFloatMicrosoftPackagesByDotNetVersion(int dotNetVersion, string expected)
         {
-            var layout = Layout(new ScaffoldOptions("Contoso", dotNetVersion));
+            var layout = Layout(new ScaffoldOptions("Contoso", ToolVersion, dotNetVersion));
 
             PackageVersion(layout["Data"], "Microsoft.EntityFrameworkCore.SqlServer").Should().Be(expected);
             PackageVersion(layout["Api"], "Microsoft.EntityFrameworkCore.SqlServer").Should().Be(expected);
@@ -227,7 +233,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [TestMethod]
         public void Create_WithWebJob_ShouldStampAlexisWebJobPropertiesOnRuntimeOnly()
         {
-            var layout = Layout(new ScaffoldOptions("CloudNimble.Contoso", webJob: true));
+            var layout = Layout(new ScaffoldOptions("CloudNimble.Contoso", ToolVersion, webJob: true));
 
             layout["MessageBus.Runtime"].Properties.Should().BeEquivalentTo(new Dictionary<string, string>
             {
@@ -242,7 +248,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [TestMethod]
         public void Create_WithNoApi_ShouldOmitApiAndItsTests()
         {
-            var layout = Layout(new ScaffoldOptions("Contoso", includeApi: false));
+            var layout = Layout(new ScaffoldOptions("Contoso", ToolVersion, includeApi: false));
 
             layout.Keys.Should().NotContain(new[] { "Api", "Tests.Api" });
             layout.Keys.Should().Contain("MessageBus.Runtime");
@@ -251,7 +257,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [TestMethod]
         public void Create_WithNoMessageBus_ShouldOmitAllThreeAndDropTheApiReference()
         {
-            var layout = Layout(new ScaffoldOptions("Contoso", includeMessageBus: false));
+            var layout = Layout(new ScaffoldOptions("Contoso", ToolVersion, includeMessageBus: false));
 
             layout.Keys.Should().NotContain(k => k.StartsWith("MessageBus."));
             layout["Api"].ProjectReferences.Should().Equal("Business", "Data");
@@ -261,7 +267,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [TestMethod]
         public void Create_WithNoRuntime_ShouldOmitOnlyTheRuntime()
         {
-            var layout = Layout(new ScaffoldOptions("Contoso", includeRuntime: false));
+            var layout = Layout(new ScaffoldOptions("Contoso", ToolVersion, includeRuntime: false));
 
             layout.Keys.Should().NotContain("MessageBus.Runtime");
             layout.Keys.Should().Contain(new[] { "MessageBus.Core", "MessageBus.Dispatch" });
@@ -270,7 +276,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         [TestMethod]
         public void Create_WithNoApiAndNoMessageBus_ShouldLeaveCoreAndTests()
         {
-            var layout = Layout(new ScaffoldOptions("Contoso", includeApi: false, includeMessageBus: false));
+            var layout = Layout(new ScaffoldOptions("Contoso", ToolVersion, includeApi: false, includeMessageBus: false));
 
             layout.Keys.Should().BeEquivalentTo("Core", "Data", "Business", "Tests.Core", "Tests.Business");
         }

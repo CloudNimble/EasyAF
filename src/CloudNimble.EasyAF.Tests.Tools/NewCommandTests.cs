@@ -1,4 +1,5 @@
 using CloudNimble.EasyAF.Tools.Commands;
+using CloudNimble.EasyAF.Tools.Commands.Root;
 using CloudNimble.EasyAF.Tools.Scaffolding;
 using FluentAssertions;
 using Microsoft.Build.Evaluation;
@@ -264,7 +265,8 @@ namespace CloudNimble.EasyAF.Tests.Tools
 
             var versions = LoadProject(DefaultSolution, "Data").Descendants("PackageReference")
                 .ToDictionary(p => (string)p.Attribute("Include"), p => (string)p.Attribute("Version"));
-            versions["EasyAF.Data.EFCore"].Should().Be(ScaffoldOptions.EasyAFPackageVersion);
+            // RWM: The range follows the tool running the test: "5.*" for a release build, "5.*-*" for a prerelease such as CI's.
+            versions["EasyAF.Data.EFCore"].Should().Be($"{EasyAFRootCommand.Version.Major}.*{(EasyAFRootCommand.IsPrerelease ? "-*" : string.Empty)}");
             versions["Microsoft.EntityFrameworkCore.SqlServer"].Should().Be("11.*-*");
             Property(DefaultSolution, "Data", "TargetFramework").Should().Be("net11.0");
         }
