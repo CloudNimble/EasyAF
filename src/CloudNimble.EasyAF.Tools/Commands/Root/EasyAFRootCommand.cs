@@ -1,6 +1,7 @@
 ﻿
 using McMaster.Extensions.CommandLineUtils;
 using System;
+using System.Reflection;
 
 namespace CloudNimble.EasyAF.Tools.Commands.Root
 {
@@ -17,10 +18,19 @@ namespace CloudNimble.EasyAF.Tools.Commands.Root
     /// dotnet easyaf
     /// </code>
     /// </example>
-    [Command(Description = "EasyAF 3.0 CLI Tools.\nBy CloudNimble. https://nimbleapps.cloud")]
+    [Command]
     [Subcommand(typeof(NewCommand), typeof(InitCommand), typeof(SetupCommand), typeof(CleanupCommand), typeof(CodeRootCommand), typeof(DatabaseRootCommand), typeof(EdmxRootCommand))]
     public class EasyAFRootCommand
     {
+
+        /// <summary>
+        /// Gets the description shown at the top of the help, with the tool's major and minor version.
+        /// </summary>
+        /// <remarks>
+        /// The version comes from the informational version (the package version the tool was built with), not the assembly version,
+        /// which is pinned for binding compatibility.
+        /// </remarks>
+        internal static string Description { get; } = $"EasyAF {GetMajorMinorVersion()} CLI Tools.\nBy CloudNimble. https://nimbleapps.cloud";
 
         /// <summary>
         /// Executes when the root command is invoked without subcommands.
@@ -31,8 +41,21 @@ namespace CloudNimble.EasyAF.Tools.Commands.Root
         {
             ArgumentNullException.ThrowIfNull(app);
 
-            app.ShowHelp();      
+            app.ShowHelp();
             return 1;
+        }
+
+        /// <summary>
+        /// Gets the major and minor version, for example <c>5.0</c>, from the informational version of this assembly.
+        /// </summary>
+        private static string GetMajorMinorVersion()
+        {
+            var assembly = typeof(EasyAFRootCommand).Assembly;
+            var informationalVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+
+            // RWM: Strip the prerelease label and build metadata, e.g. "5.0.0-CI-20261003-233509+abc123" -> "5.0.0".
+            var version = Version.TryParse(informationalVersion?.Split('-', '+')[0], out var parsed) ? parsed : assembly.GetName().Version;
+            return $"{version.Major}.{version.Minor}";
         }
 
     }
