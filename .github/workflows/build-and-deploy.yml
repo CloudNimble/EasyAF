@@ -77,14 +77,6 @@ jobs:
           Pop-Location
         }
 
-    - name: Cache NuGet packages
-      uses: actions/cache@v6
-      with:
-        path: ${{ env.NUGET_PACKAGES }}
-        key: nuget-${{ runner.os }}-${{ hashFiles('src/**/*.csproj', 'src/**/Directory.Build.props', 'src/**/Directory.Build.targets', 'src/global.json') }}
-        restore-keys: |
-          nuget-${{ runner.os }}-
-
     - name: Install .NET versions
       shell: pwsh
       run: |
