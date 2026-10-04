@@ -9,6 +9,9 @@
         <CompilerVisibleProperty Include="EasyAFApiBaseClass" />
         <CompilerVisibleProperty Include="EasyAFAdminApiBaseClass" />
         <CompilerVisibleProperty Include="EasyAFApiAdditionalUsings" />
+        <CompilerVisibleProperty Include="EasyAFLaunchDebugger" />
+        <!-- Legacy name for EasyAFGenerateViews, exposed only so the generator can warn about it (EASYAF008). -->
+        <CompilerVisibleProperty Include="GenerateViews" />
     </ItemGroup>
 
 </Project>

@@ -363,6 +363,8 @@ public interface ICreatorTrackable<T> where T : struct
 }
 ```
 
+Make the `CreatedById` column `NOT NULL`: every record has a creator. If the column allows nulls, code generation skips this interface and reports warning **EASYAF005**. Assign built-in or seed data to a system user ID that has zero permissions. `T` can be `Guid` (the default), `int`, or `long`.
+
 ### IUpdaterTrackable&lt;T&gt;
 
 Tracks which user last updated the entity.

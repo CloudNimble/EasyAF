@@ -24,7 +24,7 @@ namespace CloudNimble.EasyAF.Tools
                 {
                     services.AddEFCoreToEdmxServices();
                 })
-                .RunCommandLineApplicationAsync<EasyAFRootCommand>(args);
+                .RunCommandLineApplicationAsync<EasyAFRootCommand>(args, app => app.Description = EasyAFRootCommand.Description);
         }
 
     }

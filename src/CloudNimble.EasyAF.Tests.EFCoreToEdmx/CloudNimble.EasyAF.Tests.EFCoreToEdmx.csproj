@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net11.0;net10.0;net9.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>net11.0;net10.0</TargetFrameworks>
         <IsPackable>false</IsPackable>
         <NoWarn>$(NoWarn);CA1822;NU1701;</NoWarn>
         <UserSecretsId>bcb335b9-8bc0-43f0-b414-464196a34198</UserSecretsId>
@@ -14,7 +14,9 @@
       <None Remove="TestResults\**" />
     </ItemGroup>
 
+    <!-- EF Core Design ships Microsoft.Build.Framework; keep it out of the output so MSBuildLocator loads the SDK's copy. -->
     <ItemGroup Condition="'$(TargetFramework)' == 'net11.0'">
+        <PackageReference Include="Microsoft.Build.Framework" Version="18.10.*" ExcludeAssets="runtime" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="11.*-*" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="11.*-*" NoWarn="NU1107" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="11.*-*" />
@@ -23,25 +25,12 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+        <PackageReference Include="Microsoft.Build.Framework" Version="18.9.*" ExcludeAssets="runtime" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.*" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.*" NoWarn="NU1107" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.*-*" />
         <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.*" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.*" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.*" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.*" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.*" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.*" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.*" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.*" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.*" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.*" />
     </ItemGroup>
 
     <ItemGroup>

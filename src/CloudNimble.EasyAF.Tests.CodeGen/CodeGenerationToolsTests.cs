@@ -51,7 +51,37 @@ namespace CloudNimble.EasyAF.Tests.CodeGen.Core
         public void IsStatusInterface()
         {
             var classString = CodeGenerationTools.EntityClassDeclaration(EdmxLoader.Entities.FirstOrDefault(c => c.EntityType.Name == "ProductStatusType"));
-            classString.Should().Be("public partial class ProductStatusType : DbObservableObject, IDbStatusEnum, ICreatedAuditable, ICreatorTrackable<Guid>, IUpdatedAuditable, IUpdaterTrackable<Guid>");
+            // ProductStatusType.CreatedById is nullable in the test model, so ICreatorTrackable<Guid> must not be applied.
+            classString.Should().Be("public partial class ProductStatusType : DbObservableObject, IDbStatusEnum, ICreatedAuditable, IUpdatedAuditable, IUpdaterTrackable<Guid>");
+        }
+
+        [TestMethod]
+        public void NullableCreatedById_ShouldNotBeCreatorTrackable()
+        {
+            var entity = EdmxLoader.Entities.First(c => c.EntityType.Name == "ProductStatusType");
+
+            entity.IsCreatorTrackable.Should().BeFalse();
+            entity.HasNullableCreatedById.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void NullableCreatedByIdWarning_ShouldNameTheEntityAndExplainTheFix()
+        {
+            var message = string.Format(CodeGenConstants.NullableCreatedByIdWarning, "ProductStatusType");
+
+            message.Should().Contain("ProductStatusType.CreatedById")
+                .And.Contain("ICreatorTrackable")
+                .And.Contain("every table")
+                .And.Contain("system user");
+        }
+
+        [TestMethod]
+        public void RequiredCreatedById_ShouldBeCreatorTrackable()
+        {
+            var entity = EdmxLoader.Entities.First(c => c.EntityType.Name == "Inquiry");
+
+            entity.IsCreatorTrackable.Should().BeTrue();
+            entity.HasNullableCreatedById.Should().BeFalse();
         }
 
         [TestMethod]

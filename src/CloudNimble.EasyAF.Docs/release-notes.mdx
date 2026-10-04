@@ -1,0 +1,199 @@
+---
+title: 'Release Notes'
+sidebarTitle: 'Release Notes'
+description: 'What changed in each EasyAF release, including breaking changes and how to upgrade.'
+icon: 'clipboard-list'
+---
+
+# EasyAF 5.0
+
+## Performance Improvements
+
+EasyAF 5.0 removes reflection and expression trees from the code your app runs on every request, every save, and every property assignment.
+
+<CardGroup cols={3}>
+  <Card title="68.7x faster audit checks" icon="magnifying-glass" href="#audit-interface-detection-in-entitymanager">
+    `EntityManager` checks an entity's audit interfaces with pattern matching instead of a type dictionary and LINQ: 40.05 ns → 0.58 ns.
+  </Card>
+  <Card title="30.6x faster property setters" icon="pen-to-square" href="#generated-property-setters">
+    Generated setters use `nameof` instead of building an expression tree on every assignment: 874.4 ns → 28.6 ns, and zero allocations.
+  </Card>
+  <Card title="6.0x faster deserialization" icon="file-import" href="#serializing-and-deserializing-entities">
+    Deserializing runs every property's setter, so the faster setters and the new serializer contract combine: 1,696.7 ns → 284.6 ns, 90.8% fewer allocations.
+  </Card>
+</CardGroup>
+
+| Area | Speed | Memory |
+|---|---|---|
+| Detecting audit interfaces in `EntityManager` | **68.7x faster** | No allocations before or after |
+| Setting properties on generated entities | **30.6x faster** | **100% fewer allocations** |
+| Serializing entities without audit fields | **13.9x faster** | **92.1% fewer allocations** |
+| `EntityManager` lifecycle methods | **6.5x to 10.5x faster** | **92.4% to 98.0% fewer allocations** |
+| Deserializing entities | **6.0x faster** | **90.8% fewer allocations** |
+| Reading the user's ID from `ClaimsPrincipal` | **4.1x faster** | **97.7% fewer allocations** |
+| Creating a generated entity | **2.0x faster** | **32.3% fewer allocations** |
+| **Creating and saving an entity, end to end (EF Core)** | **6.0% faster** | **7.0% fewer allocations** |
+| **Creating and saving an entity, end to end (EF6)** | No measurable change | **1.5% fewer allocations** |
+
+"Faster" is before ÷ after. "Fewer allocations" is (before − after) ÷ before. Every "before" is the EasyAF 4.x code, frozen in a `V4` namespace in the benchmark projects so both versions run side by side.
+
+### Creating and saving an entity, end to end
+
+This is what your app does when it creates a record: create an entity, set its properties, and save it through the generated manager. Each save uses a new context and manager, the way a scoped request does, and writes to an in-memory database so disk and network time don't hide the difference.
+
+| | EasyAF 4.x | EasyAF 5.0 | Improvement |
+|---|---|---|---|
+| EF Core, time per save | 17.75 µs | 16.68 µs | **6.0% faster** (1.07 µs saved) |
+| EF Core, memory per save | 31.7 KB | 29.5 KB | **7.0% fewer allocations** |
+| EF6, time per save | 3.041 ms | 3.056 ms | No measurable change |
+| EF6, memory per save | 503.7 KB | 496.3 KB | **1.5% fewer allocations** |
+
+The individual improvements below are large, but Entity Framework does most of the work in a save. EasyAF 5.0 saves about 1 µs and 2 to 7 KB of allocations per save. On EF Core, that's 6% of the whole save. EF6 spends about 3 ms per save, so the time saved is smaller than the run-to-run variation. With a real database, network time makes the share smaller again, but the allocations you save still reduce garbage collection on a busy server.
+
+### Audit interface detection in `EntityManager`
+
+`EntityManager` checked which audit interfaces an entity implements by caching each type's interfaces in a type dictionary, then searching them with LINQ. It now uses pattern matching (`entity is ICreatedAuditable`), which compiles to a single type check and works with Native AOT.
+
+Checking all four audit interfaces on a `Product`, as `ResetAuditProperties` does:
+
+| | Time | Memory |
+|---|---|---|
+| EasyAF 4.x (type dictionary + LINQ) | 40.05 ns | 0 B |
+| EasyAF 5.0 (pattern matching) | 0.58 ns | 0 B |
+| **Improvement** | **68.7x faster** (40.05 ÷ 0.583) | No change |
+
+### `EntityManager` lifecycle methods
+
+These run inside every insert, update, and reset. They combine the faster interface checks, the faster ID claim lookup, and the faster setters. Both flavors run the same scenario, with the database query skipped so only EasyAF's code is measured.
+
+| Method | Flavor | EasyAF 4.x | EasyAF 5.0 | Speed | Memory |
+|---|---|---|---|---|---|
+| `OnInsertingAsync` | EF6 | 1,016.8 ns, 2,744 B | 125.8 ns, 208 B | **8.1x faster** | **92.4% fewer** |
+| `OnInsertingAsync` | EF Core | 1,087.7 ns, 2,824 B | 119.2 ns, 208 B | **9.1x faster** | **92.6% fewer** |
+| `OnUpdatingAsync` | EF6 | 451.8 ns, 1,440 B | 62.1 ns, 40 B | **7.3x faster** | **97.2% fewer** |
+| `OnUpdatingAsync` | EF Core | 402.9 ns, 1,360 B | 61.6 ns, 40 B | **6.5x faster** | **97.1% fewer** |
+| `ResetAuditProperties` | EF6 | 674.5 ns, 1,968 B | 64.5 ns, 40 B | **10.5x faster** | **98.0% fewer** |
+| `ResetAuditProperties` | EF Core | 698.3 ns, 1,968 B | 70.0 ns, 40 B | **10.0x faster** | **98.0% fewer** |
+
+### Generated property setters
+
+Generated setters now call `Set(nameof(Name), ref _name, value)` instead of `Set(() => Name, ref _name, value)`. The old form built an expression tree on every assignment. `nameof` is a compile-time constant, so an assignment no longer allocates at all. Rebuild your project to regenerate your entities.
+
+Setting 7 properties on a generated `Product`:
+
+| | Time | Memory |
+|---|---|---|
+| EasyAF 4.x | 874.4 ns | 2,128 B |
+| EasyAF 5.0 | 28.6 ns | 0 B |
+| **Improvement** | **30.6x faster** (874.4 ÷ 28.55) | **100% fewer** (2,128 B → 0 B) |
+
+With a `PropertyChanged` subscriber, such as a Blazor binding, each change also allocates a 24 B `PropertyChangedEventArgs`:
+
+| | Time | Memory |
+|---|---|---|
+| EasyAF 4.x | 905.1 ns | 2,296 B |
+| EasyAF 5.0 | 40.1 ns | 168 B |
+| **Improvement** | **22.6x faster** (905.1 ÷ 40.09) | **92.7% fewer** (2,296 B → 168 B) |
+
+### Serializing and deserializing entities
+
+`IgnoreAuditFields()` removes the audit properties from System.Text.Json's contract once per type, instead of using reflection on every call. The obsolete `IgnoreAuditFieldsJsonConverterFactory` now uses the same approach, so apps that haven't migrated get almost the same gain.
+
+Serializing one `Product`:
+
+| | Time | Memory |
+|---|---|---|
+| EasyAF 4.x converter | 1,545.0 ns | 5,240 B |
+| EasyAF 5.0 `IgnoreAuditFields()` | 111.2 ns | 416 B |
+| **Improvement** | **13.9x faster** (1,545.0 ÷ 111.2) | **92.1% fewer** (5,240 B → 416 B) |
+| EasyAF 5.0 obsolete converter | 117.2 ns | 416 B |
+
+Deserializing one `Product`, which also runs every property's setter:
+
+| | Time | Memory |
+|---|---|---|
+| EasyAF 4.x converter and entity | 1,696.7 ns | 2,432 B |
+| EasyAF 5.0 `IgnoreAuditFields()` and entity | 284.6 ns | 224 B |
+| **Improvement** | **6.0x faster** (1,696.7 ÷ 284.6) | **90.8% fewer** (2,432 B → 224 B) |
+
+Serializing with `IgnoreAuditFields()` is now faster than serializing the whole entity with plain System.Text.Json (186.8 ns, 696 B), because it writes four fewer properties.
+
+### Reading the user's ID claim
+
+`ClaimsPrincipal.GetIdClaim()` rebuilt the claim type string for every claim it checked, and allocated a closure, on every call. The claim type is now cached, and only rebuilt when you change the claim configuration.
+
+| | Time | Memory |
+|---|---|---|
+| EasyAF 4.x | 155.9 ns | 1,704 B |
+| EasyAF 5.0 | 38.0 ns | 40 B |
+| **Improvement** | **4.1x faster** (155.9 ÷ 38.0) | **97.7% fewer** (1,704 B → 40 B) |
+
+### Creating entities
+
+`DbObservableObject` created an empty `OriginalValues` dictionary in every constructor, even though most entities are never change-tracked. The dictionary is now created on the first tracked change. Entity Framework constructs an entity for every row it reads, so this adds up on large queries.
+
+| | Time | Memory |
+|---|---|---|
+| EasyAF 4.x | 10.1 ns | 248 B |
+| EasyAF 5.0 | 5.2 ns | 168 B |
+| **Improvement** | **2.0x faster** (10.11 ÷ 5.15) | **32.3% fewer** (248 B → 168 B) |
+
+<Note>
+Measured with BenchmarkDotNet 0.15.8 and its default job, on .NET 10.0.12, on an Intel Core Ultra 9 285K running Windows 11. The end-to-end benchmarks use Effort for EF6 and the EF Core InMemory provider. The benchmarks, and the EasyAF 4.x code they compare against, are in the `CloudNimble.EasyAF.Benchmarks.Core`, `.EF6`, and `.EFCore` projects. Run one with `dotnet run -c Release -f net10.0 --project src/CloudNimble.EasyAF.Benchmarks.Core`. Times vary by machine; the ratios are what matter.
+</Note>
+
+## Breaking changes
+
+### .NET 8 and .NET 9 are no longer supported
+
+EasyAF 5.0 targets .NET 10 and .NET 11. Packages that also target `netstandard2.0`, `net48`, or `net472` still do. Move your projects to .NET 10 or later before upgrading.
+
+### `IgnoreAuditFieldsJsonConverterFactory` is obsolete, and its output changed
+
+Call `IgnoreAuditFields()` on your `JsonSerializerOptions` instead:
+
+```csharp
+var options = new JsonSerializerOptions
+{
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+    Converters = { new JsonStringEnumConverter() },
+}.IgnoreAuditFields();
+```
+
+The obsolete converter still works, and both it and `IgnoreAuditFields()` now honor every System.Text.Json setting. That changes the JSON you send:
+
+- `WhenWritingDefault` now skips `0`, `false`, and `Guid.Empty`, not just `null`. Use `WhenWritingNull` to keep writing them.
+- Naming policies and `[JsonPropertyName]` now apply to entity properties.
+- Audit fields are also removed from related entities.
+
+See [IgnoreAuditFieldsJsonConverter](/api-reference/CloudNimble/EasyAF/Core/Converters/IgnoreAuditFieldsJsonConverter) for the full list and how to restore the 4.x output.
+
+### `ICreatorTrackable<T>` requires a non-nullable `CreatedById`
+
+Code generation only applies `ICreatorTrackable<T>` when the `CreatedById` column is `NOT NULL`. If it allows nulls, the entity is still generated without the interface, and the build reports warning **EASYAF005** at the property in your EDMX. To keep creator tracking, make `CreatedById` required on every table, and assign built-in or seed data to a system user ID that has zero permissions. See [Table Design](/guides/table-design).
+
+### Source generator diagnostic IDs
+
+`EASYAF001` was used for three different messages. Each now has its own ID:
+
+| ID | Severity | Meaning |
+|---|---|---|
+| `EASYAF001` | Warning | `EasyAFProjectType` is not set in the project file. |
+| `EASYAF006` | Info | Reports the `EasyAFProjectType` that was found. |
+| `EASYAF007` | Error | `EasyAFProjectType` is set to an unsupported value. |
+
+If you suppress `EASYAF001` in `NoWarn` or `.editorconfig`, check which of these messages you meant to suppress.
+
+### `GenerateViews` is now `EasyAFGenerateViews`
+
+Rename the `GenerateViews` MSBuild property to `EasyAFGenerateViews`. The old name still works, but reports warning **EASYAF008**. If both are set, `GenerateViews` wins until you remove it.
+
+### Restier `IModelBuilderExtensions` renamed
+
+The class is now `EasyAF_Restier_IModelBuilderExtensions`, to match the other EasyAF extension classes. Code that calls the methods as extensions is unaffected. Code that calls them through the class name must use the new name.
+
+## Improvements
+
+- **`dotnet easyaf new`.** Creates a complete EasyAF solution in one command: Core, Data, Business, Api (with OData MCP), MessageBus, and Tests projects, referenced the way EasyAF expects, with `Directory.Build.props`, `global.json`, and an `.slnx`. Projects come from the .NET SDK's own templates, so they match your installed SDK. Use `--no-api`, `--no-messagebus`, or `--no-runtime` to leave projects out, `--webjob` to publish the message processor as an Azure WebJob, and `-f net11.0` to target .NET 11. Then run `dotnet easyaf init` to connect a database.
+- **`int` and `long` IDs for audit fields.** `EntityManager` now fills `CreatedById` and `UpdatedById` for `Guid`, `int`, and `long` IDs, from the user's ID claim. Use `ClaimsPrincipal.TryGetIdClaim(out int)` or `TryGetIdClaim(out long)` to read those IDs yourself.
+- **One less dependency.** `CloudNimble.EasyAF.Business` no longer depends on `Ben.TypeDictionary`.

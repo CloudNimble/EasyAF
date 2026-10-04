@@ -1,7 +1,9 @@
 ---
 title: IgnoreAuditFieldsJsonConverterFactory
+description: "The converter we create needs to know the exact type we're converting, otherwise you would only get base object properties every time. Therefore it has to be..."
 icon: file-brackets-curly
 sidebarTitle: IgnoreAuditFieldsJsonConverterFactory
+tag: "OBSOLETE"
 keywords: ['IgnoreAuditFieldsJsonConverterFactory', 'CloudNimble.EasyAF.Core.Converters.IgnoreAuditFieldsJsonConverterFactory', 'CloudNimble.EasyAF.Core.Converters', 'class', 'System.Text.Json.Serialization.JsonConverterFactory']
 ---
 
@@ -18,6 +20,29 @@ keywords: ['IgnoreAuditFieldsJsonConverterFactory', 'CloudNimble.EasyAF.Core.Con
 ```csharp
 CloudNimble.EasyAF.Core.Converters.IgnoreAuditFieldsJsonConverterFactory
 ```
+
+## Summary
+
+The converter we create needs to know the exact type we're converting, otherwise you would only get base object properties every
+time. Therefore it has to be generic. So the Factory creates the right Converter instance type for the object and sends it on its' way.
+
+For more details,
+[see Microsoft's converter documentation.](https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to?pivots=dotnet-6-0)
+
+## Usage
+
+<Warning>
+`IgnoreAuditFieldsJsonConverterFactory` is obsolete as of EasyAF 5.0. Call `IgnoreAuditFields()` on your `JsonSerializerOptions` instead.
+</Warning>
+
+```csharp
+var options = new JsonSerializerOptions
+{
+DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+}.IgnoreAuditFields();
+```
+
+See [IgnoreAuditFieldsJsonConverter](/api-reference/CloudNimble/EasyAF/Core/Converters/IgnoreAuditFieldsJsonConverter) for migration steps, and for the 5.0 output changes and how to restore the 4.x output.
 
 ## Constructors
 

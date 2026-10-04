@@ -142,7 +142,7 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
             _writer.WriteLine("{");
             _writer.Indent++;
             _writer.WriteLine($"get => {fieldName};");
-            _writer.WriteLine($"set => Set(() => {propertyName}, ref {fieldName}, value);");
+            _writer.WriteLine($"set => Set(nameof({propertyName}), ref {fieldName}, value);");
             _writer.Indent--;
             _writer.WriteLine("}");
             _writer.WriteLine();

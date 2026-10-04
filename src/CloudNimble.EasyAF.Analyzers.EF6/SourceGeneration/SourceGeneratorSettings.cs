@@ -19,6 +19,12 @@ namespace CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration
         public bool GenerateViews { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether the generator asks to attach a debugger when it runs. Set the
+        /// <c>EasyAFLaunchDebugger</c> MSBuild property to <c>true</c> to enable it.
+        /// </summary>
+        public bool LaunchDebugger { get; set; }
+
+        /// <summary>
         /// Gets or sets the type of the project (Entity, Data, Business, Api).
         /// </summary>
         public ProjectType ProjectType { get; set; }
@@ -126,10 +132,21 @@ namespace CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration
                     {
                         settings.EasyAFNamespace = ns;
                     }
-                    if (options.GlobalOptions.TryGetValue("build_property.GenerateViews", out var generateViews))
+                    if (options.GlobalOptions.TryGetValue("build_property.EasyAFGenerateViews", out var generateViews))
                     {
                         bool.TryParse(generateViews, out var value);
                         settings.GenerateViews = value;
+                    }
+                    // RWM: The legacy GenerateViews property overrides EasyAFGenerateViews until it's removed; EASYAF008 tells the user to rename it.
+                    if (options.GlobalOptions.TryGetValue("build_property.GenerateViews", out var legacyGenerateViews) && !string.IsNullOrWhiteSpace(legacyGenerateViews))
+                    {
+                        bool.TryParse(legacyGenerateViews, out var value);
+                        settings.GenerateViews = value;
+                    }
+                    if (options.GlobalOptions.TryGetValue("build_property.EasyAFLaunchDebugger", out var launchDebugger))
+                    {
+                        bool.TryParse(launchDebugger, out var value);
+                        settings.LaunchDebugger = value;
                     }
                     if (options.GlobalOptions.TryGetValue("build_property.RootNamespace", out var rootNs))
                     {

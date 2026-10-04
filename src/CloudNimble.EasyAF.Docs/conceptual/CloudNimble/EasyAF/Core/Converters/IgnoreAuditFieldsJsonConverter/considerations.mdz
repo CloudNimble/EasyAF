@@ -1,5 +1,21 @@
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Considerations
 
-Document considerations for `IgnoreAuditFieldsJsonConverter` here.
+## Output changes in EasyAF 5.0
 
+In 5.0, both `IgnoreAuditFields()` and the obsolete converter let System.Text.Json write the whole object, so every serializer setting applies. The 4.x converter wrote each property itself, and skipped several settings. If you depend on the 4.x output, here is what changed and how to restore it.
+
+| Change | 4.x output | 5.0 output | To restore the 4.x output |
+|---|---|---|---|
+| `DefaultIgnoreCondition` | Only `null` values were skipped, even with `WhenWritingDefault`. `0`, `false`, and `Guid.Empty` were written. | `WhenWritingDefault` also skips `0`, `false`, and `Guid.Empty`. | Use `JsonIgnoreCondition.WhenWritingNull`. |
+| Naming policies and `[JsonPropertyName]` | Top-level property names were always the C# names. | The naming policy and `[JsonPropertyName]` apply. | Remove `PropertyNamingPolicy` from these options. |
+| Related entities | Audit fields were still written on related entities (for example, `Order.Customer.DateCreated`). | Audit fields are removed on every `DbObservableObject` in the graph. | Serialize the related entity separately, with options that do not call `IgnoreAuditFields()`. |
+| Property types | Values were written using their runtime type. | Values are written using their declared type, like the rest of System.Text.Json. | Add `[JsonDerivedType]` to the base type, or declare the property as `object`. |
+
+<Warning>
+If your options use `JsonIgnoreCondition.WhenWritingDefault`, check any `POST` or `PATCH` that depends on sending `false`, `0`, or `Guid.Empty`. Those values are no longer written, so the server's default value is used instead.
+</Warning>
+
+## Other considerations
+
+- `[JsonIgnore]` is honored, as it was in 4.x.
+- Only types that inherit from `DbObservableObject` are affected. Other types with a `DateCreated` property are serialized normally.
+- `IgnoreAuditFields()` throws `InvalidOperationException` if the options have already been used, because System.Text.Json makes options read-only after first use.

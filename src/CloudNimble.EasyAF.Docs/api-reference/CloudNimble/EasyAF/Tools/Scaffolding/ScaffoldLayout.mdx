@@ -1,0 +1,65 @@
+---
+title: ScaffoldLayout
+description: "Defines the projects, references, and packages of a scaffolded EasyAF solution."
+icon: bolt
+tag: "STATIC"
+keywords: ['ScaffoldLayout', 'CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldLayout', 'CloudNimble.EasyAF.Tools.Scaffolding', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Scaffolding
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldLayout
+```
+
+## Summary
+
+Defines the projects, references, and packages of a scaffolded EasyAF solution.
+
+## Remarks
+
+The graph is:
+```csharp
+Data                → Core
+Business            → Core, Data
+Api                 → Business, Data, MessageBus.Core
+MessageBus.Core     → Core
+MessageBus.Dispatch → Business, MessageBus.Core
+MessageBus.Runtime  → Business, Data, MessageBus.Core, MessageBus.Dispatch
+Tests.Core          → Core
+Tests.Business      → Business, Data
+Tests.Api           → Api
+```
+References to projects that are not created (because of `--no-api`, `--no-messagebus`, or `--no-runtime`) are dropped.
+
+## Methods
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Create
+
+Creates the project list for the given options, in solution order.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IReadOnlyList<CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldProject> Create(CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options` | `CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldOptions` | The validated scaffold options. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IReadOnlyList<CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldProject>`
+The projects to create.
+

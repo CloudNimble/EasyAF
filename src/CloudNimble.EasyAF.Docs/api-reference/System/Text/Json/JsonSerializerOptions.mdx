@@ -1,0 +1,78 @@
+---
+title: JsonSerializerOptions
+description: "Extension methods for JsonSerializerOptions from System.Text.Json"
+icon: file-brackets-curly
+keywords: ['JsonSerializerOptions', 'System.Text.Json.JsonSerializerOptions', 'System.Text.Json', 'error']
+---
+
+## Definition
+
+**Assembly:** System.Text.Json.dll
+
+**Namespace:** System.Text.Json
+
+## Syntax
+
+```csharp
+System.Text.Json.JsonSerializerOptions
+```
+
+## Summary
+
+This type is defined in System.Text.Json.
+
+## Remarks
+
+See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/system.text.json.jsonserializeroptions) for more information about the rest of the API.
+
+## Methods
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> IgnoreAuditFields <Badge color="green">Extension</Badge>
+
+<Note>Extension method from `System.Text.Json.EasyAF_JsonSerializerOptionsExtensions`</Note>
+
+Stops [ICreatedAuditable.DateCreated](/api-reference/CloudNimble/EasyAF/Core/ICreatedAuditable#datecreated), `CreatedById`, [IUpdatedAuditable.DateUpdated](/api-reference/CloudNimble/EasyAF/Core/IUpdatedAuditable#dateupdated),
+and `UpdatedById` from being written when serializing any [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject).
+
+#### Syntax
+
+```csharp
+public static System.Text.Json.JsonSerializerOptions IgnoreAuditFields(System.Text.Json.JsonSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options` | `System.Text.Json.JsonSerializerOptions` | The [JsonSerializerOptions](/api-reference/System/Text/Json/JsonSerializerOptions) to configure. Must not have been used for serialization yet. |
+
+#### Returns
+
+Type: `System.Text.Json.JsonSerializerOptions`
+The same [JsonSerializerOptions](/api-reference/System/Text/Json/JsonSerializerOptions) instance, so the call can be chained onto an object initializer.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *options* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `InvalidOperationException` | *options* has already been used and is read-only. |
+
+#### Examples
+
+```csharp
+var options = new JsonSerializerOptions
+{
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+}.IgnoreAuditFields();
+```
+
+#### Remarks
+
+The audit properties are removed from each type's serialization contract the first time that type is serialized, so there is no per-call cost.
+Every other System.Text.Json setting, including naming policies, [JsonPropertyNameAttribute](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonpropertynameattribute), and
+[DefaultIgnoreCondition](https://learn.microsoft.com/dotnet/api/system.text.json.jsonserializeroptions.defaultignorecondition), applies as usual. Audit properties are still read during deserialization.
+
+If [TypeInfoResolver](https://learn.microsoft.com/dotnet/api/system.text.json.jsonserializeroptions.typeinforesolver) is already set (for example, to a source-generated
+[JsonSerializerContext](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonserializercontext)), the modifier is added to it, so this works with Native AOT.
+

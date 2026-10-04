@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net11.0;net10.0</TargetFrameworks>
+        <OutputType>Exe</OutputType>
+        <IsPackable>false</IsPackable>
+        <RootNamespace>CloudNimble.EasyAF.Benchmarks</RootNamespace>
+        <!-- BenchmarkDotNet requires instance benchmark methods, even ones that touch no instance state. -->
+        <NoWarn>$(NoWarn);CA1822</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- Ben.TypeDictionary reproduces the EasyAF 4.x EntityManager lookup in the V4 managers. -->
+        <PackageReference Include="Ben.TypeDictionary" Version="[*, 2.0.0)" />
+        <PackageReference Include="BenchmarkDotNet" Version="0.15.*" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net11.0'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="[11.*-*, 12.0.0)" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="[10.*, 12.0.0)" />
+    </ItemGroup>
+
+    <!-- Tests.Shared can't be referenced here: its EF6 Business assembly defines the same types as Business.EFCore. -->
+    <ItemGroup>
+        <ProjectReference Include="..\CloudNimble.EasyAF.Business.EFCore\CloudNimble.EasyAF.Business.EFCore.csproj" />
+        <ProjectReference Include="..\CloudNimble.EasyAF.Core\CloudNimble.EasyAF.Core.csproj" />
+        <ProjectReference Include="..\CloudNimble.EasyAF.Data.EFCore\CloudNimble.EasyAF.Data.EFCore.csproj" />
+    </ItemGroup>
+
+    <!--
+        The same generated entities Tests.Shared compiles (EasyAF 5.0), the frozen EasyAF 4.x entities and manager code (V4), and the benchmarks
+        shared with Benchmarks.EF6. EF Core maps entity types explicitly, so both versions can live in this assembly.
+    -->
+    <ItemGroup>
+        <Compile Include="..\CloudNimble.EasyAF.Benchmarks.Core\Program.cs" Link="Program.cs" />
+        <Compile Include="..\CloudNimble.EasyAF.Benchmarks.Core\V4\ClaimsPrincipalExtensions.cs" Link="V4\ClaimsPrincipalExtensions.cs" />
+        <Compile Include="..\CloudNimble.EasyAF.Benchmarks.Core\V4\EntityManagerHooks.cs" Link="V4\EntityManagerHooks.cs" />
+        <Compile Include="..\CloudNimble.EasyAF.Benchmarks.Core\V4\Entities\*.cs" LinkBase="V4\Entities" />
+        <Compile Include="..\CloudNimble.EasyAF.Benchmarks.EF6\ManagerBenchmarks.cs" Link="ManagerBenchmarks.cs" />
+        <Compile Include="..\CloudNimble.EasyAF.Tests.CodeGen\Baselines\Entities\*.Generated.cs" LinkBase="EasyAFModel" />
+    </ItemGroup>
+
+</Project>

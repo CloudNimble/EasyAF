@@ -1,0 +1,4 @@
+{
+  "static": { "value": 1 },
+  "product": "{{Product}}"
+}

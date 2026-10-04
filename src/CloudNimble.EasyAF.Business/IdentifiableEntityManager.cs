@@ -48,11 +48,10 @@ namespace CloudNimble.EasyAF.Business
         {
             Ensure.ArgumentNotNull(entity, nameof(entity));
 
-            var entityType = entity.GetType();
-            // RWM: We have to do this cast because we're only doing this update for GUIDs. Numeric values should be set at the database level.
-            if (InterfaceDictionary[entityType].Any(c => c == typeof(IIdentifiable<Guid>)) && (entity as IIdentifiable<Guid>).Id == Guid.Empty)
+            // RWM: Only Guid keys are generated here. Numeric keys should be set at the database level.
+            if (entity is IIdentifiable<Guid> identifiable && identifiable.Id == Guid.Empty)
             {
-                (entity as IIdentifiable<Guid>).Id = Guid.NewGuid();
+                identifiable.Id = Guid.NewGuid();
             }
             await base.OnInsertingAsync(entity).ConfigureAwait(false);
         }

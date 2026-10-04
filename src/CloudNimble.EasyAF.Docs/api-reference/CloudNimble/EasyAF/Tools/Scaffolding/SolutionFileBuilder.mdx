@@ -1,0 +1,312 @@
+---
+title: SolutionFileBuilder
+description: "Builds a Visual Studio `.slnx` solution file in-process with Microsoft.VisualStudio.SolutionPersistence, placing projects and solution items into solution fo..."
+icon: file-brackets-curly
+keywords: ['SolutionFileBuilder', 'CloudNimble.EasyAF.Tools.Scaffolding.SolutionFileBuilder', 'CloudNimble.EasyAF.Tools.Scaffolding', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Scaffolding
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Scaffolding.SolutionFileBuilder
+```
+
+## Summary
+
+Builds a Visual Studio `.slnx` solution file in-process with
+Microsoft.VisualStudio.SolutionPersistence, placing projects and solution items into solution folders.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [SolutionFileBuilder](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/SolutionFileBuilder) class.
+
+#### Syntax
+
+```csharp
+public SolutionFileBuilder(string solutionDirectory, string solutionName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `solutionDirectory` | `string` | The directory the solution file is written to. |
+| `solutionName` | `string` | The solution file name without extension. |
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> BuildTypes
+
+Gets the build types (configurations) the solution declares, in the order they were added.
+Always starts with `Debug` and `Release`.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IReadOnlyList<string> BuildTypes { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.IReadOnlyList<string>`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SolutionDirectory
+
+Gets the directory the solution file is written to. Project and item paths are stored relative to it.
+
+#### Syntax
+
+```csharp
+public string SolutionDirectory { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SolutionName
+
+Gets the solution file name without extension.
+
+#### Syntax
+
+```csharp
+public string SolutionName { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AddBuildType
+
+Adds a build type (configuration) such as `DEV`. Duplicates are ignored.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.Tools.Scaffolding.SolutionFileBuilder AddBuildType(string buildType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `buildType` | `string` | The build type name. |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.Tools.Scaffolding.SolutionFileBuilder`
+The current instance for method chaining.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AddProject
+
+Adds a project to a solution folder.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.Tools.Scaffolding.SolutionFileBuilder AddProject(string solutionFolder, string projectFilePath)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `solutionFolder` | `string` | The solution folder, for example `Core` or `/Core/`. |
+| `projectFilePath` | `string` | The project file path; relative paths are resolved against [SolutionFileBuilder.SolutionDirectory](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/SolutionFileBuilder#solutiondirectory). |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.Tools.Scaffolding.SolutionFileBuilder`
+The current instance for method chaining.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | Thrown when the same project has already been added. |
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> AddSolutionItem
+
+Adds a loose file (for example `Directory.Build.props`) to a solution folder.
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.Tools.Scaffolding.SolutionFileBuilder AddSolutionItem(string solutionFolder, string filePath)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `solutionFolder` | `string` | The solution folder, for example `Solution Items`. |
+| `filePath` | `string` | The file path; relative paths are resolved against [SolutionFileBuilder.SolutionDirectory](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/SolutionFileBuilder#solutiondirectory). |
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.Tools.Scaffolding.SolutionFileBuilder`
+The current instance for method chaining.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SaveAsync
+
+Writes the solution file, replacing any existing file of the same name.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<string> SaveAsync(System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `cancellationToken` | `System.Threading.CancellationToken` | A token to cancel the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<string>`
+The full path of the written solution file.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

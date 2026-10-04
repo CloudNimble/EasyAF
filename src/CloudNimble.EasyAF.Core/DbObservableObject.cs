@@ -20,6 +20,13 @@ namespace CloudNimble.EasyAF.Core
     public class DbObservableObject : EasyObservableObject, IChangeTracking, IRevertibleChangeTracking
     {
 
+        #region Private Members
+
+        //RWM: Most instances are never tracked, so the dictionary is created on the first tracked change instead of in the constructor.
+        private Dictionary<string, object> _originalValues;
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -41,7 +48,7 @@ namespace CloudNimble.EasyAF.Core
         /// 
         /// </summary>
         [JsonIgnore]
-        public Dictionary<string, object> OriginalValues { get; private set; }
+        public Dictionary<string, object> OriginalValues => _originalValues ??= new();
 
         /// <summary>
         /// Specifies whether or not property value changes should be tracked.
@@ -61,7 +68,6 @@ namespace CloudNimble.EasyAF.Core
         /// </summary>
         public DbObservableObject()
         {
-            OriginalValues = new();
         }
 
         #endregion
@@ -73,7 +79,7 @@ namespace CloudNimble.EasyAF.Core
         /// </summary>
         public void AcceptChanges()
         {
-            OriginalValues.Clear();
+            _originalValues?.Clear();
             IsChanged = false;
         }
 
@@ -123,9 +129,12 @@ namespace CloudNimble.EasyAF.Core
         /// </summary>
         public void RejectChanges()
         {
-            foreach (var property in OriginalValues)
+            if (_originalValues is not null)
             {
-                GetType().GetRuntimeProperty(property.Key).SetValue(this, property.Value);
+                foreach (var property in _originalValues)
+                {
+                    GetType().GetRuntimeProperty(property.Key).SetValue(this, property.Value);
+                }
             }
             AcceptChanges();
         }
@@ -156,9 +165,8 @@ namespace CloudNimble.EasyAF.Core
 
             if (EqualityComparer<T>.Default.Equals(field, newValue)) return;
 
-            if (ShouldTrackChanges && !OriginalValues.ContainsKey(propertyName))
+            if (ShouldTrackChanges && OriginalValues.TryAdd(propertyName, field))
             {
-                OriginalValues[propertyName] = field;
                 IsChanged = true;
             }
 
@@ -206,22 +214,32 @@ namespace CloudNimble.EasyAF.Core
         /// <param name="obj"></param>
         /// <param name="deepTracking"></param>
         /// <returns></returns>
-        protected internal ExpandoObject ToDeltaPayloadInternal(DbObservableObject obj, bool deepTracking = false)
+        protected internal static ExpandoObject ToDeltaPayloadInternal(DbObservableObject obj, bool deepTracking = false)
         {
             Ensure.ArgumentNotNull(obj, nameof(obj));
 
             var result = new ExpandoObject();
             var type = obj.GetType();
 
-            //RWM: Delta payloads will need to have the object ID to know what changed.
-            if (type.GetInterface(typeof(IIdentifiable<Guid>).Name) is not null)
+            //RWM: Delta payloads will need to have the object ID to know what changed. EasyAF supports Guid, int, and long IDs.
+            object id = obj switch
             {
-                result.TryAdd(nameof(IIdentifiable<Guid>.Id), (this as IIdentifiable<Guid>).Id);
+                IIdentifiable<Guid> guidEntity => guidEntity.Id,
+                IIdentifiable<int> intEntity => intEntity.Id,
+                IIdentifiable<long> longEntity => longEntity.Id,
+                _ => null,
+            };
+            if (id is not null)
+            {
+                result.TryAdd(nameof(IIdentifiable<>.Id), id);
             }
 
-            foreach (var prop in obj.OriginalValues)
+            if (obj._originalValues is not null)
             {
-                result.TryAdd(prop.Key, type.GetProperty(prop.Key).GetValue(obj));
+                foreach (var prop in obj._originalValues)
+                {
+                    result.TryAdd(prop.Key, type.GetProperty(prop.Key).GetValue(obj));
+                }
             }
             if (!deepTracking) return result;
 

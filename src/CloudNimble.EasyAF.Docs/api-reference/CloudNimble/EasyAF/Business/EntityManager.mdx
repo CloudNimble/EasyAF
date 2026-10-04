@@ -33,7 +33,7 @@ This manager provides comprehensive entity lifecycle management including:
 - User tracking for entities implementing `ICreatorTrackable`1`, `IUpdaterTrackable`1`
 - Virtual hooks for custom business logic before and after CRUD operations
 - Batch operations support for improved performance
-- Thread-safe interface caching for performance optimization
+- Allocation-free audit field population using direct interface type checks (Guid IDs checked first)
 
 ## Type Parameters
 

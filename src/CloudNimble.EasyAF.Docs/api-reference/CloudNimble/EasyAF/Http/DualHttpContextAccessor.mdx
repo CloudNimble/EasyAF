@@ -1,0 +1,293 @@
+---
+title: DualHttpContextAccessor
+description: "[IHttpContextAccessor](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor) that keeps an outer request and an inner in-pro..."
+icon: lock
+tag: "SEALED"
+keywords: ['DualHttpContextAccessor', 'CloudNimble.EasyAF.Http.DualHttpContextAccessor', 'CloudNimble.EasyAF.Http', 'class', 'System.Object', 'Microsoft.AspNetCore.Http.IHttpContextAccessor']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Http.dll
+
+**Namespace:** CloudNimble.EasyAF.Http
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Http.DualHttpContextAccessor
+```
+
+## Summary
+
+[IHttpContextAccessor](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor) that keeps an outer request and an inner in-process
+request as two contexts. [DualHttpContextAccessor.HttpContext](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#httpcontext) always returns [DualHttpContextAccessor.Active](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#active).
+`HttpContext)` / [DualHttpContextAccessor.End](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#end) change which context is active without using
+Microsoft's `HttpContextAccessor` setter (that setter nulls a shared holder and ends
+the outer request).
+
+## Remarks
+
+Register this as [IHttpContextAccessor](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor) after `AddHttpContextAccessor` so
+last-wins DI gives the rest of the pipeline this instance.
+
+Host `Initialize` assigns [DualHttpContextAccessor.HttpContext](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#httpcontext) (sets [DualHttpContextAccessor.Outer](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#outer) and
+[DualHttpContextAccessor.Active](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#active)). Inner execute calls `HttpContext)`, then [DualHttpContextAccessor.End](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#end) in
+`finally`. Host `Dispose` assigns [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null), which poisons the
+holder so every execution context sees request-end.
+
+## Examples
+
+```csharp
+accessor.HttpContext = incomingRequest;
+InnerHttpContext.CopyFromOuter(innerRequest, incomingRequest);
+accessor.Start(innerRequest);
+try
+{
+    await pipeline(innerRequest);
+}
+finally
+{
+    accessor.End();
+}
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public DualHttpContextAccessor()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Active
+
+Gets the context [DualHttpContextAccessor.HttpContext](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#httpcontext) returns. `HttpContext)` and
+[DualHttpContextAccessor.End](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#end) change this without using the setter.
+
+#### Syntax
+
+```csharp
+public Microsoft.AspNetCore.Http.HttpContext Active { get; }
+```
+
+#### Property Value
+
+Type: `Microsoft.AspNetCore.Http.HttpContext`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> HttpContext
+
+#### Syntax
+
+```csharp
+public Microsoft.AspNetCore.Http.HttpContext HttpContext { get; set; }
+```
+
+#### Property Value
+
+Type: `Microsoft.AspNetCore.Http.HttpContext`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Inner
+
+Gets the inner in-process context, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if `HttpContext)` has not run
+or [DualHttpContextAccessor.End](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#end) / request-end has already cleared it.
+
+#### Syntax
+
+```csharp
+public Microsoft.AspNetCore.Http.HttpContext Inner { get; }
+```
+
+#### Property Value
+
+Type: `Microsoft.AspNetCore.Http.HttpContext`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Outer
+
+Gets the incoming (outer) context, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if the host has not assigned
+[DualHttpContextAccessor.HttpContext](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#httpcontext) yet.
+
+#### Syntax
+
+```csharp
+public Microsoft.AspNetCore.Http.HttpContext Outer { get; }
+```
+
+#### Property Value
+
+Type: `Microsoft.AspNetCore.Http.HttpContext`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> End
+
+Makes [DualHttpContextAccessor.HttpContext](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#httpcontext) return [DualHttpContextAccessor.Outer](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#outer) again and clears
+[DualHttpContextAccessor.Inner](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#inner). Does not write to [DualHttpContextAccessor.Outer](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#outer)'s response.
+
+#### Syntax
+
+```csharp
+public void End()
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Start
+
+Makes [DualHttpContextAccessor.HttpContext](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#httpcontext) return *inner* without dropping
+[DualHttpContextAccessor.Outer](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#outer). Do not use the [DualHttpContextAccessor.HttpContext](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#httpcontext) setter for this.
+
+#### Syntax
+
+```csharp
+public void Start(Microsoft.AspNetCore.Http.HttpContext inner)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `inner` | `Microsoft.AspNetCore.Http.HttpContext` | The inner in-process request. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *inner* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- Microsoft.AspNetCore.Http.IHttpContextAccessor
+

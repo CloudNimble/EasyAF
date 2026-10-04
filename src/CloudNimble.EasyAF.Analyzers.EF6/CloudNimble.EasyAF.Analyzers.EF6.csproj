@@ -2,7 +2,6 @@
 
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0</TargetFrameworks>
-        <DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <LangVersion>latest</LangVersion>
         <IsRoslynComponent>true</IsRoslynComponent>
@@ -12,6 +11,7 @@
         <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
         <IsPackable>true</IsPackable>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
     </PropertyGroup>
 
     <ItemGroup>
@@ -48,5 +48,15 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
+
+    <!--
+        A ProjectReference with OutputItemType="Analyzer" only hands the compiler this assembly, so the generator can't load
+        CodeGen, Edmx, and the rest. Return the same dependency DLLs the NuGet package ships in analyzers/dotnet/cs.
+    -->
+    <Target Name="GetDependencyTargetPaths" DependsOnTargets="ResolveReferences">
+        <ItemGroup>
+            <TargetPathWithTargetPlatformMoniker Include="@(ReferenceCopyLocalPaths->WithMetadataValue('Extension', '.dll'))" IncludeRuntimeDependency="false" />
+        </ItemGroup>
+    </Target>
 
 </Project>

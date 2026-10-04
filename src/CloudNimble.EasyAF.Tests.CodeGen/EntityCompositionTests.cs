@@ -141,7 +141,9 @@ namespace CloudNimble.EasyAF.Tests.CodeGen.Core
             entity.HasStatus.Should().BeFalse();
             entity.IsActiveTrackable.Should().BeTrue();
             entity.IsCreatedAuditable.Should().BeTrue();
-            entity.IsCreatorTrackable.Should().BeTrue();
+            // CreatedById is nullable on ProductStatusType in the test model, so it can't be creator-trackable.
+            entity.HasNullableCreatedById.Should().BeTrue();
+            entity.IsCreatorTrackable.Should().BeFalse();
             entity.IsDbEnum.Should().BeTrue();
             entity.IsDbStateEnum.Should().BeFalse();
             entity.IsDbStatusEnum.Should().BeTrue();
