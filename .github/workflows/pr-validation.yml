@@ -72,7 +72,7 @@ jobs:
          Write-Host "Installing .NET 10.0..."
          ./dotnet-install.ps1 -Channel 10.0 -InstallDir $installDir
 
-         # 11.0.1xx is the SDK feature band that contains 11.0.100-rc.1
+         # 11.0.1xx is the SDK feature band that contains 11.0.100-rc.2
          Write-Host "Installing .NET 11.0.1xx (preview/RC)..."
          ./dotnet-install.ps1 -Channel 11.0.1xx -Quality preview -InstallDir $installDir
 
