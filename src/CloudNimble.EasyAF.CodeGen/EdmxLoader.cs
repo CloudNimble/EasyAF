@@ -18,6 +18,22 @@ namespace CloudNimble.EasyAF.CodeGen
     public class EdmxLoader
     {
 
+        #region Fields
+
+        /// <summary>
+        /// The EasyAF EDMX extensions namespaces this loader accepts, current first.
+        /// </summary>
+        /// <remarks>
+        /// RWM: The legacy schemas.cloudnimble.com URI is still read so existing models load until they are regenerated.
+        /// </remarks>
+        private static readonly XNamespace[] EasyAFNamespaces =
+        [
+            XNamespace.Get("http://schemas.nimbleapps.cloud/easyaf/2025/01/edmx"),
+            XNamespace.Get("http://schemas.cloudnimble.com/easyaf/2025/01/edmx")
+        ];
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -266,9 +282,6 @@ namespace CloudNimble.EasyAF.CodeGen
         {
             try
             {
-                // Define the EasyAF namespace
-                var easyafNs = XNamespace.Get("http://schemas.cloudnimble.com/easyaf/2025/01/edmx");
-
                 // Navigate to Designer section
                 var designerElement = root.Elements()
                     .Where(e => e.Name.LocalName == "Designer")
@@ -280,9 +293,10 @@ namespace CloudNimble.EasyAF.CodeGen
                     return;
                 }
 
-                // Find EasyAF Extensions element
-                var extensionsElement = designerElement.Elements(easyafNs + "Extensions")
-                    .FirstOrDefault();
+                // Find EasyAF Extensions element under any accepted namespace
+                var extensionsElement = EasyAFNamespaces
+                    .Select(ns => designerElement.Element(ns + "Extensions"))
+                    .FirstOrDefault(e => e is not null);
 
                 if (extensionsElement is null)
                 {
@@ -291,7 +305,7 @@ namespace CloudNimble.EasyAF.CodeGen
                 }
 
                 // Find OnModelCreating element within Extensions
-                var onModelCreatingElement = extensionsElement.Elements(easyafNs + "OnModelCreating")
+                var onModelCreatingElement = extensionsElement.Elements(extensionsElement.Name.Namespace + "OnModelCreating")
                     .FirstOrDefault();
 
                 if (onModelCreatingElement is not null)

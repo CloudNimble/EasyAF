@@ -9,6 +9,7 @@
 //------------------------------------------------------------------------------
 
 using EasyAFModel.Core;
+using System;
 using System.Data.Entity;
 using System.Data.Entity.Core.EntityClient;
 using System.Data.Entity.Infrastructure;

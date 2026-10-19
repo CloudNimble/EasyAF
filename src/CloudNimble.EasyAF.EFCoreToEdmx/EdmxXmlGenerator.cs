@@ -25,7 +25,7 @@ namespace CloudNimble.EasyAF.EFCoreToEdmx
 
         private readonly XNamespace _annotationNs = XNamespace.Get("http://schemas.microsoft.com/ado/2009/02/edm/annotation");
         private readonly XNamespace _customAnnotationNs = XNamespace.Get("http://schemas.microsoft.com/ado/2013/11/edm/customannotation");
-        private readonly XNamespace _easyafNs = XNamespace.Get("http://schemas.cloudnimble.com/easyaf/2025/01/edmx");
+        private readonly XNamespace _easyafNs = XNamespace.Get("http://schemas.nimbleapps.cloud/easyaf/2025/01/edmx");
         private readonly XNamespace _edmNs = XNamespace.Get("http://schemas.microsoft.com/ado/2009/11/edm");
         private readonly XNamespace _edmxNs = XNamespace.Get("http://schemas.microsoft.com/ado/2009/11/edmx");
         private readonly XNamespace _mappingNs = XNamespace.Get("http://schemas.microsoft.com/ado/2009/11/mapping/cs");
