@@ -206,6 +206,7 @@ namespace CloudNimble.EasyAF.CodeGen.Generators.Core
         /// </summary>
         internal void AddUsings()
         {
+            ExtraUsings.Add("System");
             if (!string.IsNullOrWhiteSpace(_onModelCreatingBody))
             {
                 ExtraUsings.Add("Microsoft.EntityFrameworkCore");
