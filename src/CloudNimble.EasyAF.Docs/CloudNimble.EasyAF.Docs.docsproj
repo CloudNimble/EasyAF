@@ -63,15 +63,13 @@
                         </Group>
                     </Groups>
                 </Pages>
+                <Tabs>
+                    <Tab Name="Build For AI" Href="https://ai.easyaf.dev" />
+                </Tabs>
             </Navigation>
             <Interaction>
                 <Drilldown>true</Drilldown>
             </Interaction>
-            <Navbar>
-                <Links>
-                    <Link Label="Build For AI" Href="https://ai.easyaf.dev" />
-                </Links>
-            </Navbar>
         </MintlifyTemplate>
     </PropertyGroup>
 
