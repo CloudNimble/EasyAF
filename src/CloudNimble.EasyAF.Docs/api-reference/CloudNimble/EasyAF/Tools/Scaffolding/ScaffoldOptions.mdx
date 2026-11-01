@@ -34,7 +34,7 @@ Initializes a new instance of the [ScaffoldOptions](/api-reference/CloudNimble/E
 #### Syntax
 
 ```csharp
-public ScaffoldOptions(string namespace, string targetFramework = "net10.0", bool includeApi = true, bool includeMessageBus = true, bool includeRuntime = true, bool webJob = false)
+public ScaffoldOptions(string namespace, System.Version toolVersion, int dotNetVersion = 11, bool includeApi = true, bool includeMessageBus = true, bool includeRuntime = true, bool webJob = false, bool toolIsPrerelease = false)
 ```
 
 #### Parameters
@@ -42,16 +42,19 @@ public ScaffoldOptions(string namespace, string targetFramework = "net10.0", boo
 | Name | Type | Description |
 |------|------|-------------|
 | `namespace` | `string` | The solution namespace; every dot-separated segment must be a C# identifier. |
-| `targetFramework` | `string` | The target framework: `net10.0` or `net11.0`. |
+| `toolVersion` | `System.Version` | The version of the EasyAF tool creating the solution; its major version is the EasyAF version referenced. |
+| `dotNetVersion` | `int` | The .NET major version to target: `10` or `11`. |
 | `includeApi` | `bool` | Whether to create the `.Api` project. |
 | `includeMessageBus` | `bool` | Whether to create the `.MessageBus.*` projects. |
 | `includeRuntime` | `bool` | Whether to create the `.MessageBus.Runtime` project. |
 | `webJob` | `bool` | Whether to stamp Azure WebJob publish metadata on the runtime. |
+| `toolIsPrerelease` | `bool` | Whether the EasyAF tool is a prerelease, so EasyAF packages float to prereleases. |
 
 #### Exceptions
 
 | Exception | Description |
 |-----------|-------------|
+| `ArgumentNullException` | Thrown when *toolVersion* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
 | `ArgumentException` | Thrown when an argument is invalid or the flags conflict. |
 
 ### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
@@ -74,6 +77,35 @@ Gets the first namespace segment (for example `CloudNimble` for `CloudNimble.Con
 
 ```csharp
 public string Company { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> DotNetVersion
+
+Gets the .NET major version every project targets (for example `11`).
+
+#### Syntax
+
+```csharp
+public int DotNetVersion { get; }
+```
+
+#### Property Value
+
+Type: `int`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> EasyAFPackageVersion
+
+Gets the version range every EasyAF package reference in a new solution uses: the tool's major version (`5.*`), floating
+to prereleases (`5.*-*`) when the tool is a prerelease, so the solution restores the matching packages.
+
+#### Syntax
+
+```csharp
+public string EasyAFPackageVersion { get; }
 ```
 
 #### Property Value
@@ -167,7 +199,7 @@ Type: `string`
 
 ### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> TargetFramework
 
-Gets the target framework moniker every project uses (for example `net10.0`).
+Gets the target framework moniker every project uses (for example `net11.0`).
 
 #### Syntax
 

@@ -1,427 +1,302 @@
 ---
-title: Better .NET Applications with EasyAF
+title: Getting Started with EasyAF
 sidebarTitle: Quickstart
 description: Get up and running quickly is as easy as 1-2-3.
 icon: play
 ---
 
-<Steps>
-  <Step title="Install" titleSize="h2" iconType="duotone">
+EasyAF is a set of libraries you can drop into any .NET project, and a CLI that scaffolds a full application. Start with Core. Reach for the CLI when you want the whole stack.
 
-    ### Install the EasyAF CLI
+## Use EasyAF.Core
 
-    <CodeGroup>
-
-    ```bash Major Releases
-    dotnet tool install EasyAF --global
-    ```
-
-    ```bash Previews
-    dotnet tool install EasyAF --global --prerelease
-    ```
-
-    </CodeGroup>
-
-    ### Add EasyAF to your Solution
-
-    Navigate to your solution folder and create a new documentation project:
-
-    ```bash
-    dotnet docs add
-    ```
-
-    By default, this creates a Mintlify documentation project using the latest stable SDK version from NuGet. To use a different documentation type or prerelease SDK:
-
-    ```bash
-    # Use a different documentation type
-    dotnet docs add --type DocFX
-
-    # Use the latest prerelease SDK version
-    dotnet docs add --prerelease
-    ```
-
-    <Note>The CLI automatically queries NuGet.org for the latest SDK version. See more options in the [CLI Reference](/guides/cli-reference) docs.</Note>
-
-    This automatically:
-
-    - locates the solution
-    - creates a new `{SolutionName}.Docs\{SolutionName}.Docs.docsproj` file that centralizes your documentation
-    - adds the new project to your solution
-
-    The new project is pre-configured with sensible defaults. For Mintlify projects, it looks like this:
-
-    <CodeGroup>
-
-    <Tabs>
-      <Tab title="Current (1.0.2)">
-        ```xml
-        <Project Sdk="EasyAF.Sdk/1.0.2">
-
-	        <PropertyGroup>
-		        <DocumentationType>Mintlify</DocumentationType>
-		        <GenerateDocumentation>true</GenerateDocumentation>
-		        <NamespaceMode>Folder</NamespaceMode>
-		        <ShowDocumentationStats>true</ShowDocumentationStats>
-
-		        <ConceptualDocsEnabled>false</ConceptualDocsEnabled>
-		        <ShowPlaceholders>false</ShowPlaceholders>
-
-		        <MintlifyNavigationMode>Unified</MintlifyNavigationMode>
-		        <MintlifyTemplate>
-			        <Name>{solutionName}</Name>
-			        <Theme>maple</Theme>
-			        <Colors>
-				        <Primary>#419AC5</Primary>
-				        <Light>#419AC5</Light>
-				        <Dark>#3CD0E2</Dark>
-			        </Colors>
-		        </MintlifyTemplate>
-	        </PropertyGroup>
-
-        </Project>
-        ```
-      </Tab>
-
-      <Tab title="Preview (1.1.0-preview.1)">
-        ```xml
-        <Project Sdk="EasyAF.Sdk/1.1.0-preview.1">
-
-	        <PropertyGroup>
-		        <DocumentationType>Mintlify</DocumentationType>
-		        <GenerateDocumentation>true</GenerateDocumentation>
-		        <NamespaceMode>Folder</NamespaceMode>
-		        <ShowDocumentationStats>true</ShowDocumentationStats>
-
-		        <ConceptualDocsEnabled>false</ConceptualDocsEnabled>
-		        <ShowPlaceholders>false</ShowPlaceholders>
-
-		        <MintlifyNavigationMode>Unified</MintlifyNavigationMode>
-		        <MintlifyTemplate>
-			        <Name>{solutionName}</Name>
-			        <Theme>maple</Theme>
-			        <Colors>
-				        <Primary>#419AC5</Primary>
-				        <Light>#419AC5</Light>
-				        <Dark>#3CD0E2</Dark>
-			        </Colors>
-		        </MintlifyTemplate>
-	        </PropertyGroup>
-
-        </Project>
-        ```
-      </Tab>
-    </Tabs>
-
-    <Tabs>
-      <Tab title="Current (1.0.2)">
-        ```xml
-        <Project Sdk="EasyAF.Sdk/1.0.2">
-
-	        <PropertyGroup>
-		        <DocumentationType>DocFX</DocumentationType>
-		        <GenerateDocumentation>true</GenerateDocumentation>
-		        <NamespaceMode>Folder</NamespaceMode>
-		        <ShowDocumentationStats>true</ShowDocumentationStats>
-
-		        <ConceptualDocsEnabled>false</ConceptualDocsEnabled>
-		        <ShowPlaceholders>false</ShowPlaceholders>
-	        </PropertyGroup>
-
-        </Project>
-        ```
-      </Tab>
-
-      <Tab title="Preview (1.1.0-preview.1)">
-        ```xml
-        <Project Sdk="EasyAF.Sdk/1.1.0-preview.1">
-
-	        <PropertyGroup>
-		        <DocumentationType>DocFX</DocumentationType>
-		        <GenerateDocumentation>true</GenerateDocumentation>
-		        <NamespaceMode>Folder</NamespaceMode>
-		        <ShowDocumentationStats>true</ShowDocumentationStats>
-
-		        <ConceptualDocsEnabled>false</ConceptualDocsEnabled>
-		        <ShowPlaceholders>false</ShowPlaceholders>
-	        </PropertyGroup>
-
-        </Project>
-        ```
-      </Tab>
-    </Tabs>
-
-    <Tabs>
-      <Tab title="Current (1.0.2)">
-        ```xml
-        <Project Sdk="EasyAF.Sdk/1.0.2">
-
-	        <PropertyGroup>
-		        <DocumentationType>MkDocs</DocumentationType>
-		        <GenerateDocumentation>true</GenerateDocumentation>
-		        <NamespaceMode>Folder</NamespaceMode>
-		        <ShowDocumentationStats>true</ShowDocumentationStats>
-
-		        <ConceptualDocsEnabled>false</ConceptualDocsEnabled>
-		        <ShowPlaceholders>false</ShowPlaceholders>
-	        </PropertyGroup>
-
-        </Project>
-        ```
-      </Tab>
-
-      <Tab title="Preview (1.1.0-preview.1)">
-        ```xml
-        <Project Sdk="EasyAF.Sdk/1.1.0-preview.1">
-
-	        <PropertyGroup>
-		        <DocumentationType>MkDocs</DocumentationType>
-		        <GenerateDocumentation>true</GenerateDocumentation>
-		        <NamespaceMode>Folder</NamespaceMode>
-		        <ShowDocumentationStats>true</ShowDocumentationStats>
-
-		        <ConceptualDocsEnabled>false</ConceptualDocsEnabled>
-		        <ShowPlaceholders>false</ShowPlaceholders>
-	        </PropertyGroup>
-
-        </Project>
-        ```
-      </Tab>
-    </Tabs>
-
-    <Tabs>
-      <Tab title="Current (1.0.2)">
-        ```xml
-        <Project Sdk="EasyAF.Sdk/1.0.2">
-
-	        <PropertyGroup>
-		        <DocumentationType>Jekyll</DocumentationType>
-		        <GenerateDocumentation>true</GenerateDocumentation>
-		        <NamespaceMode>Folder</NamespaceMode>
-		        <ShowDocumentationStats>true</ShowDocumentationStats>
-
-		        <ConceptualDocsEnabled>false</ConceptualDocsEnabled>
-		        <ShowPlaceholders>false</ShowPlaceholders>
-	        </PropertyGroup>
-
-        </Project>
-        ```
-      </Tab>
-
-      <Tab title="Preview (1.1.0-preview.1)">
-        ```xml
-        <Project Sdk="EasyAF.Sdk/1.1.0-preview.1">
-
-	        <PropertyGroup>
-		        <DocumentationType>Jekyll</DocumentationType>
-		        <GenerateDocumentation>true</GenerateDocumentation>
-		        <NamespaceMode>Folder</NamespaceMode>
-		        <ShowDocumentationStats>true</ShowDocumentationStats>
-
-		        <ConceptualDocsEnabled>false</ConceptualDocsEnabled>
-		        <ShowPlaceholders>false</ShowPlaceholders>
-	        </PropertyGroup>
-
-        </Project>
-        ```
-      </Tab>
-    </Tabs>
-
-    <Tabs>
-      <Tab title="Current (1.0.2)">
-        ```xml
-        <Project Sdk="EasyAF.Sdk/1.0.2">
-
-	        <PropertyGroup>
-		        <DocumentationType>Hugo</DocumentationType>
-		        <GenerateDocumentation>true</GenerateDocumentation>
-		        <NamespaceMode>Folder</NamespaceMode>
-		        <ShowDocumentationStats>true</ShowDocumentationStats>
-
-		        <ConceptualDocsEnabled>false</ConceptualDocsEnabled>
-		        <ShowPlaceholders>false</ShowPlaceholders>
-	        </PropertyGroup>
-
-        </Project>
-        ```
-      </Tab>
-
-      <Tab title="Preview (1.1.0-preview.1)">
-        ```xml
-        <Project Sdk="EasyAF.Sdk/1.1.0-preview.1">
-
-	        <PropertyGroup>
-		        <DocumentationType>Hugo</DocumentationType>
-		        <GenerateDocumentation>true</GenerateDocumentation>
-		        <NamespaceMode>Folder</NamespaceMode>
-		        <ShowDocumentationStats>true</ShowDocumentationStats>
-
-		        <ConceptualDocsEnabled>false</ConceptualDocsEnabled>
-		        <ShowPlaceholders>false</ShowPlaceholders>
-	        </PropertyGroup>
-
-        </Project>
-        ```
-      </Tab>
-    </Tabs>
-
-    <Tabs>
-      <Tab title="Current (1.0.2)">
-        ```xml
-        <Project Sdk="EasyAF.Sdk/1.0.2">
-
-	        <PropertyGroup>
-		        <DocumentationType>Generic</DocumentationType>
-		        <GenerateDocumentation>true</GenerateDocumentation>
-		        <NamespaceMode>Folder</NamespaceMode>
-		        <ShowDocumentationStats>true</ShowDocumentationStats>
-
-		        <ConceptualDocsEnabled>false</ConceptualDocsEnabled>
-		        <ShowPlaceholders>false</ShowPlaceholders>
-	        </PropertyGroup>
-
-        </Project>
-        ```
-      </Tab>
-
-      <Tab title="Preview (1.1.0-preview.1)">
-        ```xml
-        <Project Sdk="EasyAF.Sdk/1.1.0-preview.1">
-
-	        <PropertyGroup>
-		        <DocumentationType>Generic</DocumentationType>
-		        <GenerateDocumentation>true</GenerateDocumentation>
-		        <NamespaceMode>Folder</NamespaceMode>
-		        <ShowDocumentationStats>true</ShowDocumentationStats>
-
-		        <ConceptualDocsEnabled>false</ConceptualDocsEnabled>
-		        <ShowPlaceholders>false</ShowPlaceholders>
-	        </PropertyGroup>
-
-        </Project>
-        ```
-      </Tab>
-    </Tabs>
-
-    </CodeGroup>
-
-    <Note>You can see more of how to configure your .docsproj file in the [.docsproj Reference](/guides/docsproj) docs.</Note>
-
-    Now your documentation lives right next to your code - no more context switching! Edit your doc files in Visual Studio with full IntelliSense support.
-
-    <Check>
-      Your documentation project is now part of your solution and will stay in sync with your codebase.
-    </Check>
-  </Step>
-
-  <Step title="Integrate" titleSize="h2">
-
-    ### Adjust your .docsproj settings
-
-    Change the documentation type, shut off API Reference generation, turn off conceptual docs, and adjust any other settings as necessary.
-    
-    ### Enable XML Documentation Comment compilation
-
-    Add this to the projects where you want to extract the XML Documentation comments from your code:
-
-    ```xml
-    <PropertyGroup>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    </PropertyGroup>
-    ```
-
-    ### Exclude unnecessary projects
-
-    Test projects are excluded by default. If there are other projects you'd like to exclude, update your `.docsproj` with the following property:
-
-    ```xml
-    <PropertyGroup>
-        <ExcludePatterns>pattern1;pattern2</ExcludePatterns>
-    </PropertyGroup>
-    ```
-
-    ### Generate API Documentation
-
-    Run the documentation generator:
-
-    ```bash
-    dotnet build
-    ```
-
-    EasyAF will:
-    - Parse your assembly XML documentation
-    - Extract all public types, methods, properties, and events
-    - Combine it with any conceptual docs you've written
-    - Render files in the format of your choice in the folder you specified
-
-    <Check>
-        Your API documentation now stays in sync with every build - no more stale docs!
-    </Check>
-  </Step>
-
-  <Step title="Deploy" titleSize="h2">
-
-    ### Local Development with Mintlify
-
-    Preview your docs locally with Mintlify's dev server:
-
-    ```bash
-    npm i mint -g
-    cd {SolutionName}.Docs
-    mint dev
-    ```
-
-    Open [http://localhost:3000](http://localhost:3000) to see your docs with hot-reload.
-
-    ### Deploy to Mintlify
-
-    Connect your GitHub repository to Mintlify for automatic deployments:
-
-    1. Push your docs to GitHub
-    2. Go to [mintlify.com](https://mintlify.com) and connect your repo
-    3. Mintlify automatically deploys on every push to main
-
-    ### Deploy to GitHub Pages
-
-    Add a GitHub Actions workflow (`.github/workflows/docs.yml`):
-
-    ```yaml
-    name: Deploy Docs
-    on:
-      push:
-        branches: [main]
-
-    jobs:
-      deploy:
-        runs-on: ubuntu-latest
-        steps:
-          - uses: actions/checkout@v3
-          - uses: actions/setup-dotnet@v3
-            with:
-              dotnet-version: '9.0'
-          - name: Generate Docs
-            run: |
-              dotnet tool restore
-              dotnet docs generate
-          - name: Deploy to GitHub Pages
-            uses: peaceiris/actions-gh-pages@v3
-            with:
-              github_token: ${{ secrets.GITHUB_TOKEN }}
-              publish_dir: ./MyProject.Docs
-    ```
-
-    ### CI/CD Integration
-
-    EasyAF integrates with your existing build pipeline:
-
-    ```bash
-    # In your CI/CD pipeline
-    dotnet restore
-    dotnet build --configuration Release
-    ```
-
-    <Check>
-        Your documentation is now deployed and accessible to your users!
-    </Check>
-  </Step>
-</Steps>
+`EasyAF.Core` is the shared primitives: observable objects, intervals, identity, and audit interfaces. Add it to a class library, console app, Blazor project, or WPF app. Nothing else in EasyAF is required.
+
+### Step 1: Install the package
+
+```bash
+dotnet add package EasyAF.Core
+```
+
+### Step 2: Observable objects
+
+`EasyObservableObject` implements `INotifyPropertyChanged` with strongly typed `Set` helpers. Use it anywhere you need change notification — XAML binding, Blazor, or a view-model that should raise events only when the value actually changes.
+
+```csharp
+using CloudNimble.EasyAF.Core;
+
+public class Person : EasyObservableObject
+{
+    private string _name;
+    private int _age;
+
+    public string Name
+    {
+        get => _name;
+        set => Set(nameof(Name), ref _name, value);
+    }
+
+    public int Age
+    {
+        get => _age;
+        set => Set(nameof(Age), ref _age, value);
+    }
+}
+```
+
+`DbObservableObject` adds change tracking for entities you round-trip to an API. Call `TrackChanges`, edit properties through `Set`, then send a delta of only what changed:
+
+```csharp
+var customer = GetCustomer();
+customer.TrackChanges(deepTracking: true);
+
+customer.Name = "New Name";
+customer.Orders[0].Status = "Shipped";
+
+if (customer.IsGraphChanged)
+{
+    var delta = customer.ToDeltaPayload(true);
+    await UpdateCustomer(delta);
+    customer.AcceptChanges(true);
+}
+```
+
+See the [Observable Objects](/guides/observable-objects) guide for cloning, rejecting changes, and graph traversal.
+
+### Step 3: Intervals
+
+`Interval<T>` is **time per occurrence** — how long between events — with `PerHour` / `PerDay` / `PerYear` converting that into a frequency.
+
+```csharp
+using CloudNimble.EasyAF.Core;
+
+// One widget every 1.5 hours
+var production = new Interval<double>(1.5, IntervalType.Hours);
+
+decimal perHour = production.PerHour();   // 0.67
+decimal perDay  = production.PerDay();    // 16
+decimal perYear = production.PerYear();   // 5840
+```
+
+`MoneyInterval<T>` is the same math for money: an amount that occurs on an interval, converted to any other period.
+
+```csharp
+// $100 every 1.5 hours
+var wage = new MoneyInterval<double>(100m, 1.5, IntervalType.Hours);
+
+decimal perHour = wage.PerHour();   // 66.67
+decimal perDay  = wage.PerDay();    // 1600.00
+decimal perYear = wage.PerYear();   // 584000.00
+
+var salary = new MoneyInterval<double>(75000m, 1, IntervalType.Years);
+string display = salary.ToString(); // "$75,000.00 / 1 year"
+```
+
+`RatioInterval<T>` and `PercentageInterval<T>` do the same for conversion rates and percents. The [Interval Calculations](/guides/interval-calculations) guide covers those.
+
+Core also ships `IIdentifiable<T>`, audit interfaces (`ICreatedAuditable`, `ICreatorTrackable<T>`, …), and `Ensure` argument guards. You can stop here and use those types in any project.
+
+## Scaffold an EasyAF application
+
+When you want entities, managers, and a Restier API generated from a database, the CLI builds the solution EasyAF expects.
+
+### Step 1: Install the CLI
+
+<CodeGroup>
+
+```bash Major Releases
+dotnet tool install EasyAF --global
+```
+
+```bash Previews
+dotnet tool install EasyAF --global --prerelease
+```
+
+</CodeGroup>
+
+The tool command is `dotnet easyaf`.
+
+### Step 2: Create a solution
+
+From an empty folder:
+
+```bash
+dotnet easyaf new CloudNimble.Contoso
+```
+
+That creates a `.slnx` with the projects EasyAF expects, already referenced and packaged:
+
+| Project | Role |
+| --- | --- |
+| `CloudNimble.Contoso.Core` | Entities and shared types (`EasyAF.Core`) |
+| `CloudNimble.Contoso.Data` | EF Core DbContext (`EasyAF.Data.EFCore`) |
+| `CloudNimble.Contoso.Business` | Managers (`EasyAF.Business.EFCore`) |
+| `CloudNimble.Contoso.Api` | Restier OData host (`EasyAF.Restier.EFCore`) |
+| `CloudNimble.Contoso.MessageBus.*` | Publish, dispatch, and a runtime host |
+| `CloudNimble.Contoso.Tests.*` | Breakdance test projects |
+
+Useful flags:
+
+```bash
+# Target .NET 10 instead of .NET 11
+dotnet easyaf new CloudNimble.Contoso -f 10
+
+# Skip the API or the message bus
+dotnet easyaf new CloudNimble.Contoso --no-api
+dotnet easyaf new CloudNimble.Contoso --no-messagebus
+
+# Create the solution in a different folder
+dotnet easyaf new CloudNimble.Contoso -o ./src
+```
+
+`new` only creates and links projects. It does not restore, build, or connect a database.
+
+### Step 3: Connect a database
+
+Point EasyAF at SQL Server or PostgreSQL. The connection string can be a real string (stored in user secrets) or a pointer into `appsettings.json`:
+
+<CodeGroup>
+
+```bash SQL Server
+dotnet easyaf init -c "appsettings.json:ConnectionStrings:DefaultConnection" -x ContosoContext -p SqlServer
+```
+
+```bash PostgreSQL
+dotnet easyaf init -c "appsettings.json:ConnectionStrings:DefaultConnection" -x ContosoContext -p PostgreSQL
+```
+
+</CodeGroup>
+
+`init` writes `{ContextName}.edmx.config` in the `.Data` project and sets EasyAF project types on the solution. When you are joining an existing EasyAF repo, use `dotnet easyaf setup` to store a local connection string instead.
+
+### Step 4: Generate from your schema
+
+Scaffold the EDMX from the database, then generate C# for every layer:
+
+```bash
+dotnet easyaf database generate --context-name ContosoContext
+dotnet easyaf code generate all
+```
+
+Code generation produces:
+
+- Core entities that implement EasyAF interfaces (`IIdentifiable<T>`, `ICreatedAuditable`, `IHumanReadable`, …)
+- A DbContext in `.Data`
+- A manager per entity in `.Business`
+- Restier API surface in `.Api`
+
+Generate a single layer when you need to:
+
+```bash
+dotnet easyaf code generate core
+dotnet easyaf code generate business
+dotnet easyaf code generate api
+```
+
+### Step 5: Work with a manager
+
+Generated entities compose EasyAF interfaces. A typical product looks like this:
+
+```csharp
+using CloudNimble.EasyAF.Core;
+
+public class Product : IIdentifiable<Guid>,
+                       ICreatedAuditable,
+                       IUpdatedAuditable,
+                       IHumanReadable
+{
+    public Guid Id { get; set; }
+    public string DisplayName { get; set; }
+    public string SKU { get; set; }
+    public DateTimeOffset DateCreated { get; set; }
+    public DateTimeOffset? DateUpdated { get; set; }
+}
+```
+
+Managers wrap CRUD, fill audit fields, and give you lifecycle hooks. Customize a generated manager (or write one) like this:
+
+```csharp
+using CloudNimble.EasyAF.Business;
+using CloudNimble.SimpleMessageBus.Publish;
+
+public class ProductManager : EntityManager<ContosoContext, Product>
+{
+    public ProductManager(ContosoContext context, IMessagePublisher publisher)
+        : base(context, publisher)
+    {
+    }
+
+    public override async Task OnInsertingAsync(Product entity)
+    {
+        await base.OnInsertingAsync(entity);
+
+        if (string.IsNullOrWhiteSpace(entity.SKU))
+        {
+            entity.SKU = GenerateSku();
+        }
+    }
+}
+```
+
+Call it from your API or another manager:
+
+```csharp
+public class CatalogService
+{
+    private readonly ProductManager _products;
+
+    public CatalogService(ProductManager products)
+    {
+        _products = products;
+    }
+
+    public async Task<Product> AddProductAsync(string displayName)
+    {
+        var product = new Product { DisplayName = displayName };
+        await _products.InsertAsync(product, save: true);
+        return product;
+    }
+}
+```
+
+`InsertAsync` sets `Id`, `DateCreated`, and any creator/updater fields the entity implements. You do not write that boilerplate yourself.
+
+### Step 6: Run the API
+
+```bash
+dotnet run --project CloudNimble.Contoso.Api
+```
+
+The Restier host exposes your entities over OData. Browse `$metadata` and query collections the same way you would any Restier API.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Observable Objects"
+    icon="eye"
+    href="/guides/observable-objects"
+  >
+    Property change notification and delta payloads
+  </Card>
+  <Card
+    title="Interval Calculations"
+    icon="calendar"
+    href="/guides/interval-calculations"
+  >
+    Frequency, money, ratios, and percentages over time
+  </Card>
+  <Card
+    title="Table Design"
+    icon="table"
+    href="/guides/table-design"
+  >
+    Composable interfaces for keys, audit fields, and naming
+  </Card>
+  <Card
+    title="Business Layer"
+    icon="layer-group"
+    href="/guides/business-layer"
+  >
+    Manager hierarchy, lifecycle hooks, and CRUD
+  </Card>
+</CardGroup>

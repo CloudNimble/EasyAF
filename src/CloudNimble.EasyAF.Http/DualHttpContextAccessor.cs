@@ -14,8 +14,9 @@ namespace CloudNimble.EasyAF.Http
     /// the outer request).
     /// </summary>
     /// <remarks>
-    /// Register this as <see cref="IHttpContextAccessor"/> after <c>AddHttpContextAccessor</c> so
-    /// last-wins DI gives the rest of the pipeline this instance.
+    /// Register this as <see cref="IHttpContextAccessor"/>. Do not call <c>AddHttpContextAccessor</c>;
+    /// that registers a different implementation. Existing code keeps working because it takes
+    /// <see cref="IHttpContextAccessor"/>.
     /// <para>
     /// Host <c>Initialize</c> assigns <see cref="HttpContext"/> (sets <see cref="Outer"/> and
     /// <see cref="Active"/>). Inner execute calls <see cref="Start"/>, then <see cref="End"/> in

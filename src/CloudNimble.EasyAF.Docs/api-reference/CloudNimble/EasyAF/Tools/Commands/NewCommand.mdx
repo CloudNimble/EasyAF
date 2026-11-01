@@ -67,17 +67,17 @@ public Object()
 
 ### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Framework
 
-Gets or sets the target framework: `net10.0` (the default) or `net11.0`.
+Gets or sets the .NET major version to target: `10` or `11` (the default).
 
 #### Syntax
 
 ```csharp
-public string Framework { get; set; }
+public int Framework { get; set; }
 ```
 
 #### Property Value
 
-Type: `string`
+Type: `int`
 
 ### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Name
 
@@ -151,7 +151,7 @@ Type: `bool`
 
 ### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> OutputDirectory
 
-Gets or sets the folder to create the solution in. Defaults to `./{Name}`.
+Gets or sets the folder to create the solution in. Defaults to the current folder.
 
 #### Syntax
 

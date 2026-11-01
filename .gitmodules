@@ -9,13 +9,6 @@
 	path = external/RESTier
 	url = https://github.com/OData/RESTier.git
 	branch = docs
-[submodule "external/OData-MCP"]
-	path = external/OData-MCP
-	url = https://github.com/OData/MCP.git
-	branch = dev
 [submodule "external/BlazorEssentials"]
 	path = external/BlazorEssentials
 	url = https://github.com/CloudNimble/BlazorEssentials.git
-[submodule "external/ClaudeEssentials"]
-	path = external/ClaudeEssentials
-	url = https://github.com/CloudNimble/ClaudeEssentials.git
