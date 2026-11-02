@@ -64,7 +64,7 @@
                     </Groups>
                 </Pages>
                 <Tabs>
-                    <Tab Name="Build For AI" Href="https://ai.easyaf.dev" Position="End" />
+                    <Tab Name="Build For SI" Href="https://si.easyaf.dev" Position="End" />
                 </Tabs>
             </Navigation>
             <Interaction>
