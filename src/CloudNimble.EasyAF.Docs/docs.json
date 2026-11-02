@@ -19,11 +19,6 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Build For AI",
-        "href": "https://ai.easyaf.dev",
-        "pages": []
-      },
-      {
         "tab": "Core Framework",
         "pages": [
           {
@@ -1187,6 +1182,10 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "Build For AI",
+        "href": "https://ai.easyaf.dev"
       }
     ]
   },

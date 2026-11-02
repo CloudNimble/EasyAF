@@ -1,4 +1,4 @@
-<Project Sdk="DotNetDocs.Sdk/1.5.4">
+<Project Sdk="DotNetDocs.Sdk/1.5.5-preview.3">
 
     <PropertyGroup>
         <DocumentationType>Mintlify</DocumentationType>
@@ -64,7 +64,7 @@
                     </Groups>
                 </Pages>
                 <Tabs>
-                    <Tab Name="Build For AI" Href="https://ai.easyaf.dev" />
+                    <Tab Name="Build For AI" Href="https://ai.easyaf.dev" Position="End" />
                 </Tabs>
             </Navigation>
             <Interaction>
@@ -85,10 +85,6 @@
 
     <ItemGroup>
         <None Include="**/*.jsx" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Include="guides\index.mdx" />
     </ItemGroup>
 
 </Project>

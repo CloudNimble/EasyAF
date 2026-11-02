@@ -30,8 +30,9 @@ the outer request).
 
 ## Remarks
 
-Register this as [IHttpContextAccessor](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor) after `AddHttpContextAccessor` so
-last-wins DI gives the rest of the pipeline this instance.
+Register this as [IHttpContextAccessor](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor). Do not call `AddHttpContextAccessor`;
+that registers a different implementation. Existing code keeps working because it takes
+[IHttpContextAccessor](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor).
 
 Host `Initialize` assigns [DualHttpContextAccessor.HttpContext](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#httpcontext) (sets [DualHttpContextAccessor.Outer](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#outer) and
 [DualHttpContextAccessor.Active](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#active)). Inner execute calls `HttpContext)`, then [DualHttpContextAccessor.End](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#end) in
