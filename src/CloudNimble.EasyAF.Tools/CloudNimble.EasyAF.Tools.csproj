@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <PackageId>EasyAF</PackageId>
@@ -24,14 +24,13 @@
     <!-- EF Core Design ships Microsoft.Build.Framework; keep it out of the output so MSBuildLocator loads the SDK's copy. -->
     <ItemGroup Condition="'$(TargetFramework)' == 'net11.0'">
         <PackageReference Include="Microsoft.Build.Framework" Version="18.10.*" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.*-*" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.*-*" />
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="11.*-*" />
-        <!-- TemplateEngine 11.x previews depend on NuGet.* rc builds that are not on nuget.org; the net10.0 asset of 10.x runs on net11. -->
-        <PackageReference Include="Microsoft.TemplateEngine.Edge" Version="10.*" />
-        <PackageReference Include="Microsoft.TemplateEngine.IDE" Version="10.*" />
-        <PackageReference Include="Microsoft.TemplateEngine.Orchestrator.RunnableProjects" Version="10.*" />
-        <PackageReference Include="Microsoft.TemplateEngine.Utils" Version="10.*" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.*" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.*" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="11.*" />
+        <PackageReference Include="Microsoft.TemplateEngine.Edge" Version="11.*" />
+        <PackageReference Include="Microsoft.TemplateEngine.IDE" Version="11.*" />
+        <PackageReference Include="Microsoft.TemplateEngine.Orchestrator.RunnableProjects" Version="11.*" />
+        <PackageReference Include="Microsoft.TemplateEngine.Utils" Version="11.*" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
@@ -45,8 +44,18 @@
         <PackageReference Include="Microsoft.TemplateEngine.Utils" Version="10.*" />
     </ItemGroup>
 
-    <!-- TemplateEngine ships NuGet.* 6.13; keep them out of the output so MSBuildLocator loads the SDK's copies, which MSBuild needs to evaluate SDK projects. -->
-    <ItemGroup>
+    <!-- TemplateEngine 11.0.100 still lists NuGet 8.0.0-rc.* (not on nuget.org). Override with 8.* RTM; keep 6.13.* on net10 for TemplateEngine 10. -->
+    <ItemGroup Condition="'$(TargetFramework)' == 'net11.0'">
+        <PackageReference Include="NuGet.Common" Version="8.*" ExcludeAssets="runtime" />
+        <PackageReference Include="NuGet.Configuration" Version="8.*" ExcludeAssets="runtime" />
+        <PackageReference Include="NuGet.Credentials" Version="8.*" ExcludeAssets="runtime" />
+        <PackageReference Include="NuGet.Frameworks" Version="8.*" ExcludeAssets="runtime" />
+        <PackageReference Include="NuGet.Packaging" Version="8.*" ExcludeAssets="runtime" />
+        <PackageReference Include="NuGet.Protocol" Version="8.*" ExcludeAssets="runtime" />
+        <PackageReference Include="NuGet.Versioning" Version="8.*" ExcludeAssets="runtime" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
         <PackageReference Include="NuGet.Common" Version="6.13.*" ExcludeAssets="runtime" />
         <PackageReference Include="NuGet.Configuration" Version="6.13.*" ExcludeAssets="runtime" />
         <PackageReference Include="NuGet.Credentials" Version="6.13.*" ExcludeAssets="runtime" />

@@ -1,4 +1,4 @@
-using Microsoft.CodeAnalysis.CSharp;
+﻿using Microsoft.CodeAnalysis.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -127,7 +127,7 @@ namespace CloudNimble.EasyAF.Tools.Scaffolding
             Product = segments[^1];
             MicrosoftPackageVersion = dotNetVersion switch
             {
-                11 => "11.*-*",
+                11 => "11.*",
                 _ => "10.*",
             };
         }

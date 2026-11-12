@@ -1,4 +1,4 @@
-using CloudNimble.EasyAF.Tools.Scaffolding;
+﻿using CloudNimble.EasyAF.Tools.Scaffolding;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -159,7 +159,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
 
         [TestMethod]
         [DataRow(10, "10.*")]
-        [DataRow(11, "11.*-*")]
+        [DataRow(11, "11.*")]
         public void MicrosoftPackageVersion_ShouldFloatByDotNetVersion(int dotNetVersion, string expected)
         {
             var options = new ScaffoldOptions("Contoso", ToolVersion, dotNetVersion);

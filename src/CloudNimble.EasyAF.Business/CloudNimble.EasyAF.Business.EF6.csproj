@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFrameworks>net11.0;net10.0;</TargetFrameworks>
@@ -6,19 +6,19 @@
 
     <ItemGroup>
         <PackageReference Include="EntityFramework" Version="6.*" />
-        <PackageReference Include="SimpleMessageBus.Publish" Version="[6.*-*, 7.0.0)" />
+        <PackageReference Include="SimpleMessageBus.Publish" Version="6.*" />
         <PackageReference Include="Z.EntityFramework.Plus.EF6" Version="10.*" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net11.0'">
-        <PackageReference Include="System.Text.Json" Version="[11.*-*, 12.0.0)" />
-        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="[11.*-*, 12.0.0)" PrivateAssets="All" />
+        <PackageReference Include="System.Text.Json" Version="11.*" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="11.*" PrivateAssets="All" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
-        <PackageReference Include="System.Text.Json" Version="[10.*, 12.0.0)" />
+        <PackageReference Include="System.Text.Json" Version="10.*" />
         <!-- Dealing with security vulnerabilities -->
-        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="[10.*, 12.0.0)" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.*" PrivateAssets="All" />
     </ItemGroup>
 
     <ItemGroup>

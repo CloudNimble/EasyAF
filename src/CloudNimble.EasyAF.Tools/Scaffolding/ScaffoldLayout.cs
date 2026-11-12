@@ -28,7 +28,7 @@ namespace CloudNimble.EasyAF.Tools.Scaffolding
 
         #region Fields
 
-        private const string BreakdanceVersion = "8.*-*";
+        private const string BreakdanceVersion = "8.*";
         private const string McpVersion = "1.*-*";
         private const string RestierVersion = "1.*";
         private const string SimpleMessageBusVersion = "6.*";

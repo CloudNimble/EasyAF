@@ -12,16 +12,16 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net11.0'">
-        <!-- Direct reference because the PG team fucked up thir first RC release. https://github.com/npgsql/efcore.pg/issues/3913 -->
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="11.*-*" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="11.*-*" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="11.*-*" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.*-*" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="11.*-*" />
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="11.*-*" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="11.*-*" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="11.*-*" />
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="11.*-*" />
+        <!-- Npgsql 11.x is still RC-only on nuget.org (latest 11.0.0-rc.3). Keep the prerelease float until RTM ships. -->
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="11.*" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="11.*" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="11.*" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.*" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="11.*" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="11.*" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="11.*" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="11.*" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="11.*" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="11.*-*" />
     </ItemGroup>
 

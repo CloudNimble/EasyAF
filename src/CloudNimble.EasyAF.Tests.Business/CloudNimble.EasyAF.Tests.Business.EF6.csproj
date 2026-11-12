@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Breakdance.Assemblies" Version="*-*" />
-        <PackageReference Include="SimpleMessageBus.Publish.Azure" Version="*-*" />
+        <PackageReference Include="Breakdance.Assemblies" Version="8.*" />
+        <PackageReference Include="SimpleMessageBus.Publish.Azure" Version="6.*" />
     </ItemGroup>
 
     <ItemGroup>

@@ -49,7 +49,7 @@ namespace System.Collections.ObjectModel
                     throw new ArgumentOutOfRangeException(nameof(index));
                 }
 
-                var itemsList = items is IList<T> list ? list : new List<T>(items);
+                var itemsList = items is IList<T> list ? list : [.. items];
                 for (var i = 0; i < itemsList.Count; i++)
                 {
                     collection.Insert(index + i, itemsList[i]);
@@ -105,7 +105,7 @@ namespace System.Collections.ObjectModel
                     collection.RemoveAt(index);
                 }
 
-                var newItems = items is IList<T> list ? list : new List<T>(items);
+                var newItems = items is IList<T> list ? list : [.. items];
                 for (var i = 0; i < newItems.Count; i++)
                 {
                     collection.Insert(index + i, newItems[i]);

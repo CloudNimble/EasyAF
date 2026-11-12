@@ -1,4 +1,4 @@
-using CloudNimble.EasyAF.Tools.Scaffolding;
+﻿using CloudNimble.EasyAF.Tools.Scaffolding;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -171,7 +171,7 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
 
         [TestMethod]
         [DataRow(10, "10.*")]
-        [DataRow(11, "11.*-*")]
+        [DataRow(11, "11.*")]
         public void Create_ShouldFloatMicrosoftPackagesByDotNetVersion(int dotNetVersion, string expected)
         {
             var layout = Layout(new ScaffoldOptions("Contoso", ToolVersion, dotNetVersion));
@@ -213,8 +213,8 @@ namespace CloudNimble.EasyAF.Tests.Tools.Scaffolding
         {
             foreach (var test in Layout().Values.Where(p => p.Suffix.StartsWith("Tests.")))
             {
-                PackageVersion(test, "Breakdance.Assemblies").Should().Be("8.*-*", because: test.Suffix);
-                PackageVersion(test, "Breakdance.Extensions.MSTest2").Should().Be("8.*-*", because: test.Suffix);
+                PackageVersion(test, "Breakdance.Assemblies").Should().Be("8.*", because: test.Suffix);
+                PackageVersion(test, "Breakdance.Extensions.MSTest2").Should().Be("8.*", because: test.Suffix);
             }
         }
 
