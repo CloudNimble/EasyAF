@@ -24,9 +24,6 @@ namespace CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration
         /// <param name="context"></param>
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-#if DEBUG
-            if (!Debugger.IsAttached) Debugger.Launch();
-#endif
             try
             {
                 DbConfiguration.SetConfiguration(new EF6Configuration());
@@ -47,6 +44,23 @@ namespace CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration
             var compilationAndEdmxFiles = context.CompilationProvider.Combine(edmxFiles.Collect()).Combine(options);
 
             context.RegisterSourceOutput(compilationAndEdmxFiles, Execute);
+
+            var legacyGenerateViews = context.AnalyzerConfigOptionsProvider
+                .Select((provider, _) => provider.GlobalOptions.TryGetValue("build_property.GenerateViews", out var value) && !string.IsNullOrWhiteSpace(value));
+
+            context.RegisterSourceOutput(legacyGenerateViews, (sourceContext, isSet) =>
+            {
+                if (!isSet) return;
+                sourceContext.ReportDiagnostic(Diagnostic.Create(
+                    new DiagnosticDescriptor(
+                        SourceGeneratorConstants.LegacyGenerateViewsDiagnosticId,
+                        SourceGeneratorConstants.LegacyGenerateViewsTitle,
+                        SourceGeneratorConstants.LegacyGenerateViewsMessage,
+                        SourceGeneratorConstants.SourceGenerationCategory,
+                        DiagnosticSeverity.Warning,
+                        isEnabledByDefault: true),
+                    Location.None));
+            });
         }
 
         /// <summary>
@@ -62,14 +76,22 @@ namespace CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration
 
             ((var compilation, var edmxFiles), var settings) = args;
 
+#if DEBUG
+            // Debug builds of the analyzer only, and opt-in: set <EasyAFLaunchDebugger>true</EasyAFLaunchDebugger> in the consuming project.
+            if (settings.LaunchDebugger && !Debugger.IsAttached)
+            {
+                Debugger.Launch();
+            }
+#endif
+
             if (settings.ProjectType is ProjectType.Unknown)
             {
                 context.ReportDiagnostic(Diagnostic.Create(
                     new DiagnosticDescriptor(
-                        "EASYAF001",
-                        "EasyAFProjectType not defined",
-                        "The EasyAFProjectType property is not defined in the project file",
-                        "SourceGeneration",
+                        SourceGeneratorConstants.ProjectTypeMissingDiagnosticId,
+                        SourceGeneratorConstants.ProjectTypeMissingTitle,
+                        SourceGeneratorConstants.ProjectTypeMissingMessage,
+                        SourceGeneratorConstants.SourceGenerationCategory,
                         DiagnosticSeverity.Warning,
                         isEnabledByDefault: true),
                     Location.None));
@@ -79,23 +101,24 @@ namespace CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration
             {
                 context.ReportDiagnostic(Diagnostic.Create(
                     new DiagnosticDescriptor(
-                        "EASYAF001",
-                        "EasyAFProjectType found.",
-                        $"The EasyAFProjectType property is {settings.ProjectType}",
-                        "SourceGeneration",
+                        SourceGeneratorConstants.ProjectTypeFoundDiagnosticId,
+                        SourceGeneratorConstants.ProjectTypeFoundTitle,
+                        SourceGeneratorConstants.ProjectTypeFoundMessage,
+                        SourceGeneratorConstants.SourceGenerationCategory,
                         DiagnosticSeverity.Info,
                         isEnabledByDefault: true),
-                    Location.None));
+                    Location.None,
+                    settings.ProjectType));
             }
 
             if (edmxFiles.Count() == 0)
             {
                 context.ReportDiagnostic(Diagnostic.Create(
                     new DiagnosticDescriptor(
-                        "EASYAF002",
-                        "EDMX files not found.",
-                        "There were no EDMX files found in the project. Please add an 'AdditionalFiles' node to an ItemGroup that references one or more EDMX files and try again.",
-                        "SourceGeneration",
+                        SourceGeneratorConstants.EdmxFilesMissingDiagnosticId,
+                        SourceGeneratorConstants.EdmxFilesMissingTitle,
+                        SourceGeneratorConstants.EdmxFilesMissingMessage,
+                        SourceGeneratorConstants.SourceGenerationCategory,
                         DiagnosticSeverity.Warning,
                         isEnabledByDefault: true),
                     Location.None));
@@ -110,13 +133,14 @@ namespace CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration
                 {
                     context.ReportDiagnostic(Diagnostic.Create(
                         new DiagnosticDescriptor(
-                            "EASYAF003",
-                            "EDMX file has no content.",
-                            $"The EDMX file '{edmxFile.Path}' has no content. Please check the file and try again.",
-                            "SourceGeneration",
+                            SourceGeneratorConstants.EdmxFileEmptyDiagnosticId,
+                            SourceGeneratorConstants.EdmxFileEmptyTitle,
+                            SourceGeneratorConstants.EdmxFileEmptyMessage,
+                            SourceGeneratorConstants.SourceGenerationCategory,
                             DiagnosticSeverity.Warning,
                             isEnabledByDefault: true),
-                        Location.None));
+                        Location.None,
+                        edmxFile.Path));
                     continue;
                 }
 
@@ -129,13 +153,15 @@ namespace CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration
                     {
                         context.ReportDiagnostic(Diagnostic.Create(
                             new DiagnosticDescriptor(
-                                "EASYAF004",
-                                "EDMX schema error.",
-                                $"The EDMX file '{edmxFile.Path}' has a schema error: {error}",
-                                "SourceGeneration",
+                                SourceGeneratorConstants.EdmxSchemaErrorDiagnosticId,
+                                SourceGeneratorConstants.EdmxSchemaErrorTitle,
+                                SourceGeneratorConstants.EdmxSchemaErrorMessage,
+                                SourceGeneratorConstants.SourceGenerationCategory,
                                 DiagnosticSeverity.Warning,
                                 isEnabledByDefault: true),
-                            Location.None));
+                            Location.None,
+                            edmxFile.Path,
+                            error));
                     }
                     continue;
                 }
@@ -151,7 +177,7 @@ namespace CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration
                         break;
 
                     case ProjectType.Core:
-                        new EntitySourceGenerator(edmxLoader, settings).Generate(context);
+                        new EntitySourceGenerator(edmxLoader, settings).Generate(context, edmxFile);
                         break;
 
                     case ProjectType.Data:
@@ -165,11 +191,14 @@ namespace CloudNimble.EasyAF.Analyzers.EF6.SourceGeneration
                     default:
                         context.ReportDiagnostic(Diagnostic.Create(
                             new DiagnosticDescriptor(
-                                "EASYAF001",
-                                "Unsupported project type",
-                                $"The project type '{settings.ProjectType}' is not supported.",
-                                "EasyAF", DiagnosticSeverity.Error, isEnabledByDefault: true),
-                            Location.None));
+                                SourceGeneratorConstants.ProjectTypeUnsupportedDiagnosticId,
+                                SourceGeneratorConstants.ProjectTypeUnsupportedTitle,
+                                SourceGeneratorConstants.ProjectTypeUnsupportedMessage,
+                                SourceGeneratorConstants.EasyAFCategory,
+                                DiagnosticSeverity.Error,
+                                isEnabledByDefault: true),
+                            Location.None,
+                            settings.ProjectType));
                         break;
                 }
             }

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "{{Namespace}}.MessageBus.Runtime": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

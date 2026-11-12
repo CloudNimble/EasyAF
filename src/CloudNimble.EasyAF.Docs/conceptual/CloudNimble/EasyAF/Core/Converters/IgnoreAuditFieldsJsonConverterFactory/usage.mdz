@@ -1,5 +1,13 @@
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
 
-Describe how to use `IgnoreAuditFieldsJsonConverterFactory` here.
+<Warning>
+`IgnoreAuditFieldsJsonConverterFactory` is obsolete as of EasyAF 5.0. Call `IgnoreAuditFields()` on your `JsonSerializerOptions` instead.
+</Warning>
 
+```csharp
+var options = new JsonSerializerOptions
+{
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+}.IgnoreAuditFields();
+```
+
+See [IgnoreAuditFieldsJsonConverter](/api-reference/CloudNimble/EasyAF/Core/Converters/IgnoreAuditFieldsJsonConverter) for migration steps, and for the 5.0 output changes and how to restore the 4.x output.

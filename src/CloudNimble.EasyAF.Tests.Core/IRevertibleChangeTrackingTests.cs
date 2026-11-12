@@ -1,8 +1,11 @@
-﻿using CloudNimble.EasyAF.Tests.Core.Models;
+﻿using CloudNimble.EasyAF.Core;
+using CloudNimble.EasyAF.Tests.Core.Models;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 
 namespace CloudNimble.EasyAF.Tests.Core
@@ -221,6 +224,58 @@ namespace CloudNimble.EasyAF.Tests.Core
             person.IsChanged.Should().BeFalse();
             person.OriginalValues.Should().NotBeNull().And.HaveCount(0);
         }
+
+        [TestMethod]
+        public void Revertible_NoTracking_DoesNotAllocateOriginalValues()
+        {
+            var person = new Person();
+
+            person.FirstName = "Robert";
+            person.AcceptChanges();
+            person.RejectChanges();
+            person.ToDeltaPayload();
+
+            GetOriginalValuesField(person).Should().BeNull(because: "untracked objects should not pay for a dictionary they never use");
+        }
+
+        [TestMethod]
+        public void Revertible_Tracking_AllocatesOriginalValuesOnFirstChange()
+        {
+            var person = new Person();
+            person.TrackChanges();
+
+            GetOriginalValuesField(person).Should().BeNull();
+
+            person.FirstName = "Robert";
+
+            GetOriginalValuesField(person).Should().NotBeNull().And.HaveCount(1);
+        }
+
+        [TestMethod]
+        public void Revertible_NoTracking_RejectChanges_KeepsValues()
+        {
+            var person = new Person { FirstName = "Robert" };
+
+            person.RejectChanges();
+
+            person.FirstName.Should().Be("Robert");
+            person.IsChanged.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void Revertible_NoTracking_ToDeltaPayload_IsEmpty()
+        {
+            var person = new Person { FirstName = "Robert" };
+
+            var payload = person.ToDeltaPayload() as IDictionary<string, object>;
+
+            payload.Should().NotContainKey(nameof(Person.FirstName));
+        }
+
+        private static Dictionary<string, object> GetOriginalValuesField(DbObservableObject obj) =>
+            (Dictionary<string, object>)typeof(DbObservableObject)
+                .GetField("_originalValues", BindingFlags.Instance | BindingFlags.NonPublic)
+                .GetValue(obj);
 
     }
 

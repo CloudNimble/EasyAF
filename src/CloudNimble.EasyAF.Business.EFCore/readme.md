@@ -26,8 +26,6 @@ public class UserManager : EntityManager<MyDbContext, User>
 
 Also includes `IdentifiableEntityManager`, `StatusEntityManager`, and `StateMachineEntityManager`. For EF6, use `EasyAF.Business.EF6`.
 
-On .NET 11, `DirectUpdate` / `DirectDelete` are stubbed until Z.EntityFramework.Plus ships an EF Core 11 package.
-
 Requires `EasyAF.Data.EFCore`.
 
 ## Documentation

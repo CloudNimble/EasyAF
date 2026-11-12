@@ -1,4 +1,4 @@
-<Project Sdk="DotNetDocs.Sdk/1.5.4">
+<Project Sdk="DotNetDocs.Sdk/1.5.5-preview.3">
 
     <PropertyGroup>
         <DocumentationType>Mintlify</DocumentationType>
@@ -43,7 +43,8 @@
                             <Pages>
                                 index;
                                 why-easyaf;
-                                quickstart
+                                quickstart;
+                                release-notes
                             </Pages>
                         </Group>
                         <Group Name="Guides" Icon="dog-leashed">
@@ -56,11 +57,15 @@
                                 guides/state-machines-and-status;
                                 guides/interval-calculations;
                                 guides/property-name-overrides;
+                                guides/dual-httpcontexts;
                                 guides/MSBuild/dotnet-10-changes;
                             </Pages>
                         </Group>
                     </Groups>
                 </Pages>
+                <Tabs>
+                    <Tab Name="Build For SI" Href="https://si.easyaf.dev" Position="End" />
+                </Tabs>
             </Navigation>
             <Interaction>
                 <Drilldown>true</Drilldown>
@@ -71,23 +76,15 @@
     <ItemGroup>
         <DocumentationReference Include="..\..\external\restier\src\Microsoft.Restier.Docs\Microsoft.Restier.Docs.docsproj" DestinationPath="restier" IntegrationType="Tabs" Name="REST APIs" />
 
-        <DocumentationReference Include="..\..\external\odata-mcp\src\Microsoft.OData.Mcp.Docs\Microsoft.OData.Mcp.Docs.docsproj" DestinationPath="odata-mcp" IntegrationType="Tabs" Name="AI for REST APIs" />
-
         <DocumentationReference Include="..\..\external\BlazorEssentials\src\CloudNimble.BlazorEssentials.Docs\CloudNimble.BlazorEssentials.Docs.docsproj" DestinationPath="blazoressentials" IntegrationType="Tabs" Name="Blazor UI" />
 
         <DocumentationReference Include="..\..\external\SimpleMessageBus\src\SimpleMessageBus.Docs\SimpleMessageBus.Docs.docsproj" DestinationPath="simplemessagebus" IntegrationType="Tabs" Name="Async Events" />
 
         <DocumentationReference Include="..\..\external\Breakdance\src\CloudNimble.Breakdance.Docs\Breakdance.Docs.docsproj" DestinationPath="breakdance" IntegrationType="Tabs" Name="Testing" />
-
-        <DocumentationReference Include="..\..\external\ClaudeEssentials\src\CloudNimble.ClaudeEssentials.Docs\CloudNimble.ClaudeEssentials.Docs.docsproj" DestinationPath="claudeessentials" IntegrationType="Tabs" Name="Building for Claude" />
     </ItemGroup>
 
     <ItemGroup>
         <None Include="**/*.jsx" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Include="guides\index.mdx" />
     </ItemGroup>
 
 </Project>

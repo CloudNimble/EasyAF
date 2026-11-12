@@ -7,16 +7,21 @@
     <BuildType Name="PROD" />
     <BuildType Name="Release" />
   </Configurations>
+  <Folder Name="/Benchmarks/">
+    <Project Path="CloudNimble.EasyAF.Benchmarks.Core/CloudNimble.EasyAF.Benchmarks.Core.csproj" />
+    <Project Path="CloudNimble.EasyAF.Benchmarks.EF6/CloudNimble.EasyAF.Benchmarks.EF6.csproj" />
+    <Project Path="CloudNimble.EasyAF.Benchmarks.EFCore/CloudNimble.EasyAF.Benchmarks.EFCore.csproj" />
+  </Folder>
   <Folder Name="/Core/">
     <Project Path="CloudNimble.EasyAF.Configuration/CloudNimble.EasyAF.Configuration.csproj" />
     <Project Path="CloudNimble.EasyAF.Core/CloudNimble.EasyAF.Core.csproj" />
+    <Project Path="CloudNimble.EasyAF.Extensions.Collections/CloudNimble.EasyAF.Extensions.Collections.csproj" />
     <Project Path="CloudNimble.EasyAF.Http.NewtonsoftJson/CloudNimble.EasyAF.Http.NewtonsoftJson.csproj" />
     <Project Path="CloudNimble.EasyAF.Http.SystemTextJson/CloudNimble.EasyAF.Http.SystemTextJson.csproj" />
     <Project Path="CloudNimble.EasyAF.Http/CloudNimble.EasyAF.Http.csproj" />
     <Project Path="CloudNimble.EasyAF.NewtonsoftJson.Compatibility/CloudNimble.EasyAF.NewtonsoftJson.Compatibility.csproj" />
     <Project Path="CloudNimble.EasyAF.ODataClient/CloudNimble.EasyAF.ODataClient.csproj" />
     <Project Path="CloudNimble.EasyAF.Restier.Breakdance/CloudNimble.EasyAF.Restier.Breakdance.csproj" />
-    <Project Path="CloudNimble.EasyAF.Extensions.Collections/CloudNimble.EasyAF.Extensions.Collections.csproj" />
     <Project Path="CloudNimble.EasyAF.Restier/CloudNimble.EasyAF.Restier.csproj" />
   </Folder>
   <Folder Name="/Docs/">
@@ -39,21 +44,21 @@
     <File Path=".runsettings" />
     <File Path="CLAUDE.md" />
     <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
     <File Path="easyaf-logo.png" />
     <File Path="easyaf.snk" />
     <File Path="global.json" />
     <File Path="SystemWebSdk.props" />
   </Folder>
   <Folder Name="/Tests/">
-    <Project Path="CloudNimble.EasyAF.Tests.Analyzers.EF6/CloudNimble.EasyAF.Tests.Analyzers.EF6.csproj">
-      <Build Solution="Debug|*" Project="false" />
-    </Project>
+    <Project Path="CloudNimble.EasyAF.Tests.Analyzers.EF6/CloudNimble.EasyAF.Tests.Analyzers.EF6.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.Business/CloudNimble.EasyAF.Tests.Business.EF6.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.CodeGen/CloudNimble.EasyAF.Tests.CodeGen.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.Configuration/CloudNimble.EasyAF.Tests.Configuration.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.Core/CloudNimble.EasyAF.Tests.Core.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.Data.EF6/CloudNimble.EasyAF.Tests.Data.EF6.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.EFCoreToEdmx/CloudNimble.EasyAF.Tests.EFCoreToEdmx.csproj" />
+    <Project Path="CloudNimble.EasyAF.Tests.Extensions.Collections/CloudNimble.EasyAF.Tests.Extensions.Collections.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.Http.NewtonsoftJson/CloudNimble.EasyAF.Tests.Http.NewtonsoftJson.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.Http.SystemTextJson/CloudNimble.EasyAF.Tests.Http.SystemTextJson.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.Http/CloudNimble.EasyAF.Tests.Http.csproj" />
@@ -62,7 +67,6 @@
     <Project Path="CloudNimble.EasyAF.Tests.Restier/CloudNimble.EasyAF.Tests.Restier.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.Shared/CloudNimble.EasyAF.Tests.Shared.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.Tools/CloudNimble.EasyAF.Tests.Tools.csproj" />
-    <Project Path="CloudNimble.EasyAF.Tests.Extensions.Collections/CloudNimble.EasyAF.Tests.Extensions.Collections.csproj" />
     <Project Path="CloudNimble.EasyAF.Tests.XmlDocumentation/CloudNimble.EasyAF.Tests.XmlDocumentation.csproj" Id="704244c3-ac6c-41a9-be2d-d7c9122d5174" />
   </Folder>
   <Folder Name="/Tools/" />

@@ -2,7 +2,6 @@
 
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;</TargetFrameworks>
-        <DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
         <DefineConstants>TRACE;EFCLASSIC</DefineConstants>
     </PropertyGroup>
     

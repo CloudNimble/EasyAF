@@ -1,0 +1,75 @@
+---
+title: TemplateNotFoundException
+description: "Thrown when a .NET SDK project template cannot be found in the installed SDK's templates folder."
+icon: file-brackets-curly
+keywords: ['TemplateNotFoundException', 'CloudNimble.EasyAF.Tools.Scaffolding.TemplateNotFoundException', 'CloudNimble.EasyAF.Tools.Scaffolding', 'class', 'System.Exception']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Scaffolding
+
+**Inheritance:** System.Exception
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Scaffolding.TemplateNotFoundException
+```
+
+## Summary
+
+Thrown when a .NET SDK project template cannot be found in the installed SDK's templates folder.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [TemplateNotFoundException](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/TemplateNotFoundException) class.
+
+#### Syntax
+
+```csharp
+public TemplateNotFoundException(string shortName, string searchedPath, string targetFramework)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `shortName` | `string` | The short name of the template that was requested. |
+| `searchedPath` | `string` | The folder that was searched for template packages. |
+| `targetFramework` | `string` | The target framework the template was requested for. |
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SearchedPath
+
+Gets the folder that was searched for template packages.
+
+#### Syntax
+
+```csharp
+public string SearchedPath { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ShortName
+
+Gets the short name of the template that was requested (for example, `classlib`).
+
+#### Syntax
+
+```csharp
+public string ShortName { get; }
+```
+
+#### Property Value
+
+Type: `string`
+

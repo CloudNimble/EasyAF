@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net11.0;net10.0</TargetFrameworks>
+        <OutputType>Exe</OutputType>
+        <IsPackable>false</IsPackable>
+        <RootNamespace>CloudNimble.EasyAF.Benchmarks</RootNamespace>
+        <!-- BenchmarkDotNet requires instance benchmark methods, even ones that touch no instance state. -->
+        <NoWarn>$(NoWarn);CA1822</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- Ben.TypeDictionary reproduces the EasyAF 4.x EntityManager lookup in the V4 managers. -->
+        <PackageReference Include="Ben.TypeDictionary" Version="[*, 2.0.0)" />
+        <PackageReference Include="BenchmarkDotNet" Version="0.15.*" />
+        <!-- The in-memory EF6 provider for SaveBenchmarks. Edmx.InMemoryDb targets EasyAF's EF6 port, not the EntityFramework package the apps use. -->
+        <PackageReference Include="Effort.EF6" Version="2.*" />
+    </ItemGroup>
+
+    <!--
+        Tests.Shared provides the EasyAF 5.0 EF6 model: EasyAFEntities, the entities, and ProductManager.
+        The EasyAF 4.x model is in the V4 folder. EF6 matches entity classes by name, so the V4 and V5 entities must stay in different assemblies.
+    -->
+    <ItemGroup>
+        <ProjectReference Include="..\CloudNimble.EasyAF.Tests.Shared\CloudNimble.EasyAF.Tests.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\CloudNimble.EasyAF.Benchmarks.Core\Program.cs" Link="Program.cs" />
+        <Compile Include="..\CloudNimble.EasyAF.Benchmarks.Core\V4\ClaimsPrincipalExtensions.cs" Link="V4\ClaimsPrincipalExtensions.cs" />
+        <Compile Include="..\CloudNimble.EasyAF.Benchmarks.Core\V4\EntityManagerHooks.cs" Link="V4\EntityManagerHooks.cs" />
+        <Compile Include="..\CloudNimble.EasyAF.Benchmarks.Core\V4\Entities\*.cs" LinkBase="V4\Entities" />
+    </ItemGroup>
+
+</Project>

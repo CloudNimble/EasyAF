@@ -8,6 +8,9 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+// RWM: These tests cover the obsolete converter until it is removed.
+#pragma warning disable CS0618
+
 namespace CloudNimble.EasyAF.Tests.Core.Converters
 {
 
@@ -96,6 +99,77 @@ namespace CloudNimble.EasyAF.Tests.Core.Converters
                 .And.NotContain(nameof(DbObservableObject.IsGraphChanged))
                 .And.NotContain(nameof(DbObservableObject.OriginalValues));
 
+        }
+
+        [TestMethod]
+        public void Factory_Serialize_OmitsAuditFieldsOnNestedEntities()
+        {
+            var jsonSerializerOptions = new JsonSerializerOptions
+            {
+                Converters =
+                {
+                    new IgnoreAuditFieldsJsonConverterFactory()
+                }
+            };
+
+            var tour = new AuditableTour
+            {
+                DateCreated = DateTimeOffset.UtcNow,
+                Headliner = new AuditableConcert { DateCreated = DateTimeOffset.UtcNow },
+            };
+
+            var result = JsonSerializer.Serialize(tour, jsonSerializerOptions);
+            result.Should().NotContain("DateCreated")
+                .And.Contain(nameof(AuditableTour.Headliner));
+        }
+
+        [TestMethod]
+        public void Factory_Serialize_HonorsNamingPolicy()
+        {
+            var jsonSerializerOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                Converters =
+                {
+                    new IgnoreAuditFieldsJsonConverterFactory()
+                }
+            };
+
+            var result = JsonSerializer.Serialize(new AuditableConcert { DateCreated = DateTimeOffset.UtcNow }, jsonSerializerOptions);
+            result.Should().Contain("\"id\"")
+                .And.NotContainEquivalentOf("dateCreated");
+        }
+
+        [TestMethod]
+        public void Factory_Serialize_HonorsWhenWritingDefault()
+        {
+            var jsonSerializerOptions = new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+                Converters =
+                {
+                    new IgnoreAuditFieldsJsonConverterFactory()
+                }
+            };
+
+            var result = JsonSerializer.Serialize(new AuditableConcert(), jsonSerializerOptions);
+            result.Should().Be("{}", because: "5.0 no longer writes Guid.Empty and other default values under WhenWritingDefault");
+        }
+
+        [TestMethod]
+        public void Factory_Serialize_WhenWritingNull_RestoresLegacyDefaultValues()
+        {
+            var jsonSerializerOptions = new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                Converters =
+                {
+                    new IgnoreAuditFieldsJsonConverterFactory()
+                }
+            };
+
+            var result = JsonSerializer.Serialize(new AuditableConcert(), jsonSerializerOptions);
+            result.Should().Be($"{{\"Id\":\"{Guid.Empty}\"}}");
         }
 
     }

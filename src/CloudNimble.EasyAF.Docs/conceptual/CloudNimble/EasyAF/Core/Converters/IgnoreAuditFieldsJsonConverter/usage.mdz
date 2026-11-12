@@ -1,5 +1,51 @@
-<!-- TODO: REMOVE THIS COMMENT AFTER YOU CUSTOMIZE THIS CONTENT -->
-# Usage
 
-Describe how to use `IgnoreAuditFieldsJsonConverter` here.
+<Warning>
+`IgnoreAuditFieldsJsonConverter` and `IgnoreAuditFieldsJsonConverterFactory` are obsolete as of EasyAF 5.0. Call `IgnoreAuditFields()` on your `JsonSerializerOptions` instead.
+</Warning>
 
+`IgnoreAuditFields()` stops `DateCreated`, `CreatedById`, `DateUpdated`, and `UpdatedById` from being written when any `DbObservableObject` is serialized. Audit fields are still read when deserializing. Use it on the client when you send entities back to an API, so the server stays the only source of audit values.
+
+## Migrating from the converter
+
+Remove the factory from `Converters`, and chain `IgnoreAuditFields()` onto the options:
+
+```csharp
+// EasyAF 4.x
+private JsonSerializerOptions jsonSerializerOptions = new()
+{
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+    Converters =
+    {
+        new JsonStringEnumConverter(),
+        new IgnoreAuditFieldsJsonConverterFactory()
+    },
+    TypeInfoResolver = new DefaultJsonTypeInfoResolver()
+};
+
+// EasyAF 5.0
+private JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions
+{
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+    Converters = { new JsonStringEnumConverter() },
+}.IgnoreAuditFields();
+```
+
+`IgnoreAuditFields()` returns the same instance, and must be called before the options are first used.
+
+## Native AOT and source generation
+
+If `TypeInfoResolver` is already set, `IgnoreAuditFields()` adds to it instead of replacing it, so it works with a source-generated context:
+
+```csharp
+[JsonSerializable(typeof(Scenario))]
+internal partial class AppJsonContext : JsonSerializerContext;
+
+var options = new JsonSerializerOptions
+{
+    TypeInfoResolver = AppJsonContext.Default,
+}.IgnoreAuditFields();
+```
+
+## Performance
+
+The audit properties are removed from each type's serialization contract once, the first time that type is serialized. After that, serialization runs at the same speed as plain System.Text.Json. The 4.x converter used reflection on every call. In EasyAF's benchmarks, serializing an entity dropped from 1,545.0 ns and 5,240 B to 111.2 ns and 416 B. See the [release notes](/release-notes) for the full comparison.

@@ -222,7 +222,7 @@
     </edmx:Mappings>
   </edmx:Runtime>
   <!--EF Designer content (Do not edit manually)-->
-  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx" xmlns:easyaf="http://schemas.cloudnimble.com/easyaf/2025/01/edmx">
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx" xmlns:easyaf="http://schemas.nimbleapps.cloud/easyaf/2025/01/edmx">
     <Connection>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />

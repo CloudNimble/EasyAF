@@ -1,0 +1,239 @@
+---
+title: ProjectGraphConfigurator
+description: "Applies a [ScaffoldProject](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/ScaffoldProject) description to a project file freshly created from an SDK te..."
+icon: file-brackets-curly
+keywords: ['ProjectGraphConfigurator', 'CloudNimble.EasyAF.Tools.Scaffolding.ProjectGraphConfigurator', 'CloudNimble.EasyAF.Tools.Scaffolding', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Scaffolding
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Scaffolding.ProjectGraphConfigurator
+```
+
+## Summary
+
+Applies a [ScaffoldProject](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/ScaffoldProject) description to a project file freshly created from an SDK template.
+
+## Remarks
+
+The SDK templates always add `ImplicitUsings` and `Nullable` (the class library and console templates through
+computed symbols a caller cannot set, the web template unconditionally), so they are removed here and the solution's
+`Directory.Build.props` decides. Reference groups are written immediately after the leading `PropertyGroup`,
+`PackageReference` first, then `ProjectReference`, entries alphabetical, versions as attributes.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [ProjectGraphConfigurator](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/ProjectGraphConfigurator) class.
+
+#### Syntax
+
+```csharp
+public ProjectGraphConfigurator(string solutionDirectory, string namespace)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `solutionDirectory` | `string` | The solution directory that contains one folder per project. |
+| `namespace` | `string` | The solution namespace that prefixes every project name. |
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Namespace
+
+Gets the solution namespace that prefixes every project name.
+
+#### Syntax
+
+```csharp
+public string Namespace { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SolutionDirectory
+
+Gets the solution directory that contains one folder per project.
+
+#### Syntax
+
+```csharp
+public string SolutionDirectory { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Configure
+
+Configures the project file at `{SolutionDirectory}/{name}/{name}.csproj`.
+
+#### Syntax
+
+```csharp
+public string Configure(CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldProject project)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `project` | `CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldProject` | The project description. |
+
+#### Returns
+
+Type: `string`
+The full path of the configured project file.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `FileNotFoundException` | Thrown when the project file does not exist. |
+| `InvalidOperationException` | Thrown when the project file cannot be loaded. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

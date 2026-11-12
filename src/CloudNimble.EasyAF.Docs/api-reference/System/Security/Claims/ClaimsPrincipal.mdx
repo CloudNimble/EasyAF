@@ -118,3 +118,75 @@ public static System.Guid GetIdClaim(System.Security.Claims.ClaimsPrincipal prin
 
 Type: `System.Guid`
 
+### <Icon icon="puzzle-piece" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> TryGetIdClaim <Badge color="green">Extension</Badge>
+
+<Note>Extension method from `System.Security.Claims.EasyAF_ClaimsPrincipalExtensions`</Note>
+
+Gets the current User's ID claim as a [Guid](/api-reference/System/Guid), without throwing when the claim is missing or malformed.
+
+#### Syntax
+
+```csharp
+public static bool TryGetIdClaim(System.Security.Claims.ClaimsPrincipal principal, out System.Guid id)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The ClaimsPrincipal instance we're extending. |
+| `id` | `System.Guid` | The ID, or [Empty](https://learn.microsoft.com/dotnet/api/system.guid.empty) when the claim is missing or not a valid [Guid](/api-reference/System/Guid). |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the claim exists and is a valid [Guid](/api-reference/System/Guid); otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> TryGetIdClaim <Badge color="green">Extension</Badge>
+
+<Note>Extension method from `System.Security.Claims.EasyAF_ClaimsPrincipalExtensions`</Note>
+
+Gets the current User's ID claim as an [Int32](https://learn.microsoft.com/dotnet/api/system.int32), for applications whose user IDs are integers.
+
+#### Syntax
+
+```csharp
+public static bool TryGetIdClaim(System.Security.Claims.ClaimsPrincipal principal, out int id)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The ClaimsPrincipal instance we're extending. |
+| `id` | `int` | The ID, or 0 when the claim is missing or not a valid [Int32](https://learn.microsoft.com/dotnet/api/system.int32). |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the claim exists and is a valid [Int32](https://learn.microsoft.com/dotnet/api/system.int32); otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="puzzle-piece" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> TryGetIdClaim <Badge color="green">Extension</Badge>
+
+<Note>Extension method from `System.Security.Claims.EasyAF_ClaimsPrincipalExtensions`</Note>
+
+Gets the current User's ID claim as a [Int64](https://learn.microsoft.com/dotnet/api/system.int64), for applications whose user IDs are 64-bit integers.
+
+#### Syntax
+
+```csharp
+public static bool TryGetIdClaim(System.Security.Claims.ClaimsPrincipal principal, out long id)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `principal` | `System.Security.Claims.ClaimsPrincipal` | The ClaimsPrincipal instance we're extending. |
+| `id` | `long` | The ID, or 0 when the claim is missing or not a valid [Int64](https://learn.microsoft.com/dotnet/api/system.int64). |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the claim exists and is a valid [Int64](https://learn.microsoft.com/dotnet/api/system.int64); otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+

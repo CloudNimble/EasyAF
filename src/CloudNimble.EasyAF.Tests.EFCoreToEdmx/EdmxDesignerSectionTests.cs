@@ -111,8 +111,10 @@ namespace CloudNimble.EasyAF.Tests.EFCoreToEdmx
             // Assert
             edmxContent.Should().Contain("xmlns=\"http://schemas.microsoft.com/ado/2009/11/edmx\"", 
                 "Designer should declare the EDMX namespace");
-            edmxContent.Should().Contain("xmlns:easyaf=\"http://schemas.cloudnimble.com/easyaf/2025/01/edmx\"", 
+            edmxContent.Should().Contain("xmlns:easyaf=\"http://schemas.nimbleapps.cloud/easyaf/2025/01/edmx\"",
                 "Designer should declare the EasyAF namespace for extensions");
+            edmxContent.Should().NotContain("schemas.cloudnimble.com",
+                "the legacy EasyAF namespace must not be written");
         }
 
         #endregion

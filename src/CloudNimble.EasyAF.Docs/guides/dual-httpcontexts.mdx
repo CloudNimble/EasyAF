@@ -1,0 +1,305 @@
+---
+title: 'Dual HttpContexts'
+sidebarTitle: 'Dual HttpContexts'
+description: 'Wrap in-process HTTP requests with DualHttpContextAccessor so existing IHttpContextAccessor code keeps working and the already-built pipeline handles the inner call.'
+icon: 'clone'
+---
+
+# Dual HttpContexts
+
+## Overview
+
+You already have a working ASP.NET Core pipeline: routing, authentication, OData, Restier, filters, formatters. Sometimes you need to call that same codebase from inside an incoming request — an MCP tool, a composite endpoint, an internal dispatcher.
+
+[`DualHttpContextAccessor`](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor) is an [`IHttpContextAccessor`](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor). It keeps two contexts on one execution: the **outer** request the host received, and an **inner** `HttpContext` you build and run through the pipeline you already have. `Start` and `End` turn a key: they rotate the inner context into the slot everyone reads, then rotate the outer context back. Existing services keep working because they already ask for `IHttpContextAccessor`. The inner call is `await pipeline(inner)` on the captured `RequestDelegate` — a second `HttpContext` on the host that is already running.
+
+EasyAF extracted this from [OData MCP](https://ai.easyaf.dev), where an MCP HTTP request has to execute OData URLs against the same app. The MCP type is `McpHttpContextAccessor`; `DualHttpContextAccessor` is the reusable version.
+
+## Why the built-in accessor cannot wrap a request
+
+`Microsoft.AspNetCore.Http.HttpContextAccessor` stores the current context in an `AsyncLocal` holder — a mutable box so request-end can reach every execution context that still has it.
+
+The setter's first job is to **null that holder**. Host middleware depends on this:
+
+1. `Initialize` assigns `HttpContext = incomingRequest`.
+2. `Dispose` assigns `HttpContext = null`, which poisons the shared holder so every `await` continuation sees the request as finished.
+
+If you assign an inner context through that setter, you poison the outer request. Continuations that still hold the old box see `HttpContext == null`. Controllers, Restier, link generators, and anything else that resolved `IHttpContextAccessor` mid-request all treat the incoming call as over.
+
+`DualHttpContextAccessor` keeps the same Initialize / Dispose contract on the setter. Nested work turns a key: `Start` and `End` rotate which context sits in `Active` and leave `Outer` in the cylinder.
+
+## Turning the key
+
+The holder is a cylinder. `Active` is the face the rest of the app reads — `HttpContext` always returns that face.
+
+| Property | Meaning |
+| --- | --- |
+| `Active` | The face of the cylinder. What `HttpContext` returns. Everyone else sees this. |
+| `Outer` | The incoming request, seated when the host initializes. Stays in the cylinder for the life of that request. |
+| `Inner` | The in-process wrapped request. `Start` seats it and turns it to the face. |
+
+When the host receives a request, it seats that request in the cylinder: **Outer** and **Active** are the incoming context. That is the default position of the key.
+
+`Start(inner)` **turns the key**. Inner slides into the face (`Active`). Outer stays in the cylinder — the incoming request is still there, just off the face. Every `IHttpContextAccessor.HttpContext` getter on this execution context now returns the inner request.
+
+`End()` **turns the key back**. The face is Outer again. Inner leaves the cylinder. `End` does not write to the outer response.
+
+You never pull the cylinder out and drop a new one in. That is what the setter does: it poisons the current holder and, if you assign a value, installs a new one. Turning the key keeps the same holder, the same Outer, and the same request-end broadcast when the host later assigns `null`.
+
+The turn survives `await` on the same execution context because the holder lives in `AsyncLocal`, like Microsoft's implementation.
+
+```csharp
+accessor.HttpContext = incomingRequest;          // host seats Outer; key at default
+InnerHttpContext.CopyFromOuter(inner, incomingRequest);
+accessor.Start(inner);                           // turn: Inner to the face
+try
+{
+    await pipeline(inner);
+}
+finally
+{
+    accessor.End();                              // turn back: Outer to the face
+}
+// host Dispose: accessor.HttpContext = null;    // poison the cylinder
+```
+
+Lifecycle:
+
+1. Host `Initialize` assigns `HttpContext = incoming`. That seats **Outer** and **Active**.
+2. Your executor calls `Start(inner)`. The key turns: **Active** and **Inner** become `inner`. **Outer** stays.
+3. `await pipeline(inner)` runs the already-built app against the face.
+4. `End()` in `finally` turns the key back: **Active** is **Outer**, **Inner** is cleared.
+5. Host `Dispose` assigns `HttpContext = null`, which poisons the holder the same way Microsoft's accessor does.
+
+## Register DualHttpContextAccessor as IHttpContextAccessor
+
+`DualHttpContextAccessor` implements `IHttpContextAccessor`. That is why existing code keeps working. Restier, `DefaultHttpContextFactory`, your controllers, and anything else from the outside world already take `IHttpContextAccessor`. They never ask for `HttpContextAccessor`. Register `DualHttpContextAccessor` as that interface and they receive this instance.
+
+Microsoft.Extensions.DependencyInjection is a FIFO store of service descriptors. `AddHttpContextAccessor()` puts `Microsoft.AspNetCore.Http.HttpContextAccessor` in that store as `IHttpContextAccessor`. That is a different type, with the setter that poisons Outer. **Do not call `AddHttpContextAccessor`.** `DualHttpContextAccessor` is the `IHttpContextAccessor` for this host.
+
+Keep the concrete type in the container as well. `Start`, `End`, and `Outer` live on `DualHttpContextAccessor`; they are not on the interface. The executor that turns the key injects the concrete type. Everyone else injects `IHttpContextAccessor` and reads `HttpContext`.
+
+```csharp
+services.TryAddSingleton<DualHttpContextAccessor>();
+services.AddSingleton<IHttpContextAccessor>(sp =>
+    sp.GetRequiredService<DualHttpContextAccessor>());
+```
+
+OData MCP registers `McpHttpContextAccessor` the same way: one implementation, exposed as `IHttpContextAccessor`, so the OData stack and the rest of the app keep their existing constructors.
+
+<Warning>
+Do not call `AddHttpContextAccessor()` in the same host. That registers `HttpContextAccessor` as `IHttpContextAccessor` and puts a second, incompatible implementation in the FIFO store.
+</Warning>
+
+<Note>
+`DualHttpContextAccessor` and [`InnerHttpContext`](/api-reference/CloudNimble/EasyAF/Http/InnerHttpContext) ship in `CloudNimble.EasyAF.Http` for `net10.0` and `net11.0`. They are omitted from `netstandard2.0` because they need `Microsoft.AspNetCore.Http`.
+</Note>
+
+## Capture the pipeline you already built
+
+The inner call is a `RequestDelegate` invoke. Capture that delegate when the host starts, with an `IStartupFilter` that records the next middleware and then passes it through:
+
+```csharp
+public sealed class AppPipeline
+{
+    public bool IsEnabled { get; set; }
+    public RequestDelegate Pipeline { get; set; }
+}
+
+public sealed class AppPipelineStartupFilter : IStartupFilter
+{
+    private readonly AppPipeline _pipeline;
+
+    public AppPipelineStartupFilter(AppPipeline pipeline)
+    {
+        _pipeline = pipeline;
+    }
+
+    public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
+    {
+        return app =>
+        {
+            app.Use(following =>
+            {
+                _pipeline.Pipeline = following;
+                return following;
+            });
+            next(app);
+        };
+    }
+}
+```
+
+Register the filter **before** `Build()`. Capture always runs so it wraps `Configure`, including your `Use*` method. Execution still requires the enabled flag:
+
+```csharp
+services.TryAddSingleton<AppPipeline>();
+services.TryAddEnumerable(
+    ServiceDescriptor.Transient<IStartupFilter, AppPipelineStartupFilter>());
+
+// after MapControllers / MapODataRoute / MapApiRoute:
+app.ApplicationServices.GetRequiredService<AppPipeline>().IsEnabled = true;
+```
+
+That `RequestDelegate` is the pipeline you already configured: routing, endpoints, MVC, OData, Restier, your middleware. You invoke it with a new `HttpContext` on the same host.
+
+## Build the inner context
+
+Construct a `DefaultHttpContext` (or use `IHttpContextFactory.Create`). [`InnerHttpContext`](/api-reference/CloudNimble/EasyAF/Http/InnerHttpContext) copies origin, identity, and headers; it does not construct the context, so it can stay on `Microsoft.AspNetCore.Http.Abstractions`.
+
+```csharp
+using var scope = scopeFactory.CreateScope();
+var inner = new DefaultHttpContext
+{
+    RequestServices = scope.ServiceProvider,
+    RequestAborted = cancellationToken
+};
+
+InnerHttpContext.CopyFromOuter(inner, accessor.Outer);
+InnerHttpContext.ConfigureRequest(
+    inner,
+    method: "GET",
+    path: "/odata/Customers",
+    query: QueryString.Empty);
+inner.Request.Headers.Accept = "application/json";
+inner.Response.Body = new MemoryStream();
+```
+
+`CopyFromOuter` copies:
+
+- **Scheme, host, path base** from the outer request so generated links match the public URL (`@odata.context`, `@odata.nextLink`, `IUrlHelper`).
+- **User** so the inner call runs as the same principal.
+- **Request headers**, except [`InnerHttpContext.SkippedRequestHeaders`](/api-reference/CloudNimble/EasyAF/Http/InnerHttpContext#skippedrequestheaders).
+
+When there is no outer request (a background job, a test), `CopyFromOuter` uses `http` / `localhost` and an empty principal.
+
+Give the inner call:
+
+- A **new `IServiceScope`**, so scoped services (`DbContext`, user accessors) are a fresh unit of work.
+- A **new `MemoryStream` for `Response.Body`**. Sharing the outer response writes inner bytes onto the client's socket.
+
+### Headers that stay on the outer request
+
+`SkippedRequestHeaders` drops hop-by-hop, entity-body, `Host`, `Accept`, and HTTP conditionals. Those describe the outer request (an MCP POST, a webhook, a composite call), not the resource you are wrapping:
+
+`Accept`, `Accept-Encoding`, `Connection`, `Content-Encoding`, `Content-Length`, `Content-Type`, `Expect`, `Host`, `If-Match`, `If-Modified-Since`, `If-None-Match`, `If-Range`, `If-Unmodified-Since`, `Keep-Alive`, `Proxy-Authenticate`, `Proxy-Authorization`, `Range`, `TE`, `Trailer`, `Transfer-Encoding`, `Upgrade`.
+
+Set `Accept` (and `Content-Type` plus a body for writes) on the inner call yourself. `ConfigureRequest` can attach a replacement body and content type in one step.
+
+## Start, invoke, End
+
+```csharp
+public async Task<InnerResult> ExecuteAsync(
+    string method,
+    string path,
+    QueryString query,
+    CancellationToken cancellationToken)
+{
+    var pipeline = _pipeline.Pipeline;
+    if (!_pipeline.IsEnabled || pipeline is null)
+    {
+        throw new InvalidOperationException(
+            "In-process execution requires the pipeline capture to be enabled.");
+    }
+
+    var outer = _accessor.Outer;
+    using var scope = _scopeFactory.CreateScope();
+    var inner = new DefaultHttpContext
+    {
+        RequestAborted = cancellationToken,
+        RequestServices = scope.ServiceProvider
+    };
+
+    InnerHttpContext.CopyFromOuter(inner, outer);
+    InnerHttpContext.ConfigureRequest(inner, method, path, query);
+    inner.Request.Headers.Accept = "application/json";
+    inner.Response.Body = new MemoryStream();
+
+    _accessor.Start(inner);   // turn the key: Inner to the face
+    try
+    {
+        await pipeline(inner);
+    }
+    finally
+    {
+        _accessor.End();      // turn the key back: Outer to the face
+    }
+
+    if (inner.Response.Body.CanSeek)
+    {
+        inner.Response.Body.Seek(0, SeekOrigin.Begin);
+    }
+
+    return new InnerResult
+    {
+        StatusCode = inner.Response.StatusCode,
+        ContentType = inner.Response.ContentType,
+        Body = inner.Response.Body
+    };
+}
+```
+
+During the `try`, the key is turned: every `IHttpContextAccessor.HttpContext` read on this execution context is the inner request. `End` turns it back, and those reads are the outer request again.
+
+<Warning>
+Always call `End()` in `finally`. An exception from the inner pipeline would otherwise leave the key turned, with `Active` pointing at a disposed inner context, and the outer request would keep seeing the wrap.
+</Warning>
+
+## Worked example: OData MCP
+
+When an MCP tool needs `Customers`, `InProcessODataExecutor` in `Microsoft.OData.Mcp.AspNetCore` does this wrap against the host that is already serving MCP:
+
+1. Reads `Outer` from `McpHttpContextAccessor` (the MCP HTTP request).
+2. Creates a request scope.
+3. Builds a `DefaultHttpContext` for `GET /{odataPrefix}/Customers` with the public host, the MCP user, `Accept: application/json`, and a `MemoryStream` response. Hop-by-hop and conditional headers from the MCP POST stay off the inner call.
+4. `Start(inner)` — turns the key so the OData stack sees the inner context.
+5. `await capturedPipeline(inner)` — the same `RequestDelegate` that handles browser GETs.
+6. `End()` in `finally` — turns the key back so the MCP request is on the face again.
+7. Rewinds the response and maps status, body, and content type onto the tool result.
+
+The OData stack, Restier, authorization filters, and formatters run as they would for a normal GET. They take `IHttpContextAccessor`; while the key is turned they read the inner context, then the MCP request again after `End`. The MCP request stays alive on the same host, and the inner call is a `RequestDelegate` invoke.
+
+`AddODataMcp` registers `McpHttpContextAccessor` as `IHttpContextAccessor` and an `IStartupFilter` that captures the pipeline. `UseODataMcp` is the on switch (`ODataMcpPipeline.IsEnabled = true`). EasyAF's `DualHttpContextAccessor` plus `InnerHttpContext` are that accessor and that copy/configure helper, ready for any inner URL your app already knows how to serve.
+
+## What existing code continues to do
+
+- Services that inject `IHttpContextAccessor` see whichever context is on the face of the cylinder. While the key is turned, that is the inner request; after `End`, that is the outer request.
+- Link generation uses the copied scheme, host, and path base.
+- `HttpContext.User` is the outer user (unless you replace it on the inner context).
+- Host `Initialize` and `Dispose` still assign `HttpContext`, so request-end still broadcasts to every execution context.
+
+You register `DualHttpContextAccessor` as `IHttpContextAccessor`, capture the `RequestDelegate`, and turn the key around the wrap. Callers that already take `IHttpContextAccessor` keep those constructors.
+
+## Pitfalls
+
+### Assigning `HttpContext` for the inner call
+
+`accessor.HttpContext = inner` pulls the cylinder out and poisons `Outer`. Turn the key with `Start(inner)`.
+
+The setter is for the host: incoming request in, `null` out. `Start` / `End` rotate the face.
+
+### Sharing `Response.Body`
+
+Give the inner context its own `MemoryStream`. The outer response belongs to the client that called you.
+
+### Running in the outer request scope
+
+Create a new `IServiceScope` for the inner call. Sharing the outer `DbContext` mixes two units of work on one scoped instance.
+
+### Replaying every outer header
+
+`Accept`, `Content-Type`, `If-None-Match`, `Host`, `Connection`, and `Transfer-Encoding` describe the outer request. Use `InnerHttpContext.CopyFromOuter` (or the same skip list) and set inner `Accept` / body headers yourself.
+
+### Capturing the pipeline too late
+
+The `IStartupFilter` must be in DI before `Build()`. Flip the enabled flag in your `Use*` method after routes are mapped.
+
+### `Start` with no outer request
+
+`Start` is valid when the host has not assigned `HttpContext` yet (a background job). `Outer` stays null, `CopyFromOuter` falls back to `localhost`, and `End` restores `Active` to null. Prefer a real outer request when you need public URLs and the caller's identity.
+
+## See also
+
+- [`DualHttpContextAccessor`](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor) — `Active` / `Outer` / `Inner`, `Start`, `End`
+- [`InnerHttpContext`](/api-reference/CloudNimble/EasyAF/Http/InnerHttpContext) — `CopyFromOuter`, `ConfigureRequest`, `SkippedRequestHeaders`
+- [Build For AI](https://ai.easyaf.dev) — OData MCP, the production wrap this pattern came from

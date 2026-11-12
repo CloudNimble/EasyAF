@@ -242,6 +242,74 @@ namespace CloudNimble.EasyAF.Tests.CodeGen.Core
             appointmentEntity.EntityType.Properties.Should().Contain(p => p.Name == "CreatedDateTime");
         }
 
+        [TestMethod]
+        [DataRow("http://schemas.nimbleapps.cloud/easyaf/2025/01/edmx", DisplayName = "Current namespace")]
+        [DataRow("http://schemas.cloudnimble.com/easyaf/2025/01/edmx", DisplayName = "Legacy namespace")]
+        public void CanExtractOnModelCreatingFromEasyAFExtensions(string easyafNamespace)
+        {
+            // Arrange
+            var edmx = $$"""
+                <?xml version="1.0" encoding="utf-8"?>
+                <edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+                    <edmx:Runtime>
+                        <edmx:StorageModels>
+                            <Schema Namespace="TestModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+                                <EntityType Name="Events">
+                                    <Key>
+                                        <PropertyRef Name="Id" />
+                                    </Key>
+                                    <Property Name="Id" Type="int" Nullable="false" />
+                                </EntityType>
+                                <EntityContainer Name="TestModelStoreContainer">
+                                    <EntitySet Name="Events" EntityType="TestModel.Store.Events" />
+                                </EntityContainer>
+                            </Schema>
+                        </edmx:StorageModels>
+                        <edmx:ConceptualModels>
+                            <Schema Namespace="TestModel" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+                                <EntityType Name="Event">
+                                    <Key>
+                                        <PropertyRef Name="Id" />
+                                    </Key>
+                                    <Property Name="Id" Type="Int32" Nullable="false" />
+                                </EntityType>
+                                <EntityContainer Name="TestContext">
+                                    <EntitySet Name="Events" EntityType="Self.Event" />
+                                </EntityContainer>
+                            </Schema>
+                        </edmx:ConceptualModels>
+                        <edmx:Mappings>
+                            <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+                                <EntityContainerMapping StorageEntityContainer="TestModelStoreContainer" CdmEntityContainer="TestContext">
+                                    <EntitySetMapping Name="Events">
+                                        <EntityTypeMapping TypeName="TestModel.Event">
+                                            <MappingFragment StoreEntitySet="Events">
+                                                <ScalarProperty Name="Id" ColumnName="Id" />
+                                            </MappingFragment>
+                                        </EntityTypeMapping>
+                                    </EntitySetMapping>
+                                </EntityContainerMapping>
+                            </Mapping>
+                        </edmx:Mappings>
+                    </edmx:Runtime>
+                    <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx" xmlns:easyaf="{{easyafNamespace}}">
+                        <easyaf:Extensions>
+                            <easyaf:OnModelCreating><![CDATA[protected override void OnModelCreating(ModelBuilder modelBuilder) { }]]></easyaf:OnModelCreating>
+                        </easyaf:Extensions>
+                    </Designer>
+                </edmx:Edmx>
+                """;
+
+            // Act
+            var loader = new EdmxLoader();
+            loader.Load(edmx);
+
+            // Assert
+            loader.EdmxSchemaErrors.Should().BeEmpty();
+            loader.OnModelCreatingMethod.Should().Be("protected override void OnModelCreating(ModelBuilder modelBuilder) { }");
+            loader.IsEFCore.Should().BeTrue();
+        }
+
     }
 
 }

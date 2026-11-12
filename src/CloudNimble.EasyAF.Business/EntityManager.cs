@@ -1,5 +1,4 @@
-﻿using Ben.Collections;
-using CloudNimble.EasyAF.Core;
+﻿using CloudNimble.EasyAF.Core;
 using CloudNimble.SimpleMessageBus.Publish;
 using System;
 using System.Collections.Generic;
@@ -30,7 +29,7 @@ namespace CloudNimble.EasyAF.Business
     /// - User tracking for entities implementing <see cref="ICreatorTrackable{T}"/>, <see cref="IUpdaterTrackable{T}"/>
     /// - Virtual hooks for custom business logic before and after CRUD operations
     /// - Batch operations support for improved performance
-    /// - Thread-safe interface caching for performance optimization
+    /// - Allocation-free audit field population using direct interface type checks (Guid IDs checked first)
     /// </remarks>
     /// <example>
     /// <code>
@@ -58,22 +57,7 @@ namespace CloudNimble.EasyAF.Business
         where TEntity : class
     {
 
-        #region Private Static Members
-
-        internal static readonly TypeDictionary<Type[]> InterfaceDictionary;
-
-        #endregion
-
         #region Constructors
-
-        /// <summary>
-        /// Initializes static members of the <see cref="EntityManager{TContext, TEntity}"/> class.
-        /// Sets up the interface cache for performance optimization of runtime interface checking.
-        /// </summary>
-        static EntityManager()
-        {
-            InterfaceDictionary = new TypeDictionary<Type[]>();
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EntityManager{TContext, TEntity}"/> class.
@@ -82,10 +66,6 @@ namespace CloudNimble.EasyAF.Business
         /// <param name="messagePublisher">The message publisher instance for publishing events. Should be injected by the DI container.</param>
         public EntityManager(TContext dataContext, IMessagePublisher messagePublisher) : base(dataContext, messagePublisher)
         {
-            if (!InterfaceDictionary.ContainsKey(typeof(TEntity)))
-            {
-                InterfaceDictionary[typeof(TEntity)] = typeof(TEntity).GetInterfaces();
-            }
         }
 
         #endregion
@@ -107,15 +87,10 @@ namespace CloudNimble.EasyAF.Business
         {
             Ensure.ArgumentNotNull(entity, nameof(entity));
 
-            var entityType = entity.GetType();
-            if (InterfaceDictionary[entityType].Any(c => c.Name == typeof(ICreatorTrackable<>).Name) && ClaimsPrincipal.Current is not null)
+            SetCreatedById(entity);
+            if (entity is ICreatedAuditable created)
             {
-                // TODO: RWM: This probably need to figure out how to check the type and make sure we don't just assume GUIDs.
-                (entity as ICreatorTrackable<Guid>).CreatedById = ClaimsPrincipal.Current.GetIdClaim();
-            }
-            if (InterfaceDictionary[entityType].Any(c => c == typeof(ICreatedAuditable)))
-            {
-                (entity as ICreatedAuditable).DateCreated = DateTime.UtcNow;
+                created.DateCreated = DateTime.UtcNow;
             }
             await Task.CompletedTask.ConfigureAwait(false);
         }
@@ -146,15 +121,10 @@ namespace CloudNimble.EasyAF.Business
         {
             Ensure.ArgumentNotNull(entity, nameof(entity));
 
-            var entityType = entity.GetType();
-            if (InterfaceDictionary[entityType].Any(c => c.Name == typeof(IUpdaterTrackable<>).Name) && ClaimsPrincipal.Current is not null)
+            SetUpdatedById(entity);
+            if (entity is IUpdatedAuditable updated)
             {
-                // TODO: RWM: This probably need to figure out how to check the type and make sure we don't just assume GUIDs.
-                (entity as IUpdaterTrackable<Guid>).UpdatedById = ClaimsPrincipal.Current.GetIdClaim();
-            }
-            if (InterfaceDictionary[entityType].Any(c => c == typeof(IUpdatedAuditable)))
-            {
-                (entity as IUpdatedAuditable).DateUpdated = DateTime.UtcNow;
+                updated.DateUpdated = DateTime.UtcNow;
             }
             await Task.CompletedTask.ConfigureAwait(false);
         }
@@ -619,29 +589,105 @@ namespace CloudNimble.EasyAF.Business
         /// <param name="entity">The entity whose audit properties should be reset.</param>
         public void ResetAuditProperties<TDbObservable>(TDbObservable entity) where TDbObservable : DbObservableObject
         {
-            var entityType = entity.GetType();
-            if (!InterfaceDictionary.ContainsKey(entityType))
+            SetCreatedById(entity);
+            if (entity is ICreatedAuditable created)
             {
-                InterfaceDictionary[entityType] = entityType.GetInterfaces();
+                created.DateCreated = DateTime.UtcNow;
             }
 
-            if (InterfaceDictionary[entityType].Any(c => c.Name == typeof(ICreatorTrackable<>).Name))
+            ClearUpdatedById(entity);
+            if (entity is IUpdatedAuditable updated)
             {
-                // TODO: RWM: This probably need to figure out how to check the type and make sure we don't just assume GUIDs.
-                (entity as ICreatorTrackable<Guid>).CreatedById = ClaimsPrincipal.Current.GetIdClaim();
+                updated.DateUpdated = null;
             }
-            if (InterfaceDictionary[entityType].Any(c => c == typeof(ICreatedAuditable)))
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        // RWM: These run on every insert and update, so they use plain type checks (isinst) instead of reflection or cache lookups.
+        //      Guid is the EasyAF default, so it's always checked first.
+
+        /// <summary>
+        /// Sets <see cref="ICreatorTrackable{T}.CreatedById"/> from the current user's ID claim. Supports <see cref="Guid"/>, <see cref="int"/>,
+        /// and <see cref="long"/> IDs. Leaves the value untouched when there is no current user, or when an <see cref="int"/> or
+        /// <see cref="long"/> claim is missing or malformed.
+        /// </summary>
+        /// <param name="entity">The entity to update.</param>
+        private static void SetCreatedById(object entity)
+        {
+            if (entity is ICreatorTrackable<Guid> guidCreator)
             {
-                (entity as ICreatedAuditable).DateCreated = DateTime.UtcNow;
+                var user = ClaimsPrincipal.Current;
+                if (user is not null)
+                {
+                    guidCreator.CreatedById = user.GetIdClaim();
+                }
             }
-            if (InterfaceDictionary[entityType].Any(c => c.Name == typeof(IUpdaterTrackable<>).Name))
+            else if (entity is ICreatorTrackable<int> intCreator)
             {
-                // TODO: RWM: This probably need to figure out how to check the type and make sure we don't just assume GUIDs.
-                (entity as IUpdaterTrackable<Guid>).UpdatedById = null;
+                if (ClaimsPrincipal.Current?.TryGetIdClaim(out int id) == true)
+                {
+                    intCreator.CreatedById = id;
+                }
             }
-            if (InterfaceDictionary[entityType].Any(c => c == typeof(IUpdatedAuditable)))
+            else if (entity is ICreatorTrackable<long> longCreator)
             {
-                (entity as IUpdatedAuditable).DateUpdated = null;
+                if (ClaimsPrincipal.Current?.TryGetIdClaim(out long id) == true)
+                {
+                    longCreator.CreatedById = id;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets <see cref="IUpdaterTrackable{T}.UpdatedById"/> from the current user's ID claim, with the same rules as <see cref="SetCreatedById(object)"/>.
+        /// </summary>
+        /// <param name="entity">The entity to update.</param>
+        private static void SetUpdatedById(object entity)
+        {
+            if (entity is IUpdaterTrackable<Guid> guidUpdater)
+            {
+                var user = ClaimsPrincipal.Current;
+                if (user is not null)
+                {
+                    guidUpdater.UpdatedById = user.GetIdClaim();
+                }
+            }
+            else if (entity is IUpdaterTrackable<int> intUpdater)
+            {
+                if (ClaimsPrincipal.Current?.TryGetIdClaim(out int id) == true)
+                {
+                    intUpdater.UpdatedById = id;
+                }
+            }
+            else if (entity is IUpdaterTrackable<long> longUpdater)
+            {
+                if (ClaimsPrincipal.Current?.TryGetIdClaim(out long id) == true)
+                {
+                    longUpdater.UpdatedById = id;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clears <see cref="IUpdaterTrackable{T}.UpdatedById"/>, whatever its ID type.
+        /// </summary>
+        /// <param name="entity">The entity to update.</param>
+        private static void ClearUpdatedById(object entity)
+        {
+            if (entity is IUpdaterTrackable<Guid> guidUpdater)
+            {
+                guidUpdater.UpdatedById = null;
+            }
+            else if (entity is IUpdaterTrackable<int> intUpdater)
+            {
+                intUpdater.UpdatedById = null;
+            }
+            else if (entity is IUpdaterTrackable<long> longUpdater)
+            {
+                longUpdater.UpdatedById = null;
             }
         }
 

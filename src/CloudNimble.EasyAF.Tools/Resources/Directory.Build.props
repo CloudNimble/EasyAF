@@ -1,0 +1,146 @@
+<Project>
+
+    <PropertyGroup>
+        <IsBenchmarkProject Condition="$(MSBuildProjectName.ToLower().Contains('.benchmarks'))">true</IsBenchmarkProject>
+        <IsTestProject Condition="$(MSBuildProjectName.ToLower().Contains('.tests.')) == 'true' AND $(MSBuildProjectName.ToLower().EndsWith('.tests.web')) != 'true'">true</IsTestProject>
+        <IsTestAssetProject Condition="$(RepoRelativeProjectDir.Contains('.resources'))">true</IsTestAssetProject>
+        <IsSampleProject Condition="$(MSBuildProjectName.ToLower().Contains('.samples.'))">true</IsSampleProject>
+        <IsTemplateProject Condition="$(MSBuildProjectName.ToLower().Contains('.templates.'))">true</IsTemplateProject>
+        <IsTemplatePackageProject Condition="$(MSBuildProjectName.ToLower().Contains('.templates.package'))">true</IsTemplatePackageProject>
+        <IsDatabaseProject Condition="$(MSBuildProjectName.ToLower().EndsWith('.database'))">true</IsDatabaseProject>
+        <IsWebProject Condition="$(MSBuildProjectName.ToLower().Contains('.web.')) == 'true' or $(MSBuildProjectName.ToLower().EndsWith('.api')) == 'true'">true</IsWebProject>
+        <IsPrimaryProject Condition=" ('$(IsBenchmarkProject)' != 'true' And '$(IsTestProject)' != 'true' And '$(IsTestAssetProject)' != 'true' And '$(IsSampleProject)' != 'true' And '$(IsDatabaseProject)' != 'true' And '$(IsWebProject)' != 'true') or '$(IsTemplatePackageProject)' == 'true' ">true</IsPrimaryProject>
+        <IncludeReadmeFile Condition="Exists('$(MSBuildProjectDirectory)\readme.md')">true</IncludeReadmeFile>
+        <!-- TODO: Add a package icon at the solution root and uncomment to include it in NuGet packages. -->
+        <!--<IncludePackageIcon Condition="Exists('$(MSBuildThisFileDirectory)\{{Product}}-logo.png')">true</IncludePackageIcon>-->
+
+        <IncludeSource>false</IncludeSource>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+        <LangVersion>latest</LangVersion>
+
+        <DefaultItemExcludes>$(DefaultItemExcludes);*.csproj.vspscc</DefaultItemExcludes>
+        <Configurations>Debug;Release;DEV;BETA;PROD</Configurations>
+        <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+
+        <EasyAFNamespace>{{Namespace}}</EasyAFNamespace>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Product>{{Product}}</Product>
+        <PackageVersion>1.0.0-pre</PackageVersion>
+        <Authors>{{Company}}</Authors>
+        <Company>{{Company}}</Company>
+        <Copyright>Copyright © {{Year}} {{Company}}. All rights reserved.</Copyright>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <!-- TODO: Choose a license for any packages you publish, then uncomment. -->
+        <!--<PackageLicenseExpression>MIT</PackageLicenseExpression>-->
+        <PackageReadmeFile Condition="$(IncludeReadmeFile) == 'true'">readme.md</PackageReadmeFile>
+
+        <!-- Suppress a warning about upcoming deprecation of PackageLicenseUrl. -->
+        <NoWarn>$(NoWarn);NU5125</NoWarn>
+        <!-- Suppress warnings about using SemVer 2.0. -->
+        <NoWarn>$(NoWarn);NU5105</NoWarn>
+
+        <!--<PackageIcon Condition="$(IncludePackageIcon) == 'true'">{{Product}}-logo.png</PackageIcon>-->
+        <PackageTags>{{Product}}</PackageTags>
+        <Serviceable>true</Serviceable>
+
+        <RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+
+    <!-- Compilation options -->
+    <PropertyGroup>
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+
+        <!-- Instructs the compiler to use SHA256 instead of SHA1 when adding file hashes to PDBs. -->
+        <ChecksumAlgorithm>SHA256</ChecksumAlgorithm>
+
+        <!-- Fixes a common error in targets implementing a NoBuild mode. -->
+        <BuildProjectReferences Condition=" '$(NoBuild)' == 'true' ">false</BuildProjectReferences>
+
+        <!-- Suppress warnings about uninstantiated classes. -->
+        <NoWarn>$(NoWarn);CA1812</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" $(IsTestProject) == 'true' ">
+        <NoWarn>$(NoWarn);CA1001;CA1707;CA2007;CA1801;CS1591;CS8002</NoWarn>
+
+        <EnableMSTestRunner>true</EnableMSTestRunner>
+        <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
+        <TestingPlatformCommandLineArguments>$(TestingPlatformCommandLineArguments) --ignore-exit-code 8</TestingPlatformCommandLineArguments>
+
+        <IsPackable>false</IsPackable>
+        <IsPublishable>false</IsPublishable>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" $(IsSampleProject) == 'true' ">
+        <NoWarn>$(NoWarn);CA1001;CA1707;CA1716;CA1801;CA1822</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(IsPrimaryProject)' == 'true' And '$(IsWebProject)' != 'true' ">
+        <NoWarn>$(NoWarn);CA1707</NoWarn>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <!-- DocumentationFile is set in Directory.Build.targets, where AssemblyName is available. -->
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+        <IsPublishable>false</IsPublishable>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(IsTemplateProject)' == 'true' AND '$(IsTemplatePackageProject)' != 'true' ">
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <SkipDefaultEditorConfigAsAdditionalFile>true</SkipDefaultEditorConfigAsAdditionalFile>
+        <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+    </PropertyGroup>
+
+    <ItemGroup Condition=" '$(EasyAFProjectType)' != '' ">
+        <PackageReference Include="EasyAF.Analyzers.EF6" Version="{{EasyAFPackageVersion}}">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <AdditionalFiles Include="..\{{Namespace}}.Data\*.edmx" Link="EasyAF\\%(FileName).edmx" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(IsPrimaryProject)' == 'true'">
+        <InternalsVisibleTo Include="$(AssemblyName.Replace('{{Namespace}}.', '{{Namespace}}.Tests.'))" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" $(IsTestProject) == 'true' ">
+        <PackageReference Include="FluentAssertions" Version="7.*" PrivateAssets="All" />
+        <PackageReference Include="FluentAssertions.Analyzers" Version="0.*" PrivateAssets="All" />
+        <PackageReference Include="MSTest" Version="4.*" />
+
+        <!-- Enable parallel test execution in MSTest 4 and later. -->
+        <AssemblyAttribute Include="Microsoft.VisualStudio.TestTools.UnitTesting.Parallelize">
+            <_Parameter1>Workers = 0</_Parameter1>
+            <_Parameter1_IsLiteral>true</_Parameter1_IsLiteral>
+            <_Parameter2>Scope = Microsoft.VisualStudio.TestTools.UnitTesting.ExecutionScope.MethodLevel</_Parameter2>
+            <_Parameter2_IsLiteral>true</_Parameter2_IsLiteral>
+        </AssemblyAttribute>
+
+        <None Remove="appsettings*json" />
+
+        <Content Include="appsettings*json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
+
+        <Content Update="appsettings.*.json">
+            <DependentUpon>appsettings.json</DependentUpon>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <!--<None Include="$(MSBuildThisFileDirectory){{Product}}-logo.png" Pack="true" PackagePath="\" Condition=" $(IncludePackageIcon) == 'true' And $(IsTestProject) != 'true' " />-->
+        <None Include="readme.md" Pack="true" PackagePath="\" Condition="$(IncludeReadmeFile) == 'true'" />
+    </ItemGroup>
+
+</Project>

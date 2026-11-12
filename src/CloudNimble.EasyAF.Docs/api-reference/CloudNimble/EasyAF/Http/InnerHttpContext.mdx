@@ -1,0 +1,131 @@
+---
+title: InnerHttpContext
+description: "Copies origin, identity, and headers from an outer [HttpContext](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpcontext) onto an inner ..."
+icon: bolt
+tag: "STATIC"
+keywords: ['InnerHttpContext', 'CloudNimble.EasyAF.Http.InnerHttpContext', 'CloudNimble.EasyAF.Http', 'class', 'System.Object']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Http.dll
+
+**Namespace:** CloudNimble.EasyAF.Http
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Http.InnerHttpContext
+```
+
+## Summary
+
+Copies origin, identity, and headers from an outer [HttpContext](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpcontext) onto an inner
+in-process request so the inner pipeline sees the public URL and the same user.
+
+## Remarks
+
+The caller constructs the inner [HttpContext](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpcontext) (typically `new DefaultHttpContext()` in
+an ASP.NET Core app, or [IFeatureCollection)](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextfactory.create(microsoft.aspnetcore.http.features.ifeaturecollection))). This type stays on
+`Microsoft.AspNetCore.Http.Abstractions` and does not construct a context.
+
+## Examples
+
+```csharp
+var inner = new DefaultHttpContext
+{
+    RequestServices = scope.ServiceProvider,
+    RequestAborted = cancellationToken
+};
+InnerHttpContext.CopyFromOuter(inner, outer);
+InnerHttpContext.ConfigureRequest(inner, "GET", "/odata/Customers", QueryString.Empty);
+inner.Request.Headers["Accept"] = "application/json";
+inner.Response.Body = new MemoryStream();
+```
+
+## Methods
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ConfigureRequest
+
+Sets method, path, and query on *inner*, and optionally replaces the request body.
+
+#### Syntax
+
+```csharp
+public static void ConfigureRequest(Microsoft.AspNetCore.Http.HttpContext inner, string method, string path, Microsoft.AspNetCore.Http.QueryString query, System.IO.Stream body = null, string contentType = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `inner` | `Microsoft.AspNetCore.Http.HttpContext` | The inner context to configure. |
+| `method` | `string` | The HTTP method, for example `GET`. |
+| `path` | `string` | The request path, including a leading slash. |
+| `query` | `Microsoft.AspNetCore.Http.QueryString` | The query string, or [Empty](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.querystring.empty). |
+| `body` | `System.IO.Stream` | An optional replacement request body. When [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null), the body is left unchanged. |
+| `contentType` | `string` | The content type to set when *body* is provided. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *inner* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `ArgumentException` | Thrown when *method* or *path* is blank. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> CopyFromOuter
+
+Copies scheme, host, path base, user, and non-skipped headers from *outer* onto
+*inner*. When *outer* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null), uses
+`http` / `localhost` and an empty principal.
+
+#### Syntax
+
+```csharp
+public static void CopyFromOuter(Microsoft.AspNetCore.Http.HttpContext inner, Microsoft.AspNetCore.Http.HttpContext outer)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `inner` | `Microsoft.AspNetCore.Http.HttpContext` | The inner context to fill. |
+| `outer` | `Microsoft.AspNetCore.Http.HttpContext` | The incoming context, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) when there is no outer request. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *inner* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+#### Remarks
+
+Scheme, host, and path base come from the outer request so generated links match the public URL.
+Other request headers are copied except hop-by-hop, entity-body, and HTTP conditionals
+(see [InnerHttpContext.SkippedRequestHeaders](/api-reference/CloudNimble/EasyAF/Http/InnerHttpContext#skippedrequestheaders)).
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> CopyIncomingHeaders
+
+Copies outer request headers onto the inner call, skipping [InnerHttpContext.SkippedRequestHeaders](/api-reference/CloudNimble/EasyAF/Http/InnerHttpContext#skippedrequestheaders).
+
+#### Syntax
+
+```csharp
+public static void CopyIncomingHeaders(Microsoft.AspNetCore.Http.HttpContext inner, Microsoft.AspNetCore.Http.HttpContext outer)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `inner` | `Microsoft.AspNetCore.Http.HttpContext` | The inner context. |
+| `outer` | `Microsoft.AspNetCore.Http.HttpContext` | The incoming context. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | Thrown when *inner* or *outer* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+

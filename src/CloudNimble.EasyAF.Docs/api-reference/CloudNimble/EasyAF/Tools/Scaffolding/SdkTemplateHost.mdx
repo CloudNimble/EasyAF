@@ -1,0 +1,377 @@
+---
+title: SdkTemplateHost
+description: "Instantiates the .NET SDK's built-in C# project templates (`classlib`, `web`, `console`) in-process through Microsoft.TemplateEngine, without spawning `dotne..."
+icon: lock
+tag: "SEALED"
+keywords: ['SdkTemplateHost', 'CloudNimble.EasyAF.Tools.Scaffolding.SdkTemplateHost', 'CloudNimble.EasyAF.Tools.Scaffolding', 'class', 'System.Object', 'System.IDisposable']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Scaffolding
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Scaffolding.SdkTemplateHost
+```
+
+## Summary
+
+Instantiates the .NET SDK's built-in C# project templates (`classlib`, `web`, `console`)
+in-process through Microsoft.TemplateEngine, without spawning `dotnet new`.
+
+## Remarks
+
+Template packages are discovered the same way the SDK's own `BuiltInTemplatePackageProvider` finds them:
+`{dotnetRoot}/templates/{version}/*.nupkg`, where `{version}` is the highest folder whose major version
+matches the requested target framework. Template post-actions (such as restore) are not executed.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [SdkTemplateHost](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/SdkTemplateHost) class.
+
+#### Syntax
+
+```csharp
+public SdkTemplateHost(string templatesRoot, string targetFramework)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `templatesRoot` | `string` | The folder containing versioned template package folders. |
+| `targetFramework` | `string` | The target framework moniker projects will be created for. |
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SdkVersion
+
+Gets the version of the SDK that supplied the templates in [SdkTemplateHost.TemplateFolder](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/SdkTemplateHost#templatefolder) (for example, `10.0.401`),
+or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) when it can't be determined.
+
+#### Syntax
+
+```csharp
+public string SdkVersion { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+#### Remarks
+
+The SDK installs its common project templates as `microsoft.dotnet.common.projecttemplates.{Major}.{Minor}.{SdkVersion}.nupkg`,
+so the version is read from that package name.
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> TargetFramework
+
+Gets the target framework moniker projects are created for (for example, `net10.0`).
+
+#### Syntax
+
+```csharp
+public string TargetFramework { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> TemplateFolder
+
+Gets the resolved template version folder (for example, `C:\Program Files\dotnet\templates\10.0.12`),
+or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) when [SdkTemplateHost.TemplatesRoot](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/SdkTemplateHost#templatesroot) has no folder for the target framework's major version.
+
+#### Syntax
+
+```csharp
+public string TemplateFolder { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> TemplatesRoot
+
+Gets the folder containing versioned template package folders (normally `{dotnetRoot}/templates`).
+
+#### Syntax
+
+```csharp
+public string TemplatesRoot { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> CreateProjectAsync
+
+Creates a project from an SDK template.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<string> CreateProjectAsync(string shortName, string projectName, string outputDirectory, bool overwrite = false, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `shortName` | `string` | The template short name: `classlib`, `web`, or `console`. |
+| `projectName` | `string` | The project name, which becomes the .csproj file name and default namespace. |
+| `outputDirectory` | `string` | The directory the project is written to. It must not exist or must be empty unless *overwrite* is set. |
+| `overwrite` | `bool` | When [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool), files already in *outputDirectory* may be replaced. The caller is expected to have asked the user first. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token to cancel the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<string>`
+The full path of the created .csproj file.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `TemplateNotFoundException` | Thrown when no matching C# project template exists on the machine. |
+| `InvalidOperationException` | Thrown when *outputDirectory* already contains files and *overwrite* is [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool), or when the template engine reports a failure. |
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Dispose
+
+#### Syntax
+
+```csharp
+public void Dispose()
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> FindDotnetRoot
+
+Finds the .NET installation root that owns the `dotnet` host, checking `DOTNET_ROOT`,
+then `DOTNET_HOST_PATH`, then `dotnet` on the `PATH`.
+
+#### Syntax
+
+```csharp
+public static string FindDotnetRoot()
+```
+
+#### Returns
+
+Type: `string`
+The .NET installation root.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `DirectoryNotFoundException` | Thrown when no installation root can be found. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> FindTemplatesRoot
+
+Finds the `templates` folder of the .NET installation returned by [SdkTemplateHost.FindDotnetRoot](/api-reference/CloudNimble/EasyAF/Tools/Scaffolding/SdkTemplateHost#finddotnetroot).
+
+#### Syntax
+
+```csharp
+public static string FindTemplatesRoot()
+```
+
+#### Returns
+
+Type: `string`
+The full path of the templates folder.
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetMajorVersion
+
+Gets the major version of a target framework moniker (for example, `10` for `net10.0`).
+
+#### Syntax
+
+```csharp
+public static int GetMajorVersion(string targetFramework)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `targetFramework` | `string` | The target framework moniker. |
+
+#### Returns
+
+Type: `int`
+The major version.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | Thrown when the moniker is not in the form `netX.Y`. |
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetMissingTemplatesAsync
+
+Finds which of the given C# project templates are not available, so a caller can fail before creating anything.
+
+#### Syntax
+
+```csharp
+public System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string>> GetMissingTemplatesAsync(System.Collections.Generic.IEnumerable<string> shortNames, System.Threading.CancellationToken cancellationToken = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `shortNames` | `System.Collections.Generic.IEnumerable<string>` | The template short names to look for, such as `classlib`, `web`, and `console`. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token to cancel the operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string>>`
+The short names with no matching C# project template, in the order given. Empty when all are available.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- System.IDisposable
+

@@ -75,6 +75,10 @@ public interface IUpdaterTrackable<T> where T : struct
 
 **Note**: UpdatedById is nullable since the entity may not have been updated yet.
 
+**Supported ID types**: `Guid` (the EasyAF default), `int`, and `long`. The EntityManager converts the current user's ID claim to whichever type the entity declares. For `int` and `long`, a missing or non-numeric claim leaves the ID unchanged.
+
+**CreatedById must be required**: every record has a creator, so `CreatedById` must be `NOT NULL` in the database. If a table's `CreatedById` allows nulls, code generation leaves off `ICreatorTrackable<T>` and reports warning **EASYAF005** at the column in your EDMX. To track built-in or seed data, assign it to a system user ID that has zero permissions.
+
 ## Automatic Audit Field Population
 
 The EntityManager automatically detects and populates audit fields based on implemented interfaces.

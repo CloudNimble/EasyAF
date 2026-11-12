@@ -11,7 +11,7 @@ namespace Microsoft.Restier.Core.Model
     /// Provides extension methods for Restier model configuration to handle EasyAF-specific entity properties.
     /// Includes methods to ignore tracking fields and audit fields in OData model generation.
     /// </summary>
-    public static class IModelBuilderExtensions
+    public static class EasyAF_Restier_IModelBuilderExtensions
     {
 
         /// <summary>
@@ -46,22 +46,23 @@ namespace Microsoft.Restier.Core.Model
 
             if (typeof(T).IsAssignableTo(typeof(ICreatedAuditable)))
             {
-                structuralConfig.RemoveProperty(properties.Where(c => c.Name == nameof(ICreatedAuditable.DateCreated)).FirstOrDefault());
+                structuralConfig.RemoveProperty(properties.FirstOrDefault(c => c.Name == nameof(ICreatedAuditable.DateCreated)));
             }
 
             if (typeof(T).IsAssignableTo(typeof(IUpdatedAuditable)))
             {
-                structuralConfig.RemoveProperty(properties.Where(c => c.Name == nameof(IUpdatedAuditable.DateUpdated)).FirstOrDefault());
+                structuralConfig.RemoveProperty(properties.FirstOrDefault(c => c.Name == nameof(IUpdatedAuditable.DateUpdated)));
             }
 
-            if (typeof(T).IsAssignableTo(typeof(ICreatorTrackable<int>)) || typeof(T).IsAssignableTo(typeof(ICreatorTrackable<Guid>)))
+            // EasyAF supports Guid, int, and long creator/updater IDs.
+            if (typeof(T).IsAssignableTo(typeof(ICreatorTrackable<Guid>)) || typeof(T).IsAssignableTo(typeof(ICreatorTrackable<int>)) || typeof(T).IsAssignableTo(typeof(ICreatorTrackable<long>)))
             {
-                structuralConfig.RemoveProperty(properties.Where(c => c.Name == nameof(ICreatorTrackable<Guid>.CreatedById)).FirstOrDefault());
+                structuralConfig.RemoveProperty(properties.FirstOrDefault(c => c.Name == nameof(ICreatorTrackable<>.CreatedById)));
             }
 
-            if (typeof(T).IsAssignableTo(typeof(IUpdaterTrackable<int>)) || typeof(T).IsAssignableTo(typeof(IUpdaterTrackable<Guid>)))
+            if (typeof(T).IsAssignableTo(typeof(IUpdaterTrackable<Guid>)) || typeof(T).IsAssignableTo(typeof(IUpdaterTrackable<int>)) || typeof(T).IsAssignableTo(typeof(IUpdaterTrackable<long>)))
             {
-                structuralConfig.RemoveProperty(properties.Where(c => c.Name == nameof(IUpdaterTrackable<Guid>.UpdatedById)).FirstOrDefault());
+                structuralConfig.RemoveProperty(properties.FirstOrDefault(c => c.Name == nameof(IUpdaterTrackable<>.UpdatedById)));
             }
             return configuration;
         }

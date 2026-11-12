@@ -1,0 +1,413 @@
+---
+title: ScaffoldProject
+description: "Describes one project in a scaffolded EasyAF solution: how it is created and how its project file is configured."
+icon: lock
+tag: "SEALED"
+keywords: ['ScaffoldProject', 'CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldProject', 'CloudNimble.EasyAF.Tools.Scaffolding', 'class', 'System.Object', 'System.IEquatable<CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldProject>']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.EasyAF.Tools.dll
+
+**Namespace:** CloudNimble.EasyAF.Tools.Scaffolding
+
+**Inheritance:** System.Object
+
+## Syntax
+
+```csharp
+CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldProject
+```
+
+## Summary
+
+Describes one project in a scaffolded EasyAF solution: how it is created and how its project file is configured.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor
+
+Describes one project in a scaffolded EasyAF solution: how it is created and how its project file is configured.
+
+#### Syntax
+
+```csharp
+public ScaffoldProject(string Suffix, string TemplateShortName, string SolutionFolder, string EasyAFProjectType, System.Collections.Generic.IReadOnlyList<CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldPackage> Packages, System.Collections.Generic.IReadOnlyList<string> ProjectReferences, System.Collections.Generic.IReadOnlyDictionary<string, string> Properties, bool CopyAppSettingsToOutput)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `Suffix` | `string` | The project name after the solution namespace, for example `Api` or `MessageBus.Runtime`. |
+| `TemplateShortName` | `string` | The SDK template the project is created from: `classlib`, `web`, or `console`. |
+| `SolutionFolder` | `string` | The solution folder the project is placed in. |
+| `EasyAFProjectType` | `string` | The `EasyAFProjectType` to stamp, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) for none. |
+| `Packages` | `System.Collections.Generic.IReadOnlyList<CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldPackage>` | The package references, sorted by id. |
+| `ProjectReferences` | `System.Collections.Generic.IReadOnlyList<string>` | The suffixes of referenced projects, sorted. |
+| `Properties` | `System.Collections.Generic.IReadOnlyDictionary<string, string>` | Extra MSBuild properties to stamp. |
+| `CopyAppSettingsToOutput` | `bool` | Whether `appsettings*.json` must be copied to the output folder (non-web executables). |
+
+### <Icon icon="hammer" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> CopyAppSettingsToOutput
+
+Whether `appsettings*.json` must be copied to the output folder (non-web executables).
+
+#### Syntax
+
+```csharp
+public bool CopyAppSettingsToOutput { get; init; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> EasyAFProjectType
+
+The `EasyAFProjectType` to stamp, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) for none.
+
+#### Syntax
+
+```csharp
+public string EasyAFProjectType { get; init; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Packages
+
+The package references, sorted by id.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IReadOnlyList<CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldPackage> Packages { get; init; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.IReadOnlyList<CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldPackage>`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ProjectReferences
+
+The suffixes of referenced projects, sorted.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IReadOnlyList<string> ProjectReferences { get; init; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.IReadOnlyList<string>`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Properties
+
+Extra MSBuild properties to stamp.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IReadOnlyDictionary<string, string> Properties { get; init; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.IReadOnlyDictionary<string, string>`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> SolutionFolder
+
+The solution folder the project is placed in.
+
+#### Syntax
+
+```csharp
+public string SolutionFolder { get; init; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Suffix
+
+The project name after the solution namespace, for example `Api` or `MessageBus.Runtime`.
+
+#### Syntax
+
+```csharp
+public string Suffix { get; init; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> TemplateShortName
+
+The SDK template the project is created from: `classlib`, `web`, or `console`.
+
+#### Syntax
+
+```csharp
+public string TemplateShortName { get; init; }
+```
+
+#### Property Value
+
+Type: `string`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> <Clone>$
+
+#### Syntax
+
+```csharp
+public CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldProject <Clone>$()
+```
+
+#### Returns
+
+Type: `CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldProject`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Deconstruct
+
+#### Syntax
+
+```csharp
+public void Deconstruct(out string Suffix, out string TemplateShortName, out string SolutionFolder, out string EasyAFProjectType, out System.Collections.Generic.IReadOnlyList<CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldPackage> Packages, out System.Collections.Generic.IReadOnlyList<string> ProjectReferences, out System.Collections.Generic.IReadOnlyDictionary<string, string> Properties, out bool CopyAppSettingsToOutput)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `Suffix` | `string` | - |
+| `TemplateShortName` | `string` | - |
+| `SolutionFolder` | `string` | - |
+| `EasyAFProjectType` | `string` | - |
+| `Packages` | `System.Collections.Generic.IReadOnlyList<CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldPackage>` | - |
+| `ProjectReferences` | `System.Collections.Generic.IReadOnlyList<string>` | - |
+| `Properties` | `System.Collections.Generic.IReadOnlyDictionary<string, string>` | - |
+| `CopyAppSettingsToOutput` | `bool` | - |
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="blue">Override</Badge>
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals
+
+#### Syntax
+
+```csharp
+public bool Equals(CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldProject other)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `other` | `CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldProject?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="blue">Override</Badge>
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetName
+
+Gets the full project name for a solution namespace.
+
+#### Syntax
+
+```csharp
+public string GetName(string namespace)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `namespace` | `string` | The solution namespace. |
+
+#### Returns
+
+Type: `string`
+The project name, for example `CloudNimble.Contoso.Api`.
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="blue">Override</Badge>
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+
+### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- System.IEquatable&lt;CloudNimble.EasyAF.Tools.Scaffolding.ScaffoldProject&gt;
+
