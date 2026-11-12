@@ -87,9 +87,8 @@ jobs:
          Write-Host "Installing .NET 10.0..."
          ./dotnet-install.ps1 -Channel 10.0 -InstallDir $installDir
 
-         # 11.0.1xx is the SDK feature band that contains 11.0.100-rc.2
-         Write-Host "Installing .NET 11.0.1xx (preview/RC)..."
-         ./dotnet-install.ps1 -Channel 11.0.1xx -Quality preview -InstallDir $installDir
+         Write-Host "Installing .NET 11.0..."
+         ./dotnet-install.ps1 -Channel 11.0 -InstallDir $installDir
 
          echo $installDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
          dotnet --list-sdks
@@ -181,10 +180,10 @@ jobs:
     - name: Install .NET SDK
       shell: pwsh
       run: |
-         # Checkout brings global.json, so `dotnet nuget push` needs the 11.0.1xx SDK.
+         # Checkout brings global.json, so `dotnet nuget push` needs the .NET 11 SDK.
          Invoke-WebRequest -Uri "https://dot.net/v1/dotnet-install.ps1" -OutFile "dotnet-install.ps1"
          $installDir = $env:DOTNET_INSTALL_DIR
-         ./dotnet-install.ps1 -Channel 11.0.1xx -Quality preview -InstallDir $installDir
+         ./dotnet-install.ps1 -Channel 11.0 -InstallDir $installDir
          echo $installDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
          dotnet --list-sdks
 
