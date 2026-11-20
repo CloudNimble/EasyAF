@@ -1,8 +1,8 @@
 ---
 title: IServiceCollection
 description: "Extension methods for IServiceCollection from Microsoft.Extensions.DependencyInjection.Abstractions"
-icon: file-brackets-curly
-keywords: ['IServiceCollection', 'Microsoft.Extensions.DependencyInjection.IServiceCollection', 'Microsoft.Extensions.DependencyInjection', 'error']
+icon: plug
+keywords: ['IServiceCollection', 'Microsoft.Extensions.DependencyInjection.IServiceCollection', 'Microsoft.Extensions.DependencyInjection', 'interface']
 ---
 
 ## Definition
@@ -62,8 +62,8 @@ The bound configuration instance for immediate use or further configuration.
 
 ```csharp
 // In Program.cs or Startup.cs
-var myConfig = builder.Services.AddConfigurationBase&lt;MyAppConfiguration&gt;(
-    builder.Configuration,
+var myConfig = builder.Services.AddConfigurationBase<MyAppConfiguration>(
+    builder.Configuration, 
     "AppSettings"
 );
 
@@ -137,7 +137,7 @@ The service collection for method chaining.
 
 ```csharp
 // Register HTTP clients with custom message handler
-services.AddHttpClients&lt;MyConfiguration, MyAuthHandler&gt;(config, HttpHandlerMode.Add);
+services.AddHttpClients<MyConfiguration, MyAuthHandler>(config, HttpHandlerMode.Add);
 
 // This will automatically register HttpClient instances for all properties
 // in MyConfiguration that are marked with [HttpEndpoint]

@@ -2,7 +2,7 @@
 title: EasyObservableObject
 description: "A base class for objects to implement [INotifyPropertyChanged](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged). Provides..."
 icon: file-brackets-curly
-keywords: ['EasyObservableObject', 'CloudNimble.EasyAF.Core.EasyObservableObject', 'CloudNimble.EasyAF.Core', 'class', 'System.Object', 'System.ComponentModel.INotifyPropertyChanged', 'System.IDisposable']
+keywords: ['EasyObservableObject', 'CloudNimble.EasyAF.Core.EasyObservableObject', 'CloudNimble.EasyAF.Core', 'class', 'System.ComponentModel.INotifyPropertyChanged', 'System.IDisposable']
 ---
 
 ## Definition
@@ -10,8 +10,6 @@ keywords: ['EasyObservableObject', 'CloudNimble.EasyAF.Core.EasyObservableObject
 **Assembly:** CloudNimble.EasyAF.Core.dll
 
 **Namespace:** CloudNimble.EasyAF.Core
-
-**Inheritance:** System.Object
 
 ## Syntax
 
@@ -34,14 +32,14 @@ public class Person : EasyObservableObject
 
     public string Name
     {
-        get =&gt; _name;
-        set =&gt; Set(nameof(Name), ref _name, value);
+        get => _name;
+        set => Set(nameof(Name), ref _name, value);
     }
 
     public int Age
     {
-        get =&gt; _age;
-        set =&gt; Set(nameof(Age), ref _age, value);
+        get => _age;
+        set => Set(nameof(Age), ref _age, value);
     }
 }
 ```
@@ -232,7 +230,7 @@ Occurs when a property value changes.
 #### Syntax
 
 ```csharp
-public System.ComponentModel.PropertyChangedEventHandler PropertyChanged
+public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged
 ```
 
 ## Related APIs

@@ -2,7 +2,7 @@
 title: ManagerBase
 description: "Represents the base class for all EasyAF business logic managers. Provides access to a database context and message publishing capabilities for implementing ..."
 icon: code-branch
-keywords: ['ManagerBase', 'CloudNimble.EasyAF.Business.ManagerBase<TContext>', 'CloudNimble.EasyAF.Business', 'class', 'System.Object']
+keywords: ['ManagerBase', 'CloudNimble.EasyAF.Business.ManagerBase<TContext>', 'CloudNimble.EasyAF.Business', 'class']
 ---
 
 ## Definition
@@ -10,8 +10,6 @@ keywords: ['ManagerBase', 'CloudNimble.EasyAF.Business.ManagerBase<TContext>', '
 **Assembly:** CloudNimble.EasyAF.Business.EF6.dll
 
 **Namespace:** CloudNimble.EasyAF.Business
-
-**Inheritance:** System.Object
 
 ## Syntax
 
@@ -37,12 +35,12 @@ or any workflow that needs to coordinate database operations with message publis
 ## Examples
 
 ```csharp
-public class UserRegistrationManager : ManagerBase&lt;MyDbContext&gt;
+public class UserRegistrationManager : ManagerBase<MyDbContext>
 {
-    public UserRegistrationManager(MyDbContext context, IMessagePublisher publisher)
+    public UserRegistrationManager(MyDbContext context, IMessagePublisher publisher) 
         : base(context, publisher) { }
 
-    public async Task&lt;User&gt; RegisterUserAsync(string email, string password)
+    public async Task<User> RegisterUserAsync(string email, string password)
     {
         var user = new User { Email = email, Password = HashPassword(password) };
         DataContext.Users.Add(user);

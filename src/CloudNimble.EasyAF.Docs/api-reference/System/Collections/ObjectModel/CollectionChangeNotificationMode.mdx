@@ -4,7 +4,7 @@ description: "Specifies how bulk-change notifications are raised on an [Observab
 icon: list-ol
 sidebarTitle: CollectionChangeNotificationMode
 tag: "ENUM"
-keywords: ['CollectionChangeNotificationMode', 'System.Collections.ObjectModel.CollectionChangeNotificationMode', 'System.Collections.ObjectModel', 'class', 'System.Enum']
+keywords: ['CollectionChangeNotificationMode', 'System.Collections.ObjectModel.CollectionChangeNotificationMode', 'System.Collections.ObjectModel', 'enum', 'System.Enum', 'System.IComparable', 'System.ISpanFormattable', 'System.IFormattable', 'System.IConvertible']
 ---
 
 ## Definition
@@ -30,7 +30,14 @@ Specifies how bulk-change notifications are raised on an [ObservableCollection`1
 | Name | Value | Description |
 |------|-------|-------------|
 | `Batched` | 0 | Raises a single event with the proper action (Add, Remove, or Replace)
-            and populates <c>NewItems</c>/<c>OldItems</c> with all affected items. |
-| `Reset` | 1 | Raises a single <see cref="F:System.Collections.Specialized.NotifyCollectionChangedAction.Reset" /> event.
-            Compatible with all UI frameworks including WPF. |
+and populates `NewItems`/`OldItems` with all affected items. |
+| `Reset` | 1 | Raises a single [Reset](https://learn.microsoft.com/dotnet/api/system.collections.specialized.notifycollectionchangedaction.reset) event.
+Compatible with all UI frameworks including WPF. |
+
+## Related APIs
+
+- System.IComparable
+- System.ISpanFormattable
+- System.IFormattable
+- System.IConvertible
 

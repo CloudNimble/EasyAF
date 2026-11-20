@@ -1,8 +1,8 @@
 ---
 title: ObservableCollection
 description: "Extension methods for ObservableCollection from System.ObjectModel"
-icon: file-brackets-curly
-keywords: ['ObservableCollection', 'System.Collections.ObjectModel.ObservableCollection<T>', 'System.Collections.ObjectModel', 'error']
+icon: code-branch
+keywords: ['ObservableCollection', 'System.Collections.ObjectModel.ObservableCollection<T>', 'System.Collections.ObjectModel', 'class']
 ---
 
 ## Definition
@@ -23,7 +23,7 @@ This type is defined in System.ObjectModel.
 
 ## Remarks
 
-See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection{t}) for more information about the rest of the API.
+See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1) for more information about the rest of the API.
 
 ## Methods
 
@@ -34,7 +34,7 @@ See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/system.coll
 #### Syntax
 
 ```csharp
-public static void AddRange<T>(System.Collections.ObjectModel.ObservableCollection<T> collection, System.Collections.Generic.IEnumerable<T> items, System.Collections.ObjectModel.CollectionChangeNotificationMode mode = 0)
+public static void AddRange<T>(System.Collections.ObjectModel.ObservableCollection<T> collection, System.Collections.Generic.IEnumerable<T> items, System.Collections.ObjectModel.CollectionChangeNotificationMode mode = Batched)
 ```
 
 #### Parameters
@@ -52,7 +52,7 @@ public static void AddRange<T>(System.Collections.ObjectModel.ObservableCollecti
 #### Syntax
 
 ```csharp
-public static void InsertRange<T>(System.Collections.ObjectModel.ObservableCollection<T> collection, int index, System.Collections.Generic.IEnumerable<T> items, System.Collections.ObjectModel.CollectionChangeNotificationMode mode = 0)
+public static void InsertRange<T>(System.Collections.ObjectModel.ObservableCollection<T> collection, int index, System.Collections.Generic.IEnumerable<T> items, System.Collections.ObjectModel.CollectionChangeNotificationMode mode = Batched)
 ```
 
 #### Parameters
@@ -71,7 +71,7 @@ public static void InsertRange<T>(System.Collections.ObjectModel.ObservableColle
 #### Syntax
 
 ```csharp
-public static void RemoveRange<T>(System.Collections.ObjectModel.ObservableCollection<T> collection, int index, int count, System.Collections.ObjectModel.CollectionChangeNotificationMode mode = 0)
+public static void RemoveRange<T>(System.Collections.ObjectModel.ObservableCollection<T> collection, int index, int count, System.Collections.ObjectModel.CollectionChangeNotificationMode mode = Batched)
 ```
 
 #### Parameters
@@ -90,7 +90,7 @@ public static void RemoveRange<T>(System.Collections.ObjectModel.ObservableColle
 #### Syntax
 
 ```csharp
-public static void ReplaceRange<T>(System.Collections.ObjectModel.ObservableCollection<T> collection, int index, int count, System.Collections.Generic.IEnumerable<T> items, System.Collections.ObjectModel.CollectionChangeNotificationMode mode = 0)
+public static void ReplaceRange<T>(System.Collections.ObjectModel.ObservableCollection<T> collection, int index, int count, System.Collections.Generic.IEnumerable<T> items, System.Collections.ObjectModel.CollectionChangeNotificationMode mode = Batched)
 ```
 
 #### Parameters

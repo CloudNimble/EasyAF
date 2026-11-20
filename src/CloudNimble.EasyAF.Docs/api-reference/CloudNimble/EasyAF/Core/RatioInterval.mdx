@@ -46,7 +46,7 @@ total ratio amounts across different time periods.
 
 ```csharp
 // Example: 70% conversion rate every 2 weeks
-var conversionInterval = new RatioInterval&lt;double&gt;(0.70, 2, IntervalType.Weeks);
+var conversionInterval = new RatioInterval<double>(0.70, 2, IntervalType.Weeks);
 
 // How many 2-week intervals are there per month?
 decimal intervalsPerMonth = conversionInterval.PerMonth(); // ~2.17 intervals
@@ -94,14 +94,14 @@ Initializes a new instance of the `RatioInterval`1` class with the specified rat
 #### Syntax
 
 ```csharp
-public RatioInterval(System.Decimal ratio, T value, CloudNimble.EasyAF.Core.IntervalType type)
+public RatioInterval(decimal ratio, T value, CloudNimble.EasyAF.Core.IntervalType type)
 ```
 
 #### Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `ratio` | `System.Decimal` | The decimal ratio value that is calculated over the given interval. |
+| `ratio` | `decimal` | The decimal ratio value that is calculated over the given interval. |
 | `value` | `T` | The duration of the interval. |
 | `type` | `CloudNimble.EasyAF.Core.IntervalType` | The base unit that describes what the quantity of this interval references. |
 
@@ -156,12 +156,12 @@ Can represent a ratio, rate, or other decimal value per time period.
 #### Syntax
 
 ```csharp
-public System.Decimal Ratio { get; set; }
+public decimal Ratio { get; set; }
 ```
 
 #### Property Value
 
-Type: `System.Decimal`
+Type: `decimal`
 
 ### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Type <Badge color="gray">Inherited</Badge>
 
@@ -289,12 +289,12 @@ Given this `Interval`1` instance, calculates how many occurrences will happen pe
 #### Syntax
 
 ```csharp
-public virtual System.Decimal PerDay()
+public virtual decimal PerDay()
 ```
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The number of occurrences per day as a decimal value.
 
 #### Exceptions
@@ -312,18 +312,18 @@ Given this `Interval`1` instance and a quantity, calculates the total output per
 #### Syntax
 
 ```csharp
-public virtual System.Decimal PerDay(System.Decimal quantity)
+public virtual decimal PerDay(decimal quantity)
 ```
 
 #### Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+| `quantity` | `decimal` | The quantity to multiply by the interval frequency. |
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total output per day as a decimal value.
 
 #### Exceptions
@@ -336,7 +336,7 @@ The total output per day as a decimal value.
 
 ```csharp
 // Widget production: 1 widget every 1.5 hours, total from 100 units of material per day
-var production = new Interval&lt;double&gt;(1.5, IntervalType.Hours);
+var production = new Interval<double>(1.5, IntervalType.Hours);
 decimal totalPerDay = production.PerDay(100); // 1600 widgets per day (16 * 100)
 ```
 
@@ -349,12 +349,12 @@ Given this `Interval`1` instance, calculates how many occurrences will happen pe
 #### Syntax
 
 ```csharp
-public virtual System.Decimal PerHour()
+public virtual decimal PerHour()
 ```
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The number of occurrences per hour as a decimal value.
 
 #### Exceptions
@@ -372,18 +372,18 @@ Given this `Interval`1` instance and a quantity, calculates the total output per
 #### Syntax
 
 ```csharp
-public virtual System.Decimal PerHour(System.Decimal quantity)
+public virtual decimal PerHour(decimal quantity)
 ```
 
 #### Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+| `quantity` | `decimal` | The quantity to multiply by the interval frequency. |
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total output per hour as a decimal value.
 
 #### Exceptions
@@ -396,7 +396,7 @@ The total output per hour as a decimal value.
 
 ```csharp
 // Widget production: 1 widget every 1.5 hours, total from 100 units of material per hour
-var production = new Interval&lt;double&gt;(1.5, IntervalType.Hours);
+var production = new Interval<double>(1.5, IntervalType.Hours);
 decimal totalPerHour = production.PerHour(100); // 66.67 widgets per hour (1/1.5 * 100)
 ```
 
@@ -409,12 +409,12 @@ Given this `Interval`1` instance, calculates how many occurrences will happen pe
 #### Syntax
 
 ```csharp
-public virtual System.Decimal PerMinute()
+public virtual decimal PerMinute()
 ```
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The number of occurrences per minute as a decimal value.
 
 #### Exceptions
@@ -425,7 +425,7 @@ The number of occurrences per minute as a decimal value.
 
 #### Remarks
 
-If you need this as a whole number, wrap the result in [Decimal)](https://learn.microsoft.com/dotnet/api/system.math.floor(system.decimal)).
+If you need this as a whole number, wrap the result in [Floor](https://learn.microsoft.com/dotnet/api/system.math.floor).
 
 ### <Icon icon="code-fork" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> PerMinute <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
 
@@ -436,18 +436,18 @@ Given this `Interval`1` instance and a quantity, calculates the total output per
 #### Syntax
 
 ```csharp
-public virtual System.Decimal PerMinute(System.Decimal quantity)
+public virtual decimal PerMinute(decimal quantity)
 ```
 
 #### Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+| `quantity` | `decimal` | The quantity to multiply by the interval frequency. |
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total output per minute as a decimal value.
 
 #### Exceptions
@@ -460,7 +460,7 @@ The total output per minute as a decimal value.
 
 ```csharp
 // Widget production: 1 widget every 90 minutes, total from 100 units of material per minute
-var production = new Interval&lt;int&gt;(90, IntervalType.Minutes);
+var production = new Interval<int>(90, IntervalType.Minutes);
 decimal totalPerMinute = production.PerMinute(100); // 1.11 widgets per minute (1/90 * 100)
 ```
 
@@ -473,12 +473,12 @@ Given this `Interval`1` instance, calculates how many occurrences will happen pe
 #### Syntax
 
 ```csharp
-public virtual System.Decimal PerMonth()
+public virtual decimal PerMonth()
 ```
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The number of occurrences per month as a decimal value.
 
 #### Exceptions
@@ -496,18 +496,18 @@ Given this `Interval`1` instance and a quantity, calculates the total output per
 #### Syntax
 
 ```csharp
-public virtual System.Decimal PerMonth(System.Decimal quantity)
+public virtual decimal PerMonth(decimal quantity)
 ```
 
 #### Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+| `quantity` | `decimal` | The quantity to multiply by the interval frequency. |
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total output per month as a decimal value.
 
 #### Exceptions
@@ -520,7 +520,7 @@ The total output per month as a decimal value.
 
 ```csharp
 // Widget production: 1 widget every 3 days, total from 200 units of material per month
-var production = new Interval&lt;int&gt;(3, IntervalType.Days);
+var production = new Interval<int>(3, IntervalType.Days);
 decimal totalPerMonth = production.PerMonth(200); // 2000 widgets per month (10 * 200)
 ```
 
@@ -533,12 +533,12 @@ Given this `Interval`1` instance, calculates how many occurrences will happen pe
 #### Syntax
 
 ```csharp
-public virtual System.Decimal PerWeek()
+public virtual decimal PerWeek()
 ```
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The number of occurrences per week as a decimal value.
 
 #### Exceptions
@@ -556,18 +556,18 @@ Given this `Interval`1` instance and a quantity, calculates the total output per
 #### Syntax
 
 ```csharp
-public virtual System.Decimal PerWeek(System.Decimal quantity)
+public virtual decimal PerWeek(decimal quantity)
 ```
 
 #### Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+| `quantity` | `decimal` | The quantity to multiply by the interval frequency. |
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total output per week as a decimal value.
 
 #### Exceptions
@@ -580,7 +580,7 @@ The total output per week as a decimal value.
 
 ```csharp
 // Widget production: 1 widget every 2 days, total from 50 units of material per week
-var production = new Interval&lt;int&gt;(2, IntervalType.Days);
+var production = new Interval<int>(2, IntervalType.Days);
 decimal totalPerWeek = production.PerWeek(50); // 175 widgets per week (3.5 * 50)
 ```
 
@@ -593,12 +593,12 @@ Given this `Interval`1` instance, calculates how many occurrences will happen pe
 #### Syntax
 
 ```csharp
-public virtual System.Decimal PerYear()
+public virtual decimal PerYear()
 ```
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The number of occurrences per year as a decimal value.
 
 #### Exceptions
@@ -616,18 +616,18 @@ Given this `Interval`1` instance and a quantity, calculates the total output per
 #### Syntax
 
 ```csharp
-public virtual System.Decimal PerYear(System.Decimal quantity)
+public virtual decimal PerYear(decimal quantity)
 ```
 
 #### Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `quantity` | `System.Decimal` | The quantity to multiply by the interval frequency. |
+| `quantity` | `decimal` | The quantity to multiply by the interval frequency. |
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total output per year as a decimal value.
 
 #### Exceptions
@@ -640,7 +640,7 @@ The total output per year as a decimal value.
 
 ```csharp
 // Widget production: 1 widget every 1 week, total from 500 units of material per year
-var production = new Interval&lt;int&gt;(1, IntervalType.Weeks);
+var production = new Interval<int>(1, IntervalType.Weeks);
 decimal totalPerYear = production.PerYear(500); // 26071 widgets per year (52.14 * 500)
 ```
 
@@ -652,19 +652,19 @@ This method multiplies the interval frequency (how many intervals occur per day)
 #### Syntax
 
 ```csharp
-public System.Decimal RatioPerDay()
+public decimal RatioPerDay()
 ```
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total ratio value per day as a decimal.
 
 #### Examples
 
 ```csharp
 // 0.75 ratio every 6 hours = 0.75 * 4 = 3.0 ratio per day
-var interval = new RatioInterval&lt;double&gt;(0.75, 6, IntervalType.Hours);
+var interval = new RatioInterval<double>(0.75, 6, IntervalType.Hours);
 decimal ratioPerDay = interval.RatioPerDay();
 ```
 
@@ -675,25 +675,25 @@ Calculates the total ratio value per day for a given quantity based on the inter
 #### Syntax
 
 ```csharp
-public System.Decimal RatioPerDay(System.Decimal quantity)
+public decimal RatioPerDay(decimal quantity)
 ```
 
 #### Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `quantity` | `System.Decimal` | The quantity to apply the ratio calculation to. |
+| `quantity` | `decimal` | The quantity to apply the ratio calculation to. |
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total ratio value per day as a decimal.
 
 #### Examples
 
 ```csharp
 // 70% conversion every month, total conversions from 30 customers per day
-var conversion = new RatioInterval&lt;double&gt;(0.70m, 1, IntervalType.Months);
+var conversion = new RatioInterval<double>(0.70m, 1, IntervalType.Months);
 decimal conversionsPerDay = conversion.RatioPerDay(30); // ~0.69 conversions per day
 ```
 
@@ -705,19 +705,19 @@ This method multiplies the interval frequency (how many intervals occur per hour
 #### Syntax
 
 ```csharp
-public System.Decimal RatioPerHour()
+public decimal RatioPerHour()
 ```
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total ratio value per hour as a decimal.
 
 #### Examples
 
 ```csharp
 // 0.7 ratio every 1.5 hours = 0.7 * (60/90) = 0.467 ratio per hour
-var interval = new RatioInterval&lt;double&gt;(0.7, 1.5, IntervalType.Hours);
+var interval = new RatioInterval<double>(0.7, 1.5, IntervalType.Hours);
 decimal ratioPerHour = interval.RatioPerHour();
 ```
 
@@ -728,25 +728,25 @@ Calculates the total ratio value per hour for a given quantity based on the inte
 #### Syntax
 
 ```csharp
-public System.Decimal RatioPerHour(System.Decimal quantity)
+public decimal RatioPerHour(decimal quantity)
 ```
 
 #### Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `quantity` | `System.Decimal` | The quantity to apply the ratio calculation to. |
+| `quantity` | `decimal` | The quantity to apply the ratio calculation to. |
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total ratio value per hour as a decimal.
 
 #### Examples
 
 ```csharp
 // 70% conversion every 1.5 hours, total conversions from 100 leads per hour
-var conversion = new RatioInterval&lt;double&gt;(0.70m, 1.5, IntervalType.Hours);
+var conversion = new RatioInterval<double>(0.70m, 1.5, IntervalType.Hours);
 decimal conversionsPerHour = conversion.RatioPerHour(100); // ~46.67 conversions per hour
 ```
 
@@ -758,19 +758,19 @@ This method multiplies the interval frequency (how many intervals occur per minu
 #### Syntax
 
 ```csharp
-public System.Decimal RatioPerMinute()
+public decimal RatioPerMinute()
 ```
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total ratio value per minute as a decimal.
 
 #### Examples
 
 ```csharp
 // 0.5 ratio every 2 hours = 0.5 * (60/120) = 0.25 ratio per minute
-var interval = new RatioInterval&lt;double&gt;(0.5, 2, IntervalType.Hours);
+var interval = new RatioInterval<double>(0.5, 2, IntervalType.Hours);
 decimal ratioPerMinute = interval.RatioPerMinute();
 ```
 
@@ -781,25 +781,25 @@ Calculates the total ratio value per minute for a given quantity based on the in
 #### Syntax
 
 ```csharp
-public System.Decimal RatioPerMinute(System.Decimal quantity)
+public decimal RatioPerMinute(decimal quantity)
 ```
 
 #### Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `quantity` | `System.Decimal` | The quantity to apply the ratio calculation to. |
+| `quantity` | `decimal` | The quantity to apply the ratio calculation to. |
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total ratio value per minute as a decimal.
 
 #### Examples
 
 ```csharp
 // 70% conversion every month, total conversions from 1000 leads per minute
-var conversion = new RatioInterval&lt;double&gt;(0.70m, 1, IntervalType.Months);
+var conversion = new RatioInterval<double>(0.70m, 1, IntervalType.Months);
 decimal conversionsPerMinute = conversion.RatioPerMinute(1000); // ~0.016 conversions per minute
 ```
 
@@ -811,19 +811,19 @@ This method multiplies the interval frequency (how many intervals occur per mont
 #### Syntax
 
 ```csharp
-public System.Decimal RatioPerMonth()
+public decimal RatioPerMonth()
 ```
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total ratio value per month as a decimal.
 
 #### Examples
 
 ```csharp
 // 0.6 ratio every 1 week = 0.6 * 4.34 = 2.6 ratio per month
-var interval = new RatioInterval&lt;double&gt;(0.6, 1, IntervalType.Weeks);
+var interval = new RatioInterval<double>(0.6, 1, IntervalType.Weeks);
 decimal ratioPerMonth = interval.RatioPerMonth();
 ```
 
@@ -834,25 +834,25 @@ Calculates the total ratio value per month for a given quantity based on the int
 #### Syntax
 
 ```csharp
-public System.Decimal RatioPerMonth(System.Decimal quantity)
+public decimal RatioPerMonth(decimal quantity)
 ```
 
 #### Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `quantity` | `System.Decimal` | The quantity to apply the ratio calculation to. |
+| `quantity` | `decimal` | The quantity to apply the ratio calculation to. |
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total ratio value per month as a decimal.
 
 #### Examples
 
 ```csharp
 // 60% conversion every week, total conversions from 100 leads per month
-var conversion = new RatioInterval&lt;double&gt;(0.60m, 1, IntervalType.Weeks);
+var conversion = new RatioInterval<double>(0.60m, 1, IntervalType.Weeks);
 decimal conversionsPerMonth = conversion.RatioPerMonth(100); // 260 conversions per month
 ```
 
@@ -864,19 +864,19 @@ This method multiplies the interval frequency (how many intervals occur per week
 #### Syntax
 
 ```csharp
-public System.Decimal RatioPerWeek()
+public decimal RatioPerWeek()
 ```
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total ratio value per week as a decimal.
 
 #### Examples
 
 ```csharp
 // 0.8 ratio every 2 days = 0.8 * 3.5 = 2.8 ratio per week
-var interval = new RatioInterval&lt;double&gt;(0.8, 2, IntervalType.Days);
+var interval = new RatioInterval<double>(0.8, 2, IntervalType.Days);
 decimal ratioPerWeek = interval.RatioPerWeek();
 ```
 
@@ -887,25 +887,25 @@ Calculates the total ratio value per week for a given quantity based on the inte
 #### Syntax
 
 ```csharp
-public System.Decimal RatioPerWeek(System.Decimal quantity)
+public decimal RatioPerWeek(decimal quantity)
 ```
 
 #### Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `quantity` | `System.Decimal` | The quantity to apply the ratio calculation to. |
+| `quantity` | `decimal` | The quantity to apply the ratio calculation to. |
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total ratio value per week as a decimal.
 
 #### Examples
 
 ```csharp
 // 80% conversion every 2 days, total conversions from 50 leads per week
-var conversion = new RatioInterval&lt;double&gt;(0.80m, 2, IntervalType.Days);
+var conversion = new RatioInterval<double>(0.80m, 2, IntervalType.Days);
 decimal conversionsPerWeek = conversion.RatioPerWeek(50); // 140 conversions per week
 ```
 
@@ -917,19 +917,19 @@ This method multiplies the interval frequency (how many intervals occur per year
 #### Syntax
 
 ```csharp
-public System.Decimal RatioPerYear()
+public decimal RatioPerYear()
 ```
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total ratio value per year as a decimal.
 
 #### Examples
 
 ```csharp
 // 0.9 ratio every 3 months = 0.9 * 4 = 3.6 ratio per year
-var interval = new RatioInterval&lt;double&gt;(0.9, 3, IntervalType.Months);
+var interval = new RatioInterval<double>(0.9, 3, IntervalType.Months);
 decimal ratioPerYear = interval.RatioPerYear();
 ```
 
@@ -940,25 +940,25 @@ Calculates the total ratio value per year for a given quantity based on the inte
 #### Syntax
 
 ```csharp
-public System.Decimal RatioPerYear(System.Decimal quantity)
+public decimal RatioPerYear(decimal quantity)
 ```
 
 #### Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `quantity` | `System.Decimal` | The quantity to apply the ratio calculation to. |
+| `quantity` | `decimal` | The quantity to apply the ratio calculation to. |
 
 #### Returns
 
-Type: `System.Decimal`
+Type: `decimal`
 The total ratio value per year as a decimal.
 
 #### Examples
 
 ```csharp
 // 90% conversion every 3 months, total conversions from 1000 leads per year
-var conversion = new RatioInterval&lt;double&gt;(0.90m, 3, IntervalType.Months);
+var conversion = new RatioInterval<double>(0.90m, 3, IntervalType.Months);
 decimal conversionsPerYear = conversion.RatioPerYear(1000); // 3600 conversions per year
 ```
 

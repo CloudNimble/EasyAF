@@ -3,7 +3,7 @@ title: InnerHttpContext
 description: "Copies origin, identity, and headers from an outer [HttpContext](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpcontext) onto an inner ..."
 icon: bolt
 tag: "STATIC"
-keywords: ['InnerHttpContext', 'CloudNimble.EasyAF.Http.InnerHttpContext', 'CloudNimble.EasyAF.Http', 'class', 'System.Object']
+keywords: ['InnerHttpContext', 'CloudNimble.EasyAF.Http.InnerHttpContext', 'CloudNimble.EasyAF.Http', 'class']
 ---
 
 ## Definition
@@ -11,8 +11,6 @@ keywords: ['InnerHttpContext', 'CloudNimble.EasyAF.Http.InnerHttpContext', 'Clou
 **Assembly:** CloudNimble.EasyAF.Http.dll
 
 **Namespace:** CloudNimble.EasyAF.Http
-
-**Inheritance:** System.Object
 
 ## Syntax
 
@@ -28,7 +26,7 @@ in-process request so the inner pipeline sees the public URL and the same user.
 ## Remarks
 
 The caller constructs the inner [HttpContext](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpcontext) (typically `new DefaultHttpContext()` in
-an ASP.NET Core app, or [IFeatureCollection)](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextfactory.create(microsoft.aspnetcore.http.features.ifeaturecollection))). This type stays on
+an ASP.NET Core app, or [Create](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextfactory.create)). This type stays on
 `Microsoft.AspNetCore.Http.Abstractions` and does not construct a context.
 
 ## Examples

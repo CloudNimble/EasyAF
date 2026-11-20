@@ -2,7 +2,7 @@
 title: HttpResponseMessage
 description: "Extension methods for HttpResponseMessage from System.Net.Http"
 icon: file-brackets-curly
-keywords: ['HttpResponseMessage', 'System.Net.Http.HttpResponseMessage', 'System.Net.Http', 'error']
+keywords: ['HttpResponseMessage', 'System.Net.Http.HttpResponseMessage', 'System.Net.Http', 'class']
 ---
 
 ## Definition
@@ -37,7 +37,7 @@ Returns either the deserialized response or error content as a string.
 #### Syntax
 
 ```csharp
-public static System.Threading.Tasks.Task<(T, string)> DeserializeResponseAsync<T>(System.Net.Http.HttpResponseMessage message)
+public static System.Threading.Tasks.Task<(T Response, string ErrorContent)> DeserializeResponseAsync<T>(System.Net.Http.HttpResponseMessage message)
 ```
 
 #### Parameters
@@ -48,7 +48,7 @@ public static System.Threading.Tasks.Task<(T, string)> DeserializeResponseAsync<
 
 #### Returns
 
-Type: `System.Threading.Tasks.Task<(T, string)>`
+Type: `System.Threading.Tasks.Task<(T Response, string ErrorContent)>`
 A tuple containing either the deserialized response object or error content string.
 
 #### Type Parameters
@@ -65,7 +65,7 @@ Automatically configures SystemTextJsonContractResolver if not already set. Retu
 #### Syntax
 
 ```csharp
-public static System.Threading.Tasks.Task<(T, string)> DeserializeResponseAsync<T>(System.Net.Http.HttpResponseMessage message, Newtonsoft.Json.JsonSerializerSettings settings)
+public static System.Threading.Tasks.Task<(T Response, string ErrorContent)> DeserializeResponseAsync<T>(System.Net.Http.HttpResponseMessage message, Newtonsoft.Json.JsonSerializerSettings settings)
 ```
 
 #### Parameters
@@ -77,7 +77,7 @@ public static System.Threading.Tasks.Task<(T, string)> DeserializeResponseAsync<
 
 #### Returns
 
-Type: `System.Threading.Tasks.Task<(T, string)>`
+Type: `System.Threading.Tasks.Task<(T Response, string ErrorContent)>`
 A tuple containing either the deserialized response object or error content string.
 
 #### Type Parameters
@@ -94,7 +94,7 @@ Provides type-safe error handling by deserializing error responses to a specific
 #### Syntax
 
 ```csharp
-public static System.Threading.Tasks.Task<(TResponse, TError)> DeserializeResponseAsync<TResponse, TError>(System.Net.Http.HttpResponseMessage message)
+public static System.Threading.Tasks.Task<(TResponse Response, TError ErrorContent)> DeserializeResponseAsync<TResponse, TError>(System.Net.Http.HttpResponseMessage message)
 ```
 
 #### Parameters
@@ -105,7 +105,7 @@ public static System.Threading.Tasks.Task<(TResponse, TError)> DeserializeRespon
 
 #### Returns
 
-Type: `System.Threading.Tasks.Task<(TResponse, TError)>`
+Type: `System.Threading.Tasks.Task<(TResponse Response, TError ErrorContent)>`
 A tuple containing either the deserialized response object or deserialized error object.
 
 #### Type Parameters
@@ -123,7 +123,7 @@ Automatically configures SystemTextJsonContractResolver if not already set. Prov
 #### Syntax
 
 ```csharp
-public static System.Threading.Tasks.Task<(TResponse, TError)> DeserializeResponseAsync<TResponse, TError>(System.Net.Http.HttpResponseMessage message, Newtonsoft.Json.JsonSerializerSettings settings)
+public static System.Threading.Tasks.Task<(TResponse Response, TError ErrorContent)> DeserializeResponseAsync<TResponse, TError>(System.Net.Http.HttpResponseMessage message, Newtonsoft.Json.JsonSerializerSettings settings)
 ```
 
 #### Parameters
@@ -135,7 +135,7 @@ public static System.Threading.Tasks.Task<(TResponse, TError)> DeserializeRespon
 
 #### Returns
 
-Type: `System.Threading.Tasks.Task<(TResponse, TError)>`
+Type: `System.Threading.Tasks.Task<(TResponse Response, TError ErrorContent)>`
 A tuple containing either the deserialized response object or deserialized error object.
 
 #### Type Parameters
@@ -153,7 +153,7 @@ Returns either the deserialized response or error content as a string.
 #### Syntax
 
 ```csharp
-public static System.Threading.Tasks.Task<(T, string)> DeserializeResponseAsync<T>(System.Net.Http.HttpResponseMessage message)
+public static System.Threading.Tasks.Task<(T Response, string ErrorContent)> DeserializeResponseAsync<T>(System.Net.Http.HttpResponseMessage message)
 ```
 
 #### Parameters
@@ -164,7 +164,7 @@ public static System.Threading.Tasks.Task<(T, string)> DeserializeResponseAsync<
 
 #### Returns
 
-Type: `System.Threading.Tasks.Task<(T, string)>`
+Type: `System.Threading.Tasks.Task<(T Response, string ErrorContent)>`
 A tuple containing either the deserialized response object or error content string.
 
 #### Type Parameters
@@ -181,7 +181,7 @@ Returns either the deserialized response or error content as a string.
 #### Syntax
 
 ```csharp
-public static System.Threading.Tasks.Task<(T, string)> DeserializeResponseAsync<T>(System.Net.Http.HttpResponseMessage message, System.Text.Json.JsonSerializerOptions settings)
+public static System.Threading.Tasks.Task<(T Response, string ErrorContent)> DeserializeResponseAsync<T>(System.Net.Http.HttpResponseMessage message, System.Text.Json.JsonSerializerOptions settings)
 ```
 
 #### Parameters
@@ -193,7 +193,7 @@ public static System.Threading.Tasks.Task<(T, string)> DeserializeResponseAsync<
 
 #### Returns
 
-Type: `System.Threading.Tasks.Task<(T, string)>`
+Type: `System.Threading.Tasks.Task<(T Response, string ErrorContent)>`
 A tuple containing either the deserialized response object or error content string.
 
 #### Type Parameters
@@ -210,7 +210,7 @@ Provides type-safe error handling by deserializing error responses to a specific
 #### Syntax
 
 ```csharp
-public static System.Threading.Tasks.Task<(TResponse, TError)> DeserializeResponseAsync<TResponse, TError>(System.Net.Http.HttpResponseMessage message)
+public static System.Threading.Tasks.Task<(TResponse Response, TError ErrorContent)> DeserializeResponseAsync<TResponse, TError>(System.Net.Http.HttpResponseMessage message)
 ```
 
 #### Parameters
@@ -221,7 +221,7 @@ public static System.Threading.Tasks.Task<(TResponse, TError)> DeserializeRespon
 
 #### Returns
 
-Type: `System.Threading.Tasks.Task<(TResponse, TError)>`
+Type: `System.Threading.Tasks.Task<(TResponse Response, TError ErrorContent)>`
 A tuple containing either the deserialized response object or deserialized error object.
 
 #### Type Parameters
@@ -239,7 +239,7 @@ Provides type-safe error handling by deserializing error responses to a specific
 #### Syntax
 
 ```csharp
-public static System.Threading.Tasks.Task<(TResponse, TError)> DeserializeResponseAsync<TResponse, TError>(System.Net.Http.HttpResponseMessage message, System.Text.Json.JsonSerializerOptions settings)
+public static System.Threading.Tasks.Task<(TResponse Response, TError ErrorContent)> DeserializeResponseAsync<TResponse, TError>(System.Net.Http.HttpResponseMessage message, System.Text.Json.JsonSerializerOptions settings)
 ```
 
 #### Parameters
@@ -251,7 +251,7 @@ public static System.Threading.Tasks.Task<(TResponse, TError)> DeserializeRespon
 
 #### Returns
 
-Type: `System.Threading.Tasks.Task<(TResponse, TError)>`
+Type: `System.Threading.Tasks.Task<(TResponse Response, TError ErrorContent)>`
 A tuple containing either the deserialized response object or deserialized error object.
 
 #### Type Parameters

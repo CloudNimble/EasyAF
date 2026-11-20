@@ -2,7 +2,7 @@
 title: SolutionFileBuilder
 description: "Builds a Visual Studio `.slnx` solution file in-process with Microsoft.VisualStudio.SolutionPersistence, placing projects and solution items into solution fo..."
 icon: file-brackets-curly
-keywords: ['SolutionFileBuilder', 'CloudNimble.EasyAF.Tools.Scaffolding.SolutionFileBuilder', 'CloudNimble.EasyAF.Tools.Scaffolding', 'class', 'System.Object']
+keywords: ['SolutionFileBuilder', 'CloudNimble.EasyAF.Tools.Scaffolding.SolutionFileBuilder', 'CloudNimble.EasyAF.Tools.Scaffolding', 'class']
 ---
 
 ## Definition
@@ -10,8 +10,6 @@ keywords: ['SolutionFileBuilder', 'CloudNimble.EasyAF.Tools.Scaffolding.Solution
 **Assembly:** CloudNimble.EasyAF.Tools.dll
 
 **Namespace:** CloudNimble.EasyAF.Tools.Scaffolding
-
-**Inheritance:** System.Object
 
 ## Syntax
 
@@ -282,7 +280,7 @@ Writes the solution file, replacing any existing file of the same name.
 #### Syntax
 
 ```csharp
-public System.Threading.Tasks.Task<string> SaveAsync(System.Threading.CancellationToken cancellationToken = null)
+public System.Threading.Tasks.Task<string> SaveAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
 ```
 
 #### Parameters

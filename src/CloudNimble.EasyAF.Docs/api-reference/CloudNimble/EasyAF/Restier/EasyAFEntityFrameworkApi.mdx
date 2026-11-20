@@ -35,9 +35,9 @@ for APIs that require access to the current HTTP context, logging, and SimpleMes
 ## Examples
 
 ```csharp
-public class MyApi : EasyAFEntityFrameworkApi&lt;MyDbContext&gt;
+public class MyApi : EasyAFEntityFrameworkApi<MyDbContext>
 {
-    public MyApi(IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor, IMessagePublisher messagePublisher, ILogger&lt;EasyAFEntityFrameworkApi&lt;MyDbContext&gt;&gt; logger)
+    public MyApi(IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor, IMessagePublisher messagePublisher, ILogger<EasyAFEntityFrameworkApi<MyDbContext>> logger)
         : base(serviceProvider, httpContextAccessor, messagePublisher, logger)
     {
     }

@@ -903,7 +903,8 @@
             "pages": [
               "breakdance/index",
               "breakdance/why-breakdance",
-              "breakdance/quickstart"
+              "breakdance/quickstart",
+              "breakdance/analyzer-diagnostics"
             ]
           },
           {

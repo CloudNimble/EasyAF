@@ -1,29 +1,30 @@
 ---
 title: Nullable
-description: "Extension methods for Nullable from System.Runtime"
-icon: file-brackets-curly
-keywords: ['Nullable', 'System.Nullable<System.Guid>', 'System', 'error']
+description: "Extension methods for Nullable from System.Private.CoreLib"
+icon: cubes
+tag: "SEALED"
+keywords: ['Nullable', 'System.Guid?', 'System', 'struct']
 ---
 
 ## Definition
 
-**Assembly:** System.Runtime.dll
+**Assembly:** System.Private.CoreLib.dll
 
 **Namespace:** System
 
 ## Syntax
 
 ```csharp
-System.Nullable<System.Guid>
+System.Guid?
 ```
 
 ## Summary
 
-This type is defined in System.Runtime.
+This type is defined in System.Private.CoreLib.
 
 ## Remarks
 
-See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/system.nullable{system.guid}) for more information about the rest of the API.
+See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/system.nullable-1) for more information about the rest of the API.
 
 ## Methods
 
@@ -36,14 +37,14 @@ A sweet little extension to check if a Nullable Guid has a real value or not.
 #### Syntax
 
 ```csharp
-public static bool IsNullOrEmpty(System.Nullable<System.Guid> instance)
+public static bool IsNullOrEmpty(System.Guid? instance)
 ```
 
 #### Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `instance` | `System.Nullable<System.Guid>` | - |
+| `instance` | `System.Guid?` | - |
 
 #### Returns
 

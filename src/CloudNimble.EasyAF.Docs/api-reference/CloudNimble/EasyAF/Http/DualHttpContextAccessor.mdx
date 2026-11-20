@@ -3,7 +3,7 @@ title: DualHttpContextAccessor
 description: "[IHttpContextAccessor](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor) that keeps an outer request and an inner in-pro..."
 icon: lock
 tag: "SEALED"
-keywords: ['DualHttpContextAccessor', 'CloudNimble.EasyAF.Http.DualHttpContextAccessor', 'CloudNimble.EasyAF.Http', 'class', 'System.Object', 'Microsoft.AspNetCore.Http.IHttpContextAccessor']
+keywords: ['DualHttpContextAccessor', 'CloudNimble.EasyAF.Http.DualHttpContextAccessor', 'CloudNimble.EasyAF.Http', 'class', 'Microsoft.AspNetCore.Http.IHttpContextAccessor']
 ---
 
 ## Definition
@@ -11,8 +11,6 @@ keywords: ['DualHttpContextAccessor', 'CloudNimble.EasyAF.Http.DualHttpContextAc
 **Assembly:** CloudNimble.EasyAF.Http.dll
 
 **Namespace:** CloudNimble.EasyAF.Http
-
-**Inheritance:** System.Object
 
 ## Syntax
 
@@ -24,7 +22,7 @@ CloudNimble.EasyAF.Http.DualHttpContextAccessor
 
 [IHttpContextAccessor](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor) that keeps an outer request and an inner in-process
 request as two contexts. [DualHttpContextAccessor.HttpContext](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#httpcontext) always returns [DualHttpContextAccessor.Active](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#active).
-`HttpContext)` / [DualHttpContextAccessor.End](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#end) change which context is active without using
+[DualHttpContextAccessor.Start](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#start) / [DualHttpContextAccessor.End](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#end) change which context is active without using
 Microsoft's `HttpContextAccessor` setter (that setter nulls a shared holder and ends
 the outer request).
 
@@ -35,7 +33,7 @@ that registers a different implementation. Existing code keeps working because i
 [IHttpContextAccessor](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor).
 
 Host `Initialize` assigns [DualHttpContextAccessor.HttpContext](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#httpcontext) (sets [DualHttpContextAccessor.Outer](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#outer) and
-[DualHttpContextAccessor.Active](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#active)). Inner execute calls `HttpContext)`, then [DualHttpContextAccessor.End](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#end) in
+[DualHttpContextAccessor.Active](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#active)). Inner execute calls [DualHttpContextAccessor.Start](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#start), then [DualHttpContextAccessor.End](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#end) in
 `finally`. Host `Dispose` assigns [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null), which poisons the
 holder so every execution context sees request-end.
 
@@ -79,7 +77,7 @@ public Object()
 
 ### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Active
 
-Gets the context [DualHttpContextAccessor.HttpContext](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#httpcontext) returns. `HttpContext)` and
+Gets the context [DualHttpContextAccessor.HttpContext](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#httpcontext) returns. [DualHttpContextAccessor.Start](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#start) and
 [DualHttpContextAccessor.End](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#end) change this without using the setter.
 
 #### Syntax
@@ -106,7 +104,7 @@ Type: `Microsoft.AspNetCore.Http.HttpContext`
 
 ### <Icon icon="tag" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> Inner
 
-Gets the inner in-process context, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if `HttpContext)` has not run
+Gets the inner in-process context, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if [DualHttpContextAccessor.Start](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#start) has not run
 or [DualHttpContextAccessor.End](/api-reference/CloudNimble/EasyAF/Http/DualHttpContextAccessor#end) / request-end has already cleared it.
 
 #### Syntax
