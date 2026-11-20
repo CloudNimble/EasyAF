@@ -2,7 +2,7 @@
 title: EmbeddedResourceWriter
 description: "Renders text files embedded in an assembly, replacing `{{Token}}` placeholders, and writes them to disk."
 icon: file-brackets-curly
-keywords: ['EmbeddedResourceWriter', 'CloudNimble.EasyAF.Tools.Scaffolding.EmbeddedResourceWriter', 'CloudNimble.EasyAF.Tools.Scaffolding', 'class', 'System.Object']
+keywords: ['EmbeddedResourceWriter', 'CloudNimble.EasyAF.Tools.Scaffolding.EmbeddedResourceWriter', 'CloudNimble.EasyAF.Tools.Scaffolding', 'class']
 ---
 
 ## Definition
@@ -10,8 +10,6 @@ keywords: ['EmbeddedResourceWriter', 'CloudNimble.EasyAF.Tools.Scaffolding.Embed
 **Assembly:** CloudNimble.EasyAF.Tools.dll
 
 **Namespace:** CloudNimble.EasyAF.Tools.Scaffolding
-
-**Inheritance:** System.Object
 
 ## Syntax
 
@@ -291,7 +289,7 @@ replacing any existing file.
 #### Syntax
 
 ```csharp
-public System.Threading.Tasks.Task<string> WriteAsync(string resourceName, string destinationPath, System.Threading.CancellationToken cancellationToken = null)
+public System.Threading.Tasks.Task<string> WriteAsync(string resourceName, string destinationPath, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
 ```
 
 #### Parameters

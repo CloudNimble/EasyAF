@@ -1,13 +1,13 @@
 ---
 title: IEnumerable
-description: "Extension methods for IEnumerable from System.Runtime"
-icon: file-brackets-curly
-keywords: ['IEnumerable', 'System.Collections.Generic.IEnumerable<T>', 'System.Collections.Generic', 'error']
+description: "Extension methods for IEnumerable from System.Private.CoreLib"
+icon: plug
+keywords: ['IEnumerable', 'System.Collections.Generic.IEnumerable<T>', 'System.Collections.Generic', 'interface']
 ---
 
 ## Definition
 
-**Assembly:** System.Runtime.dll
+**Assembly:** System.Private.CoreLib.dll
 
 **Namespace:** System.Collections.Generic
 
@@ -19,11 +19,11 @@ System.Collections.Generic.IEnumerable<T> where T : CloudNimble.EasyAF.Core.DbOb
 
 ## Summary
 
-This type is defined in System.Runtime.
+This type is defined in System.Private.CoreLib.
 
 ## Remarks
 
-See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable{t}) for more information about the rest of the API.
+See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1) for more information about the rest of the API.
 
 ## Methods
 
@@ -73,13 +73,13 @@ Type: `int`
 
 <Note>Extension method from `System.Collections.Generic.EasyAF_IEnumerableExtensions`</Note>
 
-Returns a [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) if a list of `Id`s from the given [IEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1) contains
+Returns a [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) if a list of [IIdentifiable`1.Id](/api-reference/CloudNimble/EasyAF/Core/IIdentifiable#id)s from the given [IEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1) contains
 the specified value.
 
 #### Syntax
 
 ```csharp
-public static bool ContainsId<T, TId>(System.Collections.Generic.IEnumerable<T> list, TId idValue) where T : class, CloudNimble.EasyAF.Core.IIdentifiable<TId> where TId : struct, System.ValueType
+public static bool ContainsId<T, TId>(System.Collections.Generic.IEnumerable<T> list, TId idValue) where T : class, CloudNimble.EasyAF.Core.IIdentifiable<TId> where TId : struct
 ```
 
 #### Parameters
@@ -149,7 +149,7 @@ Returns a [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) if an
 #### Syntax
 
 ```csharp
-public static bool ContentsAreChanged<T, TForeign, TId>(System.Collections.Generic.IEnumerable<T> enumerable, System.Collections.Generic.IEnumerable<TForeign> foreignList, System.Func<T, TId> foreignIdFunc, bool checkGraph = false) where T : CloudNimble.EasyAF.Core.DbObservableObject, CloudNimble.EasyAF.Core.IIdentifiable<TId> where TForeign : CloudNimble.EasyAF.Core.DbObservableObject, CloudNimble.EasyAF.Core.IIdentifiable<TId> where TId : struct, System.ValueType
+public static bool ContentsAreChanged<T, TForeign, TId>(System.Collections.Generic.IEnumerable<T> enumerable, System.Collections.Generic.IEnumerable<TForeign> foreignList, System.Func<T, TId> foreignIdFunc, bool checkGraph = false) where T : CloudNimble.EasyAF.Core.DbObservableObject, CloudNimble.EasyAF.Core.IIdentifiable<TId> where TForeign : CloudNimble.EasyAF.Core.DbObservableObject, CloudNimble.EasyAF.Core.IIdentifiable<TId> where TId : struct
 ```
 
 #### Parameters
@@ -158,7 +158,7 @@ public static bool ContentsAreChanged<T, TForeign, TId>(System.Collections.Gener
 |------|------|-------------|
 | `enumerable` | `System.Collections.Generic.IEnumerable<T>` | - |
 | `foreignList` | `System.Collections.Generic.IEnumerable<TForeign>` | The list of related objects that we want to filter the *enumerable* down to. |
-| `foreignIdFunc` | `System.Func<T, TId>` | The property from the *enumerable* that points to the `Id` for the objects in *foreignList*. |
+| `foreignIdFunc` | `System.Func<T, TId>` | The property from the *enumerable* that points to the [IIdentifiable`1.Id](/api-reference/CloudNimble/EasyAF/Core/IIdentifiable#id) for the objects in *foreignList*. |
 | `checkGraph` | `bool` | - |
 
 #### Returns
@@ -175,7 +175,7 @@ whose foreign keys appear in the *foreignList*.
 #### Syntax
 
 ```csharp
-public static System.Collections.Generic.IEnumerable<T> FilterForChanges<T, TForeign, TId>(System.Collections.Generic.IEnumerable<T> enumerable, System.Collections.Generic.IEnumerable<TForeign> foreignList, System.Func<T, TId> foreignIdFunc) where T : CloudNimble.EasyAF.Core.DbObservableObject, CloudNimble.EasyAF.Core.IIdentifiable<TId> where TForeign : CloudNimble.EasyAF.Core.DbObservableObject, CloudNimble.EasyAF.Core.IIdentifiable<TId> where TId : struct, System.ValueType
+public static System.Collections.Generic.IEnumerable<T> FilterForChanges<T, TForeign, TId>(System.Collections.Generic.IEnumerable<T> enumerable, System.Collections.Generic.IEnumerable<TForeign> foreignList, System.Func<T, TId> foreignIdFunc) where T : CloudNimble.EasyAF.Core.DbObservableObject, CloudNimble.EasyAF.Core.IIdentifiable<TId> where TForeign : CloudNimble.EasyAF.Core.DbObservableObject, CloudNimble.EasyAF.Core.IIdentifiable<TId> where TId : struct
 ```
 
 #### Parameters
@@ -184,7 +184,7 @@ public static System.Collections.Generic.IEnumerable<T> FilterForChanges<T, TFor
 |------|------|-------------|
 | `enumerable` | `System.Collections.Generic.IEnumerable<T>` | The list we want to check for changes in. |
 | `foreignList` | `System.Collections.Generic.IEnumerable<TForeign>` | The list of related objects that we want to filter the *enumerable* down to. |
-| `foreignIdFunc` | `System.Func<T, TId>` | The property from the *enumerable* that points to the `Id` for the objects in *foreignList*. |
+| `foreignIdFunc` | `System.Func<T, TId>` | The property from the *enumerable* that points to the [IIdentifiable`1.Id](/api-reference/CloudNimble/EasyAF/Core/IIdentifiable#id) for the objects in *foreignList*. |
 
 #### Returns
 
@@ -266,7 +266,7 @@ public static void RejectChanges<T>(System.Collections.Generic.IEnumerable<T> en
 
 <Note>Extension method from `System.Collections.Generic.EasyAF_IEnumerableExtensions`</Note>
 
-Returns a [List`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1) where the [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject)DbObservableObjects</see> have `Boolean)` turned on.
+Returns a [List`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1) where the [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject)DbObservableObjects&lt;/see&gt; have [DbObservableObject.TrackChanges](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#trackchanges) turned on.
 
 #### Syntax
 

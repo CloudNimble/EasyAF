@@ -1,8 +1,8 @@
 ---
 title: IConfiguration
 description: "Extension methods for IConfiguration from Microsoft.Extensions.Configuration.Abstractions"
-icon: file-brackets-curly
-keywords: ['IConfiguration', 'Microsoft.Extensions.Configuration.IConfiguration', 'Microsoft.Extensions.Configuration', 'error']
+icon: plug
+keywords: ['IConfiguration', 'Microsoft.Extensions.Configuration.IConfiguration', 'Microsoft.Extensions.Configuration', 'interface']
 ---
 
 ## Definition
@@ -71,7 +71,7 @@ configuration.BindWithJsonNames(config);
 #### Remarks
 
 This method supports automatic type conversion for common types including DateTime, DateTimeOffset,
-and all types supported by [Type)](https://learn.microsoft.com/dotnet/api/system.convert.changetype(system.object,system.type)). If a property has a
+and all types supported by [ChangeType](https://learn.microsoft.com/dotnet/api/system.convert.changetype). If a property has a
 [JsonPropertyNameAttribute](https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonpropertynameattribute), the attribute's Name value is used as the configuration key;
 otherwise, the property name is used directly.
 

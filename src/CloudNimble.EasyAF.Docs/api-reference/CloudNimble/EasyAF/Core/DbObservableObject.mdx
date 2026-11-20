@@ -2,7 +2,7 @@
 title: DbObservableObject
 description: "A base class for Entity Framework objects to implement [INotifyPropertyChanged](https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertyc..."
 icon: file-brackets-curly
-keywords: ['DbObservableObject', 'CloudNimble.EasyAF.Core.DbObservableObject', 'CloudNimble.EasyAF.Core', 'class', 'CloudNimble.EasyAF.Core.EasyObservableObject', 'System.ComponentModel.INotifyPropertyChanged', 'System.IDisposable', 'System.ComponentModel.IChangeTracking', 'System.ComponentModel.IRevertibleChangeTracking']
+keywords: ['DbObservableObject', 'CloudNimble.EasyAF.Core.DbObservableObject', 'CloudNimble.EasyAF.Core', 'class', 'CloudNimble.EasyAF.Core.EasyObservableObject', 'System.ComponentModel.INotifyPropertyChanged', 'System.IDisposable', 'System.ComponentModel.IRevertibleChangeTracking', 'System.ComponentModel.IChangeTracking']
 ---
 
 ## Definition
@@ -136,7 +136,7 @@ Type: `bool`
 
 #### Remarks
 
-To track changes, call `Boolean)`. PropertyChanged events will still be fired, regardless of this setting.
+To track changes, call [DbObservableObject.TrackChanges](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#trackchanges). PropertyChanged events will still be fired, regardless of this setting.
 
 ## Methods
 
@@ -411,7 +411,7 @@ Type: `bool`
 
 ### <Icon icon="function" iconType="duotone" color="#E0EC32" size={24} className="mr-2" /> RejectChanges
 
-Loops through the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#originalvalues) list, sets any property that has changed back to the value it had when `Boolean)` was called,
+Loops through the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#originalvalues) list, sets any property that has changed back to the value it had when [DbObservableObject.TrackChanges](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#trackchanges) was called,
 clears the [DbObservableObject.OriginalValues](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#originalvalues) list, and sets [DbObservableObject.IsChanged](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#ischanged) to [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
 
 #### Syntax
@@ -535,7 +535,7 @@ public void TrackChanges(bool deepTracking = false)
 
 | Name | Type | Description |
 |------|------|-------------|
-| `deepTracking` | `bool` | When [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool), loops recursively through the object graph and calls `Boolean)` on every object that 
+| `deepTracking` | `bool` | When [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool), loops recursively through the object graph and calls [DbObservableObject.TrackChanges](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject#trackchanges) on every object that 
 inherits from [EasyObservableObject](/api-reference/CloudNimble/EasyAF/Core/EasyObservableObject). |
 
 ## Events
@@ -549,13 +549,13 @@ Occurs when a property value changes.
 #### Syntax
 
 ```csharp
-public System.ComponentModel.PropertyChangedEventHandler PropertyChanged
+public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged
 ```
 
 ## Related APIs
 
 - System.ComponentModel.INotifyPropertyChanged
 - System.IDisposable
-- System.ComponentModel.IChangeTracking
 - System.ComponentModel.IRevertibleChangeTracking
+- System.ComponentModel.IChangeTracking
 

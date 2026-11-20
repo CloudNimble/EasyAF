@@ -2,7 +2,7 @@
 title: ConfigurationBase
 description: "A base class implementation of the configuration your Blazor app will pull from wwwroot/appsettings.json. Provides standard HttpClient configuration for API ..."
 icon: file-brackets-curly
-keywords: ['ConfigurationBase', 'CloudNimble.EasyAF.Configuration.ConfigurationBase', 'CloudNimble.EasyAF.Configuration', 'class', 'System.Object']
+keywords: ['ConfigurationBase', 'CloudNimble.EasyAF.Configuration.ConfigurationBase', 'CloudNimble.EasyAF.Configuration', 'class']
 ---
 
 ## Definition
@@ -10,8 +10,6 @@ keywords: ['ConfigurationBase', 'CloudNimble.EasyAF.Configuration.ConfigurationB
 **Assembly:** CloudNimble.EasyAF.Configuration.dll
 
 **Namespace:** CloudNimble.EasyAF.Configuration
-
-**Inheritance:** System.Object
 
 ## Syntax
 
@@ -34,7 +32,7 @@ consider using [ConfigurationPlusAdminBase](/api-reference/CloudNimble/EasyAF/Co
 
 ```csharp
 // In Program.cs or Startup.cs
-builder.Services.AddConfigurationBase&lt;MyAppConfiguration&gt;(builder.Configuration, "AppSettings");
+builder.Services.AddConfigurationBase<MyAppConfiguration>(builder.Configuration, "AppSettings");
 
 // Example configuration in appsettings.json
 {

@@ -3,7 +3,7 @@ title: SdkTemplateHost
 description: "Instantiates the .NET SDK's built-in C# project templates (`classlib`, `web`, `console`) in-process through Microsoft.TemplateEngine, without spawning `dotne..."
 icon: lock
 tag: "SEALED"
-keywords: ['SdkTemplateHost', 'CloudNimble.EasyAF.Tools.Scaffolding.SdkTemplateHost', 'CloudNimble.EasyAF.Tools.Scaffolding', 'class', 'System.Object', 'System.IDisposable']
+keywords: ['SdkTemplateHost', 'CloudNimble.EasyAF.Tools.Scaffolding.SdkTemplateHost', 'CloudNimble.EasyAF.Tools.Scaffolding', 'class', 'System.IDisposable']
 ---
 
 ## Definition
@@ -11,8 +11,6 @@ keywords: ['SdkTemplateHost', 'CloudNimble.EasyAF.Tools.Scaffolding.SdkTemplateH
 **Assembly:** CloudNimble.EasyAF.Tools.dll
 
 **Namespace:** CloudNimble.EasyAF.Tools.Scaffolding
-
-**Inheritance:** System.Object
 
 ## Syntax
 
@@ -134,7 +132,7 @@ Creates a project from an SDK template.
 #### Syntax
 
 ```csharp
-public System.Threading.Tasks.Task<string> CreateProjectAsync(string shortName, string projectName, string outputDirectory, bool overwrite = false, System.Threading.CancellationToken cancellationToken = null)
+public System.Threading.Tasks.Task<string> CreateProjectAsync(string shortName, string projectName, string outputDirectory, bool overwrite = false, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
 ```
 
 #### Parameters
@@ -293,7 +291,7 @@ Finds which of the given C# project templates are not available, so a caller can
 #### Syntax
 
 ```csharp
-public System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string>> GetMissingTemplatesAsync(System.Collections.Generic.IEnumerable<string> shortNames, System.Threading.CancellationToken cancellationToken = null)
+public System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string>> GetMissingTemplatesAsync(System.Collections.Generic.IEnumerable<string> shortNames, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
 ```
 
 #### Parameters

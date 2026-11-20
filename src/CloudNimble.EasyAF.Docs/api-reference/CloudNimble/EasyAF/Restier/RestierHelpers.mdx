@@ -3,7 +3,7 @@ title: RestierHelpers
 description: "Provides utility methods for logging Restier operations and entity lifecycle events. Supports logging for both named entities and identifiable entities with ..."
 icon: bolt
 tag: "STATIC"
-keywords: ['RestierHelpers', 'CloudNimble.EasyAF.Restier.RestierHelpers', 'CloudNimble.EasyAF.Restier', 'class', 'System.Object']
+keywords: ['RestierHelpers', 'CloudNimble.EasyAF.Restier.RestierHelpers', 'CloudNimble.EasyAF.Restier', 'class']
 ---
 
 ## Definition
@@ -11,8 +11,6 @@ keywords: ['RestierHelpers', 'CloudNimble.EasyAF.Restier.RestierHelpers', 'Cloud
 **Assembly:** CloudNimble.EasyAF.Restier.dll
 
 **Namespace:** CloudNimble.EasyAF.Restier
-
-**Inheritance:** System.Object
 
 ## Syntax
 
@@ -71,7 +69,7 @@ Provides more detailed logging by including the specific entity identifier.
 #### Syntax
 
 ```csharp
-public static void LogOperation<T, TId>(T entity, CloudNimble.EasyAF.Restier.RestierOperationType operation) where T : CloudNimble.EasyAF.Core.IIdentifiable<TId> where TId : struct, System.ValueType
+public static void LogOperation<T, TId>(T entity, CloudNimble.EasyAF.Restier.RestierOperationType operation) where T : CloudNimble.EasyAF.Core.IIdentifiable<TId> where TId : struct
 ```
 
 #### Parameters

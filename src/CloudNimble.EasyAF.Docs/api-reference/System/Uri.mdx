@@ -1,13 +1,13 @@
 ---
 title: Uri
-description: "Extension methods for Uri from System.Runtime"
+description: "Extension methods for Uri from System.Private.Uri"
 icon: file-brackets-curly
-keywords: ['Uri', 'System.Uri', 'System', 'error']
+keywords: ['Uri', 'System.Uri', 'System', 'class']
 ---
 
 ## Definition
 
-**Assembly:** System.Runtime.dll
+**Assembly:** System.Private.Uri.dll
 
 **Namespace:** System
 
@@ -19,7 +19,7 @@ System.Uri
 
 ## Summary
 
-This type is defined in System.Runtime.
+This type is defined in System.Private.Uri.
 
 ## Remarks
 
@@ -36,7 +36,7 @@ Creates an properly-constructed OData Uri with the correct querystring values, i
 #### Syntax
 
 ```csharp
-public static System.Uri ToODataUri(System.Uri uri, bool dollarSign = true, string filter = null, System.Nullable<int> top = null, System.Nullable<int> skip = null, string orderby = null, string expand = null, string select = null, System.Nullable<bool> count = null)
+public static System.Uri ToODataUri(System.Uri uri, bool dollarSign = true, string filter = null, int? top = null, int? skip = null, string orderby = null, string expand = null, string select = null, bool? count = null)
 ```
 
 #### Parameters
@@ -46,12 +46,12 @@ public static System.Uri ToODataUri(System.Uri uri, bool dollarSign = true, stri
 | `uri` | `System.Uri` | The [Uri](/api-reference/System/Uri) instance to extend. |
 | `dollarSign` | `bool` | Specifies whether or not the query string name should have a "$" in it. Defaults to [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). |
 | `filter` | `string` | The filter. |
-| `top` | `System.Nullable<int>` | An [Int32](https://learn.microsoft.com/dotnet/api/system.int32) representing the number of records to take. |
-| `skip` | `System.Nullable<int>` | An [Int32](https://learn.microsoft.com/dotnet/api/system.int32) representing the number of records to skip over. |
+| `top` | `int?` | An [Int32](https://learn.microsoft.com/dotnet/api/system.int32) representing the number of records to take. |
+| `skip` | `int?` | An [Int32](https://learn.microsoft.com/dotnet/api/system.int32) representing the number of records to skip over. |
 | `orderby` | `string` | The orderby. |
 | `expand` | `string` | The expand. |
 | `select` | `string` | The select. |
-| `count` | `System.Nullable<bool>` | A [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) representing whether to return a count of the total number of records in the response. |
+| `count` | `bool?` | A [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean) representing whether to return a count of the total number of records in the response. |
 
 #### Returns
 

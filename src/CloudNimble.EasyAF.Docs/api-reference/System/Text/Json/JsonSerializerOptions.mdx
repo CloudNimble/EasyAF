@@ -1,8 +1,9 @@
 ---
 title: JsonSerializerOptions
 description: "Extension methods for JsonSerializerOptions from System.Text.Json"
-icon: file-brackets-curly
-keywords: ['JsonSerializerOptions', 'System.Text.Json.JsonSerializerOptions', 'System.Text.Json', 'error']
+icon: lock
+tag: "SEALED"
+keywords: ['JsonSerializerOptions', 'System.Text.Json.JsonSerializerOptions', 'System.Text.Json', 'class']
 ---
 
 ## Definition
@@ -31,8 +32,8 @@ See [Microsoft documentation](https://learn.microsoft.com/dotnet/api/system.text
 
 <Note>Extension method from `System.Text.Json.EasyAF_JsonSerializerOptionsExtensions`</Note>
 
-Stops [ICreatedAuditable.DateCreated](/api-reference/CloudNimble/EasyAF/Core/ICreatedAuditable#datecreated), `CreatedById`, [IUpdatedAuditable.DateUpdated](/api-reference/CloudNimble/EasyAF/Core/IUpdatedAuditable#dateupdated),
-and `UpdatedById` from being written when serializing any [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject).
+Stops [ICreatedAuditable.DateCreated](/api-reference/CloudNimble/EasyAF/Core/ICreatedAuditable#datecreated), [ICreatorTrackable`1.CreatedById](/api-reference/CloudNimble/EasyAF/Core/ICreatorTrackable#createdbyid), [IUpdatedAuditable.DateUpdated](/api-reference/CloudNimble/EasyAF/Core/IUpdatedAuditable#dateupdated),
+and [IUpdaterTrackable`1.UpdatedById](/api-reference/CloudNimble/EasyAF/Core/IUpdaterTrackable#updatedbyid) from being written when serializing any [DbObservableObject](/api-reference/CloudNimble/EasyAF/Core/DbObservableObject).
 
 #### Syntax
 

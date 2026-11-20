@@ -3,7 +3,7 @@ title: HttpHandlerMode
 description: "Specifies how HttpClient message handlers should be configured when registering HTTP clients. Determines whether handlers are added to existing handlers or r..."
 icon: list-ol
 tag: "ENUM"
-keywords: ['HttpHandlerMode', 'CloudNimble.EasyAF.Core.HttpHandlerMode', 'CloudNimble.EasyAF.Core', 'class', 'System.Enum']
+keywords: ['HttpHandlerMode', 'CloudNimble.EasyAF.Core.HttpHandlerMode', 'CloudNimble.EasyAF.Core', 'enum', 'System.Enum', 'System.IComparable', 'System.ISpanFormattable', 'System.IFormattable', 'System.IConvertible']
 ---
 
 ## Definition
@@ -30,9 +30,16 @@ Determines whether handlers are added to existing handlers or replace them entir
 | Name | Value | Description |
 |------|-------|-------------|
 | `None` | 0 | No custom message handlers are configured for the HttpClient.
-            Uses the default handler configuration provided by the HttpClientFactory. |
+Uses the default handler configuration provided by the HttpClientFactory. |
 | `Add` | 1 | Adds custom message handlers to the existing handler pipeline.
-            Custom handlers are appended to any existing handlers already configured. |
+Custom handlers are appended to any existing handlers already configured. |
 | `Replace` | 2 | Replaces the entire handler pipeline with custom message handlers.
-            All existing handlers are removed and replaced with the specified custom handlers. |
+All existing handlers are removed and replaced with the specified custom handlers. |
+
+## Related APIs
+
+- System.IComparable
+- System.ISpanFormattable
+- System.IFormattable
+- System.IConvertible
 

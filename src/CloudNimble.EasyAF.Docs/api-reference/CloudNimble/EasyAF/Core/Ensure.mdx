@@ -3,7 +3,7 @@ title: Ensure
 description: "Provides methods for ensuring that method arguments meet specific criteria. This class provides a consistent way to validate arguments and throw appropriate ..."
 icon: bolt
 tag: "STATIC"
-keywords: ['Ensure', 'CloudNimble.EasyAF.Core.Ensure', 'CloudNimble.EasyAF.Core', 'class', 'System.Object']
+keywords: ['Ensure', 'CloudNimble.EasyAF.Core.Ensure', 'CloudNimble.EasyAF.Core', 'class']
 ---
 
 ## Definition
@@ -11,8 +11,6 @@ keywords: ['Ensure', 'CloudNimble.EasyAF.Core.Ensure', 'CloudNimble.EasyAF.Core'
 **Assembly:** CloudNimble.EasyAF.Core.dll
 
 **Namespace:** CloudNimble.EasyAF.Core
-
-**Inheritance:** System.Object
 
 ## Syntax
 
@@ -28,7 +26,7 @@ This class provides a consistent way to validate arguments and throw appropriate
 ## Examples
 
 ```csharp
-public void ProcessData(string input, List&lt;string&gt; items)
+public void ProcessData(string input, List<string> items)
 {
     Ensure.ArgumentNotNull(input, nameof(input));
     Ensure.ArgumentNotNull(items, nameof(items));
