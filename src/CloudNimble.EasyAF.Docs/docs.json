@@ -1404,6 +1404,10 @@
       {
         "tab": "Build For SI",
         "href": "https://si.nimbleapps.cloud"
+      },
+      {
+        "tab": "Document Everything",
+        "href": "https://dotnetdocs.com"
       }
     ]
   },

@@ -5,6 +5,8 @@ description: "System.Text.Json-shaped, UTF-8 first, 3x faster, 85% less memory, 
 icon: "house"
 ---
 
+import { ComingFrom } from '/snippets/xmlessentials/coming-from.jsx';
+
 For the better part of a decade, .NET developers have asked for XML that works the way JSON does in System.Text.Json: one static call to serialize, a UTF-8 reader that doesn't allocate, a source generator, and Native AOT that works. **XmlEssentials is that library.** It's a complete XML stack written from scratch, with no dependency on `System.Xml`, and it's ready for production today.
 
 ### The System.Text.Json equivalent for XML that .NET developers have been begging for!
@@ -47,6 +49,23 @@ If you know System.Text.Json, you already know XmlEssentials. The types, the met
 | `JsonConverter<T>` | [`XmlConverter<T>`](/xmlessentials/guides/custom-converters) | Your own reading and writing for any type |
 
 Coming from JSON? [Start with what's different about XML](/xmlessentials/guides/migrate/from-system-text-json).
+
+## Next to the code you have today
+
+Hover over or select what you use now to see the same task in XmlEssentials, side by side, and what changes when you move.
+
+<ComingFrom />
+
+<Visibility for="agents">
+
+Side-by-side comparisons and the full list of differences are in the migration guides:
+
+- [Migrate from XmlSerializer](/xmlessentials/guides/migrate/from-xmlserializer)
+- [Migrate from XmlReader and XmlWriter](/xmlessentials/guides/migrate/from-xmlreader-xmlwriter)
+- [Migrate from XDocument and XmlDocument](/xmlessentials/guides/migrate/from-xdocument)
+- [Coming from System.Text.Json](/xmlessentials/guides/migrate/from-system-text-json)
+
+</Visibility>
 
 ## Lightning fast, and light on memory
 

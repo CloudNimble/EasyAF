@@ -1,4 +1,4 @@
-<Project Sdk="DotNetDocs.Sdk/2.0.1">
+﻿<Project Sdk="DotNetDocs.Sdk/2.0.1">
 
     <PropertyGroup>
         <DocumentationType>Mintlify</DocumentationType>
@@ -65,6 +65,9 @@
                 </Pages>
                 <Tabs>
                     <Tab Name="Build For SI" Href="https://si.nimbleapps.cloud" Position="End" />
+
+                    <Tab Name="Document Everything" Href="https://dotnetdocs.com" Position="End" />
+
                 </Tabs>
             </Navigation>
             <Interaction>
