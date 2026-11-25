@@ -1,0 +1,310 @@
+---
+title: "How to use source generation in XmlEssentials"
+sidebarTitle: "Use source generation"
+description: "Declare an XmlSerializerContext, list your types on it, and call XmlSerializer with generated type info instead of reflection at run time."
+icon: "wand-magic-sparkles"
+---
+
+Source generation describes your types to the serializer at compile time. You declare a context class, the generator fills it in with metadata for each type, and you pass its type info to `XmlSerializer`. The serializer then reads and writes without reflecting over your types. Use it when you publish with trimming or Native AOT, or when you want mapping mistakes reported by the compiler. To decide between the two approaches, see [Reflection versus source generation](/xmlessentials/guides/reflection-vs-source-generation).
+
+The API mirrors System.Text.Json source generation: `XmlSerializerContext`, `[XmlSerializable]`, `[XmlSourceGenerationOptions]`, and `XmlTypeInfo<T>` correspond to `JsonSerializerContext`, `[JsonSerializable]`, `[JsonSourceGenerationOptions]`, and `JsonTypeInfo<T>`.
+
+## Generate and use a context
+
+The generator is part of the `XmlEssentials` package. There's no second package to install.
+
+<Steps>
+  <Step title="Install the package">
+    Add `XmlEssentials` to the project that holds your types:
+
+    ```bash
+    dotnet add package XmlEssentials
+    ```
+  </Step>
+  <Step title="Declare a partial context class">
+    Create a class that derives from [`XmlSerializerContext`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializerContext) and mark it `partial`. Leave the body empty. The generator writes the other half.
+
+    ```csharp OrderXmlContext.cs
+    [XmlSerializable<Order>]
+    public partial class OrderXmlContext : XmlSerializerContext
+    {
+    }
+    ```
+
+    The class can be `public` or `internal`.
+  </Step>
+  <Step title="List your root types">
+    Add one [`[XmlSerializable]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializableAttribute) attribute for each type you pass to the serializer. The generator follows the properties of each type, so `Order` brings in `OrderLine` without a second attribute. The type is a type argument of the attribute, as in `[XmlSerializable<Order>]`, so the compiler checks it. It can be any closed type, including an array (`[XmlSerializable<Order[]>]`) or a collection (`[XmlSerializable<List<Order>>]`).
+
+    ```csharp Order.cs
+    public sealed class Order
+    {
+        public string? Customer { get; set; }
+
+        [XmlAttribute]
+        public int Id { get; set; }
+
+        [XmlElement("Line")]
+        public List<OrderLine> Lines { get; set; } = [];
+    }
+
+    public sealed class OrderLine
+    {
+        public int Quantity { get; set; }
+
+        public string? Sku { get; set; }
+    }
+    ```
+  </Step>
+  <Step title="Pass the generated type info to the serializer">
+    The generator adds a static `Default` property to the context and one `XmlTypeInfo<T>` property for each type, named after the type. Pass that property to an `XmlSerializer` overload:
+
+    ```csharp Program.cs
+    Order order = CreateOrder();
+
+    string xml = XmlSerializer.Serialize(order, OrderXmlContext.Default.Order);
+    output.WriteLine(xml);
+
+    Order? copy = XmlSerializer.Deserialize(xml, OrderXmlContext.Default.Order);
+    output.WriteLine($"Order {copy!.Id} for {copy.Customer}: {copy.Lines.Count} lines");
+    ```
+
+    The code produces the following output:
+
+    ```text
+    <?xml version="1.0" encoding="utf-8"?><Order Id="1042"><Customer>Ada</Customer><Line><Quantity>1</Quantity><Sku>KB-01</Sku></Line><Line><Quantity>2</Quantity><Sku>MS-02</Sku></Line></Order>
+    Order 1042 for Ada: 2 lines
+    ```
+
+    `Deserialize` needs no type argument here: the compiler infers `Order` from the type info.
+  </Step>
+</Steps>
+
+`CreateOrder` builds the order that every example in this article uses: number 1042 for Ada, with two lines.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/32_UseSourceGeneration.cs)
+
+## What the generator adds to your class
+
+For a context named `OrderXmlContext` that lists `Order`, the generated half of the class contains:
+
+| Member | Purpose |
+| --- | --- |
+| `static OrderXmlContext Default` | A shared instance, with options taken from `[XmlSourceGenerationOptions]` when the attribute is present. |
+| `OrderXmlContext()` | Creates a context with the same options as `Default`. |
+| `OrderXmlContext(XmlSerializerOptions? options)` | Creates a context bound to your options. |
+| `XmlTypeInfo<Order> Order` | The type info for `Order`. There's one such property for every listed type and every object type it reaches, such as `OrderLine`. |
+| `XmlTypeInfo? GetTypeInfo(Type type)` | Looks up type info by type. This is how the context overloads find it. |
+
+To give a property a different name, for example when two listed types share a name, set `TypeInfoPropertyName`:
+
+```csharp OrderLineXmlContext.cs
+[XmlSerializable<OrderLine>(TypeInfoPropertyName = "Line")]
+public partial class OrderLineXmlContext : XmlSerializerContext
+{
+}
+```
+
+```csharp Program.cs
+var line = new OrderLine { Sku = "KB-01", Quantity = 1 };
+
+string xml = XmlSerializer.Serialize(line, OrderLineXmlContext.Default.Line);
+output.WriteLine(xml);
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?><OrderLine><Quantity>1</Quantity><Sku>KB-01</Sku></OrderLine>
+```
+
+The property name changes. The element name doesn't.
+
+## Pass the context instead of the type info
+
+Most serializer methods that take an `XmlTypeInfo<T>` also have an overload that takes the context: the ones for strings, UTF-8 bytes, streams, buffer writers, `Utf8XmlReader`, `Utf8XmlWriter`, and DOM nodes. The serializer then calls `GetTypeInfo` for you. The `PipeReader` and `IAsyncEnumerable<T>` methods take type info only.
+
+```csharp Program.cs
+string xml = XmlSerializer.Serialize(CreateOrder(), OrderXmlContext.Default);
+output.WriteLine(xml);
+
+Order? copy = XmlSerializer.Deserialize<Order>(xml, OrderXmlContext.Default);
+output.WriteLine($"Order {copy!.Id} for {copy.Customer}: {copy.Lines.Count} lines");
+```
+
+The code produces the following output:
+
+```text
+<?xml version="1.0" encoding="utf-8"?><Order Id="1042"><Customer>Ada</Customer><Line><Quantity>1</Quantity><Sku>KB-01</Sku></Line><Line><Quantity>2</Quantity><Sku>MS-02</Sku></Line></Order>
+Order 1042 for Ada: 2 lines
+```
+
+Prefer the type info overloads when you know the type at compile time. They skip the lookup, and a type that isn't in the context is a compiler error instead of a surprise at run time.
+
+<Warning>
+A generated context answers `GetTypeInfo` for the types it lists and for every type reachable from them: classes, structs, and records, and the collection, dictionary, enumeration, and nullable types their members use. It also answers for a built-in value, an XML value such as `XmlElement`, `object`, and a type with `[XmlConverter]`. For any other type it returns `null`, and the serializer throws `NotSupportedException`. It never maps the members of a type through reflection, so list every class, struct, and record you serialize, and list a collection or array type too when you serialize it as the document element.
+</Warning>
+
+## Set options
+
+A context is bound to one `XmlSerializerOptions` instance, which you read from its `Options` property. You choose those options at compile time, at run time, or both.
+
+### At compile time
+
+Add [`[XmlSourceGenerationOptions]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlSourceGenerationOptionsAttribute) to the context. `Default` and the parameterless constructor use these values.
+
+```csharp CamelCaseOrderXmlContext.cs
+[XmlSourceGenerationOptions(
+    OmitXmlDeclaration = true,
+    PropertyNamingPolicy = XmlKnownNamingPolicy.CamelCase)]
+[XmlSerializable<Order>]
+public partial class CamelCaseOrderXmlContext : XmlSerializerContext
+{
+}
+```
+
+```csharp Program.cs
+string xml = XmlSerializer.Serialize(CreateOrder(), CamelCaseOrderXmlContext.Default.Order);
+output.WriteLine(xml);
+```
+
+The code produces the following output:
+
+```xml
+<order id="1042"><customer>Ada</customer><Line><quantity>1</quantity><sku>KB-01</sku></Line><Line><quantity>2</quantity><sku>MS-02</sku></Line></order>
+```
+
+`Line` keeps its capital because `[XmlElement("Line")]` names it explicitly. A naming policy changes only the names it derives from member and type names.
+
+`GenerationMode` chooses what the generator writes. See [Source-generation modes](/xmlessentials/guides/source-generation-modes). Every other property of the attribute sets the `XmlSerializerOptions` property of the same name on the default options:
+
+| Properties | Also used for |
+| --- | --- |
+| `PropertyNamingPolicy`, `ElementNamingPolicy`, `AttributeNamingPolicy` | The element and attribute names the write fast path is compiled with. |
+| `DefaultPropertyMapping` | Which members the write fast path writes as attributes. |
+| `DefaultCollectionMapping` | Whether the write fast path wraps collections. |
+| `IncludeFields` | Whether the write fast path writes public fields. |
+| `IgnoreReadOnlyProperties` and `IgnoreReadOnlyFields` set to `true`; `MemberOrder`, `CharHandling`, and `UtcOffsetHandling` set to a value other than the default; `DefaultIgnoreCondition` set to `WhenWritingNullReference` | Each turns the write fast path off, so the context writes from the metadata. See [When the fast path writes](/xmlessentials/guides/source-generation-modes#when-the-fast-path-writes). |
+| `WriteIndented`, `OmitXmlDeclaration`, `DefaultNamespace`, the other `DefaultIgnoreCondition` values, `RespectNullableAnnotations`, `PreferredObjectCreationHandling`, `UnknownTypeHandling`, `EnumHandling`, `MaxDepth`, `EmitByteOrderMark`, `XmlVersion`, `PropertyNameCaseInsensitive` | Nothing else. |
+
+The naming policies are the `XmlKnownNamingPolicy` values. For any other setting, such as `NewLine`, `Converters`, or `ReferenceHandler`, pass your own `XmlSerializerOptions` to the context's constructor.
+
+### At run time
+
+Pass an `XmlSerializerOptions` instance to the context's constructor. The context makes itself the options' `TypeInfoResolver`, and the default options from the attribute aren't used: constructor options win.
+
+```csharp Program.cs
+var options = new XmlSerializerOptions
+{
+    NewLine = "\n",
+    OmitXmlDeclaration = true,
+    WriteIndented = true,
+};
+var context = new OrderXmlContext(options);
+
+string xml = XmlSerializer.Serialize(CreateOrder(), context.Order);
+output.WriteLine(xml);
+```
+
+The code produces the following output:
+
+```xml
+<Order Id="1042">
+  <Customer>Ada</Customer>
+  <Line>
+    <Quantity>1</Quantity>
+    <Sku>KB-01</Sku>
+  </Line>
+  <Line>
+    <Quantity>2</Quantity>
+    <Sku>MS-02</Sku>
+  </Line>
+</Order>
+```
+
+Create the context once and keep it, as you would an options instance. The constructor throws `InvalidOperationException` when the options are read-only, which includes `XmlSerializerOptions.Default`, `Web`, `Strict`, and `Bcl`.
+
+### How a context applies your options
+
+The metadata in a generated context describes each type as it's declared. The serializer applies your options to that metadata when it creates the type info, as the reflection resolver does. Every `XmlSerializerOptions` setting applies, and a generated context writes and reads the same documents as the reflection resolver for the same options. That includes:
+
+- The naming policies, `DefaultPropertyMapping`, `IncludeFields`, `IgnoreReadOnlyProperties`, and `IgnoreReadOnlyFields`.
+- `DefaultIgnoreCondition`, `RespectNullableAnnotations`, `PreferredObjectCreationHandling`, `UnknownTypeHandling`, `UnmappedMemberHandling`, `PropertyNameCaseInsensitive`, and `NumberHandling`.
+- `ReferenceHandler`. See [Preserve references](/xmlessentials/guides/preserve-references).
+- `Converters`, and `[XmlConverter]` on a type or on a member. A converter you supply for a type, in the options or with the attribute on the type, is used in place of the generated metadata for that type. See [Custom converters](/xmlessentials/guides/custom-converters#use-a-converter-with-source-generation).
+
+A generated context also supports derived types, mixed content, extension data, `XmlObjectCreationHandling.Populate`, `init`-only and `required` members, non-public members marked `[XmlInclude]`, and a non-public constructor marked `[XmlConstructor]`.
+
+In the default mode, a context also has a *write fast path* for each type: generated code that writes the type directly, with its names and its choice of members compiled in from `[XmlSourceGenerationOptions]`. The serializer uses it when your options agree with what it was compiled for, and writes from the metadata when they don't. The document is the same either way. For the conditions, see [When the fast path writes](/xmlessentials/guides/source-generation-modes#when-the-fast-path-writes).
+
+<Note>
+A context in `XmlSourceGenerationMode.Serialization` has the fast path and no metadata. It writes with the options it was compiled for, and it can't read. See [Source-generation modes](/xmlessentials/guides/source-generation-modes).
+</Note>
+
+## Use more than one context
+
+A project can hold any number of contexts, for example one for each feature area. Take the type info for each type from the context that lists it:
+
+```csharp Program.cs
+var shipment = new Shipment { OrderId = 1042, Carrier = "Contoso Freight" };
+
+output.WriteLine(XmlSerializer.Serialize(CreateOrder(), OrderXmlContext.Default.Order));
+output.WriteLine(XmlSerializer.Serialize(shipment, ShippingXmlContext.Default.Shipment));
+```
+
+The code produces the following output:
+
+```text
+<?xml version="1.0" encoding="utf-8"?><Order Id="1042"><Customer>Ada</Customer><Line><Quantity>1</Quantity><Sku>KB-01</Sku></Line><Line><Quantity>2</Quantity><Sku>MS-02</Sku></Line></Order>
+<?xml version="1.0" encoding="utf-8"?><Shipment><Carrier>Contoso Freight</Carrier><OrderId>1042</OrderId></Shipment>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/32_UseSourceGeneration.cs)
+
+<Warning>
+You can add several generated contexts to `XmlSerializerOptions.TypeInfoResolverChain`. Each context answers for the types it lists and returns `null` for the others, so the next context in the chain is asked. The options that hold the chain decide how every type is written: each context creates its type info for those options, not for its own. Every setting of those options applies, as it does when you pass options to a context's constructor.
+</Warning>
+
+## Understand the diagnostics
+
+The generator reports problems as compiler diagnostics in the `XmlEssentials` category. All are errors except `XMLESS011`, which is information, and `XMLESS018`, which is a warning.
+
+| ID | Message | Cause and fix |
+| --- | --- | --- |
+| `XMLESS001` | '*type*' must be a partial class that inherits XmlSerializerContext | A class has `[XmlSerializable]` but isn't `partial` or doesn't derive from `XmlSerializerContext`. Add the modifier or the base class. |
+| `XMLESS002` | The type '*type*' cannot be serialized by XmlEssentials | The type is a pointer, `IntPtr`, `UIntPtr`, or an open generic type, or the generator can't call a constructor: a parameter of the chosen constructor that no member fills has no default value, or a class has no `[XmlConstructor]`, no public constructor, and no parameterless constructor that is public or internal. |
+| `XMLESS003` | Member '*type*.*member*' is mapped as an XML attribute | A member with `[XmlAttribute]` has a type that isn't a simple value and has no `[XmlConverter]`. Map it as an element, or give the type a converter. |
+| `XMLESS004` | The type '*type*' has more than one [XmlText] or [XmlCData] | An element has one text content. Keep the attribute on one member. |
+| `XMLESS005` | The type '*type*' has more than one constructor that can bind its members | Two constructors are marked `[XmlConstructor]`, or none is marked and the type has more than one public constructor with parameters and no public parameterless one. Mark one. |
+| `XMLESS006` | The XML name '*name*' on '*member*' is not a valid XML Name | The name of a member, after the naming policy, can't be an element or attribute name. Rename it with `[XmlElement]`, `[XmlAttribute]`, or `[XmlPropertyName]`. |
+| `XMLESS007` | The type '*type*' uses XmlIncludeAttribute; use [XmlDerivedType] for known derived types | The type or one of its members carries `System.Xml.Serialization.XmlIncludeAttribute`, which this library doesn't read. Declare derived types with `[XmlDerivedType]`. |
+| `XMLESS010` | Varies | A schema file has a DTD, isn't well formed, or includes or imports a schema that isn't an `AdditionalFiles` item. See [Generate types from an XSD](/xmlessentials/guides/xsd-source-generation). |
+| `XMLESS011` | Varies | Information only. A schema says something the generated code doesn't act on, and the documents stay the same. |
+| `XMLESS012` | The generated C# name '*name*' is used more than once | Two schema components produce the same class or enumeration name. |
+| `XMLESS013` | The XML name '*name*' is not a valid XML Name | A schema names an element or attribute with a name that isn't a valid XML name. |
+| `XMLESS015` | Member '*type*.*member*' is mapped as XML text, and its type is not a single value | A member with `[XmlText]` or `[XmlCData]` has a type that isn't a simple value and has no `[XmlConverter]`. Map it as an element, or give the type a converter. |
+| `XMLESS017` | '*member*' is required, and its ignore condition is XmlIgnoreCondition.WhenReading, so it would never be read | A required member is marked `[XmlIgnore(Condition = XmlIgnoreCondition.WhenReading)]`. Remove one of the two. |
+| `XMLESS018` | Varies | Warning. A schema allows a document that the generated classes can't read or write as the schema describes it. See [Generate types from an XSD](/xmlessentials/guides/xsd-source-generation#limitations). |
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Reflection vs. source generation" icon="scale-balanced" href="/xmlessentials/guides/reflection-vs-source-generation">
+    What each approach does and costs.
+  </Card>
+  <Card title="Source-generation modes" icon="sliders" href="/xmlessentials/guides/source-generation-modes">
+    What the generator writes in each mode, and what each mode can do.
+  </Card>
+  <Card title="Publish with Native AOT" icon="rocket" href="/xmlessentials/guides/native-aot">
+    The project settings that go with a generated context.
+  </Card>
+  <Card title="Generate types from an XSD" icon="file-code" href="/xmlessentials/guides/xsd-source-generation">
+    Let the generator write the classes too.
+  </Card>
+</Columns>
+
+- [`XmlSerializerContext`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializerContext)
+- [`XmlSerializableAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializableAttribute)
+- [`XmlSourceGenerationOptionsAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSourceGenerationOptionsAttribute)
+- [`XmlTypeInfo`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo)
+- [How to configure XmlSerializerOptions](/xmlessentials/guides/configure-options)

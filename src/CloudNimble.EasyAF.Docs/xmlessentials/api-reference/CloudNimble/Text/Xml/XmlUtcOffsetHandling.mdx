@@ -1,0 +1,47 @@
+---
+title: XmlUtcOffsetHandling
+description: "Specifies how a [DateTimeOffset](https://learn.microsoft.com/dotnet/api/system.datetimeoffset) whose offset from UTC is zero is written."
+icon: list-ol
+tag: "ENUM"
+keywords: ['XmlUtcOffsetHandling', 'CloudNimble.Text.Xml.XmlUtcOffsetHandling', 'CloudNimble.Text.Xml', 'enum', 'System.Enum', 'System.IComparable', 'System.ISpanFormattable', 'System.IFormattable', 'System.IConvertible']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlUtcOffsetHandling
+```
+
+## Summary
+
+Specifies how a [DateTimeOffset](https://learn.microsoft.com/dotnet/api/system.datetimeoffset) whose offset from UTC is zero is written.
+
+## Remarks
+
+Both forms are valid ISO 8601 and `xs:dateTime` values for the same instant, and both are read under
+either value.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `WriteOffset` | 0 | The offset in numbers, such as `2026-03-14T09:30:00+00:00`, as System.Text.Json writes it. This is
+the default. |
+| `WriteZ` | 1 | The ISO 8601 UTC designator `Z`, such as `2026-03-14T09:30:00Z`. This is the canonical form in XML Schema and
+what `System.Xml.Serialization.XmlSerializer` writes. |
+
+## Related APIs
+
+- System.IComparable
+- System.ISpanFormattable
+- System.IFormattable
+- System.IConvertible
+

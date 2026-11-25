@@ -1,0 +1,84 @@
+---
+title: XmlAttributes
+description: "Provides the local names of the XML Schema instance attributes that XmlEssentials reads and writes. This class cannot be inherited."
+icon: bolt
+tag: "STATIC"
+keywords: ['XmlAttributes', 'CloudNimble.Text.Xml.XmlAttributes', 'CloudNimble.Text.Xml', 'class', 'CloudNimble.Text.Xml.XmlNamespaces', 'CloudNimble.Text.Xml.XmlElement', 'CloudNimble.Text.Xml.Utf8XmlWriter']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlAttributes
+```
+
+## Summary
+
+Provides the local names of the XML Schema instance attributes that XmlEssentials reads and writes.
+This class cannot be inherited.
+
+## Usage
+
+`XmlAttributes` holds the local names of the two XML Schema instance attributes that XmlEssentials reads and writes: `Nil` (`"nil"`, for `xsi:nil`) and `Type` (`"type"`, for `xsi:type`). The constants are local names only. Pair them with the `XmlNamespaces.Xsi` namespace URI so that a lookup matches the attribute whatever prefix the document uses.
+
+```csharp
+const string xml = """
+    <Order xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <ShippedOn xsi:nil="true"/>
+      <Total>129.90</Total>
+    </Order>
+    """;
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement shippedOn = document.RootElement.GetChild("ShippedOn");
+
+output.WriteLine($"ValueKind: {shippedOn.ValueKind}");
+output.WriteLine($"IsNil: {shippedOn.IsNil}");
+output.WriteLine($"GetString returns null: {shippedOn.GetString() is null}");
+output.WriteLine($"GetInnerText returns an empty string: {shippedOn.GetInnerText().Length == 0}");
+
+try
+{
+    shippedOn.GetDateTimeOffset();
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+
+XmlElement nil = shippedOn.GetAttribute(XmlAttributes.Nil, XmlNamespaces.Xsi);
+output.WriteLine($"{nil.Prefix}:{nil.LocalName} = {nil.GetBoolean()}");
+```
+
+The code produces the following output:
+
+```text
+ValueKind: Nil
+IsNil: True
+GetString returns null: True
+GetInnerText returns an empty string: True
+The element is nil and has no value.
+xsi:nil = True
+```
+
+To find out whether an element is nil, read `XmlElement.IsNil` instead of looking for the attribute yourself. For how the serializer uses these attributes, see [Handle null and nil](/xmlessentials/guides/null-and-nil) and [Polymorphism](/xmlessentials/guides/polymorphism).
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/27_QueryWithXmlElement.cs)
+
+## Remarks
+
+The constants are local names only. Bind them to the [XmlNamespaces.Xsi](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamespaces#xsi) namespace
+when you write `xsi:nil` or `xsi:type`.
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlNamespaces
+- CloudNimble.Text.Xml.XmlElement
+- CloudNimble.Text.Xml.Utf8XmlWriter
+

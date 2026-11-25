@@ -1,0 +1,131 @@
+---
+title: XmlEmptyElementStyle
+description: "Specifies how a [Utf8XmlWriter](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter) writes an element that has no content."
+icon: list-ol
+tag: "ENUM"
+keywords: ['XmlEmptyElementStyle', 'CloudNimble.Text.Xml.XmlEmptyElementStyle', 'CloudNimble.Text.Xml', 'enum', 'System.Enum', 'CloudNimble.Text.Xml.XmlWriterOptions', 'CloudNimble.Text.Xml.XmlSerializerOptions', 'CloudNimble.Text.Xml.Utf8XmlWriter', 'CloudNimble.Text.Xml.XmlAttributeStyle', 'CloudNimble.Text.Xml.Nodes.XmlElementNode']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlEmptyElementStyle
+```
+
+## Summary
+
+Specifies how a [Utf8XmlWriter](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter) writes an element that has no content.
+
+## Usage
+
+Set `XmlWriterOptions.EmptyElementStyle`, or `XmlSerializerOptions.EmptyElementStyle`, to choose how an element with no content is written.
+
+| Value | An element with no content is written as |
+| --- | --- |
+| `SelfClosing` | `<Notes/>`. This is the default. |
+| `SelfClosingWithSpace` | `<Notes />`, the form the writers in `System.Xml` use. |
+| `StartAndEndTag` | `<Notes></Notes>`. |
+
+The sample writes one document three times. The first two use `SelfClosingWithSpace` and the third uses `StartAndEndTag`:
+
+```csharp
+var asSystemXml = new XmlWriterOptions
+{
+    EmptyElementStyle = XmlEmptyElementStyle.SelfClosingWithSpace,
+    Indented = true,
+    NewLine = "\n",
+    OmitXmlDeclaration = true,
+};
+var onePerLine = asSystemXml with { AttributeStyle = XmlAttributeStyle.PerLine };
+var twoPerLine = onePerLine with { AttributesPerLine = 2, EmptyElementStyle = XmlEmptyElementStyle.StartAndEndTag };
+
+foreach (XmlWriterOptions options in new[] { asSystemXml, onePerLine, twoPerLine })
+{
+    var buffer = new ArrayBufferWriter<byte>();
+    using (var writer = new Utf8XmlWriter(buffer, options))
+    {
+        writer.WriteStartElement("Order");
+        writer.WriteAttributeString("id", "1042");
+        writer.WriteAttributeString("status", "open");
+        writer.WriteAttributeString("region", "EU");
+        writer.WriteElementString("Customer", "Ada Lovelace");
+        writer.WriteStartElement("Notes");
+        writer.WriteEndElement();
+        writer.WriteEndElement();
+    }
+
+    output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+}
+```
+
+```xml
+<Order id="1042" status="open" region="EU">
+  <Customer>Ada Lovelace</Customer>
+  <Notes />
+</Order>
+<Order id="1042"
+       status="open"
+       region="EU">
+  <Customer>Ada Lovelace</Customer>
+  <Notes />
+</Order>
+<Order id="1042" status="open"
+       region="EU">
+  <Customer>Ada Lovelace</Customer>
+  <Notes></Notes>
+</Order>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/23_WriteElementsAndValues.cs)
+
+## Remarks
+
+The three forms mean the same thing to a reader. The setting makes the output consistent: every
+element with no content is written in the one form, whichever code wrote it.
+
+[XmlEmptyElementStyle.SelfClosing](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlEmptyElementStyle) is the zero value, so it is the default in [XmlWriterOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWriterOptions),
+          created with `new` or as `default`, and in [XmlSerializerOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions).
+
+[Utf8XmlWriter.WriteFullEndElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter#writefullendelement) always writes a start tag and an end tag, whatever the
+          setting is.
+
+An element that was given an empty string has content: a value of no characters. It is written as
+`<e></e>` whatever the setting is, as the serializer writes a string that is empty,
+which keeps it apart from an element that was given nothing and from one that is nil.
+
+## Considerations
+
+- **`SelfClosing` is the zero value, and the default.** `new XmlWriterOptions()`, `default(XmlWriterOptions)`, a writer created without options, and `new XmlSerializerOptions()` all write `<e/>`.
+- **The three forms mean the same thing to a reader.** The setting changes how the output looks, not what it holds.
+- **It is one rule for all output.** Your own calls to the writer, the serializer, a generated context, `XmlDocument.WriteTo` and `XmlNode.WriteTo` write an element with no content the same way.
+- **It applies when an element is ended with nothing in it.** That is `WriteEndElement` before any content is written, the `WriteEmptyElement` methods, and `WriteElementString` with a `null` string. An element with attributes and no content counts: `<e a="1" />`.
+- **`WriteFullEndElement` always writes an end tag,** whatever the setting is.
+- **An empty string is content.** `WriteElementString("e", "")`, and a `string` member that holds `""`, are written as `<e></e>` under every value. That keeps an empty string apart from an element given nothing and from one marked `xsi:nil`.
+- **A document or a node keeps an end tag it read.** An element that was parsed as `<e></e>` is written as `<e></e>` under every value. An element that was parsed as `<e/>` or `<e />` takes the form the setting asks for. For a node, `XmlElementNode.IsEmptyElement` holds which of the two it is.
+- **Indentation puts nothing between the two tags** of `<e></e>`, because white space there would be content.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `SelfClosing` | 0 | The element is written as one tag, `<e/>`. This is the default. |
+| `SelfClosingWithSpace` | 1 | The element is written as one tag with a space before the slash, `<e />`, which is the
+form the writers in `System.Xml` use. |
+| `StartAndEndTag` | 2 | The element is written as a start tag and an end tag, `<e></e>`. |
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlWriterOptions
+- CloudNimble.Text.Xml.XmlSerializerOptions
+- CloudNimble.Text.Xml.Utf8XmlWriter
+- CloudNimble.Text.Xml.XmlAttributeStyle
+- CloudNimble.Text.Xml.Nodes.XmlElementNode
+

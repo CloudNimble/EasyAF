@@ -1,0 +1,333 @@
+---
+title: XmlDeclarationInfo
+description: "Represents the XML declaration captured when an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) is parsed."
+icon: cubes
+tag: "SEALED"
+keywords: ['XmlDeclarationInfo', 'CloudNimble.Text.Xml.XmlDeclarationInfo', 'CloudNimble.Text.Xml', 'struct', 'System.ValueType', 'CloudNimble.Text.Xml.XmlDocument', 'CloudNimble.Text.Xml.XmlVersion', 'CloudNimble.Text.Xml.Utf8XmlReader', 'CloudNimble.Text.Xml.XmlWriterOptions', 'CloudNimble.Text.Xml.Nodes.XmlDeclarationNode']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.ValueType
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlDeclarationInfo
+```
+
+## Summary
+
+Represents the XML declaration captured when an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) is parsed.
+
+## Usage
+
+`XmlDeclarationInfo` is what `XmlDocument` keeps of a document's XML declaration: the version, the encoding, and the `standalone` flag. Read it from `XmlDocument.Declaration`, which is `null` when the document has no declaration.
+
+```csharp
+using var document = XmlDocument.Parse("<?xml version=\"1.1\" encoding=\"UTF-8\" standalone=\"yes\"?><Order/>"u8);
+
+if (document.Declaration is XmlDeclarationInfo declaration)
+{
+    output.WriteLine($"Version: {declaration.Version}");
+    output.WriteLine($"Encoding: {declaration.Encoding}");
+    output.WriteLine($"Standalone: {declaration.Standalone}");
+}
+
+using var bare = XmlDocument.Parse("<Order/>"u8);
+output.WriteLine($"A document without a declaration has one: {bare.Declaration.HasValue}");
+```
+
+```text
+Version: 1.1
+Encoding: utf-8
+Standalone: True
+A document without a declaration has one: False
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/21_ReadMarkupAndHandleErrors.cs)
+
+See [How to use XmlDocument](/xmlessentials/guides/use-xmldocument) for the rest of the document API.
+
+## Remarks
+
+The value is immutable. Mutable trees use `CloudNimble.Text.Xml.Nodes.XmlDeclarationNode` instead.
+
+## Considerations
+
+- **The values are normalized, not copied from the source.** For a parsed document, `Version` is `1.0` or `1.1`, and `Encoding` is always `utf-8`, however the document spelled it. In the example, the source says `UTF-8`.
+- **`Standalone` has three states:** `true` for `standalone="yes"`, `false` for `standalone="no"`, and `null` when the declaration doesn't say.
+- **A missing declaration isn't an error.** `XmlDocument.Declaration` is `null`, and the document is XML 1.0.
+- **`XmlDocument` produces this type; `Utf8XmlReader` reports a token.** The reader reports the declaration as an `XmlTokenType.XmlDeclaration` token, with the version in `Utf8XmlReader.Version` and the pseudo-attributes, as written, in `ValueSpan`.
+- **It's an immutable value.** In the tree that you can change, the declaration is a `CloudNimble.Text.Xml.Nodes.XmlDeclarationNode`.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [XmlDeclarationInfo](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDeclarationInfo) struct.
+
+#### Syntax
+
+```csharp
+public XmlDeclarationInfo(string version, string encoding, bool? standalone)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `version` | `string` | The XML version named in the declaration, such as `1.0`. |
+| `encoding` | `string` | The name of the encoding named in the declaration, such as `utf-8`. |
+| `standalone` | `bool?` | The value of the `standalone` pseudo-attribute, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if it is omitted. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+protected ValueType()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Encoding
+
+Gets the encoding named in the declaration.
+
+#### Syntax
+
+```csharp
+public string Encoding { get; }
+```
+
+#### Property Value
+
+Type: `string`
+The name of the encoding. This is always `utf-8` for a document that
+[XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) parsed, because no other encoding is accepted.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Standalone
+
+Gets the value of the `standalone` pseudo-attribute of the declaration.
+
+#### Syntax
+
+```csharp
+public bool? Standalone { get; }
+```
+
+#### Property Value
+
+Type: `bool?`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the declaration says `standalone="yes"`; [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if
+it says `standalone="no"`; [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if the pseudo-attribute is omitted.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Version
+
+Gets the XML version named in the declaration.
+
+#### Syntax
+
+```csharp
+public string Version { get; }
+```
+
+#### Property Value
+
+Type: `string`
+The version string, which is `1.0` or `1.1` for a document that
+[XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) parsed.
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlDocument
+- CloudNimble.Text.Xml.XmlVersion
+- CloudNimble.Text.Xml.Utf8XmlReader
+- CloudNimble.Text.Xml.XmlWriterOptions
+- CloudNimble.Text.Xml.Nodes.XmlDeclarationNode
+

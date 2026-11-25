@@ -1,0 +1,269 @@
+---
+title: XmlObjectInfoValues
+description: "Provides serialization metadata about an object type with constructors, properties, and fields. This class cannot be inherited."
+icon: code-branch
+tag: "SEALED"
+keywords: ['XmlObjectInfoValues', 'CloudNimble.Text.Xml.Serialization.XmlObjectInfoValues<T>', 'CloudNimble.Text.Xml.Serialization', 'class']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlObjectInfoValues<T>
+```
+
+## Summary
+
+Provides serialization metadata about an object type with constructors, properties, and fields. This class
+cannot be inherited.
+
+## Remarks
+
+Source-generated contexts create instances of this class and pass them to
+[XmlMetadataServices.CreateObjectInfo](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMetadataServices#createobjectinfo). It is analogous to `JsonObjectInfoValues<T>` in
+`System.Text.Json`. The serializer reads and writes the type from this metadata with the rules it applies
+to a type it maps through reflection, and with no reflection over the members of the type.
+
+## Type Parameters
+
+- `T` - The object type to serialize or deserialize.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public XmlObjectInfoValues()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ConstructorParameterMetadataInitializer
+
+Gets or initializes a method that returns the metadata of the parameters of the constructor that
+[XmlObjectInfoValues`1.ObjectWithParameterizedConstructorCreator](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlObjectInfoValues#objectwithparameterizedconstructorcreator) calls.
+
+#### Syntax
+
+```csharp
+public System.Func<CloudNimble.Text.Xml.Serialization.XmlParameterInfoValues[]> ConstructorParameterMetadataInitializer { get; init; }
+```
+
+#### Property Value
+
+Type: `System.Func<CloudNimble.Text.Xml.Serialization.XmlParameterInfoValues[]>?`
+A method that returns one [XmlParameterInfoValues](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlParameterInfoValues) for each parameter, or
+[`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) when the type is not created through a constructor with parameters.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ObjectCreator
+
+Gets or initializes a mechanism to create an instance of the type with no arguments.
+
+#### Syntax
+
+```csharp
+public System.Func<T> ObjectCreator { get; init; }
+```
+
+#### Property Value
+
+Type: `System.Func<T>?`
+A method that creates the object, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) when the type is created through
+[XmlObjectInfoValues`1.ObjectWithParameterizedConstructorCreator](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlObjectInfoValues#objectwithparameterizedconstructorcreator) or is never created, as an abstract class is not.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ObjectWithParameterizedConstructorCreator
+
+Gets or initializes a mechanism to create an instance of the type through a constructor with parameters.
+
+#### Syntax
+
+```csharp
+public System.Func<object[], T> ObjectWithParameterizedConstructorCreator { get; init; }
+```
+
+#### Property Value
+
+Type: `System.Func<object?[], T>?`
+A method that creates the object from an array that holds one argument for each parameter, in the order
+of [XmlParameterInfoValues.Position](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlParameterInfoValues#position); or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). The array may be longer than
+the parameter list.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PropertyMetadataInitializer
+
+Gets or initializes a method that returns the metadata of the properties and fields of the type.
+
+#### Syntax
+
+```csharp
+public System.Func<CloudNimble.Text.Xml.XmlSerializerOptions, CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues[]> PropertyMetadataInitializer { get; init; }
+```
+
+#### Property Value
+
+Type: `System.Func<CloudNimble.Text.Xml.XmlSerializerOptions, CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues[]>?`
+A method that returns one [XmlPropertyInfoValues](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyInfoValues) for each property and field of the type and
+its base types, in the order they are declared, base types first. The serializer leaves out the ones the
+options and the attributes exclude; or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) when the type has no metadata, as in
+[XmlSourceGenerationMode.Serialization](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSourceGenerationMode).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeHandler
+
+Gets or initializes a method that writes the members of an object directly, without the metadata.
+
+#### Syntax
+
+```csharp
+public System.Action<CloudNimble.Text.Xml.Utf8XmlWriter, T, CloudNimble.Text.Xml.XmlSerializerOptions> SerializeHandler { get; init; }
+```
+
+#### Property Value
+
+Type: `System.Action<CloudNimble.Text.Xml.Utf8XmlWriter, T, CloudNimble.Text.Xml.XmlSerializerOptions>?`
+A method that writes the attributes and the content of the element for a value, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+The start and end tags are written by the serializer.
+
+#### Remarks
+
+A source-generated context sets this only when [XmlMetadataServices.CanUseSerializeHandler](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMetadataServices#canuseserializehandler)
+says the options allow it. When it is set, the serializer writes through it. When
+[XmlObjectInfoValues`1.PropertyMetadataInitializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlObjectInfoValues#propertymetadatainitializer) is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) as well, the type has no metadata: it can
+be written through this method and cannot be read.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

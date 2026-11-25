@@ -1,0 +1,294 @@
+---
+title: "Quickstart: read, write, and serialize XML"
+sidebarTitle: "Quickstart"
+description: "Install XmlEssentials, serialize your first object, and meet the reader, the writer, and the two document models in about five minutes."
+icon: "play"
+---
+
+In this quickstart, you install XmlEssentials and use each of its four entry points once: the serializer, the reader, the writer, and the document object model. Every sample on this page is compiled and tested in the repository, and each one links to its source.
+
+## Prerequisites
+
+- [.NET 10 or .NET 11](https://dotnet.microsoft.com/download). The package targets `net10.0` and `net11.0`.
+- A project to add the package to. `dotnet new console` is enough.
+
+## Install the package
+
+<Steps>
+  <Step title="Add the package to your project">
+    <CodeGroup>
+
+    ```bash .NET CLI
+    dotnet add package XmlEssentials
+    ```
+
+    ```xml Project file
+    <ItemGroup>
+      <PackageReference Include="XmlEssentials" Version="1.*" />
+    </ItemGroup>
+    ```
+
+    </CodeGroup>
+
+    The one package contains the library and its source generator. There's nothing else to install.
+  </Step>
+  <Step title="Import the namespaces">
+    ```csharp
+    using CloudNimble.Text.Xml;
+    using CloudNimble.Text.Xml.Serialization;
+    ```
+
+    `CloudNimble.Text.Xml` holds the serializer, reader, writer, and document. `CloudNimble.Text.Xml.Serialization` holds the attributes, converters, and source-generation types.
+  </Step>
+</Steps>
+
+<Note>
+  XmlEssentials doesn't use `System.Xml`. If a file imports both `System.Xml.Serialization` and `CloudNimble.Text.Xml`, the name `XmlSerializer` is ambiguous. Remove the `System.Xml` imports from files you move over. See [Migrate from XmlSerializer](/xmlessentials/guides/migrate/from-xmlserializer).
+</Note>
+
+## Serialize and deserialize an object
+
+`XmlSerializer` turns objects into XML and back. If you've used `JsonSerializer` from System.Text.Json, you already know the calls.
+
+Start with a class. Public properties with a getter and a setter are written as child elements, in the order you declare them:
+
+```csharp Person.cs
+public sealed class Person
+{
+    public string? Name { get; set; }
+
+    public int Age { get; set; }
+}
+```
+
+Then serialize it and read it back:
+
+```csharp Program.cs
+var person = new Person { Name = "Ada", Age = 36 };
+
+string xml = XmlSerializer.Serialize(person);
+output.WriteLine(xml);
+
+Person? copy = XmlSerializer.Deserialize<Person>(xml);
+output.WriteLine($"{copy!.Name} is {copy.Age}");
+```
+
+The code produces the following output:
+
+```text
+<?xml version="1.0" encoding="utf-8"?><Person><Name>Ada</Name><Age>36</Age></Person>
+Ada is 36
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/01_SerializeAndDeserialize.cs)
+
+<Tip>
+  In these samples, `output` is a `TextWriter`. In your own code, use `Console.Out` or call `Console.WriteLine`.
+</Tip>
+
+From here, you shape the XML with attributes and options: [customize names](/xmlessentials/guides/customize-names), write properties as [XML attributes](/xmlessentials/guides/customize-names), [format the output](/xmlessentials/guides/serialize), or map [collections](/xmlessentials/guides/collections).
+
+## Read XML one token at a time
+
+`Utf8XmlReader` reads UTF-8 bytes directly and hands you one token per call to `Read`. It doesn't allocate for the tokens it reads, which makes it the right tool for large documents and hot paths. It's the counterpart of `Utf8JsonReader`.
+
+```csharp
+ReadOnlySpan<byte> xml = """
+    <Order id="1042">
+      <Item>Keyboard</Item>
+      <Item>Mouse</Item>
+      <Total>129.90</Total>
+    </Order>
+    """u8;
+
+var reader = new Utf8XmlReader(xml);
+while (reader.Read())
+{
+    if (reader.TokenType is not XmlTokenType.StartElement)
+    {
+        continue;
+    }
+
+    if (reader.LocalNameEquals("Order"u8))
+    {
+        while (reader.MoveToNextAttribute())
+        {
+            if (reader.LocalNameEquals("id"u8))
+            {
+                output.WriteLine($"Order {reader.GetInt32()}");
+            }
+        }
+
+        reader.MoveToElement();
+    }
+    else if (reader.LocalNameEquals("Item"u8))
+    {
+        reader.Read();
+        output.WriteLine($"Item: {reader.GetString()}");
+    }
+    else if (reader.LocalNameEquals("Total"u8))
+    {
+        reader.Read();
+        output.WriteLine($"Total: {reader.GetDecimal()}");
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+Order 1042
+Item: Keyboard
+Item: Mouse
+Total: 129.90
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/02_ReadWithUtf8XmlReader.cs)
+
+The `"..."u8` literals are UTF-8 strings, so names are compared as bytes and nothing is converted to a `string` until you call `GetString`. For attributes, chunked input, namespaces, and limits, see [Use Utf8XmlReader](/xmlessentials/guides/use-utf8xmlreader).
+
+<Note>
+  By default, the reader also reports comments and the white space between elements, so that XML you read and write back keeps its comments and its layout. This loop ignores them because it acts only on start tags. For a loop that wants data only, pass `new XmlReaderOptions { CommentHandling = XmlCommentHandling.Skip, WhitespaceHandling = XmlWhitespaceHandling.Insignificant }`.
+</Note>
+
+## Write XML
+
+`Utf8XmlWriter` writes UTF-8 straight into a buffer or a stream, and it escapes text for you. It's the counterpart of `Utf8JsonWriter`.
+
+```csharp
+var buffer = new ArrayBufferWriter<byte>();
+var options = new XmlWriterOptions { Indented = true, NewLine = "\n" };
+
+using (var writer = new Utf8XmlWriter(buffer, options))
+{
+    writer.WriteStartElement("Order");
+    writer.WriteAttributeString("id", "1042");
+    writer.WriteElementString("Item", "Keyboard");
+    writer.WriteElementString("Item", "Mouse & pad");
+    writer.WriteElementNumber("Total", 129.90m);
+    writer.WriteEndElement();
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Order id="1042">
+  <Item>Keyboard</Item>
+  <Item>Mouse &amp; pad</Item>
+  <Total>129.90</Total>
+</Order>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/03_WriteWithUtf8XmlWriter.cs)
+
+The writer added the XML declaration and escaped the `&`. For namespaces, reusing a writer, and writing to streams, see [Use Utf8XmlWriter](/xmlessentials/guides/use-utf8xmlwriter).
+
+## Query a document
+
+When you want to look things up instead of reading front to back, parse the XML into an `XmlDocument`. It's read-only and keeps its data in pooled buffers, so parsing a document of any size allocates one small object. It's the counterpart of `JsonDocument`.
+
+A document keeps comments and the white space between elements, so that writing it back with `WriteTo` doesn't lose them. That's why the loop below checks `ValueKind`: the indentation between the items is there too, as text.
+
+```csharp
+const string xml = """
+    <Order id="1042">
+      <Item>Keyboard</Item>
+      <Item>Mouse</Item>
+      <Total>129.90</Total>
+    </Order>
+    """;
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement order = document.RootElement;
+
+output.WriteLine($"Order {order.GetAttribute("id").GetInt32()}");
+
+foreach (XmlElement child in order.EnumerateChildren())
+{
+    if (child.ValueKind is XmlValueKind.Element && child.LocalName == "Item")
+    {
+        output.WriteLine($"Item: {child.GetString()}");
+    }
+}
+
+output.WriteLine($"Total: {order.GetChild("Total").GetDecimal()}");
+```
+
+The code produces the following output:
+
+```text
+Order 1042
+Item: Keyboard
+Item: Mouse
+Total: 129.90
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/04_QueryWithXmlDocument.cs)
+
+<Warning>
+  Always dispose an `XmlDocument`, with `using` or a call to `Dispose`. Disposing returns its buffers to the pool. An `XmlElement` is a view into the document, so don't use one after the document is disposed.
+</Warning>
+
+For more, see [Use XmlDocument](/xmlessentials/guides/use-xmldocument).
+
+## Change a document
+
+To edit XML in memory, use the node tree in `CloudNimble.Text.Xml.Nodes`. It's the counterpart of `JsonNode`.
+
+```csharp
+var order = (XmlElementNode)XmlNode.Parse("""<Order id="1042"><Item>Keyboard</Item></Order>""")!;
+
+order.SetAttribute("status", "shipped");
+order.AddElement("Item").Add(new XmlTextNode("Mouse"));
+
+output.WriteLine(order.ToString());
+```
+
+The code produces the following output:
+
+```xml
+<Order id="1042" status="shipped"><Item>Keyboard</Item><Item>Mouse</Item></Order>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/05_EditWithXmlNode.cs)
+
+For more, see [Use XmlNode](/xmlessentials/guides/use-xmlnode).
+
+## Choose the right entry point
+
+| You want to | Use | Like |
+| --- | --- | --- |
+| Turn objects into XML and back | [`XmlSerializer`](/xmlessentials/guides/serialize) | `JsonSerializer` |
+| Read a large document or a stream with the least memory | [`Utf8XmlReader`](/xmlessentials/guides/use-utf8xmlreader) | `Utf8JsonReader` |
+| Produce XML without building objects first | [`Utf8XmlWriter`](/xmlessentials/guides/use-utf8xmlwriter) | `Utf8JsonWriter` |
+| Look up values in a document you don't change | [`XmlDocument`](/xmlessentials/guides/use-xmldocument) | `JsonDocument` |
+| Build or edit a document in memory | [`XmlNode`](/xmlessentials/guides/use-xmlnode) | `JsonNode` |
+
+## Best practices from the start
+
+- **Work in UTF-8 when you can.** Every entry point accepts UTF-8 bytes, spans, and streams. The `string` overloads are there for convenience, and they convert first.
+- **Create `XmlSerializerOptions` once and reuse it.** An options instance caches what it learns about your types. A new instance for every call throws that work away. See [Configure options](/xmlessentials/guides/configure-options).
+- **Dispose every `XmlDocument`.** Its memory is rented, not allocated.
+- **Use a source-generated context when you publish with Native AOT or trimming.** Reflection is the default because it needs no setup. [Source generation](/xmlessentials/guides/source-generation) removes it.
+- **Set limits when the XML comes from someone you don't trust.** XmlEssentials doesn't process DTDs or external entities, and the reader, document, and serializer all take size and depth limits. See [Security](/xmlessentials/guides/security).
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="How to serialize" icon="arrow-right-from-bracket" href="/xmlessentials/guides/serialize">
+    Strings, bytes, streams, indentation, and the declaration.
+  </Card>
+  <Card title="Shape your XML" icon="pen-ruler" href="/xmlessentials/guides/customize-names">
+    Elements, attributes, text content, names, and order.
+  </Card>
+  <Card title="Use source generation" icon="wand-magic-sparkles" href="/xmlessentials/guides/source-generation">
+    Serialize without reflection, ready for Native AOT.
+  </Card>
+  <Card title="Migrate from System.Xml" icon="right-left" href="/xmlessentials/guides/migrate/from-xmlserializer">
+    Move an existing `XmlSerializer` codebase across.
+  </Card>
+</Columns>

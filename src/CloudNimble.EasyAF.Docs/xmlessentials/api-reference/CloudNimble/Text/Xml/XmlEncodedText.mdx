@@ -1,0 +1,440 @@
+---
+title: XmlEncodedText
+description: "Represents an XML name that is already encoded as UTF-8, so that a [Utf8XmlWriter](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter) can write it many times..."
+icon: cubes
+tag: "SEALED"
+keywords: ['XmlEncodedText', 'CloudNimble.Text.Xml.XmlEncodedText', 'CloudNimble.Text.Xml', 'struct', 'System.ValueType', 'CloudNimble.Text.Xml.Utf8XmlWriter', 'CloudNimble.Text.Xml.XmlWriterOptions', 'CloudNimble.Text.Xml.XmlName']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.ValueType
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlEncodedText
+```
+
+## Summary
+
+Represents an XML name that is already encoded as UTF-8, so that a [Utf8XmlWriter](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter) can write it
+many times without encoding it again.
+
+## Usage
+
+`XmlEncodedText` holds an element name as UTF-8 bytes, so that a `Utf8XmlWriter` can write the name many times without converting it from a `string` each time. It's the counterpart of `JsonEncodedText`.
+
+Create a value once with `XmlEncodedText.Encode` and keep it in a static field:
+
+```csharp
+private static readonly XmlEncodedText ItemName = XmlEncodedText.Encode("Item");
+
+private static readonly XmlEncodedText SoldOutName = XmlEncodedText.Encode("SoldOut"u8);
+```
+
+Then pass it to `Utf8XmlWriter.WriteStartElement` or `Utf8XmlWriter.WriteEmptyElement`:
+
+```csharp
+var buffer = new ArrayBufferWriter<byte>();
+string?[] items = ["Keyboard", "Mouse", null];
+
+using (var writer = new Utf8XmlWriter(buffer, new XmlWriterOptions { OmitXmlDeclaration = true }))
+{
+    writer.WriteStartElement("Items"u8);
+    foreach (var item in items)
+    {
+        if (item is null)
+        {
+            writer.WriteEmptyElement(SoldOutName);
+            continue;
+        }
+
+        writer.WriteStartElement(ItemName);
+        writer.WriteStringValue(item);
+        writer.WriteEndElement();
+    }
+
+    writer.WriteEndElement();
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+output.WriteLine($"{ItemName} is {ItemName.EncodedUtf8Bytes.Length} bytes");
+```
+
+```text
+<Items><Item>Keyboard</Item><Item>Mouse</Item><SoldOut/></Items>
+Item is 4 bytes
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/25_ManageWriterLifetime.cs)
+
+`Encode` accepts a `string`, a `ReadOnlySpan<char>`, or UTF-8 bytes. `EncodedUtf8Bytes` returns the stored bytes, and `ToString` returns the name as a string.
+
+## Remarks
+
+Create a value once with [XmlEncodedText.Encode](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlEncodedText#encode) and reuse it for a name that is written often.
+Encoding converts the name to UTF-8. It does not escape or check the name. The writer checks the name
+when it writes it.
+
+## Best Practices
+
+- **Encode once and keep the value.** A `static readonly` field on the type that writes the element is the usual place. Calling `Encode` each time you write gains nothing.
+- **Use it for names only.** A name is never escaped, so text passed this way isn't either.
+- **Compare values with `==` or `Equals`.** Both compare the bytes. Comparing the results of `ToString` creates two strings to do the same thing.
+- **Reach for a `u8` literal first.** `writer.WriteStartElement("Item"u8)` also skips the conversion and needs no field. Use `XmlEncodedText` when the name isn't known at compile time, or when you want one named value to share.
+
+## Considerations
+
+- **`Encode` doesn't check the name.** It only converts to UTF-8. The writer checks that the bytes are a valid XML name each time it writes them, unless `XmlWriterOptions.SkipValidation` is set. This is unlike `JsonEncodedText`, which escapes when it encodes.
+- **`Encode` allocates one array** and copies its input into it, including the overload that takes UTF-8 bytes.
+- **The writer methods that take it write an element with no prefix and no namespace argument:** `WriteStartElement`, `WriteEmptyElement`, `WriteNilElement`, and the `WriteElement*` methods. Like `WriteStartElement(string)`, they declare no namespace for the element, so under a default namespace the element is in that namespace. For attribute names, prefixed names, and names with a namespace argument, use the `string` or UTF-8 overloads.
+- **The default value is an empty name.** `default(XmlEncodedText)` has an empty `EncodedUtf8Bytes`, and the writer rejects an empty name unless `SkipValidation` is set.
+- **Equality is by bytes.** Two values are equal when their UTF-8 bytes are the same, with no Unicode normalization.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+protected ValueType()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> EncodedUtf8Bytes
+
+Gets the UTF-8 encoded representation of the name.
+
+#### Syntax
+
+```csharp
+public System.ReadOnlySpan<byte> EncodedUtf8Bytes { get; }
+```
+
+#### Property Value
+
+Type: `System.ReadOnlySpan<byte>`
+The UTF-8 bytes of the name. The span is empty for a default [XmlEncodedText](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlEncodedText).
+
+## Methods
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Encode
+
+Encodes a name specified as a string to UTF-8.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlEncodedText Encode(string value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `string` | The name to encode. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlEncodedText`
+The UTF-8 encoded name.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *value* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Encode
+
+Encodes a name specified as a read-only span of characters to UTF-8.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlEncodedText Encode(System.ReadOnlySpan<char> value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `System.ReadOnlySpan<char>` | The name to encode. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlEncodedText`
+The UTF-8 encoded name.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Encode
+
+Creates an encoded name from a name specified as a read-only span of UTF-8 bytes.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlEncodedText Encode(System.ReadOnlySpan<byte> utf8Value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Value` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded name. The bytes are copied. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlEncodedText`
+The UTF-8 encoded name.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals
+
+#### Syntax
+
+```csharp
+public bool Equals(CloudNimble.Text.Xml.XmlEncodedText other)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `other` | `CloudNimble.Text.Xml.XmlEncodedText` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="blue">Override</Badge>
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="blue">Override</Badge>
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="blue">Override</Badge>
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Utf8XmlWriter
+- CloudNimble.Text.Xml.XmlWriterOptions
+- CloudNimble.Text.Xml.XmlName
+

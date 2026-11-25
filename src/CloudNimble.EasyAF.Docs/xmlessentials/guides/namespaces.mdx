@@ -1,0 +1,468 @@
+---
+title: "How to use XML namespaces with XmlSerializer"
+sidebarTitle: "Use XML namespaces"
+description: "Put serialized elements and attributes in XML namespaces, and learn how the serializer matches namespaces and prefixes when it reads."
+icon: "tags"
+---
+
+An XML namespace is a URI that qualifies an element or attribute name, so that `<Note>` in a shipping vocabulary and `<Note>` in a billing vocabulary are different names. This article shows how to put a whole document in a namespace, how to give one element or attribute a namespace of its own, and what `XmlSerializer` checks when it reads a qualified document.
+
+JSON has no namespaces, so this part of the API has no System.Text.Json counterpart. The attribute names follow `System.Xml.Serialization` instead: `[XmlRoot]`, `[XmlElement]`, and `[XmlAttribute]` each have a `Namespace` property.
+
+## Put a document in a default namespace
+
+Set [`XmlSerializerOptions.DefaultNamespace`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions) to put the document element of every type in one namespace. You don't need to change the type.
+
+```csharp Program.cs
+var options = new XmlSerializerOptions
+{
+    DefaultNamespace = "urn:example:shipping",
+    WriteIndented = true,
+    NewLine = "\n",
+};
+
+var shipment = new Shipment { Id = 1042, Carrier = "Contoso Freight" };
+string xml = XmlSerializer.Serialize(shipment, options);
+output.WriteLine(xml);
+
+Shipment? copy = XmlSerializer.Deserialize<Shipment>(xml, options);
+output.WriteLine($"Shipment {copy!.Id} travels with {copy.Carrier}");
+```
+
+```csharp Shipment.cs
+public sealed class Shipment
+{
+    public int Id { get; set; }
+
+    public string? Carrier { get; set; }
+}
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Shipment xmlns="urn:example:shipping">
+  <Id>1042</Id>
+  <Carrier>Contoso Freight</Carrier>
+</Shipment>
+Shipment 1042 travels with Contoso Freight
+```
+
+The serializer declares the namespace once, as the default namespace of the document element. The child elements have no prefix, so they are in the same namespace.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/14_Namespaces.cs)
+
+## Set the namespace of a type, an element, or an attribute
+
+When the namespace belongs to the type and not to the application, declare it on the type. Three attributes take a namespace URI:
+
+| Attribute | What it qualifies |
+| --- | --- |
+| `[XmlRoot(Namespace = "...")]` | The document element of the type. It takes precedence over `DefaultNamespace`. |
+| `[XmlElement("Name", "...")]` | One child element. |
+| `[XmlAttribute("name", "...")]` | One attribute. |
+
+```csharp Invoice.cs
+[XmlRoot("Invoice", Namespace = "urn:example:billing")]
+public sealed class Invoice
+{
+    [XmlAttribute("number")]
+    public int Number { get; set; }
+
+    [XmlAttribute("revision", "urn:example:audit")]
+    public int Revision { get; set; }
+
+    public string? Customer { get; set; }
+
+    [XmlElement("Note", "urn:example:shipping")]
+    public string? Note { get; set; }
+}
+```
+
+```csharp Program.cs
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n" };
+var invoice = new Invoice
+{
+    Number = 7,
+    Revision = 2,
+    Customer = "Fabrikam",
+    Note = "Leave at the front desk",
+};
+
+output.WriteLine(XmlSerializer.Serialize(invoice, options));
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Invoice xmlns="urn:example:billing" number="7" xmlns:ns1="urn:example:audit" ns1:revision="2">
+  <Customer>Fabrikam</Customer>
+  <Note xmlns="urn:example:shipping">Leave at the front desk</Note>
+</Invoice>
+```
+
+Notice the following in the output:
+
+- `Customer` has no namespace of its own, so it is written without a prefix and inherits the namespace of `Invoice`.
+- `Note` is in a different namespace. The serializer declares that namespace as the default namespace of the `Note` element.
+- An attribute with no prefix is never in a namespace, so `number` stays unqualified. The `revision` attribute needs a prefix, and the writer generates one: `ns1`.
+
+Without further instruction the serializer chooses how each namespace is declared, as it did here with `ns1`. The next section shows how to choose the prefixes yourself.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/14_Namespaces.cs)
+
+### Put an element in no namespace
+
+An element with no namespace of its own takes the namespace of its parent. Some formats put the document element in a namespace and the elements inside it in none; an XML Schema does this unless it says `elementFormDefault="qualified"`. Give such a member an empty namespace:
+
+```csharp LegacyOrder.cs
+[XmlRoot("Order", Namespace = "urn:example:orders")]
+public sealed class LegacyOrder
+{
+    public string? Customer { get; set; }
+
+    [XmlElement("Id", Namespace = "")]
+    public int Id { get; set; }
+}
+```
+
+```csharp Program.cs
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n" };
+var order = new LegacyOrder { Customer = "Fabrikam", Id = 7 };
+
+output.WriteLine(XmlSerializer.Serialize(order, options));
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Order xmlns="urn:example:orders">
+  <Customer>Fabrikam</Customer>
+  <Id xmlns="">7</Id>
+</Order>
+```
+
+`xmlns=""` takes the element out of the default namespace. When the document is read, only an `Id` element in no namespace is this member: an `Id` in the namespace of the order is another element. `[XmlArray(Namespace = "")]` does the same for a wrapper element.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/14_Namespaces.cs)
+
+## Choose the prefixes
+
+Prefixes carry no meaning in XML: a conforming reader treats `ns1:revision` and `audit:revision` as the same name. People and less careful consumers do read them, so you can state the prefixes a document is written with. A namespace that you declare is declared once, on the document element, and every element and attribute in it uses the prefix you gave.
+
+There are three ways to state them, and one place to find them.
+
+### Set them on the options
+
+[`XmlSerializerOptions.Namespaces`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions) takes the declarations as a dictionary of prefix and namespace URI. An empty prefix is the default namespace.
+
+```csharp Program.cs
+var options = new XmlSerializerOptions
+{
+    Namespaces = new Dictionary<string, string>
+    {
+        [""] = "urn:example:billing",
+        ["audit"] = "urn:example:audit",
+        ["ship"] = "urn:example:shipping",
+    },
+    WriteIndented = true,
+    NewLine = "\n",
+};
+
+var invoice = new Invoice
+{
+    Number = 7,
+    Revision = 2,
+    Customer = "Fabrikam",
+    Note = "Leave at the front desk",
+};
+
+output.WriteLine(XmlSerializer.Serialize(invoice, options));
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Invoice xmlns="urn:example:billing" xmlns:audit="urn:example:audit" xmlns:ship="urn:example:shipping" number="7" audit:revision="2">
+  <Customer>Fabrikam</Customer>
+  <ship:Note>Leave at the front desk</ship:Note>
+</Invoice>
+```
+
+The declarations are written in the order of the dictionary, whether or not the document uses them. The one that names the document element's own namespace comes first. The dictionary is copied when you set the property, and a declaration that XML doesn't allow, such as one for the `xmlns` prefix, is an `ArgumentException` then.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/14_Namespaces.cs)
+
+### Declare them on the type
+
+When the prefixes belong to the format and not to one call, put [`[XmlNamespaceDeclaration]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlNamespaceDeclarationAttribute) on the type that is the document element. The attribute can be repeated.
+
+```csharp PodcastShow.cs
+[XmlRoot("rss")]
+[XmlNamespaceDeclaration("itunes", "http://www.itunes.com/dtds/podcast-1.0.dtd")]
+public sealed class PodcastShow
+{
+    [XmlElement("author", "http://www.itunes.com/dtds/podcast-1.0.dtd")]
+    public string? Author { get; set; }
+
+    [XmlElement("title")]
+    public string? Title { get; set; }
+}
+```
+
+```csharp Program.cs
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n", OmitXmlDeclaration = true };
+var show = new PodcastShow { Title = "Field Notes", Author = "Contoso Radio" };
+
+output.WriteLine(XmlSerializer.Serialize(show, options));
+```
+
+The code produces the following output:
+
+```xml
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  <itunes:author>Contoso Radio</itunes:author>
+  <title>Field Notes</title>
+</rss>
+```
+
+The declarations of the options are written first and take precedence: a declaration on the type is left out when the options already declare its prefix or its namespace. The attribute has no effect where the type is a member of another type, because only a document element carries the declarations.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/14_Namespaces.cs)
+
+### Use the prefixes of a well-known format
+
+[`KnownNamespaces`](/xmlessentials/api-reference/CloudNimble/Text/Xml/KnownNamespaces) has the customary prefixes of some common formats, ready to assign.
+
+| Property | Prefixes |
+| --- | --- |
+| `KnownNamespaces.Edmx` | `edmx` (OData version 4 metadata) |
+| `KnownNamespaces.Podcast` | `atom`, `content`, `dc`, `googleplay`, `itunes`, `media`, `podcast` (Podcasting 2.0), `psc`, `sy` |
+| `KnownNamespaces.Rss` | `atom`, `content`, `dc`, `georss`, `media`, `slash`, `sy`, `wfw` |
+| `KnownNamespaces.Sitemap` | `image`, `news`, `video`, `xhtml` |
+| `KnownNamespaces.Soap11`, `KnownNamespaces.Soap12` | `soap` (as .NET writes it), `xsd`, `xsi` |
+| `KnownNamespaces.Svg` | `svg`, `xlink` |
+| `KnownNamespaces.XmlSchema` | `xsd`, `xsi` |
+
+```csharp Program.cs
+var options = new XmlSerializerOptions { Namespaces = KnownNamespaces.Podcast, WriteIndented = true, NewLine = "\n", OmitXmlDeclaration = true };
+var show = new PodcastShow { Title = "Field Notes", Author = "Contoso Radio" };
+
+output.WriteLine(XmlSerializer.Serialize(show, options));
+```
+
+The code produces the following output. The start tag is one line; it is wrapped here to fit.
+
+```xml
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
+     xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:media="http://search.yahoo.com/mrss/"
+     xmlns:podcast="https://podcastindex.org/namespace/1.0" xmlns:psc="http://podlove.org/simple-chapters"
+     xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
+  <itunes:author>Contoso Radio</itunes:author>
+  <title>Field Notes</title>
+</rss>
+```
+
+Every declaration of a set is written. A set holds the namespaces a format adds, not the format's own: RSS elements have no namespace, and a sitemap's are customarily in the default namespace.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/14_Namespaces.cs)
+
+### Take them from an existing document
+
+[`XmlDocument.DiscoverNamespaces`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) reads a document and returns the prefixes it declares, in order, as a dictionary you can assign to `Namespaces`. Use it when what you write has to look like a document you were given.
+
+```csharp Program.cs
+string existing = """
+    <Invoice xmlns="urn:example:billing" xmlns:a="urn:example:audit" number="6" a:revision="1">
+      <Customer>Fabrikam</Customer>
+      <s:Note xmlns:s="urn:example:shipping">Ring the bell</s:Note>
+    </Invoice>
+    """;
+
+var namespaces = XmlDocument.DiscoverNamespaces(existing);
+foreach (var (prefix, namespaceUri) in namespaces)
+{
+    output.WriteLine($"'{prefix}' is {namespaceUri}");
+}
+
+var options = new XmlSerializerOptions { Namespaces = namespaces, WriteIndented = true, NewLine = "\n", OmitXmlDeclaration = true };
+var invoice = new Invoice { Number = 7, Revision = 2, Customer = "Fabrikam", Note = "Leave at the front desk" };
+output.WriteLine(XmlSerializer.Serialize(invoice, options));
+```
+
+The code produces the following output:
+
+```text
+'' is urn:example:billing
+'a' is urn:example:audit
+'s' is urn:example:shipping
+<Invoice xmlns="urn:example:billing" xmlns:a="urn:example:audit" xmlns:s="urn:example:shipping" number="7" a:revision="2">
+  <Customer>Fabrikam</Customer>
+  <s:Note>Leave at the front desk</s:Note>
+</Invoice>
+```
+
+`DiscoverNamespaces` looks at every start tag, so it finds `s`, which the document declares on an inner element. A prefix that the document binds more than once is listed with its first namespace. A default namespace is listed only when the document element declares it: one that an inner element declares names that element's content alone. There are overloads for a string, UTF-8 bytes, and a stream.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/14_Namespaces.cs)
+
+### What a prefix on the document element changes
+
+Two rules decide how the document element itself is written when one of the declarations names its namespace:
+
+- Declared as the default namespace (an empty prefix), the element has no prefix, as it has without any declarations.
+- Declared with a prefix only, the element is written with that prefix, such as `<bill:Invoice>`.
+
+<Warning>
+In the second case there is no default namespace, so a member with no namespace of its own, such as `Customer`, is written as `<Customer>` in no namespace. It no longer inherits the namespace of the document element. `XmlSerializer` still reads the document, because it matches such a member by local name, but another consumer sees a different name. Either declare the namespace as the default namespace too, or give each member its namespace with `[XmlElement]`.
+</Warning>
+
+When the document element has a namespace, and the declarations give that namespace no prefix but declare a different default namespace, both can't be written on one element. Serialization throws an `InvalidOperationException`.
+
+## Read a document that uses prefixes
+
+When the serializer reads, it compares local names and namespace URIs. It never compares prefixes. The following document binds every namespace to a prefix of its own choosing, and it deserializes into the same `Invoice` type.
+
+```csharp Program.cs
+string xml = """
+    <bill:Invoice xmlns:bill="urn:example:billing" xmlns:a="urn:example:audit" xmlns:ship="urn:example:shipping" number="7" a:revision="2">
+      <bill:Customer>Fabrikam</bill:Customer>
+      <ship:Note>Leave at the front desk</ship:Note>
+    </bill:Invoice>
+    """;
+
+Invoice? invoice = XmlSerializer.Deserialize<Invoice>(xml);
+output.WriteLine($"Invoice {invoice!.Number}, revision {invoice.Revision}");
+output.WriteLine($"{invoice.Customer}: {invoice.Note}");
+```
+
+The code produces the following output:
+
+```text
+Invoice 7, revision 2
+Fabrikam: Leave at the front desk
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/14_Namespaces.cs)
+
+## Know what the serializer checks
+
+How strictly a name is matched depends on whether the type gives it a namespace.
+
+| Name | Matched by |
+| --- | --- |
+| Document element of a type with a namespace (`[XmlRoot]` or `DefaultNamespace`) | Local name and namespace URI. |
+| Document element of a type with no namespace | Local name. The element can be in any namespace. |
+| Child element with a namespace of its own | Local name and namespace URI. |
+| Child element with no namespace of its own | Local name. The element can be in any namespace, except a namespace that another member gives the same local name. |
+| Attribute with a namespace | Local name and namespace URI. |
+| Attribute with no namespace | Local name. The attribute must have no prefix. |
+
+Two element members can map to the same local name when their namespaces differ, as `link` and `atom:link` do in an RSS feed. Each element goes to the member that names its namespace, and the member with no namespace takes the rest. Two element members with the same local name and the same namespace are an `InvalidOperationException` when the type is first used.
+
+Attribute members follow the same rule: two can share a local name when their namespaces differ, as `href` and `xlink:href` do on a link, and two with the same local name and the same namespace are an `InvalidOperationException`. An attribute with no prefix is in no namespace, so an attribute member with no namespace takes only the unprefixed attribute. An attribute of that local name in a namespace no member names is unmapped.
+
+A document element in the wrong namespace is an error:
+
+```csharp Program.cs
+string xml = """<Invoice xmlns="urn:example:orders" number="7"><Customer>Fabrikam</Customer></Invoice>""";
+
+try
+{
+    XmlSerializer.Deserialize<Invoice>(xml);
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+```
+
+The code produces the following output:
+
+```text
+The root element is not in namespace 'urn:example:billing'. Path: /Invoice | LineNumber: 1 | BytePositionInLine: 48.
+```
+
+A child element or attribute whose namespace doesn't match is not an error by default. The serializer treats it as content the type doesn't map, and skips it. To reject it or to keep it, see [Handle content that no member maps](/xmlessentials/guides/mixed-content#keep-content-that-no-member-maps).
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/14_Namespaces.cs)
+
+## Namespaces the serializer writes for you
+
+Some features add an attribute in a namespace of their own. The serializer declares the namespace on the element that carries the attribute, unless a declaration of it is already in scope: an element inside one that declared it reuses that declaration, and a namespace declared with `XmlSerializerOptions.Namespaces` is declared once, on the document element.
+
+| Feature | Attribute | Namespace | Constant |
+| --- | --- | --- | --- |
+| [Null values](/xmlessentials/guides/null-and-nil) | `xsi:nil` | `http://www.w3.org/2001/XMLSchema-instance` | `XmlNamespaces.Xsi` |
+| [Polymorphism](/xmlessentials/guides/polymorphism) with `XmlDiscriminatorPlacement.XsiType` | `xsi:type` | `http://www.w3.org/2001/XMLSchema-instance` | `XmlNamespaces.Xsi` |
+| [Preserved references](/xmlessentials/guides/preserve-references) | `id` and `ref` | `urn:CloudNimble.Text.Xml:refs` | `XmlNamespaces.Refs` |
+
+## Compare qualified names in code
+
+[`XmlName`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlName) is the type the library uses for a qualified name: a local name, a namespace URI, and an optional prefix. Two names are equal when the local name and the URI are equal. The prefix only affects how the name is printed.
+
+[`XmlNamespaces`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamespaces) holds the URIs of the well-known namespaces, and [`XmlAttributes`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlAttributes) holds the local names `nil` and `type`. Use them when you compare names with the reader.
+
+```csharp Program.cs
+var written = new XmlName("Invoice", "urn:example:billing", "b");
+var expected = new XmlName("Invoice", "urn:example:billing");
+var unqualified = new XmlName("Invoice");
+
+output.WriteLine(written);
+output.WriteLine(expected);
+output.WriteLine(unqualified);
+output.WriteLine(written == expected);
+output.WriteLine(written == unqualified);
+
+var reader = new Utf8XmlReader("<Total xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:nil=\"true\" />"u8);
+reader.Read();
+while (reader.MoveToNextAttribute())
+{
+    if (reader.LocalNameEquals(XmlAttributes.Nil) && reader.NamespaceUriEquals(XmlNamespaces.Xsi))
+    {
+        output.WriteLine($"xsi:nil is {reader.GetString()}");
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+b:Invoice
+{urn:example:billing}Invoice
+Invoice
+True
+False
+xsi:nil is true
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/14_Namespaces.cs)
+
+## Work with namespaces below the serializer
+
+The reader and the writer give you full control when the serializer's choices aren't enough:
+
+- [`Utf8XmlReader`](/xmlessentials/guides/use-utf8xmlreader) resolves every prefix as it reads. Compare names with `LocalNameEquals` and `NamespaceUriEquals`, and never by prefix.
+- [`Utf8XmlWriter`](/xmlessentials/guides/use-utf8xmlwriter) has overloads of `WriteStartElement` and `WriteAttributeString` that take a prefix, a local name, and a namespace URI, and `WriteDefaultNamespace` for an `xmlns` declaration.
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Customize names" icon="pen" href="/xmlessentials/guides/customize-names">
+    Rename elements and attributes, and choose which members are attributes.
+  </Card>
+  <Card title="Null and nil" icon="ban" href="/xmlessentials/guides/null-and-nil">
+    How `xsi:nil` marks a null value.
+  </Card>
+  <Card title="Use Utf8XmlWriter" icon="pencil" href="/xmlessentials/guides/use-utf8xmlwriter">
+    Write prefixes and namespace declarations yourself.
+  </Card>
+  <Card title="XmlName" icon="code" href="/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlName">
+    API reference for qualified names.
+  </Card>
+</Columns>

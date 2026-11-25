@@ -1,0 +1,565 @@
+---
+title: XmlDocumentOptions
+description: "Provides the ability for the user to define custom behavior when parsing XML to create an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument)."
+icon: cubes
+tag: "SEALED"
+keywords: ['XmlDocumentOptions', 'CloudNimble.Text.Xml.XmlDocumentOptions', 'CloudNimble.Text.Xml', 'struct', 'System.ValueType', 'CloudNimble.Text.Xml.XmlDocument', 'CloudNimble.Text.Xml.XmlCommentHandling', 'CloudNimble.Text.Xml.XmlWhitespaceHandling', 'CloudNimble.Text.Xml.XmlReaderOptions', 'CloudNimble.Text.Xml.XmlException']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.ValueType
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlDocumentOptions
+```
+
+## Summary
+
+Provides the ability for the user to define custom behavior when parsing XML to create an
+[XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument).
+
+## Usage
+
+Pass an `XmlDocumentOptions` to `XmlDocument.Parse`, `ParseAsync`, `TryParse`, or `DiscoverNamespaces` to choose what the parser keeps and what it rejects. `default`, `new XmlDocumentOptions()`, and a call to `Parse` without options all mean the same options.
+
+The defaults are chosen so that there are no surprises on a round trip: a document that is parsed and written back with `XmlDocument.WriteTo` keeps its comments and the white space between its elements. When you only read values and don't want either in the document:
+
+- Set `CommentHandling` to `XmlCommentHandling.Skip` to leave comments out. `Disallow` rejects a document that contains one.
+- Set `WhitespaceHandling` to `XmlWhitespaceHandling.Insignificant` to leave out text that is only white space between elements. `None` rejects a document that contains it.
+
+```csharp
+const string xml = "<Order><!-- rush --><Item>Keyboard</Item></Order>";
+
+using (XmlDocument kept = XmlDocument.Parse(xml))
+{
+    output.WriteLine($"Allow (the default): {CountChildren(kept.RootElement)} children");
+    foreach (XmlElement child in kept.RootElement.EnumerateChildren())
+    {
+        output.WriteLine($"  {child.ValueKind}: '{child.GetString()}'");
+    }
+}
+
+var skip = new XmlDocumentOptions { CommentHandling = XmlCommentHandling.Skip };
+using (XmlDocument skipped = XmlDocument.Parse(xml, skip))
+{
+    output.WriteLine($"Skip: {CountChildren(skipped.RootElement)} child");
+}
+
+var disallow = new XmlDocumentOptions { CommentHandling = XmlCommentHandling.Disallow };
+try
+{
+    using XmlDocument rejected = XmlDocument.Parse(xml, disallow);
+}
+catch (XmlException ex)
+{
+    output.WriteLine($"Disallow: {ex.Message}");
+}
+```
+
+`CountChildren` is a helper in the sample that counts the nodes `EnumerateChildren` returns. The code produces the following output:
+
+```text
+Allow (the default): 2 children
+  Comment: ' rush '
+  Element: 'Keyboard'
+Skip: 1 child
+Disallow: Comments are not allowed.
+```
+
+The options are:
+
+| Property | Controls | Default |
+| --- | --- | --- |
+| `CommentHandling` | Whether comments are kept, dropped, or rejected | `Allow` (kept) |
+| `WhitespaceHandling` | What happens to white space that is the only text between two tags | `Significant` (kept) |
+| `MaxDepth` | How deeply elements nest | 0, which means 64 |
+| `MaxAttributeCount` | Attributes on one element, namespace declarations included | 0, which means 1,000 |
+| `MaxNameByteCount` | One element or attribute name, in UTF-8 bytes | 0, which means 1,024 |
+| `MaxTextByteCount` | One text node, CDATA section, attribute value, or processing instruction's data, in UTF-8 bytes | 0, which means 16,777,216 |
+| `MaxCommentByteCount` | One comment, in UTF-8 bytes | 0, which means 1,048,576 |
+| `MaxDocumentByteCount` | The whole document, in UTF-8 bytes | 0, which means no limit |
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/26_ParseWithXmlDocument.cs)
+
+## Remarks
+
+The defaults are chosen so that a document that is parsed and then written with
+[XmlDocument.WriteTo](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument#writeto) keeps its comments and the white space between its
+elements. If you don't want comments in the document, set [XmlDocumentOptions.CommentHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions#commenthandling) to
+[XmlCommentHandling.Skip](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling). If you don't want white-space-only text in the document, set
+[XmlDocumentOptions.WhitespaceHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions#whitespacehandling) to [XmlWhitespaceHandling.Insignificant](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWhitespaceHandling).
+`default` and `new XmlDocumentOptions()` are the same options.
+A limit property that is set to 0 uses its default limit, except
+[XmlDocumentOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions#maxdocumentbytecount), where 0 means that the size is not limited.
+
+## Examples
+
+### Limit untrusted input
+
+A limit that is exceeded throws an `XmlException` whose message names the limit.
+
+```csharp
+var options = new XmlDocumentOptions
+{
+    MaxDepth = 2,
+    MaxDocumentByteCount = 64,
+};
+
+try
+{
+    using XmlDocument tooDeep = XmlDocument.Parse("<a>**<c/>**</a>", options);
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+
+try
+{
+    using XmlDocument tooLarge = XmlDocument.Parse($"<a>{new string('x', 100)}</a>", options);
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+```
+
+The code produces the following output:
+
+```text
+MaxDepth exceeded (2).
+MaxDocumentByteCount exceeded (64).
+```
+
+### Leave out white space between elements
+
+By default the indentation of a document is kept as `Text` nodes. `Insignificant` leaves it out.
+
+```csharp
+const string xml = """
+    <Order>
+      <Item>Keyboard</Item>
+      <Item>Mouse</Item>
+    </Order>
+    """;
+
+using (XmlDocument document = XmlDocument.Parse(xml))
+{
+    XmlElement order = document.RootElement;
+    output.WriteLine($"Significant (the default): {CountChildren(order)} children");
+    foreach (XmlElement child in order.EnumerateChildren())
+    {
+        output.WriteLine($"  {child.ValueKind}");
+    }
+
+    output.WriteLine($"  Text of the root: '{order.GetString()!.Replace("\n", "\\n")}'");
+    output.WriteLine($"  Text of the first Item: '{order.GetChild("Item").GetString()}'");
+}
+
+var options = new XmlDocumentOptions { WhitespaceHandling = XmlWhitespaceHandling.Insignificant };
+using (XmlDocument document = XmlDocument.Parse(xml, options))
+{
+    XmlElement order = document.RootElement;
+    output.WriteLine($"Insignificant: {CountChildren(order)} children");
+    output.WriteLine($"  Text of the root: '{order.GetString()}'");
+}
+```
+
+The code produces the following output:
+
+```text
+Significant (the default): 5 children
+  Text
+  Element
+  Text
+  Element
+  Text
+  Text of the root: '\n  Keyboard\n  Mouse\n'
+  Text of the first Item: 'Keyboard'
+Insignificant: 2 children
+  Text of the root: 'KeyboardMouse'
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/26_ParseWithXmlDocument.cs)
+
+## Best Practices
+
+- **Keep the defaults when the document is written back.** `CommentHandling.Allow` and `WhitespaceHandling.Significant` are what keep comments and indentation through a round trip.
+- **Set `Skip` and `Insignificant` when you only read values.** The children of an element are then only the nodes that carry data, and the text of an element doesn't include indentation.
+- **Set `MaxDocumentByteCount` for input you don't control.** It's the only limit with no default, and with the `Stream` overload of `Parse` it stops the read as soon as the stream is found to be longer.
+- **Lower `MaxDepth` when you know the shape.** The default of 64 is generous for most formats.
+- **Use `Disallow` or `None` to enforce a contract,** for example a message format that must not carry comments.
+
+## Considerations
+
+- `XmlDocumentOptions` is a struct. `default(XmlDocumentOptions)` and `new XmlDocumentOptions()` are the same options: `CommentHandling` is `Allow` and `WhitespaceHandling` is `Significant` in both.
+- `XmlReaderOptions` has the same two defaults, so a `Utf8XmlReader` reports comments and white-space-only text as well. `XmlSerializer` skips both. A document keeps them so that `XmlDocument.WriteTo` reproduces the comments and the layout that were parsed.
+- Because white space is kept, `XmlElement.EnumerateChildren` on an indented document returns a `Text` node for each run of indentation, and the text of an element that has child elements includes it. Lookups by name and the values of leaf elements aren't affected.
+- `WhitespaceHandling` applies only to text that is nothing but white space between two tags. White space inside a value, such as `<Item> Keyboard </Item>`, is always kept.
+- White space outside the root element isn't stored under any setting.
+- A limit of 0 means the default limit in the table under Usage, except `MaxDocumentByteCount`, where 0 means no limit.
+- `MaxDocumentByteCount` counts UTF-8 bytes. For the `string` and `ReadOnlySpan<char>` overloads of `Parse`, it applies to the size after conversion to UTF-8.
+- `XmlDocument.ParseValue` doesn't take these options. The `XmlReaderOptions` of the reader you pass apply.
+- `XmlNode.Parse` takes no options. It keeps comments and white space and uses the default limits. To build a mutable tree with other options, parse with `XmlDocument` and call `XmlElement.CloneNode`.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [XmlDocumentOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions) struct.
+
+#### Syntax
+
+```csharp
+public XmlDocumentOptions()
+```
+
+#### Remarks
+
+[XmlDocumentOptions.CommentHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions#commenthandling) is [XmlCommentHandling.Allow](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling),
+[XmlDocumentOptions.WhitespaceHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions#whitespacehandling) is [XmlWhitespaceHandling.Significant](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWhitespaceHandling), and every
+limit property is set to 0, which selects its default limit.
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+protected ValueType()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CommentHandling
+
+Gets or sets a value that determines how the parser handles comments.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlCommentHandling CommentHandling { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlCommentHandling`
+One of the enumeration values that indicates how comments are handled. The default is
+[XmlCommentHandling.Allow](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling).
+
+#### Remarks
+
+Comments are kept by default so that parsing a document and writing it back does not lose them.
+Set this property to [XmlCommentHandling.Skip](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling) to leave comments out of the document,
+or to [XmlCommentHandling.Disallow](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling) to reject a document that contains one.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MaxAttributeCount
+
+Gets or sets the maximum number of attributes allowed on one element.
+
+#### Syntax
+
+```csharp
+public int MaxAttributeCount { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum number of attributes on one element, including namespace declarations
+(`xmlns` and `xmlns:prefix`). The default is 0, which means 1000.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MaxCommentByteCount
+
+Gets or sets the maximum size allowed for the content of one comment.
+
+#### Syntax
+
+```csharp
+public int MaxCommentByteCount { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum size of the content of a comment, in UTF-8 bytes. The default is 0, which means 1,048,576.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MaxDepth
+
+Gets or sets the maximum depth allowed when parsing XML.
+
+#### Syntax
+
+```csharp
+public int MaxDepth { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum depth of nested elements. The default is 0, which means 64.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MaxDocumentByteCount
+
+Gets or sets the maximum size allowed for the document.
+
+#### Syntax
+
+```csharp
+public int MaxDocumentByteCount { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum size of the document, in UTF-8 bytes. The default is 0, which means that the size is not limited.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MaxNameByteCount
+
+Gets or sets the maximum size allowed for an element name or an attribute name.
+
+#### Syntax
+
+```csharp
+public int MaxNameByteCount { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum size of an element or attribute name, in UTF-8 bytes. The default is 0, which means 1024.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MaxTextByteCount
+
+Gets or sets the maximum size allowed for a text node, a CDATA section, an attribute value, or the data of a processing instruction.
+
+#### Syntax
+
+```csharp
+public int MaxTextByteCount { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum size of each, in UTF-8 bytes as they appear in the document. The default is 0, which means
+16,777,216.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> WhitespaceHandling
+
+Gets or sets a value that determines how the parser handles text between elements that consists only of white space.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlWhitespaceHandling WhitespaceHandling { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlWhitespaceHandling`
+One of the enumeration values that indicates how white-space-only text between elements is handled.
+The default is [XmlWhitespaceHandling.Significant](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWhitespaceHandling).
+
+#### Remarks
+
+White space between elements, such as indentation, is kept by default so that parsing a document
+and writing it back does not change its layout. Each run of white space is a text node, so it
+appears when you enumerate an element's children. Set this property to
+[XmlWhitespaceHandling.Insignificant](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWhitespaceHandling) to leave white-space-only text out of the
+document, or to [XmlWhitespaceHandling.None](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWhitespaceHandling) to reject a document that contains it.
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlDocument
+- CloudNimble.Text.Xml.XmlCommentHandling
+- CloudNimble.Text.Xml.XmlWhitespaceHandling
+- CloudNimble.Text.Xml.XmlReaderOptions
+- CloudNimble.Text.Xml.XmlException
+

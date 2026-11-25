@@ -1,0 +1,250 @@
+---
+title: XmlMixedElement
+description: "Represents a child element in mixed content. This class cannot be inherited."
+icon: lock
+tag: "SEALED"
+keywords: ['XmlMixedElement', 'CloudNimble.Text.Xml.Serialization.XmlMixedElement', 'CloudNimble.Text.Xml.Serialization', 'class', 'CloudNimble.Text.Xml.Serialization.XmlMixedContentItem', 'CloudNimble.Text.Xml.Serialization.XmlMixedText', 'CloudNimble.Text.Xml.Serialization.XmlMixedAttribute', 'CloudNimble.Text.Xml.Nodes.XmlElementNode', 'CloudNimble.Text.Xml.Nodes.XmlNode']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+**Inheritance:** CloudNimble.Text.Xml.Serialization.XmlMixedContentItem
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlMixedElement
+```
+
+## Summary
+
+Represents a child element in mixed content. This class cannot be inherited.
+
+## Usage
+
+An `XmlMixedElement` is a child element inside mixed content. Its `Element` property holds the element as an `XmlElementNode`, with its attributes and everything inside it.
+
+When you read, get the name, attributes, and content from the node. When you write, build a node and wrap it:
+
+```csharp
+var note = new XmlElementNode("Note");
+note.Add(new XmlTextNode("Changes are saved to disk."));
+paragraph.Content.Add(new XmlMixedText(" "));
+paragraph.Content.Add(new XmlMixedElement(note));
+
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+output.WriteLine(XmlSerializer.Serialize(paragraph, options));
+```
+
+Added to the paragraph `Press <Key>Ctrl</Key> and <Key>S</Key> to save.`, the code produces the following output:
+
+```xml
+<Paragraph>Press <Key>Ctrl</Key> and <Key>S</Key> to save. <Note>Changes are saved to disk.</Note></Paragraph>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/18_MixedContent.cs)
+
+## Considerations
+
+- An item whose `Element` is `null` is skipped when the list is written.
+- The element is a DOM node, not a typed object. To turn it into an object, pass the node to `XmlSerializer.Deserialize<T>(XmlNode)`.
+- The node is mutable. Changes you make to it are written the next time you serialize.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [XmlMixedElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedElement) class that has no element.
+
+#### Syntax
+
+```csharp
+public XmlMixedElement()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [XmlMixedElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedElement) class with the specified element.
+
+#### Syntax
+
+```csharp
+public XmlMixedElement(CloudNimble.Text.Xml.Nodes.XmlElementNode element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `CloudNimble.Text.Xml.Nodes.XmlElementNode` | The child element. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlMixedContentItem`</Note>
+
+#### Syntax
+
+```csharp
+protected XmlMixedContentItem()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Element
+
+Gets or sets the child element.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.Nodes.XmlElementNode Element { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.Nodes.XmlElementNode?`
+The child element, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if none is set. An item whose element is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) is not written.
+The default is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Serialization.XmlMixedContentItem
+- CloudNimble.Text.Xml.Serialization.XmlMixedText
+- CloudNimble.Text.Xml.Serialization.XmlMixedAttribute
+- CloudNimble.Text.Xml.Nodes.XmlElementNode
+- CloudNimble.Text.Xml.Nodes.XmlNode
+

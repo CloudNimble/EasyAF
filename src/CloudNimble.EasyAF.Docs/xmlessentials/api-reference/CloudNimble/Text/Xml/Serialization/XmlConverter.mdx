@@ -1,0 +1,665 @@
+---
+title: XmlConverter
+description: "Converts an object or value to or from XML."
+icon: code-branch
+tag: "ABSTRACT"
+keywords: ['XmlConverter', 'CloudNimble.Text.Xml.Serialization.XmlConverter<T>', 'CloudNimble.Text.Xml.Serialization', 'class', 'CloudNimble.Text.Xml.Serialization.XmlConverter', 'CloudNimble.Text.Xml.Serialization.XmlConverterFactory', 'CloudNimble.Text.Xml.Serialization.XmlConverterAttribute', 'CloudNimble.Text.Xml.Serialization.XmlTypeInfo', 'CloudNimble.Text.Xml.XmlSerializerOptions', 'CloudNimble.Text.Xml.Utf8XmlReader']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+**Inheritance:** CloudNimble.Text.Xml.Serialization.XmlConverter
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlConverter<T>
+```
+
+## Summary
+
+Converts an object or value to or from XML.
+
+## Usage
+
+A converter reads one type from XML and writes it back. To write your own, derive from `XmlConverter<T>` and override `Read` and `Write`. You can't derive from the non-generic `XmlConverter` class directly: it's the common base of `XmlConverter<T>` and `XmlConverterFactory`.
+
+```csharp
+public sealed class MoneyConverter : XmlConverter<Money>
+{
+    public override Money Read(ref Utf8XmlReader reader, Type typeToConvert, XmlSerializerOptions options)
+    {
+        Money value = default;
+        if (reader.IsEmptyElement)
+        {
+            return value;
+        }
+
+        while (reader.Read() && reader.TokenType is not XmlTokenType.EndElement)
+        {
+            if (reader.TokenType is XmlTokenType.Text or XmlTokenType.CData)
+            {
+                value = Parse(reader.GetString()!);
+            }
+        }
+
+        return value;
+    }
+
+    public override void Write(Utf8XmlWriter writer, Money value, XmlSerializerOptions options)
+    {
+        writer.WriteStringValue(string.Create(CultureInfo.InvariantCulture, $"{value.Amount:0.00} {value.Currency}"));
+    }
+
+    private static Money Parse(string text)
+    {
+        int space = text.IndexOf(' ');
+        if (space < 0 || !decimal.TryParse(text.AsSpan(0, space), NumberStyles.Number, CultureInfo.InvariantCulture, out decimal amount))
+        {
+            throw new XmlException($"'{text}' is not an amount followed by a currency code.");
+        }
+
+        return new Money(amount, text[(space + 1)..]);
+    }
+}
+```
+
+Register the converter by adding an instance to `XmlSerializerOptions.Converters`, or by naming it in `[XmlConverter]` on the type it converts.
+
+### Where Read starts and stops
+
+`Read` is called with the reader on the start tag of the element that holds the value. It must leave the reader on the last token of that element: the end tag, or the start tag itself when the element is an empty-element tag such as `<Total/>`, which has no end-tag token. Check `reader.IsEmptyElement` before the first call to `reader.Read()`.
+
+### What Write writes
+
+`Write` is called after the serializer has written the element's start tag. Write the content, text or child elements, and return. The serializer writes the end tag.
+
+The classes correspond to `JsonConverter` and `JsonConverter<T>` in System.Text.Json. For the factory pattern, registration, and attribute support, see [How to write custom converters](/xmlessentials/guides/custom-converters).
+
+## Remarks
+
+[XmlConverter`1.Read](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverter#read) is called with the reader positioned on the start tag of the value.
+The converter consumes through the matching end tag, or handles an empty element.
+
+## Type Parameters
+
+- `T` - The type of object or value handled by the converter.
+
+## Examples
+
+### Register converters in the options
+
+The following example registers `MoneyConverter` and a second converter that replaces the built-in converter of `DateOnly`. `Issued` is mapped as an attribute, so it's written by the date converter's `WriteAsAttribute` method.
+
+```csharp
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+options.Converters.Add(new MoneyConverter());
+options.Converters.Add(new CompactDateConverter());
+
+var invoice = new Invoice
+{
+    Number = "INV-204",
+    Issued = new DateOnly(2026, 11, 23),
+    Due = new DateOnly(2026, 12, 23),
+    Total = new Money(129.9m, "USD"),
+};
+
+string xml = XmlSerializer.Serialize(invoice, options);
+output.WriteLine(xml);
+
+Invoice? copy = XmlSerializer.Deserialize<Invoice>(xml, options);
+output.WriteLine($"{copy!.Number}: {copy.Total.Amount} {copy.Total.Currency}, issued {copy.Issued:yyyy-MM-dd}, due {copy.Due:yyyy-MM-dd}");
+```
+
+The code produces the following output:
+
+```text
+<Invoice Issued="20261123"><Due>20261223</Due><Number>INV-204</Number><Total>129.90 USD</Total></Invoice>
+INV-204: 129.90 USD, issued 2026-11-23, due 2026-12-23
+```
+
+### Convert a built-in type in elements, attributes, and text
+
+```csharp
+public sealed class CompactDateConverter : XmlConverter<DateOnly>
+{
+    private const string Format = "yyyyMMdd";
+
+    public override DateOnly Read(ref Utf8XmlReader reader, Type typeToConvert, XmlSerializerOptions options)
+    {
+        DateOnly value = default;
+        if (reader.IsEmptyElement)
+        {
+            return value;
+        }
+
+        while (reader.Read() && reader.TokenType is not XmlTokenType.EndElement)
+        {
+            if (reader.TokenType is XmlTokenType.Text)
+            {
+                value = ReadLexical(reader.ValueSpan, options);
+            }
+        }
+
+        return value;
+    }
+
+    public override DateOnly ReadAsAttribute(ref Utf8XmlReader reader, Type typeToConvert, XmlSerializerOptions options)
+    {
+        return ReadLexical(reader.ValueSpan, options);
+    }
+
+    public override DateOnly ReadLexical(ReadOnlySpan<byte> utf8, XmlSerializerOptions options)
+    {
+        string text = Encoding.UTF8.GetString(utf8);
+        return DateOnly.TryParseExact(text, Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly value)
+            ? value
+            : throw new XmlException($"'{text}' is not a date in the form {Format}.");
+    }
+
+    public override void Write(Utf8XmlWriter writer, DateOnly value, XmlSerializerOptions options)
+    {
+        writer.WriteStringValue(value.ToString(Format, CultureInfo.InvariantCulture));
+    }
+
+    public override void WriteAsAttribute(Utf8XmlWriter writer, XmlName name, DateOnly value, XmlSerializerOptions options)
+    {
+        writer.WriteAttributeString(name.LocalName, value.ToString(Format, CultureInfo.InvariantCulture));
+    }
+}
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/35_CustomConverters.cs)
+
+## Best Practices
+
+- **Check `IsEmptyElement` first in `Read`.** An empty-element tag has no end-tag token. A loop that reads until `EndElement` without the check runs into the elements that follow.
+- **Leave the reader on the element's last token.** Don't read past the end tag, and don't stop before it. The serializer continues from where you stop.
+- **Pass the reader by `ref` to helper methods.** `Utf8XmlReader` is a struct. A helper that takes it by value advances a copy.
+- **Skip what you don't recognize.** Call `reader.Skip()` on an unknown child element so that a newer document doesn't break an older converter.
+- **Close every element you open in `Write`,** and don't write the value's own start or end tag.
+- **Throw `XmlException` for content that isn't valid,** as the built-in converters do.
+- **Format and parse with `CultureInfo.InvariantCulture`.** XML is exchanged between machines, and the current culture changes decimal separators and date order.
+- **Keep converters stateless.** One instance serves every thread that uses the options.
+- **Don't widen `CanConvert` on an `XmlConverter<T>`.** A converter can serve only `T`. Use an `XmlConverterFactory` for a family of types.
+
+## Considerations
+
+- **Lookup order.** The serializer uses the first match among the converters in `XmlSerializerOptions.Converters`, in list order, then `[XmlConverter]` on the type, then the built-in converters.
+- **Nil elements.** With `HandleNull` at its default of `false`, the serializer handles an element marked `xsi:nil="true"` itself: it returns `null` without calling `Read`, or throws `XmlException` when `T` can't be `null`. Override `HandleNull` to return `true` to receive those elements.
+- **Attributes and text need more overrides.** `ReadAsAttribute`, `WriteAsAttribute`, and `ReadLexical` throw `InvalidOperationException` unless you override them. The serializer calls them only for the types it treats as simple values, such as numbers, dates, strings, and enumerations, when a member is mapped with `[XmlAttribute]`, `[XmlText]`, or `[XmlCData]`. A member of any other type can't be an attribute or text, whatever its converter writes.
+- **Source generation.** A source-generated context in the default mode or in `Metadata` mode uses your converter as the reflection resolver does, whether it's in `XmlSerializerOptions.Converters` or named by `[XmlConverter]` on a type or a member. A converter you supply for a type is used in place of the generated metadata for that type. See [Use a converter with source generation](/xmlessentials/guides/custom-converters#use-a-converter-with-source-generation).
+- **Stream reads.** When the serializer reads from a stream and the document isn't all in memory yet, it first makes sure the whole element has arrived and then calls `Read` once. A converter never has to resume part way through an element.
+- **Differences from `JsonConverter<T>`.** `Read` and `Write` work on an element, not on a token. There are no `ReadAsPropertyName` or `WriteAsPropertyName` methods. `HandleNull` concerns `xsi:nil` when reading.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlConverter`</Note>
+
+Limits derivation to `XmlConverter`1` and [XmlConverterFactory](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterFactory).
+
+#### Syntax
+
+```csharp
+private protected XmlConverter()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CanPopulate <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlConverter`</Note>
+
+Gets whether the converter can read an element into a value that already exists.
+
+#### Syntax
+
+```csharp
+internal virtual bool CanPopulate { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) for the converters of objects and dictionaries that the library creates; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). A converter the caller wrote creates its value, so a member it reads is replaced.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> HandleNull <Badge color="orange">Virtual</Badge>
+
+Gets a value that indicates whether an element marked `xsi:nil="true"` is passed to the converter on deserialization.
+
+#### Syntax
+
+```csharp
+public virtual bool HandleNull { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if [XmlConverter`1.Read](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverter#read) is called for an element marked `xsi:nil="true"`; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+The default is [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Remarks
+
+When the value is [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool), the serializer returns [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) for a nil element without calling [XmlConverter`1.Read](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverter#read),
+and throws an [XmlException](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException) when *T* is a value type that cannot be [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsValueConverter <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlConverter`</Note>
+
+Gets whether this is one of the built-in converters that read and write a value from its lexical form,
+which the serializer can call directly.
+
+#### Syntax
+
+```csharp
+internal virtual bool IsValueConverter { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CanConvert <Badge color="blue">Override</Badge>
+
+#### Syntax
+
+```csharp
+public override bool CanConvert(System.Type typeToConvert)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `typeToConvert` | `System.Type` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CanConvert <Badge color="gray">Inherited</Badge> <Badge color="orange">Abstract</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlConverter`</Note>
+
+When overridden in a derived class, determines whether the converter instance can convert the specified type.
+
+#### Syntax
+
+```csharp
+public abstract bool CanConvert(System.Type typeToConvert)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `typeToConvert` | `System.Type` | The type to check. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the instance can convert *typeToConvert*; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateTypeInfo <Badge color="gray">Inherited</Badge> <Badge color="orange">Abstract</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlConverter`</Note>
+
+Creates type info that reads and writes *typeToConvert* with this converter.
+
+#### Syntax
+
+```csharp
+internal abstract CloudNimble.Text.Xml.Serialization.XmlTypeInfo CreateTypeInfo(System.Type typeToConvert, CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `typeToConvert` | `System.Type` | The CLR type. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serializer options. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlTypeInfo?`
+The type info, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) when this converter cannot produce values of that exact type.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Populate <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlConverter`</Note>
+
+Reads the element *reader* is on into *existing*.
+
+#### Syntax
+
+```csharp
+internal virtual void Populate(ref CloudNimble.Text.Xml.Utf8XmlReader reader, object existing, CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `reader` | `CloudNimble.Text.Xml.Utf8XmlReader` | The reader, on a start tag that is not marked nil. |
+| `existing` | `object` | The value to populate. A value type is boxed, and the box is what is changed. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serializer options. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `NotSupportedException` | The converter cannot populate: [XmlConverter.CanPopulate](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterFactory#canpopulate) is [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Read <Badge color="orange">Abstract</Badge>
+
+When overridden in a derived class, reads and converts the XML element to type *T*.
+
+#### Syntax
+
+```csharp
+public abstract T Read(ref CloudNimble.Text.Xml.Utf8XmlReader reader, System.Type typeToConvert, CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `reader` | `CloudNimble.Text.Xml.Utf8XmlReader` | The reader, positioned on the start tag of the element. |
+| `typeToConvert` | `System.Type` | The type to convert. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serialization options to use. |
+
+#### Returns
+
+Type: `T?`
+The converted value.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReadAsAttribute <Badge color="orange">Virtual</Badge>
+
+Reads and converts the value of the current XML attribute to type *T*.
+
+#### Syntax
+
+```csharp
+public virtual T ReadAsAttribute(ref CloudNimble.Text.Xml.Utf8XmlReader reader, System.Type typeToConvert, CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `reader` | `CloudNimble.Text.Xml.Utf8XmlReader` | The reader, positioned on an attribute. |
+| `typeToConvert` | `System.Type` | The type to convert. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serialization options to use. |
+
+#### Returns
+
+Type: `T?`
+The converted value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | The converter does not support reading from attributes. |
+
+#### Remarks
+
+The default implementation throws an [InvalidOperationException](https://learn.microsoft.com/dotnet/api/system.invalidoperationexception). Override this method in a converter
+whose type can be mapped to an XML attribute.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReadLexical <Badge color="orange">Virtual</Badge>
+
+Converts the lexical form of a value, as decoded UTF-8 text content, to type *T*.
+
+#### Syntax
+
+```csharp
+public virtual T ReadLexical(System.ReadOnlySpan<byte> utf8, CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8` | `System.ReadOnlySpan<byte>` | The lexical form of the value, as decoded UTF-8 text. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serialization options to use. |
+
+#### Returns
+
+Type: `T?`
+The converted value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | The converter does not support reading from text content. |
+
+#### Remarks
+
+The default implementation throws an [InvalidOperationException](https://learn.microsoft.com/dotnet/api/system.invalidoperationexception). Override this method in a converter
+whose type can be read from simple content.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Resolve <Badge color="gray">Inherited</Badge> <Badge color="orange">Abstract</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlConverter`</Note>
+
+Returns the converter that does the work for *typeToConvert*: this converter, or the
+one a factory creates.
+
+#### Syntax
+
+```csharp
+internal abstract CloudNimble.Text.Xml.Serialization.XmlConverter Resolve(System.Type typeToConvert, CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `typeToConvert` | `System.Type` | The CLR type. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serializer options. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlConverter`
+The converter.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Write <Badge color="orange">Abstract</Badge>
+
+When overridden in a derived class, writes the specified value as the content of the current XML element.
+
+#### Syntax
+
+```csharp
+public abstract void Write(CloudNimble.Text.Xml.Utf8XmlWriter writer, T value, CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The writer to write to, positioned inside the start tag of the element. |
+| `value` | `T` | The value to convert to XML. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serialization options to use. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> WriteAsAttribute <Badge color="orange">Virtual</Badge>
+
+Writes the specified value as an XML attribute with the specified name.
+
+#### Syntax
+
+```csharp
+public virtual void WriteAsAttribute(CloudNimble.Text.Xml.Utf8XmlWriter writer, CloudNimble.Text.Xml.XmlName name, T value, CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The writer to write to, positioned on an open start tag. |
+| `name` | `CloudNimble.Text.Xml.XmlName` | The name of the attribute. |
+| `value` | `T` | The value to convert to XML. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serialization options to use. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | The converter does not support writing attributes. |
+
+#### Remarks
+
+The default implementation throws an [InvalidOperationException](https://learn.microsoft.com/dotnet/api/system.invalidoperationexception). Override this method in a converter
+whose type can be mapped to an XML attribute.
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Serialization.XmlConverterFactory
+- CloudNimble.Text.Xml.Serialization.XmlConverterAttribute
+- CloudNimble.Text.Xml.Serialization.XmlTypeInfo
+- CloudNimble.Text.Xml.XmlSerializerOptions
+- CloudNimble.Text.Xml.Utf8XmlReader
+- CloudNimble.Text.Xml.Utf8XmlWriter
+- CloudNimble.Text.Xml.XmlException
+- CloudNimble.Text.Xml.XmlName
+

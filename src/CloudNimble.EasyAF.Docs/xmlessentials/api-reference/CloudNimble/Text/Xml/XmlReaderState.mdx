@@ -1,0 +1,391 @@
+---
+title: XmlReaderState
+description: "Represents the state a [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) needs to continue reading a document with more data."
+icon: cubes
+tag: "SEALED"
+keywords: ['XmlReaderState', 'CloudNimble.Text.Xml.XmlReaderState', 'CloudNimble.Text.Xml', 'struct', 'System.ValueType', 'CloudNimble.Text.Xml.Utf8XmlReader', 'CloudNimble.Text.Xml.XmlReaderOptions', 'CloudNimble.Text.Xml.XmlCommentHandling']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.ValueType
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlReaderState
+```
+
+## Summary
+
+Represents the state a [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) needs to continue reading a document with more data.
+
+## Usage
+
+`XmlReaderState` is what lets a `Utf8XmlReader` read a document that arrives in blocks. A reader is a `ref struct` and can't outlive the block it reads, so everything it knows about the document so far travels in this value from one reader to the next. It's the counterpart of `JsonReaderState`.
+
+You use it in two places:
+
+1. Before the first block, create a state that holds your options:
+
+   ```csharp
+   var state = new XmlReaderState(new XmlReaderOptions());
+   ```
+
+2. For every block, pass the state to the reader's constructor, and take the new state from `CurrentState` when `Read` returns `false`:
+
+   ```csharp
+   var reader = new Utf8XmlReader(buffer.AsSpan(0, buffered), isFinalBlock, state);
+   ```
+
+   ```csharp
+   state = reader.CurrentState;
+   var consumed = (int)reader.BytesConsumed;
+   ```
+
+The state is opaque. Its only public member is `Options`, the options it was created with. The complete loop is in the examples.
+
+## Remarks
+
+The state is opaque. As with the state of a `Utf8JsonReader`, only [XmlReaderState.Options](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState#options) is
+visible. [Utf8XmlReader.CurrentState](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader#currentstate) copies an immutable snapshot so two readers
+never share mutable element or namespace stacks.
+
+## Examples
+
+The example is a sample in the repository whose output is checked by a test.
+
+### Read a stream in blocks
+
+The loop reads a block from a stream, gives it to a reader with the state of the previous reader, and keeps the bytes that the reader didn't consume for the next pass. The buffer is 16 bytes so that the sample has to refill it and grow it.
+
+```csharp
+using var stream = new MemoryStream(Encoding.UTF8.GetBytes(
+    "<Orders><Order id=\"1042\"><Item>Keyboard</Item><Item>Mouse &amp; pad</Item></Order><Order id=\"1043\"><Item>Monitor stand</Item></Order></Orders>"));
+
+// The buffer is small so that the sample has to refill it and grow it. Use 4096 bytes or more in an application.
+var buffer = new byte[16];
+var buffered = 0;
+var isFinalBlock = false;
+var state = new XmlReaderState(new XmlReaderOptions());
+
+// What the application knows about its place in the document. The reader does not keep this between blocks.
+var inItem = false;
+var blocks = 0;
+
+while (!isFinalBlock)
+{
+    var read = stream.Read(buffer, buffered, buffer.Length - buffered);
+    buffered += read;
+    isFinalBlock = read == 0;
+    blocks++;
+
+    var reader = new Utf8XmlReader(buffer.AsSpan(0, buffered), isFinalBlock, state);
+    while (reader.Read())
+    {
+        switch (reader.TokenType)
+        {
+            case XmlTokenType.StartElement when reader.LocalNameEquals("Order"u8):
+                while (reader.MoveToNextAttribute())
+                {
+                    if (reader.LocalNameEquals("id"u8))
+                    {
+                        output.WriteLine($"Order {reader.GetInt32()}");
+                    }
+                }
+
+                break;
+
+            case XmlTokenType.StartElement:
+                inItem = reader.LocalNameEquals("Item"u8);
+                break;
+
+            case XmlTokenType.Text when inItem:
+                output.WriteLine($"  Item: {reader.GetString()}");
+                break;
+
+            case XmlTokenType.EndElement:
+                inItem = false;
+                break;
+        }
+    }
+
+    // Keep the bytes the reader did not consume. They are the start of a token that is not complete yet.
+    state = reader.CurrentState;
+    var consumed = (int)reader.BytesConsumed;
+    buffer.AsSpan(consumed, buffered - consumed).CopyTo(buffer);
+    buffered -= consumed;
+
+    // A full buffer with nothing consumed means the next token is larger than the buffer.
+    if (buffered == buffer.Length)
+    {
+        Array.Resize(ref buffer, buffer.Length * 2);
+    }
+}
+
+output.WriteLine($"Read {stream.Length} bytes in {blocks} blocks. The buffer grew to {buffer.Length} bytes.");
+```
+
+```text
+Order 1042
+  Item: Keyboard
+  Item: Mouse & pad
+Order 1043
+  Item: Monitor stand
+Read 142 bytes in 8 blocks. The buffer grew to 32 bytes.
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/22_ReadFromSequencesAndStreams.cs)
+
+[How to read XML with Utf8XmlReader](/xmlessentials/guides/use-utf8xmlreader#read-a-stream-in-blocks) explains each step.
+
+## Considerations
+
+- **A state made without options uses the defaults.** `new XmlReaderState()` and `default(XmlReaderState)` hold the default options, with which the reader reports comments and white space between elements.
+- **Taking a state allocates.** `Utf8XmlReader.CurrentState` copies the names of the open elements and the namespace bindings in scope, because the buffer they point into is about to be reused. The cost grows with the depth of the document and the number of namespaces in scope. `JsonReaderState` has no such cost. Take the state once per block, not once per token.
+- **A state is a snapshot.** It never changes after you take it, and two readers created from the same state don't affect each other. You can keep a state and go back to it, as long as you still have the bytes that follow it.
+- **A state doesn't hold bytes.** When `Read` returns `false` in the middle of a token, the reader stops at the start of that token. The bytes after `BytesConsumed` are yours to keep and pass again, followed by the new data.
+- **A state holds what the next reader needs to read the same way.** That's the open elements and the namespaces in scope, the `xml:space` setting and whether each open element already has text (so white space is reported as it would be in one piece), the XML version, the line count, and the number of bytes read for `MaxDocumentByteCount`.
+- **After `TrySkip` returns `false`, the state is taken just after the start tag.** A reader created from it reads the element's content token by token. To skip the element whole in the next block, take the state from a copy of the reader made before the `Read` that reached the start tag. See [Skip elements](/xmlessentials/guides/use-utf8xmlreader#skip-elements).
+- **The options can't change mid-document.** The state carries them, and every reader created from the state uses them.
+- **What your code knows isn't in the state.** Which element you're inside, and what you've collected so far, belong in your own variables.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [XmlReaderState](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState) struct using the specified options.
+
+#### Syntax
+
+```csharp
+public XmlReaderState(CloudNimble.Text.Xml.XmlReaderOptions options = default(CloudNimble.Text.Xml.XmlReaderOptions))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options` | `CloudNimble.Text.Xml.XmlReaderOptions` | The options that define the behavior of the [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader). The default is
+`default`, which is the same as `new XmlReaderOptions()`: comments and
+whitespace-only text between elements are reported as tokens. |
+
+#### Remarks
+
+The new state holds no read progress, so a reader created from it starts at the beginning of a document.
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+protected ValueType()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Options
+
+Gets the custom behavior of the [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) that this state belongs to.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlReaderOptions Options { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlReaderOptions`
+The options the reader was created with.
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Utf8XmlReader
+- CloudNimble.Text.Xml.XmlReaderOptions
+- CloudNimble.Text.Xml.XmlCommentHandling
+

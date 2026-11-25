@@ -1,0 +1,393 @@
+---
+title: XmlNodeList
+description: "Represents the ordered list of child nodes of an [XmlElementNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlElementNode). This class cannot be inherited."
+icon: lock
+tag: "SEALED"
+keywords: ['XmlNodeList', 'CloudNimble.Text.Xml.Nodes.XmlNodeList', 'CloudNimble.Text.Xml.Nodes', 'class', 'CloudNimble.Text.Xml.Nodes.XmlElementNode', 'CloudNimble.Text.Xml.Nodes.XmlNode', 'CloudNimble.Text.Xml.Nodes.XmlAttributeNodeList']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Nodes
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Nodes.XmlNodeList
+```
+
+## Summary
+
+Represents the ordered list of child nodes of an [XmlElementNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlElementNode). This class cannot be inherited.
+
+## Usage
+
+`XmlNodeList` is the type of `XmlElementNode.Children`. It's an `IList<XmlNode>` that holds an element's child nodes in document order: elements, text, CDATA sections, comments, and processing instructions. Use it to count, index, insert at a position, remove, and replace.
+
+```csharp
+var order = (XmlElementNode)XmlNode.Parse("""<Order><Item>Keyboard</Item><Item>Mouse</Item><Item>Monitor</Item><Note>Gift</Note></Order>""")!;
+
+order.Children.RemoveAt(0);
+
+XmlElementNode note = order["Note"]!;
+order.Children.Remove(note);
+output.WriteLine($"The removed node has a parent: {note.Parent is not null}");
+
+var replacement = new XmlElementNode("Item");
+replacement.InnerText = "Trackball";
+order.Children[0] = replacement;
+
+var archive = new XmlElementNode("Archive");
+archive.Add(note);
+
+order["Item"]!.InnerText = "Trackball (wireless)";
+
+output.WriteLine(order.ToString());
+output.WriteLine(archive.ToString());
+```
+
+The code produces the following output:
+
+```text
+The removed node has a parent: False
+<Order><Item>Trackball (wireless)</Item><Item>Monitor</Item></Order>
+<Archive><Note>Gift</Note></Archive>
+```
+
+You don't create a list. Every `XmlElementNode` has one.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/30_ChangeWithXmlNode.cs)
+
+## Remarks
+
+A node can belong to one list at a time. Adding, inserting, or assigning a node that already has a
+parent throws an [XmlException](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException), and [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) throws an
+[ArgumentNullException](https://learn.microsoft.com/dotnet/api/system.argumentnullexception). A node that is removed or replaced has no parent afterward.
+
+## Considerations
+
+- A node belongs to one list at a time. `Add`, `Insert`, and the index setter throw an `XmlException` ("The node already has a parent.") for a node that has a parent. Remove it first to move it, or add a `DeepClone` to copy it.
+- `Remove`, `RemoveAt`, `Clear`, and replacing through the index setter set the `Parent` of the node that leaves the list to `null`. `Remove` returns `false` when the node isn't in the list.
+- In a tree parsed from an indented document, the list holds a text node for each run of white space between elements. Don't assume that an index holds an element.
+- Don't change the list while a `foreach` loop enumerates it. After a change, the loop's next step throws an `InvalidOperationException` ("Collection was modified; enumeration operation may not execute."), as a `List<T>` or a `JsonArray` does. Loop over a copy (`list.ToArray()`), or loop by index from the end.
+- The list accepts the kinds of node that can be content: elements, text, CDATA sections, comments, and processing instructions. Adding an `XmlAttributeNode` or an `XmlDeclarationNode` throws an `XmlException`. When an assignment to an index is refused, the node that was there stays.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Count
+
+#### Syntax
+
+```csharp
+public int Count { get; }
+```
+
+#### Property Value
+
+Type: `int`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsReadOnly
+
+#### Syntax
+
+```csharp
+public bool IsReadOnly { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> this[]
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.Nodes.XmlNode this { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.Nodes.XmlNode`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Add
+
+#### Syntax
+
+```csharp
+public void Add(CloudNimble.Text.Xml.Nodes.XmlNode node)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `node` | `CloudNimble.Text.Xml.Nodes.XmlNode` | - |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Clear
+
+#### Syntax
+
+```csharp
+public void Clear()
+```
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Contains
+
+#### Syntax
+
+```csharp
+public bool Contains(CloudNimble.Text.Xml.Nodes.XmlNode item)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `item` | `CloudNimble.Text.Xml.Nodes.XmlNode` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CopyTo
+
+#### Syntax
+
+```csharp
+public void CopyTo(CloudNimble.Text.Xml.Nodes.XmlNode[] array, int arrayIndex)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `array` | `CloudNimble.Text.Xml.Nodes.XmlNode[]` | - |
+| `arrayIndex` | `int` | - |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetEnumerator
+
+Returns an enumerator that iterates through the nodes in order.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerator<CloudNimble.Text.Xml.Nodes.XmlNode> GetEnumerator()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerator<CloudNimble.Text.Xml.Nodes.XmlNode>`
+An enumerator for the list.
+
+#### Remarks
+
+The list must not change while it is enumerated. After a node is added, inserted, removed, or
+replaced, or the list is cleared, the next call to [MoveNext](https://learn.microsoft.com/dotnet/api/system.collections.ienumerator.movenext) throws an
+[InvalidOperationException](https://learn.microsoft.com/dotnet/api/system.invalidoperationexception). To change the list in a loop, enumerate a copy of it.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IndexOf
+
+#### Syntax
+
+```csharp
+public int IndexOf(CloudNimble.Text.Xml.Nodes.XmlNode item)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `item` | `CloudNimble.Text.Xml.Nodes.XmlNode` | - |
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Insert
+
+#### Syntax
+
+```csharp
+public void Insert(int index, CloudNimble.Text.Xml.Nodes.XmlNode node)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `index` | `int` | - |
+| `node` | `CloudNimble.Text.Xml.Nodes.XmlNode` | - |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Remove
+
+#### Syntax
+
+```csharp
+public bool Remove(CloudNimble.Text.Xml.Nodes.XmlNode node)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `node` | `CloudNimble.Text.Xml.Nodes.XmlNode` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> RemoveAt
+
+#### Syntax
+
+```csharp
+public void RemoveAt(int index)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `index` | `int` | - |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Nodes.XmlElementNode
+- CloudNimble.Text.Xml.Nodes.XmlNode
+- CloudNimble.Text.Xml.Nodes.XmlAttributeNodeList
+

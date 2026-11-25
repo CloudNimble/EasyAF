@@ -1,0 +1,124 @@
+---
+title: XmlSerializerDefaults
+description: "Specifies the predefined sets of options that an [XmlSerializerOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions) instance can be created with."
+icon: list-ol
+tag: "ENUM"
+keywords: ['XmlSerializerDefaults', 'CloudNimble.Text.Xml.XmlSerializerDefaults', 'CloudNimble.Text.Xml', 'enum', 'System.Enum', 'CloudNimble.Text.Xml.XmlSerializerOptions', 'CloudNimble.Text.Xml.XmlSerializer', 'CloudNimble.Text.Xml.XmlNamingPolicy', 'CloudNimble.Text.Xml.XmlCommentHandling', 'CloudNimble.Text.Xml.Serialization.XmlUnmappedMemberHandling']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlSerializerDefaults
+```
+
+## Summary
+
+Specifies the predefined sets of options that an [XmlSerializerOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions) instance can be created with.
+
+## Usage
+
+`XmlSerializerDefaults` names a starting set of option values. Pass a value to the [`XmlSerializerOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions) constructor, then set whatever else you need. It is the counterpart of `JsonSerializerDefaults`.
+
+| Value | Differences from `General` | Ready-made instance |
+| --- | --- | --- |
+| `General` | None. Names are unchanged, the XML declaration is written, and `null` is written as `xsi:nil="true"`. | `XmlSerializerOptions.Default` |
+| `Web` | `PropertyNamingPolicy` is `XmlNamingPolicy.CamelCase` and `OmitXmlDeclaration` is `true`. | `XmlSerializerOptions.Web` |
+| `Strict` | `AllowDuplicateProperties` is `false`, `RespectNullableAnnotations` is `true`, `ReadCommentHandling` is `XmlCommentHandling.Disallow`, and `UnmappedMemberHandling` is `XmlUnmappedMemberHandling.Disallow`. | `XmlSerializerOptions.Strict` |
+| `Bcl` | The settings that write what `System.Xml.Serialization.XmlSerializer` writes: `CharHandling` is `Number`, `DefaultCollectionMapping` is `Wrapped`, `DefaultIgnoreCondition` is `WhenWritingNullReference`, `EmptyElementStyle` is `SelfClosingWithSpace`, `IgnoreReadOnlyProperties` and `IncludeFields` are `true`, `MemberOrder` is `FieldsFirst`, `Namespaces` declares the `xsi` and `xsd` prefixes, `PreferredObjectCreationHandling` is `Populate`, `UtcOffsetHandling` is `WriteZ`, and `WriteIndented` is `true`. | `XmlSerializerOptions.Bcl` |
+
+```csharp
+var web = new XmlSerializerOptions(XmlSerializerDefaults.Web)
+{
+    WriteIndented = true,
+    NewLine = "\n",
+};
+```
+
+When you need a set of defaults exactly as it is, use the ready-made instance instead of creating your own. It is shared and already read-only.
+
+## Examples
+
+The following example shows what the strict defaults add to the general ones.
+
+### Compare the general and the strict defaults when reading
+
+The strict defaults change reading, apart from refusing to write a `null` that a nullable annotation forbids. The following example reads a document with a repeated element, one with a comment, and one with an unknown element, first with the general defaults and then with the strict ones.
+
+```csharp
+string[] documents =
+[
+    "<InvoiceLine><Sku>KB-101</Sku><Sku>MS-220</Sku></InvoiceLine>",
+    "<InvoiceLine><!-- checked --><Sku>KB-101</Sku></InvoiceLine>",
+    "<InvoiceLine><Sku>KB-101</Sku><Colour>black</Colour></InvoiceLine>",
+];
+
+foreach (string xml in documents)
+{
+    InvoiceLine? line = XmlSerializer.Deserialize<InvoiceLine>(xml);
+    output.WriteLine($"General: {line!.Sku}");
+
+    try
+    {
+        XmlSerializer.Deserialize<InvoiceLine>(xml, XmlSerializerOptions.Strict);
+    }
+    catch (XmlException ex)
+    {
+        output.WriteLine($"Strict: {ex.Message}");
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+General: MS-220
+Strict: Duplicate property 'Sku'. Path: /InvoiceLine | LineNumber: 1 | BytePositionInLine: 36.
+General: KB-101
+Strict: Comments are not allowed. Path: /InvoiceLine | LineNumber: 1 | BytePositionInLine: 30.
+General: KB-101
+Strict: Unknown element 'Colour'. Path: /InvoiceLine | LineNumber: 1 | BytePositionInLine: 39.
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/13_ConfigureOptions.cs)
+
+## Considerations
+
+- `Web` is smaller than `JsonSerializerDefaults.Web`. It doesn't make name matching case-insensitive, and it doesn't change how numbers are read. Set `PropertyNameCaseInsensitive` yourself if you need it.
+- With `Web`, the camelCase policy also applies to the document element, so a type named `InvoiceLine` is written as `<invoiceLine>`.
+- `Strict` changes what is written in one case only: with `RespectNullableAnnotations` on, a member annotated non-nullable that holds `null` throws when it is written. It doesn't set any of the size limits. For XML from an untrusted source, also set `MaxDocumentByteCount`. See [Security](/xmlessentials/guides/security).
+- The value is only a starting point. It isn't stored on the options, so there's no way to ask an instance which set it was created from.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `General` | 0 | General-purpose option values: names are left unchanged, an XML declaration is written, and a
+[`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) value is written with `xsi:nil`. |
+| `Web` | 1 | Option values for web-based scenarios: names are camel-cased and
+[XmlSerializerOptions.OmitXmlDeclaration](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#omitxmldeclaration) is [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). |
+| `Strict` | 2 | Option values for strict deserialization: an unmapped member, a duplicate property, a comment, or a
+[`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) for a member annotated non-nullable is an error. |
+| `Bcl` | 3 | Option values that write what `System.Xml.Serialization.XmlSerializer` writes for the same
+type, as far as the options reach: collections in a wrapper element, [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null)
+references left out, public fields included and written first, read-only properties left out, collections with no
+setter filled, a [Char](https://learn.microsoft.com/dotnet/api/system.char) as its number, `Z` for a zero offset, two-space
+indentation, `<e />` for an empty element, and the `xsi` and `xsd` namespaces
+declared on the document element. |
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlSerializerOptions
+- CloudNimble.Text.Xml.XmlSerializer
+- CloudNimble.Text.Xml.XmlNamingPolicy
+- CloudNimble.Text.Xml.XmlCommentHandling
+- CloudNimble.Text.Xml.Serialization.XmlUnmappedMemberHandling
+

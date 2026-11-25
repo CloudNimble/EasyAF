@@ -1,0 +1,209 @@
+---
+title: "How to require properties when deserializing XML"
+sidebarTitle: "Require properties"
+description: "Learn how to make XmlSerializer reject XML that lacks a required member or constructor parameter, or that holds elements the type doesn't map."
+icon: "asterisk"
+---
+
+By default, [`XmlSerializer`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) accepts XML that doesn't match the target type exactly. A member with no element keeps its default value, and an element with no member is skipped. This article shows how to tighten both: how to mark members as required, and how to reject content the type doesn't map. Requirements apply to deserialization only. They don't change what is written.
+
+## Mark members as required
+
+There are two ways to require a member, the same two that System.Text.Json offers:
+
+- The C# `required` modifier.
+- The [`[XmlRequired]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlRequiredAttribute) attribute, for when you don't want the compiler to enforce the member in object initializers.
+
+```csharp Registration.cs
+public sealed class Registration
+{
+    public required string Email { get; set; }
+
+    [XmlRequired]
+    public string? Plan { get; set; }
+
+    public string? Referrer { get; set; }
+}
+```
+
+The following example deserializes three documents: one that is complete, one without `Email`, and one without `Plan`.
+
+```csharp Program.cs
+string[] documents =
+[
+    "<Registration><Email>ada@contoso.example</Email><Plan>pro</Plan></Registration>",
+    "<Registration><Plan>pro</Plan></Registration>",
+    "<Registration><Email>ada@contoso.example</Email></Registration>",
+];
+
+foreach (string xml in documents)
+{
+    try
+    {
+        Registration? registration = XmlSerializer.Deserialize<Registration>(xml);
+        output.WriteLine($"{registration!.Email} chose {registration.Plan}");
+    }
+    catch (XmlException ex)
+    {
+        output.WriteLine(ex.Message);
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+ada@contoso.example chose pro
+The required member 'Email' is missing. Path: /Registration | LineNumber: 1 | BytePositionInLine: 46.
+The required member 'Plan' is missing. Path: /Registration | LineNumber: 1 | BytePositionInLine: 64.
+```
+
+A missing required member throws an [`XmlException`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException). The message names the member by its XML name, so a member renamed with `[XmlPropertyName("email")]` is reported as `email`. `Referrer` isn't required, so the first document is accepted without it.
+
+A required member can be an element, an XML attribute, or element text. A required collection that is written as repeated elements counts as present when the XML has at least one item.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/10_RequiredProperties.cs)
+
+## Present, nil, and empty
+
+XML can say three different things about a value that isn't there. A required member treats them differently:
+
+- The element is missing: an error, as shown above.
+- The element is present and marked `xsi:nil="true"`: an error. A required member can't be nil.
+- The element is present and empty: accepted. For a `string`, the value is the empty string.
+
+```csharp Program.cs
+const string nil = """
+    <Registration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <Email xsi:nil="true" />
+      <Plan>pro</Plan>
+    </Registration>
+    """;
+
+try
+{
+    XmlSerializer.Deserialize<Registration>(nil);
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+
+Registration? empty = XmlSerializer.Deserialize<Registration>("<Registration><Email /><Plan>pro</Plan></Registration>");
+output.WriteLine($"Email is empty: {empty!.Email.Length == 0}");
+```
+
+The code produces the following output:
+
+```text
+The required member 'Email' cannot be nil. Path: /Registration/Email | LineNumber: 2 | BytePositionInLine: 27.
+Email is empty: True
+```
+
+"Required" means the member must be in the XML with a value. It doesn't validate the value. To reject an empty string, check it in your own code after deserializing. For how `null` is written and read in general, see [Handle null values](/xmlessentials/guides/null-and-nil).
+
+## Constructor parameters
+
+When a type is created through a constructor with parameters, as a positional record is, every parameter that has no default value is required.
+
+```csharp Coupon.cs
+public sealed record Coupon(string Code, int PercentOff = 10);
+```
+
+```csharp Program.cs
+Coupon? coupon = XmlSerializer.Deserialize<Coupon>("<Coupon><Code>SPRING</Code></Coupon>");
+output.WriteLine($"{coupon!.Code}: {coupon.PercentOff}% off");
+
+try
+{
+    XmlSerializer.Deserialize<Coupon>("<Coupon><PercentOff>25</PercentOff></Coupon>");
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+
+var options = new XmlSerializerOptions { RespectRequiredConstructorParameters = false };
+Coupon? lenient = XmlSerializer.Deserialize<Coupon>("<Coupon><PercentOff>25</PercentOff></Coupon>", options);
+output.WriteLine($"{lenient!.Code ?? "(null)"}: {lenient.PercentOff}% off");
+```
+
+The code produces the following output:
+
+```text
+SPRING: 10% off
+The required constructor parameter 'Code' is missing. Path: /Coupon | LineNumber: 1 | BytePositionInLine: 45.
+(null): 25% off
+```
+
+- `PercentOff` has a default value, so the first document may leave it out and the constructor receives `10`.
+- `Code` has no default value, so the second document is rejected.
+- With `RespectRequiredConstructorParameters` set to `false`, a missing parameter receives the default value of its type. Here that puts `null` in a property declared as a non-nullable `string`.
+
+<Note>
+`RespectRequiredConstructorParameters` defaults to `true`. In System.Text.Json the option of the same name defaults to `false`. If you port types that rely on missing constructor arguments being filled with defaults, set the option to `false` or give the parameters default values.
+</Note>
+
+## Reject unmapped members
+
+An *unmapped member* is an element or attribute in the XML that no member of the type maps to. Set `UnmappedMemberHandling` to [`XmlUnmappedMemberHandling.Disallow`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlUnmappedMemberHandling) to make it an error. The following example reads two documents, one with an unknown element and one with an unknown attribute, under both settings.
+
+```csharp Program.cs
+string[] documents =
+[
+    "<Registration><Email>ada@contoso.example</Email><Plan>pro</Plan><Coupon>SPRING</Coupon></Registration>",
+    "<Registration source=\"web\"><Email>ada@contoso.example</Email><Plan>pro</Plan></Registration>",
+];
+
+var options = new XmlSerializerOptions { UnmappedMemberHandling = XmlUnmappedMemberHandling.Disallow };
+
+foreach (string xml in documents)
+{
+    Registration? registration = XmlSerializer.Deserialize<Registration>(xml);
+    output.WriteLine($"Skip: {registration!.Email} chose {registration.Plan}");
+
+    try
+    {
+        XmlSerializer.Deserialize<Registration>(xml, options);
+    }
+    catch (XmlException ex)
+    {
+        output.WriteLine($"Disallow: {ex.Message}");
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+Skip: ada@contoso.example chose pro
+Disallow: Unknown element 'Coupon'. Path: /Registration | LineNumber: 1 | BytePositionInLine: 73.
+Skip: ada@contoso.example chose pro
+Disallow: Unknown attribute 'source'. Path: /Registration | LineNumber: 1 | BytePositionInLine: 28.
+```
+
+Keep these details in mind:
+
+- The setting is on the options, so it applies to every type in the object graph. There is no attribute that sets it for one type.
+- Namespace declarations (`xmlns` and `xmlns:prefix`), `xsi:nil`, `xsi:type`, and the attributes the serializer writes for [polymorphism](/xmlessentials/guides/polymorphism) and [preserved references](/xmlessentials/guides/preserve-references) are never unmapped members.
+- A member marked `[XmlIgnore]` isn't mapped. With `Disallow`, an element for it is an error.
+- When the type has a member marked with [`[XmlExtensionData]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlExtensionDataAttribute), unmapped elements and attributes are collected there instead, and `Disallow` doesn't reject them.
+
+[`XmlSerializerOptions.Strict`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions) turns on `Disallow` together with three other checks: duplicate elements, comments, and nullable annotations. See [Configure XmlSerializerOptions](/xmlessentials/guides/configure-options).
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Deserialize" icon="arrow-right-to-bracket" href="/xmlessentials/guides/deserialize">
+    Read XML into objects, and see the default handling of missing and unknown elements.
+  </Card>
+  <Card title="Immutable types" icon="lock" href="/xmlessentials/guides/immutable-types">
+    Deserialize records and types with constructor parameters.
+  </Card>
+  <Card title="Handle null values" icon="ban" href="/xmlessentials/guides/null-and-nil">
+    Tell missing, nil, and empty apart.
+  </Card>
+  <Card title="XmlRequiredAttribute" icon="code" href="/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlRequiredAttribute">
+    API reference for the attribute.
+  </Card>
+</Columns>

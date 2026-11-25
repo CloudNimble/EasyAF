@@ -1,0 +1,76 @@
+---
+title: XmlNamespaces
+description: "Provides the well-known XML namespace URIs that XmlEssentials uses. This class cannot be inherited."
+icon: bolt
+tag: "STATIC"
+keywords: ['XmlNamespaces', 'CloudNimble.Text.Xml.XmlNamespaces', 'CloudNimble.Text.Xml', 'class', 'CloudNimble.Text.Xml.XmlAttributes', 'CloudNimble.Text.Xml.XmlName', 'CloudNimble.Text.Xml.Utf8XmlReader', 'CloudNimble.Text.Xml.Utf8XmlWriter', 'CloudNimble.Text.Xml.Serialization.XmlReferenceHandler']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlNamespaces
+```
+
+## Summary
+
+Provides the well-known XML namespace URIs that XmlEssentials uses. This class cannot be inherited.
+
+## Usage
+
+`XmlNamespaces` holds the namespace URIs that XML itself and the serializer define. Use the constants when you compare a namespace with the reader, so that the URI text isn't repeated in your code.
+
+| Constant | Namespace | Used for |
+| --- | --- | --- |
+| `Xml` | `http://www.w3.org/XML/1998/namespace` | The `xml` prefix, as in `xml:lang` and `xml:space`. |
+| `Xmlns` | `http://www.w3.org/2000/xmlns/` | The `xmlns` prefix, which declares namespaces. |
+| `Xsi` | `http://www.w3.org/2001/XMLSchema-instance` | `xsi:nil` and `xsi:type`. |
+| `Xsd` | `http://www.w3.org/2001/XMLSchema` | The XML Schema datatypes. |
+| `Refs` | `urn:CloudNimble.Text.Xml:refs` | The `id` and `ref` attributes that `XmlReferenceHandler.Preserve` writes. |
+
+The following code finds an `xsi:nil` attribute by its local name and namespace. The prefix in the document doesn't matter.
+
+```csharp
+var reader = new Utf8XmlReader("<Total xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:nil=\"true\" />"u8);
+reader.Read();
+while (reader.MoveToNextAttribute())
+{
+    if (reader.LocalNameEquals(XmlAttributes.Nil) && reader.NamespaceUriEquals(XmlNamespaces.Xsi))
+    {
+        output.WriteLine($"xsi:nil is {reader.GetString()}");
+    }
+}
+```
+
+The code prints `xsi:nil is true`. It is part of the [namespaces sample](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/14_Namespaces.cs). For namespaces with the serializer, see [Use XML namespaces](/xmlessentials/guides/namespaces).
+
+## Remarks
+
+The `xml` and `xmlns` prefixes are bound to [XmlNamespaces.Xml](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamespaces#xml) and [XmlNamespaces.Xmlns](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamespaces#xmlns)
+for the whole of every document. Do not bind them to another namespace.
+
+## Best Practices
+
+- Compare by URI, never by prefix. A document can bind `http://www.w3.org/2001/XMLSchema-instance` to any prefix, and `xsi` is only the conventional one.
+- Use `XmlNamespaces.Xsi` together with `XmlAttributes.Nil` or `XmlAttributes.Type` when you look for `xsi:nil` or `xsi:type`. An attribute with no prefix is never in a namespace, so an unprefixed `nil` attribute is not `xsi:nil`.
+
+## Considerations
+
+- The `xml` and `xmlns` prefixes are bound for the whole of every document. The reader rejects a document that binds `xml` to another namespace, declares the `xmlns` prefix, or binds either of the two reserved namespaces to another prefix.
+- `Refs` is specific to XmlEssentials. Another XML library treats the `id` and `ref` attributes in that namespace as ordinary attributes.
+- The members are constants, so their values are compiled into your assembly.
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlAttributes
+- CloudNimble.Text.Xml.XmlName
+- CloudNimble.Text.Xml.Utf8XmlReader
+- CloudNimble.Text.Xml.Utf8XmlWriter
+- CloudNimble.Text.Xml.Serialization.XmlReferenceHandler
+

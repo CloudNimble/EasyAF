@@ -1,0 +1,250 @@
+---
+title: "How to handle mixed content, CDATA, and unmapped XML"
+sidebarTitle: "Mixed content and overflow"
+description: "Map text mixed with child elements, write a member as a CDATA section, and keep the elements and attributes that your type doesn't declare."
+icon: "paragraph"
+---
+
+Most serialized types are records: each member is one child element or one attribute. Documents written for people don't always fit that shape. This article covers three cases where the content of an element is not a plain list of members:
+
+- **Mixed content**: text with elements inside it, such as `Press <Key>Ctrl</Key> to save.`
+- **CDATA sections**: text that is written without escaping, such as a script or a query.
+- **Unmapped content**: elements and attributes that your type doesn't declare, which you want to keep and write back. System.Text.Json calls this *overflow* or *extension data*.
+
+## Map text mixed with elements
+
+Mark a `List<XmlMixedContentItem>` member with [`[XmlMixed]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedAttribute). The serializer fills the list with the content of the element, in document order. Each item is one of two types:
+
+| Type | Holds |
+| --- | --- |
+| [`XmlMixedText`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedText) | A run of text, in its `Text` property. |
+| [`XmlMixedElement`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedElement) | A child element, as an [`XmlElementNode`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlElementNode) in its `Element` property. |
+
+```csharp Paragraph.cs
+public sealed class Paragraph
+{
+    [XmlMixed]
+    public List<XmlMixedContentItem> Content { get; set; } = [];
+}
+```
+
+```csharp Program.cs
+string xml = "<Paragraph>Press <Key>Ctrl</Key> and <Key>S</Key> to save.</Paragraph>";
+
+Paragraph? paragraph = XmlSerializer.Deserialize<Paragraph>(xml);
+foreach (XmlMixedContentItem item in paragraph!.Content)
+{
+    switch (item)
+    {
+        case XmlMixedText text:
+            output.WriteLine($"Text: \"{text.Text}\"");
+            break;
+        case XmlMixedElement { Element: { } element }:
+            output.WriteLine($"Element: {element.LocalName} = {element.InnerText}");
+            break;
+    }
+}
+
+var note = new XmlElementNode("Note");
+note.Add(new XmlTextNode("Changes are saved to disk."));
+paragraph.Content.Add(new XmlMixedText(" "));
+paragraph.Content.Add(new XmlMixedElement(note));
+
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+output.WriteLine(XmlSerializer.Serialize(paragraph, options));
+```
+
+The code produces the following output:
+
+```text
+Text: "Press "
+Element: Key = Ctrl
+Text: " and "
+Element: Key = S
+Text: " to save."
+<Paragraph>Press <Key>Ctrl</Key> and <Key>S</Key> to save. <Note>Changes are saved to disk.</Note></Paragraph>
+```
+
+The spaces around each `<Key>` element are part of the text runs, so the sentence is written back exactly as it was read.
+
+Know the following before you rely on mixed content:
+
+- A type can have one `[XmlMixed]` member. It can also have attribute members, but no element members and no `[XmlText]` or `[XmlCData]` member. The serializer throws `NotSupportedException` for any other combination.
+- Child elements are DOM nodes, not typed objects. Read them with the [`XmlNode` API](/xmlessentials/guides/use-xmlnode), or pass a node to `XmlSerializer.Deserialize<T>(XmlNode)` to turn it into an object.
+- Text that is only white space between two elements is dropped, unless you set `XmlSerializerOptions.WhitespaceHandling` to `XmlWhitespaceHandling.Significant`. In `<Paragraph><Key>A</Key> <Key>B</Key></Paragraph>`, the space between the keys is lost with the default setting.
+- A CDATA section is read as an `XmlMixedText`, and is written back as ordinary escaped text. Comments and processing instructions are not kept.
+- `WriteIndented` is safe to use. The writer doesn't indent inside an element that contains text, so the text runs are written unchanged.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/18_MixedContent.cs)
+
+## Write a member as CDATA
+
+A CDATA section holds text in which `<` and `&` don't need to be escaped. It makes embedded code easier for a person to read. To a parser, it is the same text as the escaped form.
+
+Mark a member with [`[XmlCData]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlCDataAttribute) to make it the text of its containing element, written as a CDATA section.
+
+```csharp Script.cs
+public sealed class Script
+{
+    [XmlAttribute("language")]
+    public string? Language { get; set; }
+
+    [XmlCData]
+    public string? Code { get; set; }
+}
+```
+
+```csharp Program.cs
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+var script = new Script { Language = "js", Code = "if (a < b && b > 0) { run(); }" };
+
+string xml = XmlSerializer.Serialize(script, options);
+output.WriteLine(xml);
+
+Script? copy = XmlSerializer.Deserialize<Script>(xml, options);
+output.WriteLine(copy!.Code);
+```
+
+The code produces the following output:
+
+```text
+<Script language="js"><![CDATA[if (a < b && b > 0) { run(); }]]></Script>
+if (a < b && b > 0) { run(); }
+```
+
+`[XmlCData]` follows the rules of `[XmlText]`, which maps a member to the element's text without CDATA:
+
+- The member is the content of the *containing* element. It doesn't get an element of its own, so the type can't also have members that are child elements. The other members must be attributes.
+- A type can have one `[XmlText]` or `[XmlCData]` member, and the member must have a simple type, such as `string`, a number, or an enumeration.
+- When reading, the serializer accepts escaped text and CDATA alike. The attribute only affects writing.
+- A value that contains `]]>` can't be written as one CDATA section, so the serializer splits it at each `]]>` and writes several sections: `a]]>b` is written as `<![CDATA[a]]]]><![CDATA[>b]]>`. A reader joins them again, and the value reads back as it was.
+- A `null` value writes no content, which leaves the element empty.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/18_MixedContent.cs)
+
+## Keep content that no member maps
+
+By default, the serializer skips an element or attribute that your type doesn't map. That is safe for reading, but the content is gone when you write the object back. To keep it, add a member of type [`XmlExtensionData`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlExtensionData) and mark it with [`[XmlExtensionData]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlExtensionDataAttribute).
+
+This is the counterpart of `[JsonExtensionData]`. JSON overflow is a dictionary of properties. XML overflow has two parts, because an element can carry both attributes and child elements:
+
+| Property | Type | Holds |
+| --- | --- | --- |
+| `Attributes` | `Dictionary<XmlName, string>` | Each unmapped attribute, keyed by its qualified name. |
+| `Elements` | `List<XmlElementNode>` | Each unmapped child element, in document order, with everything inside it. |
+
+```csharp Settings.cs
+public sealed class Settings
+{
+    public string? Theme { get; set; }
+
+    [XmlExtensionData]
+    public XmlExtensionData? Extra { get; set; }
+}
+```
+
+```csharp Program.cs
+string xml = """
+    <Settings version="2" xmlns:ui="urn:example:ui" ui:density="compact">
+      <Theme>Dark</Theme>
+      <Telemetry enabled="false" />
+      <ui:Font size="14">Cascadia Code</ui:Font>
+    </Settings>
+    """;
+
+Settings? settings = XmlSerializer.Deserialize<Settings>(xml);
+output.WriteLine($"Theme: {settings!.Theme}");
+
+foreach (KeyValuePair<XmlName, string> attribute in settings.Extra!.Attributes)
+{
+    output.WriteLine($"Attribute: {attribute.Key} = {attribute.Value}");
+}
+
+foreach (XmlElementNode element in settings.Extra.Elements)
+{
+    output.WriteLine($"Element: {element.LocalName}");
+}
+
+settings.Theme = "Light";
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n", OmitXmlDeclaration = true };
+output.WriteLine(XmlSerializer.Serialize(settings, options));
+```
+
+The code produces the following output:
+
+```text
+Theme: Dark
+Attribute: version = 2
+Attribute: ui:density = compact
+Element: Telemetry
+Element: Font
+<Settings version="2" xmlns:ui="urn:example:ui" ui:density="compact">
+  <Theme>Light</Theme>
+  <Telemetry enabled="false"/>
+  <ui:Font size="14">Cascadia Code</ui:Font>
+</Settings>
+```
+
+The type knows only about `Theme`, and the document survives the round trip with the attributes, the `Telemetry` element, and the namespaced `Font` element intact.
+
+Details that matter:
+
+- The member must be of type `XmlExtensionData`, and a type can have only one. Any other member type throws `NotSupportedException`.
+- If the document has no unmapped content, the serializer doesn't assign the member. It stays `null` unless your type creates the object itself. If your type does create it, captured content is added to the object that is already there.
+- Namespace declarations (`xmlns` and `xmlns:prefix`) are not captured. Neither are the attributes the serializer handles itself: `xsi:nil`, `xsi:type`, and the reference attributes described in [Preserve references](/xmlessentials/guides/preserve-references).
+- When writing, unmapped attributes follow the mapped attributes, and unmapped elements follow the mapped elements. The original position of an unmapped element among the mapped ones is not recorded.
+- A namespaced attribute keeps the prefix it was read with. An attribute you add in code with an `XmlName` that has a namespace but no prefix gets a generated prefix.
+- You can add to the object in code before you serialize. That is a way to write attributes or elements that the type doesn't declare.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/18_MixedContent.cs)
+
+## Reject content that no member maps
+
+When a type has no extension data member, `XmlSerializerOptions.UnmappedMemberHandling` decides what happens to unmapped content. The default, `XmlUnmappedMemberHandling.Skip`, ignores it. `XmlUnmappedMemberHandling.Disallow` treats it as an error, as `JsonUnmappedMemberHandling.Disallow` does.
+
+```csharp Program.cs
+string xml = "<Contact><Name>Ada</Name><Phone>555-0100</Phone></Contact>";
+
+Contact? contact = XmlSerializer.Deserialize<Contact>(xml);
+output.WriteLine(contact!.Name);
+
+var strict = new XmlSerializerOptions { UnmappedMemberHandling = XmlUnmappedMemberHandling.Disallow };
+try
+{
+    XmlSerializer.Deserialize<Contact>(xml, strict);
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+```
+
+The code produces the following output:
+
+```text
+Ada
+Unknown element 'Phone'. Path: /Contact | LineNumber: 1 | BytePositionInLine: 33.
+```
+
+An unmapped attribute fails the same way, with a message that names the attribute: `Unknown attribute 'a'. Path: /Contact | LineNumber: 1 | BytePositionInLine: 15.` The `XmlSerializerOptions.Strict` preset sets `Disallow` for you.
+
+An extension data member takes precedence. A type that has one accepts unmapped content even when the options say `Disallow`, because the content is mapped: it goes to that member.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/18_MixedContent.cs)
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Customize names" icon="pen" href="/xmlessentials/guides/customize-names">
+    Map members to attributes, elements, and element text.
+  </Card>
+  <Card title="Use XmlNode" icon="diagram-project" href="/xmlessentials/guides/use-xmlnode">
+    Read and build the element nodes that mixed content and extension data hold.
+  </Card>
+  <Card title="Configure options" icon="sliders" href="/xmlessentials/guides/configure-options">
+    Set `UnmappedMemberHandling` and the other serializer options.
+  </Card>
+  <Card title="XmlExtensionData" icon="code" href="/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlExtensionData">
+    API reference for the extension data type.
+  </Card>
+</Columns>

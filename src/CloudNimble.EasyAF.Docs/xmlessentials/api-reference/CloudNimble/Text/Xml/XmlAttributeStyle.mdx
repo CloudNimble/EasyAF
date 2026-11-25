@@ -1,0 +1,125 @@
+---
+title: XmlAttributeStyle
+description: "Specifies how a [Utf8XmlWriter](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter) lays out the attributes of a start tag."
+icon: list-ol
+tag: "ENUM"
+keywords: ['XmlAttributeStyle', 'CloudNimble.Text.Xml.XmlAttributeStyle', 'CloudNimble.Text.Xml', 'enum', 'System.Enum', 'CloudNimble.Text.Xml.XmlWriterOptions', 'CloudNimble.Text.Xml.XmlSerializerOptions', 'CloudNimble.Text.Xml.Utf8XmlWriter', 'CloudNimble.Text.Xml.XmlEmptyElementStyle']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlAttributeStyle
+```
+
+## Summary
+
+Specifies how a [Utf8XmlWriter](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter) lays out the attributes of a start tag.
+
+## Usage
+
+Set `XmlWriterOptions.AttributeStyle`, or `XmlSerializerOptions.AttributeStyle`, to choose how the attributes of a start tag are laid out.
+
+| Value | The attributes of a start tag are written |
+| --- | --- |
+| `Inline` | On the line of the start tag, with one space before each. This is the default. |
+| `PerLine` | A fixed number to a line. `AttributesPerLine` is the number, which is 1 unless you set it. |
+
+The sample writes one document three times: with `Inline`, with `PerLine`, and with `PerLine` and `AttributesPerLine = 2`:
+
+```csharp
+var asSystemXml = new XmlWriterOptions
+{
+    EmptyElementStyle = XmlEmptyElementStyle.SelfClosingWithSpace,
+    Indented = true,
+    NewLine = "\n",
+    OmitXmlDeclaration = true,
+};
+var onePerLine = asSystemXml with { AttributeStyle = XmlAttributeStyle.PerLine };
+var twoPerLine = onePerLine with { AttributesPerLine = 2, EmptyElementStyle = XmlEmptyElementStyle.StartAndEndTag };
+
+foreach (XmlWriterOptions options in new[] { asSystemXml, onePerLine, twoPerLine })
+{
+    var buffer = new ArrayBufferWriter<byte>();
+    using (var writer = new Utf8XmlWriter(buffer, options))
+    {
+        writer.WriteStartElement("Order");
+        writer.WriteAttributeString("id", "1042");
+        writer.WriteAttributeString("status", "open");
+        writer.WriteAttributeString("region", "EU");
+        writer.WriteElementString("Customer", "Ada Lovelace");
+        writer.WriteStartElement("Notes");
+        writer.WriteEndElement();
+        writer.WriteEndElement();
+    }
+
+    output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+}
+```
+
+```xml
+<Order id="1042" status="open" region="EU">
+  <Customer>Ada Lovelace</Customer>
+  <Notes />
+</Order>
+<Order id="1042"
+       status="open"
+       region="EU">
+  <Customer>Ada Lovelace</Customer>
+  <Notes />
+</Order>
+<Order id="1042" status="open"
+       region="EU">
+  <Customer>Ada Lovelace</Customer>
+  <Notes></Notes>
+</Order>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/23_WriteElementsAndValues.cs)
+
+## Remarks
+
+The layout of attributes means nothing to a reader. The setting makes the output consistent: every
+start tag is laid out the same way, whichever code wrote it.
+
+[XmlAttributeStyle.Inline](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlAttributeStyle) is the zero value, so it is the default in [XmlWriterOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWriterOptions),
+          created with `new` or as `default`, and in [XmlSerializerOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions).
+
+## Considerations
+
+- **`Inline` is the zero value, and the default.** `new XmlWriterOptions()`, `default(XmlWriterOptions)`, a writer created without options, and `new XmlSerializerOptions()` all write every attribute on the line of its start tag.
+- **The layout of attributes means nothing to a reader.** The setting changes how the output looks, not what it holds.
+- **It is one rule for all output.** Your own calls to the writer, the serializer, a generated context, `XmlDocument.WriteTo` and `XmlNode.WriteTo` lay out a start tag the same way. A document or a node doesn't keep the layout its source had inside a tag, so this setting decides it.
+- **`AttributesPerLine` is read only under `PerLine`.** On `XmlWriterOptions` its default is 0, which means 1, and a negative value throws an `ArgumentOutOfRangeException`. On `XmlSerializerOptions` its default is 1, and a value below 1 throws.
+- **How a later line is indented.** It starts with the white space that starts the line of the tag, and then one space for each character of the tag up to its first attribute: the `<`, the name with its prefix, and the space. For a tag that starts its line, that puts the attributes under the first one. A tab in the white space stays a tab.
+- **It doesn't depend on `Indented`.** A document that is read keeps the white space between its elements, so a tag is usually on a line of its own without the writer indenting anything.
+- **A tag in the middle of a line follows the same rule.** Its later lines start with the white space of the line it is on, not at the column of its own first attribute. For example, unindented output gives `<r><e a="1"><f c="3"`, a line break, three spaces, and then `d="4"/></e></r>`.
+- **A namespace declaration and `xsi:nil` are attributes,** and are counted with the others.
+- **The line break is `XmlWriterOptions.NewLine`.**
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Inline` | 0 | Every attribute is written on the line of the start tag, with one space before it. This is the default. |
+| `PerLine` | 1 | The attributes are written a fixed number to a line. The first line is the line of the start tag.
+Each line after it starts with the white space that starts the line of the tag, and then one space
+for each character of the tag up to its first attribute, so for a tag that starts its line the
+attributes are under one another. [XmlWriterOptions.AttributesPerLine](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWriterOptions#attributesperline) is the number,
+which is 1 unless it is set. A namespace declaration and `xsi:nil` are attributes and are counted. |
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlWriterOptions
+- CloudNimble.Text.Xml.XmlSerializerOptions
+- CloudNimble.Text.Xml.Utf8XmlWriter
+- CloudNimble.Text.Xml.XmlEmptyElementStyle
+

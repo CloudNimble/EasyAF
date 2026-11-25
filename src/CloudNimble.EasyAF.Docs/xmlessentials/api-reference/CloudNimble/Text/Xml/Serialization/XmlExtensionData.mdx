@@ -1,0 +1,286 @@
+---
+title: XmlExtensionData
+description: "Represents the XML attributes and child elements that have no matching member and are captured by a member marked with [XmlExtensionDataAttribute](/xmlessentials/api-refer..."
+icon: lock
+tag: "SEALED"
+keywords: ['XmlExtensionData', 'CloudNimble.Text.Xml.Serialization.XmlExtensionData', 'CloudNimble.Text.Xml.Serialization', 'class', 'CloudNimble.Text.Xml.Serialization.XmlExtensionDataAttribute', 'CloudNimble.Text.Xml.Serialization.XmlUnmappedMemberHandling', 'CloudNimble.Text.Xml.XmlName', 'CloudNimble.Text.Xml.Nodes.XmlElementNode', 'CloudNimble.Text.Xml.XmlSerializerOptions']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlExtensionData
+```
+
+## Summary
+
+Represents the XML attributes and child elements that have no matching member and are captured by a member marked with
+[XmlExtensionDataAttribute](/api-reference/CloudNimble/Text/Xml/Serialization/XmlExtensionDataAttribute). This class cannot be inherited.
+
+## Usage
+
+`XmlExtensionData` holds the attributes and child elements of an element that no member of your type maps. Add a member of this type, mark it with `[XmlExtensionData]`, and the serializer fills it when it reads and writes its content back when it serializes. It is the XML counterpart of the dictionary that `[JsonExtensionData]` uses in System.Text.Json.
+
+```csharp
+public sealed class Settings
+{
+    public string? Theme { get; set; }
+
+    [XmlExtensionData]
+    public XmlExtensionData? Extra { get; set; }
+}
+```
+
+| Property | Type | Holds |
+| --- | --- | --- |
+| `Attributes` | `Dictionary<XmlName, string>` | Each unmapped attribute, keyed by its qualified name. The value is the attribute's text with references resolved. |
+| `Elements` | `List<XmlElementNode>` | Each unmapped child element, in document order, with its attributes and content. |
+
+Both collections are created with the object and are never `null`. You can read them after deserializing, and add to them before serializing.
+
+## Examples
+
+### Round-trip content the type doesn't declare
+
+The `Settings` type maps only `Theme`. The document also has two attributes and two elements, one of each in a namespace. They are captured, and written back after the mapped member changes.
+
+```csharp
+string xml = """
+    <Settings version="2" xmlns:ui="urn:example:ui" ui:density="compact">
+      <Theme>Dark</Theme>
+      <Telemetry enabled="false" />
+      <ui:Font size="14">Cascadia Code</ui:Font>
+    </Settings>
+    """;
+
+Settings? settings = XmlSerializer.Deserialize<Settings>(xml);
+output.WriteLine($"Theme: {settings!.Theme}");
+
+foreach (KeyValuePair<XmlName, string> attribute in settings.Extra!.Attributes)
+{
+    output.WriteLine($"Attribute: {attribute.Key} = {attribute.Value}");
+}
+
+foreach (XmlElementNode element in settings.Extra.Elements)
+{
+    output.WriteLine($"Element: {element.LocalName}");
+}
+
+settings.Theme = "Light";
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n", OmitXmlDeclaration = true };
+output.WriteLine(XmlSerializer.Serialize(settings, options));
+```
+
+The code produces the following output:
+
+```text
+Theme: Dark
+Attribute: version = 2
+Attribute: ui:density = compact
+Element: Telemetry
+Element: Font
+<Settings version="2" xmlns:ui="urn:example:ui" ui:density="compact">
+  <Theme>Light</Theme>
+  <Telemetry enabled="false"/>
+  <ui:Font size="14">Cascadia Code</ui:Font>
+</Settings>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/18_MixedContent.cs)
+
+## Considerations
+
+- **Position.** When writing, unmapped attributes follow the mapped attributes and unmapped elements follow the mapped elements. Where an unmapped element stood among the mapped ones is not recorded.
+- **Namespace declarations.** `xmlns` attributes are not captured and are not written from `Attributes`. The writer declares the namespaces that the captured names need.
+- **Prefixes.** A captured attribute keeps the prefix it was read with, in the `Prefix` of its `XmlName`. An attribute that you add with a namespace and no prefix gets a generated prefix.
+- **Serializer attributes.** `xsi:nil`, `xsi:type`, and the `id` and `ref` attributes of reference handling are consumed by the serializer and are not captured.
+- **Keys.** `XmlName` equality ignores the prefix, so two attributes with the same local name and namespace are one entry.
+- **Allocation.** Each captured element is a mutable `XmlElementNode` tree. Capturing large unmapped subtrees costs one node for every element, attribute, and text run in them. If you don't need the content, leave the member out and let the serializer skip it.
+- **Thread safety.** The object is an ordinary mutable class with a dictionary and a list. Don't change it from several threads at once.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public XmlExtensionData()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Attributes
+
+Gets the XML attributes that have no matching member.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.Dictionary<CloudNimble.Text.Xml.XmlName, string> Attributes { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.Dictionary<CloudNimble.Text.Xml.XmlName, string>`
+A dictionary that maps the name of each unmapped attribute to its value.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Elements
+
+Gets the child elements that have no matching member.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.List<CloudNimble.Text.Xml.Nodes.XmlElementNode> Elements { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.List<CloudNimble.Text.Xml.Nodes.XmlElementNode>`
+A list of the unmapped child elements, in document order.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Serialization.XmlExtensionDataAttribute
+- CloudNimble.Text.Xml.Serialization.XmlUnmappedMemberHandling
+- CloudNimble.Text.Xml.XmlName
+- CloudNimble.Text.Xml.Nodes.XmlElementNode
+- CloudNimble.Text.Xml.XmlSerializerOptions
+

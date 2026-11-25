@@ -1,0 +1,255 @@
+---
+title: DefaultXmlTypeInfoResolver
+description: "Defines the default, reflection-based XML contract resolver used by [XmlSerializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer). This class cannot be ..."
+icon: lock
+tag: "SEALED"
+keywords: ['DefaultXmlTypeInfoResolver', 'CloudNimble.Text.Xml.Serialization.DefaultXmlTypeInfoResolver', 'CloudNimble.Text.Xml.Serialization', 'class', 'CloudNimble.Text.Xml.Serialization.IXmlTypeInfoResolver', 'CloudNimble.Text.Xml.Serialization.XmlSerializerContext', 'CloudNimble.Text.Xml.Serialization.XmlTypeInfo', 'CloudNimble.Text.Xml.Serialization.XmlConverter', 'CloudNimble.Text.Xml.Serialization.XmlConverterAttribute']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.DefaultXmlTypeInfoResolver
+```
+
+## Summary
+
+Defines the default, reflection-based XML contract resolver used by [XmlSerializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer). This class cannot be inherited.
+
+## Usage
+
+`DefaultXmlTypeInfoResolver` is the resolver behind every `XmlSerializer` call that passes only a value, or a value and options. It finds the converter for a type and wraps it in type info. For a class or struct, that converter is built by inspecting the type's members and attributes with reflection.
+
+You rarely name the class. An `XmlSerializerOptions` instance with no `TypeInfoResolver` is given the shared `DefaultXmlTypeInfoResolver.Instance` the first time an `XmlSerializer` method that takes options uses it:
+
+```csharp
+var receipt = new Receipt { Number = 77, Paid = 129.90m };
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+
+string xml = XmlSerializer.Serialize(receipt, options);
+output.WriteLine(xml);
+
+Receipt? copy = XmlSerializer.Deserialize<Receipt>(xml, options);
+output.WriteLine($"Receipt {copy!.Number}: {copy.Paid}");
+output.WriteLine(options.TypeInfoResolver!.GetType().Name);
+```
+
+The code produces the following output:
+
+```text
+<Receipt><Number>77</Number><Paid>129.90</Paid></Receipt>
+Receipt 77: 129.90
+DefaultXmlTypeInfoResolver
+```
+
+The resolver looks for a converter in this order: the `Converters` list of the options, then `[XmlConverter]` on the type, then the built-in converters. It returns `null` when none of them handles the type.
+
+The class has no public constructor. Use `Instance`. It's the counterpart of `DefaultJsonTypeInfoResolver` in System.Text.Json.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/31_ReflectionVsSourceGeneration.cs)
+
+## Remarks
+
+The resolver builds type info from the converters of an [XmlSerializerOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions) instance: its
+[XmlSerializerOptions.Converters](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#converters), the [XmlConverterAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterAttribute) on the type, and the built-in converters.
+
+## Considerations
+
+- **It isn't safe for trimming or Native AOT, and it says so.** The resolver reads members with reflection and creates generic converter types at run time, so the class carries `RequiresUnreferencedCode` and `RequiresDynamicCode`: the compiler warns wherever a trimmed or Native AOT application names it. In such an application, use a source-generated context. See [Publish with Native AOT](/xmlessentials/guides/native-aot).
+- **Options get it only from members that need reflection.** An options instance with no resolver is given this one by an `XmlSerializer` method that takes options, by `XmlSerializerOptions.GetConverter`, by `MakeReadOnly(populateMissingResolver: true)`, and by the shared `Default`, `Web`, `Strict`, and `Bcl` instances. Reading `TypeInfoResolver` or calling `GetTypeInfo` never brings it in.
+- **The first request for a type is the expensive one.** It reflects over the type's members and builds its converter, which costs many times what a later call costs. Create one `XmlSerializerOptions` instance and reuse it, because the options cache what the resolver returns.
+- **There are no modifiers.** `DefaultJsonTypeInfoResolver` in System.Text.Json lets you add modifiers that edit a contract. This class has none. Change a mapping with attributes, options, or a custom converter.
+- **Generated contexts don't use it.** A source-generated context builds the type info of every type it lists from generated code, and takes a built-in value, an XML value, `object`, and a type you supplied a converter for from converters that exist already.
+- **It's stateless and shared.** `Instance` is safe to use from any thread. The caching is done by the options, not by the resolver.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Instance
+
+Gets the shared instance of the [DefaultXmlTypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/DefaultXmlTypeInfoResolver) class.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Serialization.DefaultXmlTypeInfoResolver Instance { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.Serialization.DefaultXmlTypeInfoResolver`
+The shared resolver.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetTypeInfo
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.Serialization.XmlTypeInfo GetTypeInfo(System.Type type, CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `type` | `System.Type` | - |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | - |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlTypeInfo?`
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *type* or *options* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `InvalidOperationException` | The converter found for *type* does not convert exactly that type. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Serialization.IXmlTypeInfoResolver
+- CloudNimble.Text.Xml.Serialization.XmlSerializerContext
+- CloudNimble.Text.Xml.Serialization.XmlTypeInfo
+- CloudNimble.Text.Xml.Serialization.XmlConverter
+- CloudNimble.Text.Xml.Serialization.XmlConverterAttribute
+- CloudNimble.Text.Xml.XmlSerializerOptions
+- CloudNimble.Text.Xml.XmlSerializer
+

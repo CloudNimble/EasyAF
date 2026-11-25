@@ -1,0 +1,1240 @@
+---
+title: "How to read XML with XmlDocument and XmlElement"
+sidebarTitle: "Use XmlDocument"
+description: "Parse XML into the read-only, pooled XmlDocument, find and read elements and attributes with XmlElement, and write it back."
+icon: "file-code"
+---
+
+`XmlDocument` parses a whole XML document once and lets you read any part of it, in any order, without defining types for it. It's read-only, and it keeps its data in buffers that it rents from the shared array pool, so you dispose it when you're done. Each node you read from it is an `XmlElement`, a small struct that points into the document.
+
+`XmlDocument` and `XmlElement` are the XML counterparts of `JsonDocument` and `JsonElement` in System.Text.Json. If you know those types, the lifetime rules and most of the member names carry over.
+
+<Note>
+These types are in the `CloudNimble.Text.Xml` namespace. They share their names with `System.Xml.XmlDocument` and `System.Xml.XmlElement`, so a file that imports both namespaces needs an alias or a fully qualified name.
+</Note>
+
+## Choose an API
+
+XmlEssentials has four ways to read XML. Use the one that matches what you do with the data.
+
+| You want to | Use | Why |
+| --- | --- | --- |
+| Read a few values from a document, or inspect XML whose shape you don't control | `XmlDocument` and `XmlElement` (this page) | Random access by name, typed getters, no types to define. Read-only. |
+| Change a document, or build one node by node | [`XmlNode` and `XmlElementNode`](/xmlessentials/guides/use-xmlnode) | A tree of objects that you can add to, remove from, and rewrite. Each node is allocated on the heap. |
+| Turn XML into your own classes, or your classes into XML | [`XmlSerializer`](/xmlessentials/guides/deserialize) | Maps elements and attributes to properties for you. |
+| Read a document that is too large to hold in memory, or read forward once with the least overhead | [`Utf8XmlReader`](/xmlessentials/guides/use-utf8xmlreader) | Forward-only tokens over UTF-8. You track the state yourself. |
+
+You can combine them. A reader can hand one element to `XmlDocument.ParseValue`, a document can copy one element into the mutable tree with `CloneNode`, and the serializer can read from a document, an element, or a node. This page shows each of those.
+
+## Parse a document
+
+`XmlDocument.Parse` has an overload for each kind of input: a `string`, a `ReadOnlySpan<char>`, a `ReadOnlySpan<byte>` of UTF-8, a `ReadOnlySequence<byte>` of UTF-8, and a `Stream` of UTF-8. Every overload copies the input into a buffer that the document owns, so the document doesn't depend on your string, array, or stream after `Parse` returns.
+
+```csharp
+const string text = """<Order id="1042"><Item>Keyboard</Item></Order>""";
+byte[] utf8 = """<Order id="1043"><Item>Mouse</Item></Order>"""u8.ToArray();
+
+using (XmlDocument fromString = XmlDocument.Parse(text))
+{
+    output.WriteLine($"string: order {fromString.RootElement.GetAttribute("id").GetInt32()}");
+}
+
+using (XmlDocument fromUtf8 = XmlDocument.Parse(utf8.AsSpan()))
+{
+    output.WriteLine($"UTF-8 span: order {fromUtf8.RootElement.GetAttribute("id").GetInt32()}");
+}
+
+using (var stream = new MemoryStream(utf8))
+using (XmlDocument fromStream = XmlDocument.Parse(stream))
+{
+    output.WriteLine($"stream: order {fromStream.RootElement.GetAttribute("id").GetInt32()}");
+}
+
+using (XmlDocument fromSequence = XmlDocument.Parse(new ReadOnlySequence<byte>(utf8)))
+{
+    output.WriteLine($"sequence: order {fromSequence.RootElement.GetAttribute("id").GetInt32()}");
+}
+```
+
+The code produces the following output:
+
+```text
+string: order 1042
+UTF-8 span: order 1043
+stream: order 1043
+sequence: order 1043
+```
+
+What to notice:
+
+- `RootElement` is the document element. It's where every query starts.
+- When you already have UTF-8 bytes, pass them as bytes. The `string` and `ReadOnlySpan<char>` overloads convert the text to UTF-8 first.
+- The `Stream` overload reads the stream to its end and doesn't close it. To read the stream without blocking, use [`ParseAsync`](#parse-a-stream-without-blocking).
+- The input must be UTF-8 (or text that the string overloads convert). In bytes, a declaration that names another encoding, such as `encoding="utf-16"`, is rejected. In a string or a span of characters, the declared encoding isn't checked.
+- Input that isn't a well-formed XML document throws an [`XmlException`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException). So does a document that has more than one root element, no root element, or a document type declaration (`<!DOCTYPE ...>`), which XmlEssentials never accepts.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/26_ParseWithXmlDocument.cs)
+
+### Parse a stream without blocking
+
+`XmlDocument.ParseAsync` reads a `Stream` of UTF-8 to its end with asynchronous reads and then parses what it read. It's the counterpart of `JsonDocument.ParseAsync`.
+
+```csharp
+byte[] utf8 = """<Order id="1044"><Item>Monitor</Item></Order>"""u8.ToArray();
+
+await using var stream = new MemoryStream(utf8);
+using XmlDocument document = await XmlDocument.ParseAsync(stream);
+
+output.WriteLine($"order {document.RootElement.GetAttribute("id").GetInt32()}: {document.RootElement.GetChild("Item").GetString()}");
+```
+
+The code produces the following output:
+
+```text
+order 1044: Monitor
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/26_ParseWithXmlDocument.cs)
+
+What to notice:
+
+- It takes the same `XmlDocumentOptions` as `Parse`, and a `CancellationToken`. A canceled token cancels the task.
+- A `null` stream throws `ArgumentNullException` from the call itself, not from the task.
+- The stream isn't closed. With `MaxDocumentByteCount` set, reading stops as soon as the stream is found to be longer than the limit.
+
+## Dispose the document
+
+An `XmlDocument` rents its buffers from `ArrayPool<T>.Shared`. `Dispose` clears them and returns them. A document that you don't dispose never returns its buffers, and the pool has to allocate new ones, so put every document in a `using` statement.
+
+An `XmlElement` doesn't hold data. It holds a reference to its document and a position in it, so it's usable only while the document is alive. Copy the values you need (strings, numbers, or a [mutable copy](#copy-an-element-into-the-mutable-tree)) before the document is disposed.
+
+```csharp
+XmlElement item;
+string? name;
+
+using (XmlDocument document = XmlDocument.Parse("<Order><Item>Keyboard</Item></Order>"))
+{
+    item = document.RootElement.GetChild("Item");
+    name = item.GetString();
+}
+
+output.WriteLine($"The copied string is still valid: {name}");
+
+try
+{
+    item.GetString();
+}
+catch (ObjectDisposedException)
+{
+    output.WriteLine("The element is not: ObjectDisposedException");
+}
+
+XmlElement empty = default;
+output.WriteLine($"A default element is {empty.ValueKind}");
+```
+
+The code produces the following output:
+
+```text
+The copied string is still valid: Keyboard
+The element is not: ObjectDisposedException
+A default element is Undefined
+```
+
+The rules for `XmlElement`:
+
+- Don't return an `XmlElement` from a method that disposes the document, and don't store one in a field that outlives the document.
+- Every member that reads from the document throws `ObjectDisposedException` after the document is disposed.
+- `default(XmlElement)` refers to no node. Its `ValueKind` is `Undefined`, and every other member that reads a node throws `InvalidOperationException`.
+- Two `XmlElement` values are equal when they point at the same node of the same document.
+
+## Find child elements and attributes
+
+`GetChild` and `GetAttribute` return the node with the name you ask for and throw an `XmlException` when there isn't one. `TryGetChild` and `TryGetAttribute` return `false` instead. Use the `Get` methods for what the document must contain and the `Try` methods for what's optional.
+
+```csharp
+const string xml = """
+    <Order id="1042">
+      <Customer>Ada Lovelace</Customer>
+      <Total currency="GBP">129.90</Total>
+    </Order>
+    """;
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement order = document.RootElement;
+
+output.WriteLine($"Customer: {order.GetChild("Customer").GetString()}");
+output.WriteLine($"Order id: {order.GetAttribute("id").GetInt32()}");
+
+if (order.TryGetChild("Total", out XmlElement total) && total.TryGetAttribute("currency", out XmlElement currency))
+{
+    output.WriteLine($"Total: {total.GetDecimal()} {currency.GetString()}");
+}
+
+if (!order.TryGetChild("Discount", out _))
+{
+    output.WriteLine("No Discount element");
+}
+
+try
+{
+    order.GetChild("Discount");
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+
+try
+{
+    order.GetAttribute("status");
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+```
+
+The code produces the following output:
+
+```text
+Customer: Ada Lovelace
+Order id: 1042
+Total: 129.90 GBP
+No Discount element
+Child element 'Discount' was not found.
+Attribute 'status' was not found.
+```
+
+What to notice:
+
+- An attribute is an `XmlElement` too. Its `ValueKind` is `Attribute`, and you read its value with the same getters as an element.
+- The lookups search direct children only, and return the first match in document order. To go deeper, chain the calls: `order.GetChild("Customer").GetChild("Name")`. To search at any depth, write a recursive method over `EnumerateChildren`.
+- Names are case-sensitive, as XML requires.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/27_QueryWithXmlElement.cs)
+
+### Pass a name as characters or as UTF-8
+
+`GetChild`, `TryGetChild`, `GetAttribute` and `TryGetAttribute` also take the name as a `ReadOnlySpan<char>` or as a `ReadOnlySpan<byte>` of UTF-8, as `JsonElement.GetProperty` and `TryGetProperty` do. Use them when the name is part of a longer string, or when you have it as a `u8` literal.
+
+```csharp
+const string xml = """<Order id="1042"><Customer>Ada Lovelace</Customer><Total>129.90</Total></Order>""";
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement order = document.RootElement;
+
+ReadOnlySpan<char> wanted = "Customer;Total;Discount";
+foreach (Range part in wanted.Split(';'))
+{
+    ReadOnlySpan<char> name = wanted[part];
+    output.WriteLine(order.TryGetChild(name, out XmlElement child)
+        ? $"{name}: {child.GetString()}"
+        : $"{name}: not in the order");
+}
+
+output.WriteLine($"id: {order.GetAttribute("id"u8).GetInt32()}");
+```
+
+The code produces the following output:
+
+```text
+Customer: Ada Lovelace
+Total: 129.90
+Discount: not in the order
+id: 1042
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/27_QueryWithXmlElement.cs)
+
+These overloads match the local name in any namespace. To match one namespace, use the overloads that take a `string`.
+
+### Find names in a namespace
+
+The one-argument lookups match the local name in any namespace. To match one namespace, pass its URI as the second argument. Pass an empty string for a name that is in no namespace. You never pass a prefix: prefixes are an author's choice, and two documents can use different prefixes for the same namespace.
+
+```csharp
+const string xml = """
+    <feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+      <title>Release notes</title>
+      <dc:title>Notes de version</dc:title>
+      <link href="https://example.com/" dc:language="fr"/>
+    </feed>
+    """;
+
+const string atom = "http://www.w3.org/2005/Atom";
+const string dc = "http://purl.org/dc/elements/1.1/";
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement feed = document.RootElement;
+
+output.WriteLine($"Atom title: {feed.GetChild("title", atom).GetString()}");
+output.WriteLine($"Dublin Core title: {feed.GetChild("title", dc).GetString()}");
+output.WriteLine($"First title in any namespace: {feed.GetChild("title").GetString()}");
+
+XmlElement dcTitle = feed.GetChild("title", dc);
+output.WriteLine($"Prefix '{dcTitle.Prefix}', local name '{dcTitle.LocalName}', namespace '{dcTitle.NamespaceUri}'");
+
+XmlElement link = feed.GetChild("link", atom);
+output.WriteLine($"href: {link.GetAttribute("href", "").GetString()}");
+output.WriteLine($"language: {link.GetAttribute("language", dc).GetString()}");
+
+output.WriteLine($"feed has {feed.AttributeCount} attributes:");
+foreach (XmlElement attribute in feed.EnumerateAttributes())
+{
+    string name = attribute.Prefix.Length == 0 ? attribute.LocalName : $"{attribute.Prefix}:{attribute.LocalName}";
+    output.WriteLine($"  {name} = {attribute.GetString()}");
+}
+```
+
+The code produces the following output:
+
+```text
+Atom title: Release notes
+Dublin Core title: Notes de version
+First title in any namespace: Release notes
+Prefix 'dc', local name 'title', namespace 'http://purl.org/dc/elements/1.1/'
+href: https://example.com/
+language: fr
+feed has 2 attributes:
+  xmlns = http://www.w3.org/2005/Atom
+  xmlns:dc = http://purl.org/dc/elements/1.1/
+```
+
+What to notice:
+
+- An attribute without a prefix is in no namespace, even when its element is in a default namespace. That's why `href` is found with an empty namespace URI.
+- Namespace declarations (`xmlns` and `xmlns:prefix`) are attributes of the element that declares them. `AttributeCount` and `EnumerateAttributes` include them.
+- `GetChild`, `TryGetChild`, and `GetAttribute` each have a namespace overload. `TryGetAttribute` has only the any-namespace form.
+
+To list the namespaces a document declares, with their prefixes, call `XmlDocument.DiscoverNamespaces`. It reads the XML without building a document; see [Take them from an existing document](/xmlessentials/guides/namespaces#take-them-from-an-existing-document). For how namespaces work across the library, see [Use XML namespaces](/xmlessentials/guides/namespaces).
+
+## Enumerate children and attributes
+
+`EnumerateChildren` returns every child node of an element in document order, and `EnumerateAttributes` returns its attributes. Both work in a `foreach` statement.
+
+```csharp
+const string xml = """
+    <Order id="1042" status="open">
+      <Item sku="KB-1">Keyboard</Item>
+      <Item sku="MS-2">Mouse</Item>
+      <Note/>
+    </Order>
+    """;
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement order = document.RootElement;
+
+output.WriteLine($"{order.AttributeCount} attributes");
+foreach (XmlElement attribute in order.EnumerateAttributes())
+{
+    output.WriteLine($"  {attribute.LocalName} = {attribute.GetString()}");
+}
+
+foreach (XmlElement child in order.EnumerateChildren())
+{
+    if (child.ValueKind is not (XmlValueKind.Element or XmlValueKind.EmptyElement or XmlValueKind.Nil))
+    {
+        continue;
+    }
+
+    if (child.TryGetAttribute("sku", out XmlElement sku))
+    {
+        output.WriteLine($"{child.LocalName} {sku.GetString()}: {child.GetString()}");
+    }
+    else
+    {
+        output.WriteLine($"{child.LocalName} ({child.ValueKind})");
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+2 attributes
+  id = 1042
+  status = open
+Item KB-1: Keyboard
+Item MS-2: Mouse
+Note (EmptyElement)
+```
+
+<Warning>
+The loop skips every child that isn't an element, and it has to. A document keeps the white space between elements and the comments, so the children of this indented `Order` are a `Text` node (the line break and indentation), an `Item`, another `Text` node, and so on. Check `ValueKind` in every loop over `EnumerateChildren`, or parse with [`WhitespaceHandling = XmlWhitespaceHandling.Insignificant`](#keep-or-drop-white-space-between-elements) and [`CommentHandling = XmlCommentHandling.Skip`](#keep-skip-or-reject-comments). `GetChild`, `TryGetChild`, and the attribute methods find elements and attributes by name and aren't affected.
+</Warning>
+
+The enumerators are structs, like `JsonElement.ArrayEnumerator`, and enumerating doesn't allocate. They don't implement `IEnumerable<T>`, so LINQ operators such as `Where` and `Select` don't apply to them. Filter inside the loop.
+
+## Check the kind of a node
+
+Children aren't always elements. XML allows text, CDATA sections, comments, and processing instructions between them, and a document keeps all of them by default, including the white space used for indentation. Check `ValueKind` when you enumerate.
+
+```csharp
+const string xml = """
+    <Order xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><!-- packed by hand --><Item>Keyboard</Item><Gift/><Coupon xsi:nil="true"/>Leave at the door<![CDATA[<b>fragile</b>]]><?print label?></Order>
+    """;
+
+using XmlDocument document = XmlDocument.Parse(xml);
+
+foreach (XmlElement child in document.RootElement.EnumerateChildren())
+{
+    string description = child.ValueKind switch
+    {
+        XmlValueKind.Element or XmlValueKind.EmptyElement or XmlValueKind.Nil => $"<{child.LocalName}>",
+        XmlValueKind.ProcessingInstruction => $"target '{child.LocalName}', data '{child.GetString()}'",
+        _ => $"'{child.GetString()}'",
+    };
+
+    output.WriteLine($"{child.ValueKind,-21} {child.TokenType,-21} {description}");
+}
+```
+
+The code produces the following output:
+
+```text
+Comment               Comment               ' packed by hand '
+Element               StartElement          <Item>
+EmptyElement          StartElement          <Gift>
+Nil                   StartElement          <Coupon>
+Text                  Text                  'Leave at the door'
+CData                 CData                 '<b>fragile</b>'
+ProcessingInstruction ProcessingInstruction target 'print', data 'label'
+```
+
+<Warning>
+An element has one of three kinds. `Element` has a start tag and an end tag, `EmptyElement` is written as `<Gift/>`, and `Nil` carries `xsi:nil="true"`. A test for elements has to accept all three, as the `switch` above does. `child.ValueKind is XmlValueKind.Element` alone skips empty and nil elements.
+</Warning>
+
+`TokenType` is the token a `Utf8XmlReader` reports for the same node, which is useful when code handles both. For a processing instruction, `LocalName` is the target.
+
+## Read typed values
+
+The typed getters parse the value of an attribute, a text node, or an element. The value of an element is the text of all the text nodes and CDATA sections inside it.
+
+```csharp
+const string xml = """
+    <Shipment id="7c9e6679-7425-40de-944b-e07fc1f90ae7" express="1">
+      <Parcels> 3 </Parcels>
+      <WeightKg>12.5</WeightKg>
+      <Cost>49.90</Cost>
+      <TrackingNumber>940011189922</TrackingNumber>
+      <ShippedOn>2026-03-14T09:30:00Z</ShippedOn>
+      <Signature>SGVsbG8=</Signature>
+      <Carrier>Contoso Freight</Carrier>
+    </Shipment>
+    """;
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement shipment = document.RootElement;
+
+Guid id = shipment.GetAttribute("id").GetGuid();
+bool express = shipment.GetAttribute("express").GetBoolean();
+int parcels = shipment.GetChild("Parcels").GetInt32();
+double weight = shipment.GetChild("WeightKg").GetDouble();
+decimal cost = shipment.GetChild("Cost").GetDecimal();
+long tracking = shipment.GetChild("TrackingNumber").GetInt64();
+DateTimeOffset shippedOn = shipment.GetChild("ShippedOn").GetDateTimeOffset();
+byte[] signature = shipment.GetChild("Signature").GetBytesFromBase64();
+
+output.WriteLine($"id: {id}");
+output.WriteLine($"express: {express}");
+output.WriteLine($"parcels: {parcels} (the string is '{shipment.GetChild("Parcels").GetString()}')");
+output.WriteLine($"weight: {weight.ToString(CultureInfo.InvariantCulture)}");
+output.WriteLine($"cost: {cost.ToString(CultureInfo.InvariantCulture)}");
+output.WriteLine($"tracking: {tracking}");
+output.WriteLine($"shipped on: {shippedOn.ToString("yyyy-MM-dd HH:mm zzz", CultureInfo.InvariantCulture)}");
+output.WriteLine($"signature: {signature.Length} bytes");
+
+try
+{
+    shipment.GetChild("Carrier").GetInt32();
+}
+catch (XmlException ex)
+{
+    output.WriteLine($"Carrier as an integer: {ex.Message}");
+}
+```
+
+The code produces the following output:
+
+```text
+id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+express: True
+parcels: 3 (the string is ' 3 ')
+weight: 12.5
+cost: 49.90
+tracking: 940011189922
+shipped on: 2026-03-14 09:30 +00:00
+signature: 5 bytes
+Carrier as an integer: The value is not a valid integer.
+```
+
+The getters follow the XML Schema lexical forms, not the current culture:
+
+| Method | Accepts | Throws `XmlException` when |
+| --- | --- | --- |
+| `GetString` | Any value. Returns it unchanged, white space included. | Never. Returns `null` for a nil element. |
+| `GetBoolean` | `true`, `false`, `1`, `0` | The value is anything else, including `True`. |
+| `GetByte`, `GetSByte`, `GetInt16`, `GetUInt16`, `GetInt32`, `GetUInt32`, `GetInt64`, `GetUInt64` | An optional sign and digits | The value isn't an integer or doesn't fit the type. |
+| `GetDecimal` | An optional sign, digits, and a decimal point | The value has an exponent or doesn't fit a `decimal`. |
+| `GetDouble`, `GetSingle` | A decimal or exponent form, `INF`, `-INF`, `NaN` | The value isn't an `xs:double` or an `xs:float`. |
+| `GetDateTime`, `GetDateTimeOffset` | An `xs:dateTime` such as `2026-03-14T09:30:00Z` | The value isn't a date and time that the type can hold. |
+| `GetGuid` | The `D`, `N`, `B`, and `P` GUID formats | The value is in another format. |
+| `GetBytesFromBase64` | Base64 text | The value isn't valid Base64. |
+
+What to notice:
+
+- The typed getters ignore white space around the value, so `<Parcels> 3 </Parcels>` is the integer `3`. `GetString` returns `" 3 "`.
+- A failed conversion throws `XmlException`. It doesn't throw `FormatException`. For a value that might not convert, use a [`TryGet` method](#read-a-value-that-might-not-convert).
+- For a `TimeSpan` or an enum, call `GetString` and convert the result, or [deserialize the element](#deserialize-from-a-document-or-an-element).
+- `GetDateTime` returns `DateTimeKind.Utc` for a value that ends in `Z`, `Unspecified` for a value with no time zone, and local time for any other offset. `GetDateTimeOffset` gives a value with no time zone the local offset. Use `GetDateTimeOffset` with explicit offsets when the result must not depend on the machine.
+- Name lookups, enumeration, and the numeric, Boolean, date, and GUID getters don't allocate. Members that return a `string` or a `byte[]` allocate that result.
+
+### Read a value that might not convert
+
+Each typed getter except `GetBoolean` and `GetString` has a `TryGet` counterpart, as `JsonElement` has: `TryGetInt32`, `TryGetDouble`, `TryGetGuid`, `TryGetBytesFromBase64` and the rest. It returns `false` when the value isn't in the form the type needs or doesn't fit the type.
+
+```csharp
+const string xml = """
+    <Reading sensor="12">
+      <Level>high</Level>
+      <Ratio>0.75</Ratio>
+      <Count>70000</Count>
+    </Reading>
+    """;
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement reading = document.RootElement;
+
+byte sensor = reading.GetAttribute("sensor").GetByte();
+float ratio = reading.GetChild("Ratio").GetSingle();
+output.WriteLine($"sensor: {sensor}");
+output.WriteLine($"ratio: {ratio.ToString(CultureInfo.InvariantCulture)}");
+
+XmlElement level = reading.GetChild("Level");
+output.WriteLine(level.TryGetInt32(out int number)
+    ? $"level: {number}"
+    : $"level: not an integer ('{level.GetString()}')");
+
+XmlElement count = reading.GetChild("Count");
+output.WriteLine($"count as a short: {count.TryGetInt16(out short small)} ({small})");
+output.WriteLine($"count as a uint: {count.TryGetUInt32(out uint large)} ({large})");
+```
+
+The code produces the following output:
+
+```text
+sensor: 12
+ratio: 0.75
+level: not an integer ('high')
+count as a short: False (0)
+count as a uint: True (70000)
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/27_QueryWithXmlElement.cs)
+
+What to notice:
+
+- When a `TryGet` method returns `false`, the value it gives back is the default for the type.
+- A `TryGet` method throws where the getter throws for a reason other than the value: `XmlException` for a nil element, which has no value, and `InvalidOperationException` for a default `XmlElement`.
+
+## Read text and markup
+
+Three methods return a node as a string, and they answer different questions.
+
+| Method | Returns |
+| --- | --- |
+| `GetString` | The value: an attribute's value, a text node's text, or all the text inside an element. `null` for a nil element. For a comment or a processing instruction, its content. |
+| `GetInnerText` | The same text, but never `null`: an empty string for a nil element, and an empty string for a comment or a processing instruction. |
+| `GetRawXml` | The node written back as XML markup, tags and escaping included. |
+
+```csharp
+const string xml = """<Note priority="high">Ship <b>today</b>, <![CDATA[before 5 & not later]]>.<?audit checked?></Note>""";
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement note = document.RootElement;
+
+output.WriteLine($"GetString:    {note.GetString()}");
+output.WriteLine($"GetInnerText: {note.GetInnerText()}");
+output.WriteLine($"GetRawXml:    {note.GetRawXml()}");
+
+foreach (XmlElement child in note.EnumerateChildren())
+{
+    if (child.ValueKind is XmlValueKind.ProcessingInstruction)
+    {
+        output.WriteLine($"On the processing instruction, GetString is '{child.GetString()}' and GetInnerText is '{child.GetInnerText()}'");
+    }
+}
+
+output.WriteLine($"GetRawXml on an attribute is empty: {note.GetAttribute("priority").GetRawXml().Length == 0}");
+```
+
+The code produces the following output:
+
+```text
+GetString:    Ship today, before 5 & not later.
+GetInnerText: Ship today, before 5 & not later.
+GetRawXml:    <Note priority="high">Ship <b>today</b>, <![CDATA[before 5 & not later]]>.<?audit checked?></Note>
+On the processing instruction, GetString is 'checked' and GetInnerText is ''
+GetRawXml on an attribute is empty: True
+```
+
+What to notice:
+
+- The text of an element includes the text of its descendants (`today` is inside `<b>`) and the content of CDATA sections. Comments and processing instructions inside the element don't contribute.
+- That text includes white space between child elements when the document keeps it, which is the default. For `<r>`, a line break, two spaces, `<c>x</c>`, a line break, and `</r>`, the text of `r` is `"\n  x\n"`. Read values from the leaf elements that hold them (`c` here), where there is no surrounding white space to worry about.
+- Entity and character references are already expanded in `GetString` and `GetInnerText`. `GetRawXml` escapes the characters that markup requires.
+- `GetRawXml` builds the markup with a writer; it isn't a slice of the original input. An attribute has no markup outside its element, so the result for an attribute is an empty string.
+
+## Handle nil elements
+
+An element with `xsi:nil="true"` (or `"1"`) says that it has no value, which is how XML Schema represents `null`. The document reports it with `ValueKind` equal to `Nil` and `IsNil` equal to `true`.
+
+```csharp
+const string xml = """
+    <Order xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <ShippedOn xsi:nil="true"/>
+      <Total>129.90</Total>
+    </Order>
+    """;
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement shippedOn = document.RootElement.GetChild("ShippedOn");
+
+output.WriteLine($"ValueKind: {shippedOn.ValueKind}");
+output.WriteLine($"IsNil: {shippedOn.IsNil}");
+output.WriteLine($"GetString returns null: {shippedOn.GetString() is null}");
+output.WriteLine($"GetInnerText returns an empty string: {shippedOn.GetInnerText().Length == 0}");
+
+try
+{
+    shippedOn.GetDateTimeOffset();
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+
+XmlElement nil = shippedOn.GetAttribute(XmlAttributes.Nil, XmlNamespaces.Xsi);
+output.WriteLine($"{nil.Prefix}:{nil.LocalName} = {nil.GetBoolean()}");
+```
+
+The code produces the following output:
+
+```text
+ValueKind: Nil
+IsNil: True
+GetString returns null: True
+GetInnerText returns an empty string: True
+The element is nil and has no value.
+xsi:nil = True
+```
+
+Check `IsNil` before you call a typed getter on an element that can be nil. A typed getter on a nil element throws, because there is no value to convert. For how the serializer reads and writes nil, see [Handle null and nil](/xmlessentials/guides/null-and-nil).
+
+## Read the XML declaration
+
+`Declaration` is the `<?xml ...?>` declaration that the document started with, as an [`XmlDeclarationInfo`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDeclarationInfo), or `null` when the document had none.
+
+```csharp
+using (XmlDocument document = XmlDocument.Parse("""<?xml version="1.1" encoding="UTF-8" standalone="yes"?><Order/>"""))
+{
+    if (document.Declaration is { } declaration)
+    {
+        output.WriteLine($"version {declaration.Version}, encoding {declaration.Encoding}, standalone {declaration.Standalone}");
+    }
+}
+
+using (XmlDocument document = XmlDocument.Parse("<Order/>"))
+{
+    output.WriteLine($"has a declaration: {document.Declaration.HasValue}");
+}
+```
+
+The code produces the following output:
+
+```text
+version 1.1, encoding utf-8, standalone True
+has a declaration: False
+```
+
+`Version` is `1.0` or `1.1`. `Encoding` is always reported as `utf-8`, however the declaration spelled it. `Standalone` is `null` when the declaration leaves it out.
+
+## Keep, skip, or reject comments
+
+A document keeps comments by default. The goal is no surprises on a round trip: a document that you parse and write back with [`WriteTo`](#write-a-document), for example a file that is edited and saved back to source control, still has its comments. `XmlDocumentOptions.CommentHandling` changes that. Set it to `Skip` when you don't want comments in the document, or to `Disallow` to reject input that contains one.
+
+```csharp
+const string xml = "<Order><!-- rush --><Item>Keyboard</Item></Order>";
+
+using (XmlDocument kept = XmlDocument.Parse(xml))
+{
+    output.WriteLine($"Allow (the default): {CountChildren(kept.RootElement)} children");
+    foreach (XmlElement child in kept.RootElement.EnumerateChildren())
+    {
+        output.WriteLine($"  {child.ValueKind}: '{child.GetString()}'");
+    }
+}
+
+var skip = new XmlDocumentOptions { CommentHandling = XmlCommentHandling.Skip };
+using (XmlDocument skipped = XmlDocument.Parse(xml, skip))
+{
+    output.WriteLine($"Skip: {CountChildren(skipped.RootElement)} child");
+}
+
+var disallow = new XmlDocumentOptions { CommentHandling = XmlCommentHandling.Disallow };
+try
+{
+    using XmlDocument rejected = XmlDocument.Parse(xml, disallow);
+}
+catch (XmlException ex)
+{
+    output.WriteLine($"Disallow: {ex.Message}");
+}
+```
+
+`CountChildren` is a helper in the sample that counts the nodes `EnumerateChildren` returns. The code produces the following output:
+
+```text
+Allow (the default): 2 children
+  Comment: ' rush '
+  Element: 'Keyboard'
+Skip: 1 child
+Disallow: Comments are not allowed.
+```
+
+| `CommentHandling` | Effect |
+| --- | --- |
+| `Allow` (the default) | Comments are kept. Those inside an element are children with `ValueKind` equal to `Comment`, and `WriteTo` writes them. |
+| `Skip` | Comments are read and dropped. The document doesn't contain them. |
+| `Disallow` | A comment anywhere in the document throws `XmlException`. |
+
+<Warning>
+Because comments are kept by default, `EnumerateChildren` can return `Comment` nodes for any document that has them. A loop that treats every child as an element must check `ValueKind`, or parse with `CommentHandling = XmlCommentHandling.Skip`.
+</Warning>
+
+`default(XmlDocumentOptions)`, `new XmlDocumentOptions()`, and a call to `Parse` without options all mean the same options. `Utf8XmlReader` has the same defaults: it reports comments and white-space-only text between elements. `XmlSerializer` doesn't; it skips both, because neither maps to a property.
+
+Comments and processing instructions before and after the root element aren't children of anything you can reach from `RootElement`. The document keeps them and writes them in `WriteTo`.
+
+## Keep or drop white space between elements
+
+A document also keeps text that consists only of white space between elements, which is what indentation is. The reason is the same as for comments: writing the document back keeps its layout. Each run of white space is a `Text` node among the children, and it's part of the text of the element that contains it. Set `WhitespaceHandling` to `Insignificant` to leave that text out when you only read values.
+
+```csharp
+const string xml = """
+    <Order>
+      <Item>Keyboard</Item>
+      <Item>Mouse</Item>
+    </Order>
+    """;
+
+using (XmlDocument document = XmlDocument.Parse(xml))
+{
+    XmlElement order = document.RootElement;
+    output.WriteLine($"Significant (the default): {CountChildren(order)} children");
+    foreach (XmlElement child in order.EnumerateChildren())
+    {
+        output.WriteLine($"  {child.ValueKind}");
+    }
+
+    output.WriteLine($"  Text of the root: '{order.GetString()!.Replace("\n", "\\n")}'");
+    output.WriteLine($"  Text of the first Item: '{order.GetChild("Item").GetString()}'");
+}
+
+var options = new XmlDocumentOptions { WhitespaceHandling = XmlWhitespaceHandling.Insignificant };
+using (XmlDocument document = XmlDocument.Parse(xml, options))
+{
+    XmlElement order = document.RootElement;
+    output.WriteLine($"Insignificant: {CountChildren(order)} children");
+    output.WriteLine($"  Text of the root: '{order.GetString()}'");
+}
+```
+
+The code produces the following output:
+
+```text
+Significant (the default): 5 children
+  Text
+  Element
+  Text
+  Element
+  Text
+  Text of the root: '\n  Keyboard\n  Mouse\n'
+  Text of the first Item: 'Keyboard'
+Insignificant: 2 children
+  Text of the root: 'KeyboardMouse'
+```
+
+| `WhitespaceHandling` | Effect |
+| --- | --- |
+| `Significant` (the default) | White-space-only text between elements is kept as `Text` nodes, and `WriteTo` writes it. |
+| `Insignificant` | White-space-only text between elements is dropped. An indented document has the same children as a compact one. |
+| `None` | A document that has white-space-only text between elements throws `XmlException`. |
+
+What to notice:
+
+- The setting is about text that is nothing but white space. White space inside a value is always kept: `<Item> Keyboard </Item>` has the value `" Keyboard "` under every setting.
+- Lookups by name and values of leaf elements (`Item` here) are the same under every setting.
+- White space outside the root element (after the declaration, around comments in the prolog, and the final line break) isn't stored under any setting.
+
+## Set limits for untrusted input
+
+`XmlDocumentOptions` carries the same limits as the reader. Each limit is a property whose value 0 means "use the default".
+
+| Property | Limits | Default when 0 |
+| --- | --- | --- |
+| `MaxDepth` | How deeply elements nest | 64 |
+| `MaxAttributeCount` | Attributes on one element, namespace declarations included | 1,000 |
+| `MaxNameByteCount` | One element or attribute name, in UTF-8 bytes | 1,024 |
+| `MaxTextByteCount` | One text node, CDATA section, attribute value, or processing instruction's data, in UTF-8 bytes | 16,777,216 |
+| `MaxCommentByteCount` | One comment, in UTF-8 bytes | 1,048,576 |
+| `MaxDocumentByteCount` | The whole document, in UTF-8 bytes | No limit |
+
+```csharp
+var options = new XmlDocumentOptions
+{
+    MaxDepth = 2,
+    MaxDocumentByteCount = 64,
+};
+
+try
+{
+    using XmlDocument tooDeep = XmlDocument.Parse("<a><b><c/></b></a>", options);
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+
+try
+{
+    using XmlDocument tooLarge = XmlDocument.Parse($"<a>{new string('x', 100)}</a>", options);
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+```
+
+The code produces the following output:
+
+```text
+MaxDepth exceeded (2).
+MaxDocumentByteCount exceeded (64).
+```
+
+`MaxDocumentByteCount` is the one limit that is off by default. Because `XmlDocument` holds the whole document in memory, set it whenever the input comes from outside your process. With the `Stream` overload, reading stops as soon as the stream is found to be longer than the limit. A document that contains a document type declaration (`<!DOCTYPE ...>`) is rejected with "DTD is not allowed.", so there are no entities to expand and nothing external to fetch. For the full threat model, see [Security considerations](/xmlessentials/guides/security).
+
+## Test input without an exception
+
+`TryParse` returns `false` where `Parse` would throw an `XmlException`, which reads better than a `try`/`catch` when malformed input is an ordinary case. It takes UTF-8 bytes, and the options argument is required.
+
+```csharp
+var options = new XmlDocumentOptions();
+
+if (XmlDocument.TryParse("<Order><Item>Keyboard</Item></Order>"u8, options, out XmlDocument? document))
+{
+    using (document)
+    {
+        output.WriteLine($"Parsed: {document!.RootElement.LocalName}");
+    }
+}
+
+if (!XmlDocument.TryParse("<Order><Item>Keyboard</Order>"u8, options, out XmlDocument? broken))
+{
+    output.WriteLine($"Not well formed: document is null: {broken is null}");
+}
+```
+
+The code produces the following output:
+
+```text
+Parsed: Order
+Not well formed: document is null: True
+```
+
+A document that `TryParse` returns still has to be disposed. `TryParse` catches the exception for you, so it isn't faster than `Parse` on bad input, and it doesn't tell you what was wrong with the input; when you need the message and the position, call `Parse` and read them from the `XmlException`.
+
+## Parse one element from a reader
+
+`ParseValue` builds a document from the element a `Utf8XmlReader` is positioned on: that element, its attributes, and everything inside it. Use it to read a large input forward with the reader and switch to random access for one record at a time, so only one record is in memory.
+
+```csharp
+ReadOnlySpan<byte> feed = """
+    <Feed>
+      <Entry id="1"><Title>First post</Title></Entry>
+      <Entry id="2"><Title>Second post</Title></Entry>
+    </Feed>
+    """u8;
+
+var reader = new Utf8XmlReader(feed);
+while (reader.Read())
+{
+    if (reader.TokenType is XmlTokenType.StartElement && reader.LocalNameEquals("Entry"u8))
+    {
+        using XmlDocument entry = XmlDocument.ParseValue(ref reader);
+        XmlElement root = entry.RootElement;
+        output.WriteLine($"{root.GetAttribute("id").GetInt32()}: {root.GetChild("Title").GetString()}");
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+1: First post
+2: Second post
+```
+
+What to notice:
+
+- When `ParseValue` returns, the reader is on the end tag of the element (or on the element itself, for an empty-element tag), so the next `Read` moves past it.
+- The document copies what it keeps. It doesn't depend on the reader's input after `ParseValue` returns.
+- The reader's own `XmlReaderOptions` apply. `ParseValue` takes no `XmlDocumentOptions`.
+- If the reader reaches the end of its input without finding an element, `ParseValue` throws an `XmlException` with the message "The reader is not on an element and has none left to read.".
+
+### When the input arrives in blocks
+
+A reader that was created with `isFinalBlock: false` might be given only part of an element. `ParseValue` throws for an element that isn't complete. `TryParseValue` returns `false` instead and leaves the reader where it was, so you can read more input and call it again. It's the counterpart of `JsonDocument.TryParseValue`.
+
+```csharp
+ReadOnlySpan<byte> feed = """<Feed><Entry id="1"><Title>First post</Title></Entry><Entry id="2"><Title>Second post</Title></Entry></Feed>"""u8;
+
+// The first block of the input ends inside the second entry.
+var reader = new Utf8XmlReader(feed[..80], isFinalBlock: false, default);
+while (reader.Read())
+{
+    if (reader.TokenType is not XmlTokenType.StartElement || !reader.LocalNameEquals("Entry"u8))
+    {
+        continue;
+    }
+
+    if (!XmlDocument.TryParseValue(ref reader, out XmlDocument? entry))
+    {
+        output.WriteLine($"The next entry isn't all here. The reader is still on its {reader.TokenType}.");
+        break;
+    }
+
+    using (entry)
+    {
+        XmlElement root = entry.RootElement;
+        output.WriteLine($"{root.GetAttribute("id").GetInt32()}: {root.GetChild("Title").GetString()}");
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+1: First post
+The next entry isn't all here. The reader is still on its StartElement.
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/26_ParseWithXmlDocument.cs)
+
+What to notice:
+
+- `TryParseValue` returns `false` in two cases: the element isn't all in the block and the block isn't the last one, or the reader is on an end tag.
+- XML that isn't well formed still throws an `XmlException`, and so does an element that is cut short in the last block. The reader hasn't moved when the exception leaves the method.
+- To go on after `false`, keep the bytes from `BytesConsumed` onward, add the next block, and create a reader with `CurrentState`, as [Read a stream in blocks](/xmlessentials/guides/use-utf8xmlreader#read-a-stream-in-blocks) shows.
+
+For the reader itself, see [Use Utf8XmlReader](/xmlessentials/guides/use-utf8xmlreader).
+
+## Write a document
+
+`WriteTo` writes the document to a [`Utf8XmlWriter`](/xmlessentials/guides/use-utf8xmlwriter): the declaration, the comments and processing instructions before the root, the root element, and whatever follows it.
+
+```csharp
+const string xml = """<?xml version="1.0" encoding="utf-8"?><!-- exported nightly --><c:Catalog xmlns:c="urn:example:catalog" updated="2026-03-14"><c:Product sku="KB-1">Keyboard</c:Product><c:Discontinued></c:Discontinued><c:Spare/></c:Catalog>""";
+
+using XmlDocument document = XmlDocument.Parse(xml);
+
+var buffer = new ArrayBufferWriter<byte>();
+using (var writer = new Utf8XmlWriter(buffer))
+{
+    document.WriteTo(writer);
+}
+
+string written = Encoding.UTF8.GetString(buffer.WrittenSpan);
+output.WriteLine(written);
+output.WriteLine($"Same as the input: {written == xml}");
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?><!-- exported nightly --><c:Catalog xmlns:c="urn:example:catalog" updated="2026-03-14"><c:Product sku="KB-1">Keyboard</c:Product><c:Discontinued></c:Discontinued><c:Spare/></c:Catalog>
+Same as the input: True
+```
+
+`WriteTo` writes what was parsed: comments, the white space between elements, namespace declarations where they were, prefixes as they were, attributes in their original order, and `<c:Discontinued></c:Discontinued>` and `<c:Spare/>` each in its own form. This document is already spelled the way the writer spells XML, so it comes back identical.
+
+### What a round trip keeps
+
+With the default options, a round trip preserves the document's content, its comments, and the indentation inside the root element. It doesn't promise the same bytes, because the writer has one spelling for things XML lets authors spell several ways. Some of those spellings are set by `XmlWriterOptions`, and the rest are fixed. The next example parses a document that differs from the writer's spelling in each of those ways.
+
+```csharp
+const string xml =
+    "<?xml version='1.0'?>\r\n" +
+    "<!-- exported nightly -->\r\n" +
+    "<Order  id='1042'   status=\"open\">\r\n" +
+    "  <!-- rush -->\r\n" +
+    "  <Item>Keyboard &#65;</Item>\r\n" +
+    "  <Notes />\r\n" +
+    "</Order>\r\n";
+
+using XmlDocument document = XmlDocument.Parse(xml);
+
+var buffer = new ArrayBufferWriter<byte>();
+using (var writer = new Utf8XmlWriter(buffer, new XmlWriterOptions { NewLine = "\n" }))
+{
+    document.WriteTo(writer);
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan).Replace("\r", "\\r"));
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?><!-- exported nightly --><Order id="1042" status="open">
+  <!-- rush -->
+  <Item>Keyboard A</Item>
+  <Notes/>
+</Order>
+```
+
+| Kept | Normalized or dropped |
+| --- | --- |
+| Elements, attributes, text, and CDATA sections | White space outside the root element: after the declaration, around comments in the prolog, and the final line break |
+| Comments and processing instructions, inside and outside the root | The declaration, written as `<?xml version="..." encoding="utf-8"?>` with double quotes |
+| Indentation and other white space between elements inside the root | Attribute quotes, which become double quotes |
+| Attribute order, prefixes, and where namespaces are declared | White space inside a tag. The attributes are laid out as `AttributeStyle` says: by default, one space before each |
+| `<e></e>` as distinct from `<e/>` | The form of an empty-element tag, which follows `EmptyElementStyle`. With the default, `<Notes />` is written as `<Notes/>` |
+| | Line ends, which follow `NewLine`. The input has CRLF, and the sample sets `NewLine = "\n"`, so the output above has no `\r` |
+| | Character references such as `&#65;`, written as the character |
+
+`NewLine` defaults to `Environment.NewLine`, so on Windows a document that was read with LF line ends is written with CRLF unless you set `NewLine = "\n"`. To write the `<Notes />` form, set `EmptyElementStyle = XmlEmptyElementStyle.SelfClosingWithSpace`. See [Control the layout](/xmlessentials/guides/use-utf8xmlwriter#control-the-layout).
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/28_WriteAndConvertXmlDocument.cs)
+
+### Control the XML declaration
+
+A document that was parsed without a declaration leaves the decision to the writer, and a `Utf8XmlWriter` writes a declaration unless `XmlWriterOptions.OmitXmlDeclaration` is `true`. A document that was parsed with a declaration always writes it, even to a writer that omits its own.
+
+```csharp
+using XmlDocument document = XmlDocument.Parse("""<Order id="1042"><Item>Keyboard</Item></Order>""");
+
+var buffer = new ArrayBufferWriter<byte>();
+using (var writer = new Utf8XmlWriter(buffer))
+{
+    document.WriteTo(writer);
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+
+buffer.ResetWrittenCount();
+using (var writer = new Utf8XmlWriter(buffer, new XmlWriterOptions { OmitXmlDeclaration = true }))
+{
+    document.WriteTo(writer);
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+
+using XmlDocument declared = XmlDocument.Parse("""<?xml version="1.0" encoding="utf-8" standalone="yes"?><Order id="1042"/>""");
+
+buffer.ResetWrittenCount();
+using (var writer = new Utf8XmlWriter(buffer, new XmlWriterOptions { OmitXmlDeclaration = true }))
+{
+    declared.WriteTo(writer);
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?><Order id="1042"><Item>Keyboard</Item></Order>
+<Order id="1042"><Item>Keyboard</Item></Order>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><Order id="1042"/>
+```
+
+The third line has a declaration although the writer was told to omit one, because the declaration belongs to the document. To write a parsed document without its declaration, write `RootElement` instead of the document, as the next section does.
+
+### Write one element
+
+`XmlElement.WriteTo` writes one node and everything inside it, so you can copy part of a document into new markup.
+
+```csharp
+const string xml = """<c:Catalog xmlns:c="urn:example:catalog"><c:Product sku="KB-1">Keyboard</c:Product><c:Product sku="MS-2">Mouse</c:Product></c:Catalog>""";
+
+using XmlDocument document = XmlDocument.Parse(xml);
+
+var buffer = new ArrayBufferWriter<byte>();
+var options = new XmlWriterOptions { Indented = true, NewLine = "\n", OmitXmlDeclaration = true };
+using (var writer = new Utf8XmlWriter(buffer, options))
+{
+    writer.WriteStartElement("Picked");
+    foreach (XmlElement product in document.RootElement.EnumerateChildren())
+    {
+        if (product.GetAttribute("sku").GetString() == "MS-2")
+        {
+            product.WriteTo(writer);
+        }
+    }
+
+    writer.WriteEndElement();
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+```
+
+The code produces the following output:
+
+```xml
+<Picked>
+  <c:Product xmlns:c="urn:example:catalog" sku="MS-2">Mouse</c:Product>
+</Picked>
+```
+
+The `c` prefix was declared on the root of the source document, which isn't part of what's written. The writer adds the declaration to the copied element so the result is still correct. `GetRawXml` does the same when it returns a string.
+
+## Copy an element into the mutable tree
+
+A document can't be changed. When you need to edit what you parsed, `CloneNode` copies an element, its attributes, and its descendants into the mutable tree in `CloudNimble.Text.Xml.Nodes`. The copy owns its data, so it stays valid after the document is disposed.
+
+```csharp
+XmlElementNode product;
+
+using (XmlDocument document = XmlDocument.Parse("""<Catalog><Product sku="KB-1"><Name>Keyboard</Name></Product></Catalog>"""))
+{
+    product = (XmlElementNode)document.RootElement.GetChild("Product").CloneNode();
+}
+
+product.SetAttribute("sku", "KB-2");
+product.AddElement("Price").InnerText = "49.90";
+
+output.WriteLine(product.ToString());
+```
+
+The code produces the following output:
+
+```xml
+<Product sku="KB-2"><Name>Keyboard</Name><Price>49.90</Price></Product>
+```
+
+`CloneNode` returns the node type that matches the kind: an `XmlElementNode` for an element, an `XmlTextNode` for text, and so on. It makes every node under the element when it's called, and each one is a heap object, so clone the smallest element you need to change. When you parse only to edit, call [`XmlNode.Parse`](/xmlessentials/guides/use-xmlnode#parse-xml-into-a-tree) instead: it keeps the parsed input with the tree and makes the nodes under an element only when you reach into it.
+
+## Deserialize from a document or an element
+
+`XmlSerializer.Deserialize` accepts an `XmlDocument` or an `XmlElement`. That lets you look at a document first (check a version attribute, pick the elements you want) and then turn the parts you chose into objects.
+
+```csharp
+using (XmlDocument single = XmlDocument.Parse("<Product><Name>Keyboard</Name><Price>49.90</Price></Product>"))
+{
+    Product? product = XmlSerializer.Deserialize<Product>(single);
+    output.WriteLine($"{product!.Name}: {product.Price.ToString(CultureInfo.InvariantCulture)}");
+}
+
+const string xml = """
+    <Catalog>
+      <Product><Name>Mouse</Name><Price>19.90</Price></Product>
+      <Product><Name>Monitor</Name><Price>249.00</Price></Product>
+    </Catalog>
+    """;
+
+using XmlDocument catalog = XmlDocument.Parse(xml);
+foreach (XmlElement element in catalog.RootElement.EnumerateChildren())
+{
+    if (element.ValueKind is not (XmlValueKind.Element or XmlValueKind.EmptyElement or XmlValueKind.Nil))
+    {
+        continue;
+    }
+
+    Product? product = XmlSerializer.Deserialize<Product>(element);
+    output.WriteLine($"{product!.Name}: {product.Price.ToString(CultureInfo.InvariantCulture)}");
+}
+```
+
+```csharp Product.cs
+public sealed class Product
+{
+    public string? Name { get; set; }
+
+    public decimal Price { get; set; }
+}
+```
+
+The code produces the following output:
+
+```text
+Keyboard: 49.90
+Mouse: 19.90
+Monitor: 249.00
+```
+
+Deserializing from a document reads its root element. Each of these calls writes the element to a pooled buffer and reads that buffer, so when all you want is objects, deserialize from the original text or bytes and skip the document. The overloads that take an `XmlTypeInfo<T>` or an `XmlSerializerContext` work with [source generation](/xmlessentials/guides/source-generation).
+
+The reverse direction is `XmlSerializer.SerializeToDocument`, which gives you a document to query without producing text in between:
+
+```csharp
+var product = new Product { Name = "Keyboard", Price = 49.90m };
+
+using XmlDocument document = XmlSerializer.SerializeToDocument(product);
+XmlElement root = document.RootElement;
+
+output.WriteLine(root.GetRawXml());
+output.WriteLine($"Price as a decimal: {root.GetChild("Price").GetDecimal().ToString(CultureInfo.InvariantCulture)}");
+```
+
+The code produces the following output:
+
+```text
+<Product><Name>Keyboard</Name><Price>49.90</Price></Product>
+Price as a decimal: 49.90
+```
+
+Dispose the document that `SerializeToDocument` returns. `SerializeToElement` returns the root element of a document that holds no pooled memory, so there's nothing to dispose; it costs one more copy of the XML than `SerializeToDocument`. For everything else about the serializer, see [Deserialize XML](/xmlessentials/guides/deserialize) and [Serialize XML](/xmlessentials/guides/serialize).
+
+## Performance
+
+`XmlDocument` stores one row per node in a pooled array, and names and values as offsets into its pooled copy of the input. It doesn't create an object per node. In the project's benchmarks against `System.Xml.XmlDocument`, on four real documents (an RSS feed, an OpenDocument file, a WordprocessingML file, and RPM metadata):
+
+- Parsing is 3.1× to 3.4× faster and allocates about 104 bytes, which is the `XmlDocument` object, where `System.Xml.XmlDocument` allocates 127 KB to 709 KB.
+- Writing a parsed document is 1.4× to 1.7× faster and allocates nothing.
+
+See [Benchmarks](/xmlessentials/benchmarks) for the tables and the method. These numbers compare `XmlDocument` with `System.Xml` only. They say nothing about `JsonDocument`.
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Use XmlNode" icon="pen-to-square" href="/xmlessentials/guides/use-xmlnode">
+    Build and change XML with the mutable tree.
+  </Card>
+  <Card title="Use Utf8XmlReader" icon="book-open" href="/xmlessentials/guides/use-utf8xmlreader">
+    Read XML forward, one token at a time.
+  </Card>
+  <Card title="Use Utf8XmlWriter" icon="pen" href="/xmlessentials/guides/use-utf8xmlwriter">
+    Write XML to a buffer or a stream.
+  </Card>
+  <Card title="Migrate from XDocument and XmlDocument" icon="right-left" href="/xmlessentials/guides/migrate/from-xdocument">
+    Map `System.Xml` DOM code to XmlEssentials.
+  </Card>
+  <Card title="Security considerations" icon="shield-halved" href="/xmlessentials/guides/security">
+    Limits and defaults for untrusted input.
+  </Card>
+  <Card title="Use XML namespaces" icon="tags" href="/xmlessentials/guides/namespaces">
+    How names, prefixes, and URIs are handled.
+  </Card>
+</Columns>
+
+API reference:
+
+- [`XmlDocument`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument)
+- [`XmlElement`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement)
+- [`XmlDocumentOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions)
+- [`XmlValueKind`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlValueKind)
+- [`XmlDeclarationInfo`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDeclarationInfo)

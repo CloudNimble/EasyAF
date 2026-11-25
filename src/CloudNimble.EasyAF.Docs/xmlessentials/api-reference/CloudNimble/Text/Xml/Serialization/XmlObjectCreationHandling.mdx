@@ -1,0 +1,64 @@
+---
+title: XmlObjectCreationHandling
+description: "Determines how [XmlSerializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) handles a member that already holds a value when it is deserialized."
+icon: list-ol
+tag: "ENUM"
+keywords: ['XmlObjectCreationHandling', 'CloudNimble.Text.Xml.Serialization.XmlObjectCreationHandling', 'CloudNimble.Text.Xml.Serialization', 'enum', 'System.Enum', 'System.IComparable', 'System.ISpanFormattable', 'System.IFormattable', 'System.IConvertible']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlObjectCreationHandling
+```
+
+## Summary
+
+Determines how [XmlSerializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) handles a member that already holds a value when it is deserialized.
+
+## Usage
+
+`XmlObjectCreationHandling` says what happens to the value a member already holds when the member is read. Use it in two places: [`[XmlObjectCreationHandling]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlObjectCreationHandlingAttribute), for one member or one type, and `XmlSerializerOptions.PreferredObjectCreationHandling`, for every member. It is the counterpart of `JsonObjectCreationHandling`, with the same values and rules.
+
+| Value | When the member is read |
+| --- | --- |
+| `Replace` | The member is given a new value. A member with no setter isn't read. This is the default. |
+| `Populate` | The value the member holds is kept. Items are added to a collection, entries to a dictionary, and the members of an object are set on it. |
+
+```csharp
+var options = new XmlSerializerOptions
+{
+    PreferredObjectCreationHandling = XmlObjectCreationHandling.Populate,
+};
+```
+
+See [Populate a collection that already holds a value](/xmlessentials/guides/collections#populate-a-collection-that-already-holds-a-value) for what can and can't be populated.
+
+## Remarks
+
+The values and their meaning are those of `System.Text.Json.Serialization.JsonObjectCreationHandling`.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Replace` | 0 | A new instance is created and assigned to the member. A member with no setter is not read. |
+| `Populate` | 1 | The instance the member holds is populated: items are added to a collection, entries to a dictionary, and
+the members of an object are set on it. A member that holds [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) is given a new instance
+when it has a setter. |
+
+## Related APIs
+
+- System.IComparable
+- System.ISpanFormattable
+- System.IFormattable
+- System.IConvertible
+

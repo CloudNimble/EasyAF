@@ -1,0 +1,567 @@
+---
+title: "How to write custom converters for XML serialization"
+sidebarTitle: "Write custom converters"
+description: "Write an XmlConverter<T> or an XmlConverterFactory, register it, and keep the contract about where a converter leaves the reader and writer."
+icon: "arrows-rotate"
+---
+
+A *converter* is a class that reads one type from XML and writes it back. `XmlSerializer` has built-in converters for the [supported types](/xmlessentials/guides/supported-types). You write your own when the XML form of a value isn't the one the serializer would choose: a value with its own text format, a type you can't annotate, or a built-in type that a partner writes differently.
+
+The design follows System.Text.Json: [`XmlConverter<T>`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverter), [`XmlConverterFactory`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterFactory), and [`XmlConverterAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterAttribute) correspond to `JsonConverter<T>`, `JsonConverterFactory`, and `JsonConverterAttribute`. If you've written a JSON converter, the main new idea is that a converter works on an *element*, which has a start tag and an end tag, instead of a single token.
+
+## Choose a pattern
+
+There are two patterns, as in System.Text.Json:
+
+- The **basic pattern** is a class that derives from `XmlConverter<T>` and handles one type. Use it for a type such as `Money` or `DateOnly`.
+- The **factory pattern** is a class that derives from `XmlConverterFactory` and creates a converter for each type it's asked about. Use it for a family of types, such as every enumeration or every closed form of a generic type.
+
+You can't derive from the non-generic `XmlConverter` class directly.
+
+## Write a basic converter
+
+The following converter reads and writes a `Money` value as text such as `129.90 USD`:
+
+```csharp MoneyConverter.cs
+public sealed class MoneyConverter : XmlConverter<Money>
+{
+    public override Money Read(ref Utf8XmlReader reader, Type typeToConvert, XmlSerializerOptions options)
+    {
+        Money value = default;
+        if (reader.IsEmptyElement)
+        {
+            return value;
+        }
+
+        while (reader.Read() && reader.TokenType is not XmlTokenType.EndElement)
+        {
+            if (reader.TokenType is XmlTokenType.Text or XmlTokenType.CData)
+            {
+                value = Parse(reader.GetString()!);
+            }
+        }
+
+        return value;
+    }
+
+    public override void Write(Utf8XmlWriter writer, Money value, XmlSerializerOptions options)
+    {
+        writer.WriteStringValue(string.Create(CultureInfo.InvariantCulture, $"{value.Amount:0.00} {value.Currency}"));
+    }
+
+    private static Money Parse(string text)
+    {
+        int space = text.IndexOf(' ');
+        if (space < 0 || !decimal.TryParse(text.AsSpan(0, space), NumberStyles.Number, CultureInfo.InvariantCulture, out decimal amount))
+        {
+            throw new XmlException($"'{text}' is not an amount followed by a currency code.");
+        }
+
+        return new Money(amount, text[(space + 1)..]);
+    }
+}
+```
+
+```csharp Money.cs
+public readonly struct Money
+{
+    public Money(decimal amount, string currency)
+    {
+        Amount = amount;
+        Currency = currency;
+    }
+
+    public decimal Amount { get; }
+
+    public string Currency { get; }
+}
+```
+
+[View the converter on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/Models/Advanced/MoneyConverter.cs)
+
+To follow the basic pattern:
+
+<Steps>
+  <Step title="Derive from XmlConverter<T>">
+    Create a class that derives from `XmlConverter<T>`, where `T` is the type to read and write. Give it a public parameterless constructor if you plan to name it in `[XmlConverter]`.
+  </Step>
+  <Step title="Override Read">
+    Read the element the reader is on and return the value. Follow [the reader contract](#the-contract-a-converter-keeps): the reader starts on the element's start tag and you leave it on the element's last token.
+  </Step>
+  <Step title="Override Write">
+    Write the *content* of the element: text, or child elements. The serializer has already written the start tag and writes the end tag after you return.
+  </Step>
+  <Step title="Leave CanConvert as it is">
+    The default implementation returns `true` when the requested type is exactly `T`, and a basic converter can serve only that type. If you widen `CanConvert` to accept other types, the serializer throws `InvalidOperationException` when it asks the converter for one of them. To handle several types, write a [factory](#write-a-converter-factory).
+  </Step>
+</Steps>
+
+## The contract a converter keeps
+
+A converter shares the reader and the writer with the serializer. The serializer continues from where you stop, so a converter that reads too little or too much breaks the members that follow it.
+
+### In Read
+
+When the serializer calls `Read`, the reader is on the **start tag** of the element that holds the value. `reader.TokenType` is `XmlTokenType.StartElement`, and you can read the element's attributes.
+
+When you return, the reader must be on the **last token of that same element**:
+
+- For an element with an end tag, such as `<Total>129.90 USD</Total>` or `<Total></Total>`, that's the end tag. Read until `reader.TokenType` is `XmlTokenType.EndElement` at the element's own depth.
+- For an empty-element tag, such as `<Total/>`, that's the start tag itself. The reader produces no end-tag token for it, so check `reader.IsEmptyElement` before you call `reader.Read()`, and return without reading.
+
+`MoneyConverter.Read` shows both cases. Don't read past the end tag: the next token belongs to the serializer.
+
+Three members of [`Utf8XmlReader`](/xmlessentials/guides/use-utf8xmlreader) do most of the work in a converter:
+
+| Member | Use |
+| --- | --- |
+| `Read()` | Moves to the next token. |
+| `GetString()`, `GetInt32()`, `GetDouble()`, and the other getters | Read the value of the current text token or attribute. `ValueSpan` gives you the same value as UTF-8 bytes. |
+| `Skip()` | On a start tag, moves to the matching end tag. Use it for a child element you don't recognize. |
+
+`Utf8XmlReader` is a `ref struct`, and `Read` receives it by reference. Pass it by `ref` to any helper method, as the next section does, or the helper advances a copy.
+
+### In Write
+
+When the serializer calls `Write`, the writer is inside the element that holds the value. The start tag is written, and the end tag follows after you return. Write the content only:
+
+- A text value, with `WriteStringValue`, `WriteNumberValue`, or `WriteBooleanValue`.
+- Child elements, each with a `WriteStartElement` and a matching `WriteEndElement`.
+
+Close every element you open. Don't write the value's own element, and don't call `Flush` or dispose the writer.
+
+### Null and nil
+
+By default, a converter never sees a nil element. For an element marked `xsi:nil="true"`, the serializer returns `null` without calling `Read`, and throws `XmlException` when `T` can't be `null`. To handle nil elements yourself, override [`HandleNull`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverter) to return `true`. `Read` is then called for nil elements too, and `reader.GetNil()` tells you whether the element is one.
+
+### Errors
+
+Throw `XmlException` when the content isn't valid for the type, as `MoneyConverter.Parse` does. That's the exception the built-in converters throw for a value they can't parse.
+
+## Read and write child elements
+
+A converter isn't limited to text. The following one writes a `GeoPoint` as a `Lat` and a `Lon` child element, and reads them back in any order:
+
+```csharp GeoPointConverter.cs
+public sealed class GeoPointConverter : XmlConverter<GeoPoint>
+{
+    public override GeoPoint Read(ref Utf8XmlReader reader, Type typeToConvert, XmlSerializerOptions options)
+    {
+        double latitude = 0;
+        double longitude = 0;
+        if (reader.IsEmptyElement)
+        {
+            return new GeoPoint(latitude, longitude);
+        }
+
+        while (reader.Read() && reader.TokenType is not XmlTokenType.EndElement)
+        {
+            if (reader.TokenType is not XmlTokenType.StartElement)
+            {
+                continue;
+            }
+
+            if (reader.LocalNameEquals("Lat"u8))
+            {
+                latitude = ReadNumber(ref reader);
+            }
+            else if (reader.LocalNameEquals("Lon"u8))
+            {
+                longitude = ReadNumber(ref reader);
+            }
+            else
+            {
+                reader.Skip();
+            }
+        }
+
+        return new GeoPoint(latitude, longitude);
+    }
+
+    public override void Write(Utf8XmlWriter writer, GeoPoint value, XmlSerializerOptions options)
+    {
+        writer.WriteStartElement("Lat");
+        writer.WriteNumberValue(value.Latitude);
+        writer.WriteEndElement();
+
+        writer.WriteStartElement("Lon");
+        writer.WriteNumberValue(value.Longitude);
+        writer.WriteEndElement();
+    }
+
+    private static double ReadNumber(ref Utf8XmlReader reader)
+    {
+        double value = 0;
+        if (reader.IsEmptyElement)
+        {
+            return value;
+        }
+
+        while (reader.Read() && reader.TokenType is not XmlTokenType.EndElement)
+        {
+            if (reader.TokenType is XmlTokenType.Text)
+            {
+                value = reader.GetDouble();
+            }
+        }
+
+        return value;
+    }
+}
+```
+
+Each child element is read to its own end tag, by `ReadNumber` or by `Skip`, before the outer loop reads again. That keeps the outer loop's test simple: the next `EndElement` it sees is the end of the `GeoPoint` element. The same rule you keep for the serializer, you keep for yourself.
+
+[View the converter on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/Models/Advanced/GeoPointConverter.cs)
+
+## Register a converter
+
+The serializer looks for a converter in this order and uses the first match:
+
+1. The converter named by `[XmlConverter]` on the property or field. It applies to that member only.
+2. The converters in [`XmlSerializerOptions.Converters`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions), in list order, by calling `CanConvert`.
+3. The converter named by `[XmlConverter]` on the type.
+4. The built-in converters.
+
+Because the options list comes before the type, a converter you add there replaces a built-in converter and overrides an attribute on the type. An attribute on a member overrides both.
+
+### Add it to the options
+
+Add an instance to `Converters` before you use the options. The converter then applies to every value of its type, wherever it appears.
+
+```csharp Program.cs
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+options.Converters.Add(new MoneyConverter());
+options.Converters.Add(new CompactDateConverter());
+
+var invoice = new Invoice
+{
+    Number = "INV-204",
+    Issued = new DateOnly(2026, 11, 23),
+    Due = new DateOnly(2026, 12, 23),
+    Total = new Money(129.9m, "USD"),
+};
+
+string xml = XmlSerializer.Serialize(invoice, options);
+output.WriteLine(xml);
+
+Invoice? copy = XmlSerializer.Deserialize<Invoice>(xml, options);
+output.WriteLine($"{copy!.Number}: {copy.Total.Amount} {copy.Total.Currency}, issued {copy.Issued:yyyy-MM-dd}, due {copy.Due:yyyy-MM-dd}");
+```
+
+```csharp Invoice.cs
+public sealed class Invoice
+{
+    public DateOnly Due { get; set; }
+
+    [XmlAttribute]
+    public DateOnly Issued { get; set; }
+
+    public string? Number { get; set; }
+
+    public Money Total { get; set; }
+}
+```
+
+The code produces the following output:
+
+```text
+<Invoice Issued="20261123"><Due>20261223</Due><Number>INV-204</Number><Total>129.90 USD</Total></Invoice>
+INV-204: 129.90 USD, issued 2026-11-23, due 2026-12-23
+```
+
+`MoneyConverter` wrote the `Total` element. `CompactDateConverter`, shown in [Replace a built-in converter](#replace-a-built-in-converter), wrote both dates.
+
+The options become read-only the first time the serializer uses them. Adding a converter after that throws `InvalidOperationException`.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/35_CustomConverters.cs)
+
+### Put an attribute on the type
+
+Apply `[XmlConverter]` to a class, struct, or enumeration that you own. Every options instance then uses the converter, with nothing to register.
+
+```csharp GeoPoint.cs
+[XmlConverter<GeoPointConverter>]
+public readonly struct GeoPoint
+{
+    public GeoPoint(double latitude, double longitude)
+    {
+        Latitude = latitude;
+        Longitude = longitude;
+    }
+
+    public double Latitude { get; }
+
+    public double Longitude { get; }
+}
+
+public sealed class Warehouse
+{
+    public GeoPoint Location { get; set; }
+
+    public string? Name { get; set; }
+}
+```
+
+```csharp Program.cs
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+var warehouse = new Warehouse { Name = "North", Location = new GeoPoint(47.61, -122.33) };
+
+string xml = XmlSerializer.Serialize(warehouse, options);
+output.WriteLine(xml);
+
+Warehouse? copy = XmlSerializer.Deserialize<Warehouse>(xml, options);
+output.WriteLine($"{copy!.Name}: {copy.Location.Latitude}, {copy.Location.Longitude}");
+```
+
+The code produces the following output:
+
+```text
+<Warehouse><Location><Lat>47.61</Lat><Lon>-122.33</Lon></Location><Name>North</Name></Warehouse>
+North: 47.61, -122.33
+```
+
+The converter is the type argument of the attribute. It must derive from `XmlConverter` and have a public parameterless constructor, and the compiler checks both. The serializer creates one instance for each options instance when the attribute is on a type, and one for each member when it is on a property or field.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/35_CustomConverters.cs)
+
+<Note>
+`[XmlConverter]` can also be applied to a property or a field, as `[JsonConverter]` can in System.Text.Json. The converter then reads and writes that member only, and the other members of the same type keep their usual converter. The converter handles the whole value: a collection member isn't taken apart into items, and the member may be mapped with `[XmlAttribute]` or `[XmlText]`. A converter for `T` also serves a member of type `T?`. The reflection resolver and a source-generated context both apply it.
+</Note>
+
+## Replace a built-in converter
+
+A converter for a type the serializer already handles, such as `DateOnly`, `int`, or `string`, has more to do, because those types can also appear in attributes and as the text of an element. Override three more methods:
+
+| Method | Called for |
+| --- | --- |
+| `ReadAsAttribute` | A member mapped with `[XmlAttribute]`. The reader is on the attribute. |
+| `WriteAsAttribute` | The same member when writing. Write the whole attribute, name and value. |
+| `ReadLexical` | A member mapped with `[XmlText]` or `[XmlCData]`. You receive the text as UTF-8 bytes, with character and entity references already decoded. |
+
+The default implementation of each throws `InvalidOperationException`.
+
+```csharp CompactDateConverter.cs
+public sealed class CompactDateConverter : XmlConverter<DateOnly>
+{
+    private const string Format = "yyyyMMdd";
+
+    public override DateOnly Read(ref Utf8XmlReader reader, Type typeToConvert, XmlSerializerOptions options)
+    {
+        DateOnly value = default;
+        if (reader.IsEmptyElement)
+        {
+            return value;
+        }
+
+        while (reader.Read() && reader.TokenType is not XmlTokenType.EndElement)
+        {
+            if (reader.TokenType is XmlTokenType.Text)
+            {
+                value = ReadLexical(reader.ValueSpan, options);
+            }
+        }
+
+        return value;
+    }
+
+    public override DateOnly ReadAsAttribute(ref Utf8XmlReader reader, Type typeToConvert, XmlSerializerOptions options)
+    {
+        return ReadLexical(reader.ValueSpan, options);
+    }
+
+    public override DateOnly ReadLexical(ReadOnlySpan<byte> utf8, XmlSerializerOptions options)
+    {
+        string text = Encoding.UTF8.GetString(utf8);
+        return DateOnly.TryParseExact(text, Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly value)
+            ? value
+            : throw new XmlException($"'{text}' is not a date in the form {Format}.");
+    }
+
+    public override void Write(Utf8XmlWriter writer, DateOnly value, XmlSerializerOptions options)
+    {
+        writer.WriteStringValue(value.ToString(Format, CultureInfo.InvariantCulture));
+    }
+
+    public override void WriteAsAttribute(Utf8XmlWriter writer, XmlName name, DateOnly value, XmlSerializerOptions options)
+    {
+        writer.WriteAttributeString(name.LocalName, value.ToString(Format, CultureInfo.InvariantCulture));
+    }
+}
+```
+
+In the invoice output above, `Issued="20261123"` came from `WriteAsAttribute` and `<Due>20261223</Due>` from `Write`.
+
+[View the converter on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/Models/Advanced/CompactDateConverter.cs)
+
+<Note>
+A type that has a converter can be an attribute or the text of an element, whether the converter is in `Converters` or named by `[XmlConverter]`. The serializer then calls the converter's `WriteAsAttribute`, `ReadAsAttribute`, and `ReadLexical` methods, so override them. A converter that overrides only `Read` and `Write` throws `InvalidOperationException` with the message "Converter '...' does not support attributes." when it is asked for an attribute. A type with no converter that isn't a simple value still can't be an attribute: the serializer throws `NotSupportedException` with the message "Member '...' is mapped as an XML attribute. Complex types cannot be attributes."
+</Note>
+
+## Write a converter factory
+
+A factory decides at run time which converter a type gets. The following factory handles every enumeration. It writes member names in kebab case, so `ReadyToShip` becomes `ready-to-ship`.
+
+```csharp KebabCaseEnumConverterFactory.cs
+public sealed class KebabCaseEnumConverterFactory : XmlConverterFactory
+{
+    public override bool CanConvert(Type typeToConvert)
+    {
+        return typeToConvert.IsEnum;
+    }
+
+    public override XmlConverter? CreateConverter(Type typeToConvert, XmlSerializerOptions options)
+    {
+        Type converterType = typeof(KebabCaseEnumConverter<>).MakeGenericType(typeToConvert);
+        return (XmlConverter?)Activator.CreateInstance(converterType);
+    }
+}
+```
+
+```csharp KebabCaseEnumConverter.cs
+public sealed class KebabCaseEnumConverter<TEnum> : XmlConverter<TEnum>
+    where TEnum : struct, Enum
+{
+    public override TEnum Read(ref Utf8XmlReader reader, Type typeToConvert, XmlSerializerOptions options)
+    {
+        TEnum value = default;
+        if (reader.IsEmptyElement)
+        {
+            return value;
+        }
+
+        while (reader.Read() && reader.TokenType is not XmlTokenType.EndElement)
+        {
+            if (reader.TokenType is XmlTokenType.Text)
+            {
+                value = Parse(reader.GetString()!);
+            }
+        }
+
+        return value;
+    }
+
+    public override void Write(Utf8XmlWriter writer, TEnum value, XmlSerializerOptions options)
+    {
+        writer.WriteStringValue(XmlNamingPolicy.KebabCaseLower.ConvertName(value.ToString()));
+    }
+
+    private static TEnum Parse(string text)
+    {
+        foreach (TEnum candidate in Enum.GetValues<TEnum>())
+        {
+            if (XmlNamingPolicy.KebabCaseLower.ConvertName(candidate.ToString()) == text)
+            {
+                return candidate;
+            }
+        }
+
+        throw new XmlException($"'{text}' is not a value of {typeof(TEnum).Name}.");
+    }
+}
+```
+
+Register the factory as you would a converter:
+
+```csharp Program.cs
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+options.Converters.Add(new KebabCaseEnumConverterFactory());
+
+var tracking = new OrderTracking
+{
+    OrderId = 1042,
+    Status = OrderStatus.ReadyToShip,
+    Priority = Priority.Rush,
+};
+
+string xml = XmlSerializer.Serialize(tracking, options);
+output.WriteLine(xml);
+
+OrderTracking? copy = XmlSerializer.Deserialize<OrderTracking>(xml, options);
+output.WriteLine($"Order {copy!.OrderId}: {copy.Status}, {copy.Priority}");
+```
+
+The code produces the following output:
+
+```text
+<OrderTracking><OrderId>1042</OrderId><Priority>rush</Priority><Status>ready-to-ship</Status></OrderTracking>
+Order 1042: ReadyToShip, Rush
+```
+
+One factory served two enumerations, `OrderStatus` and `Priority`.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/35_CustomConverters.cs)
+
+Rules for a factory:
+
+- `CreateConverter` must return an `XmlConverter<T>` whose `T` is exactly the requested type. The serializer throws `InvalidOperationException` when it returns `null` or a converter for another type.
+- The serializer calls `CreateConverter` once for each type and options instance, and keeps the result. A factory named by `[XmlConverter]` on a property or field is asked once for that member.
+- A factory that uses `MakeGenericType`, as this one does, isn't safe for Native AOT. In an AOT application, return converters you construct directly, for example from a `switch` on the type.
+
+<Tip>
+This factory is a teaching example. To change how enumerations are written without a converter, see `XmlSerializerOptions.EnumHandling` in [How to configure XmlSerializerOptions](/xmlessentials/guides/configure-options).
+</Tip>
+
+## Use a converter with source generation
+
+A source-generated context applies custom converters as the reflection resolver does, with the same result. That covers a converter in `Converters`, `[XmlConverter]` on a type, and `[XmlConverter]` on a member. A converter you supply for a type, in the options or with the attribute on the type, is used in place of the generated metadata for that type.
+
+The context needs no special setup. Create it from the options that hold the converter, and pass its type info to the serializer:
+
+```csharp QuoteXmlContext.cs
+[XmlSerializable<Quote>]
+public partial class QuoteXmlContext : XmlSerializerContext
+{
+}
+```
+
+```csharp Program.cs
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+options.Converters.Add(new MoneyConverter());
+var context = new QuoteXmlContext(options);
+
+var quote = new Quote { Number = "Q-17", Price = new Money(89.9m, "EUR") };
+
+string xml = XmlSerializer.Serialize(quote, context.Quote);
+output.WriteLine(xml);
+
+Quote? copy = XmlSerializer.Deserialize(xml, context.Quote);
+output.WriteLine($"{copy!.Number}: {copy.Price.Amount} {copy.Price.Currency}");
+```
+
+The code produces the following output:
+
+```text
+<Quote><Number>Q-17</Number><Price>89.90 EUR</Price></Quote>
+Q-17: 89.90 EUR
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/35_CustomConverters.cs)
+
+The context here is in the default generation mode, and the `Metadata` mode works the same way. See [Source-generation modes](/xmlessentials/guides/source-generation-modes).
+
+## Keep converters safe to share
+
+The serializer keeps one converter instance for each type and options instance, and one for each member that names a converter with `[XmlConverter]`, and calls it from every thread that uses those options. Don't store state from one call in a field. Keep a converter immutable after you construct it.
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Use Utf8XmlReader" icon="book-open" href="/xmlessentials/guides/use-utf8xmlreader">
+    Tokens, values, and attributes, as a converter's Read sees them.
+  </Card>
+  <Card title="Use Utf8XmlWriter" icon="pen" href="/xmlessentials/guides/use-utf8xmlwriter">
+    The write methods a converter's Write calls.
+  </Card>
+  <Card title="Supported types" icon="list-check" href="/xmlessentials/guides/supported-types">
+    The types that have a built-in converter.
+  </Card>
+  <Card title="Polymorphism" icon="sitemap" href="/xmlessentials/guides/polymorphism">
+    Derived types without a converter.
+  </Card>
+</Columns>
+
+- [`XmlConverter`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverter)
+- [`XmlConverterFactory`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterFactory)
+- [`XmlConverterAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterAttribute)
+- [How to configure XmlSerializerOptions](/xmlessentials/guides/configure-options)

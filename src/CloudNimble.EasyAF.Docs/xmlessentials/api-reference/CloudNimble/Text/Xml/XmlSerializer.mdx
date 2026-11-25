@@ -1,0 +1,4047 @@
+---
+title: XmlSerializer
+description: "Provides functionality to serialize objects or value types to XML and to deserialize XML into objects or value types. This class cannot be inherited."
+icon: bolt
+tag: "STATIC"
+keywords: ['XmlSerializer', 'CloudNimble.Text.Xml.XmlSerializer', 'CloudNimble.Text.Xml', 'class', 'CloudNimble.Text.Xml.XmlSerializerOptions', 'CloudNimble.Text.Xml.XmlSerializerDefaults', 'CloudNimble.Text.Xml.Serialization.XmlSerializerContext', 'CloudNimble.Text.Xml.Serialization.XmlTypeInfo', 'CloudNimble.Text.Xml.Utf8XmlReader']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlSerializer
+```
+
+## Summary
+
+Provides functionality to serialize objects or value types to XML and to deserialize XML into objects or value types.
+This class cannot be inherited.
+
+## Usage
+
+`XmlSerializer` converts .NET objects to XML and back. It is a static class with the same shape as `JsonSerializer` in System.Text.Json: there is no instance to create or cache, and every method takes the value or the XML plus an optional [`XmlSerializerOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions).
+
+Call `Serialize` to get a `string`:
+
+```csharp
+var order = new PurchaseOrder
+{
+    Id = 1042,
+    Customer = "Contoso",
+    Placed = new DateOnly(2026, 3, 14),
+    Total = 129.90m,
+};
+
+string xml = XmlSerializer.Serialize(order);
+output.WriteLine(xml);
+```
+
+Call `Deserialize<TValue>` to turn XML into an object:
+
+```csharp
+PurchaseOrder? order = XmlSerializer.Deserialize<PurchaseOrder>(xml);
+```
+
+The methods come in families. Each family has overloads for reflection (`XmlSerializerOptions`), for a type known only at run time (`Type`), and for source generation (`XmlTypeInfo<TValue>` or `XmlSerializerContext`).
+
+| To write to | Call | To read from | Call |
+| --- | --- | --- | --- |
+| A `string` | `Serialize` | A `string` or `ReadOnlySpan<char>` | `Deserialize` |
+| A `byte[]` of UTF-8 | `SerializeToUtf8Bytes` | A `ReadOnlySpan<byte>` or `ReadOnlySequence<byte>` of UTF-8 | `Deserialize` |
+| An `IBufferWriter<byte>` | `Serialize` | | |
+| A `Stream` | `Serialize`, `SerializeAsync` | A `Stream` | `Deserialize`, `DeserializeAsync` |
+| A `PipeWriter` | `SerializeAsync` | A `PipeReader` | `DeserializeAsync` |
+| An open `Utf8XmlWriter` | `Serialize` | A `Utf8XmlReader` on a start tag | `Deserialize` |
+| An `XmlDocument`, `XmlElement`, or `XmlNode` | `SerializeToDocument`, `SerializeToElement`, `SerializeToNode` | An `XmlDocument`, `XmlElement`, or `XmlNode` | `Deserialize` |
+| A stream, one item at a time | `SerializeAsyncEnumerable` | A stream, one item at a time | `DeserializeAsyncEnumerable` |
+
+For a walk through each destination and source, see [Serialize](/xmlessentials/guides/serialize) and [Deserialize](/xmlessentials/guides/deserialize).
+
+## Remarks
+
+This class is the XML counterpart of `System.Text.Json.JsonSerializer`.
+Every overload resolves an [XmlTypeInfo](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo) and then goes through one of the internal
+`Read` or `Write` methods in this file. All reading is done by [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) and
+all writing by [Utf8XmlWriter](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter).
+
+## Examples
+
+The following examples come from the serialization samples, and each shows the output the code produces.
+
+### Serialize an object graph with indentation
+
+```csharp
+var invoice = new Invoice
+{
+    Number = 7,
+    BillTo = new InvoiceCustomer { Name = "Contoso", Email = "ap@contoso.example" },
+    Lines =
+    [
+        new InvoiceLine { Sku = "KB-101", Quantity = 2 },
+        new InvoiceLine { Sku = "MS-220", Quantity = 1 },
+    ],
+};
+
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n" };
+
+string xml = XmlSerializer.Serialize(invoice, options);
+output.WriteLine(xml);
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Invoice>
+  <Number>7</Number>
+  <BillTo>
+    <Name>Contoso</Name>
+    <Email>ap@contoso.example</Email>
+  </BillTo>
+  <Lines>
+    <Sku>KB-101</Sku>
+    <Quantity>2</Quantity>
+  </Lines>
+  <Lines>
+    <Sku>MS-220</Sku>
+    <Quantity>1</Quantity>
+  </Lines>
+</Invoice>
+```
+
+### Serialize to UTF-8 bytes
+
+```csharp
+var customer = new InvoiceCustomer { Name = "Contoso", Email = "ap@contoso.example" };
+
+byte[] utf8 = XmlSerializer.SerializeToUtf8Bytes(customer);
+
+output.WriteLine($"{utf8.Length} bytes");
+output.WriteLine(Encoding.UTF8.GetString(utf8));
+```
+
+The code produces the following output:
+
+```text
+126 bytes
+<?xml version="1.0" encoding="utf-8"?><InvoiceCustomer><Name>Contoso</Name><Email>ap@contoso.example</Email></InvoiceCustomer>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/06_SerializeToXml.cs)
+
+### Deserialize from a string
+
+```csharp
+const string xml = """
+    <?xml version="1.0" encoding="utf-8"?>
+    <PurchaseOrder>
+      <Id>1042</Id>
+      <Customer>Contoso</Customer>
+      <Placed>2026-03-14</Placed>
+      <Total>129.90</Total>
+    </PurchaseOrder>
+    """;
+
+PurchaseOrder? order = XmlSerializer.Deserialize<PurchaseOrder>(xml);
+
+output.WriteLine($"Order {order!.Id} for {order.Customer}");
+output.WriteLine($"Placed {order.Placed:yyyy-MM-dd}");
+output.WriteLine($"Total is 129.90: {order.Total == 129.90m}");
+```
+
+The code produces the following output:
+
+```text
+Order 1042 for Contoso
+Placed 2026-03-14
+Total is 129.90: True
+```
+
+### Handle XML that doesn't fit the type
+
+```csharp
+string[] documents =
+[
+    "<Order><Id>1042</Id></Order>",
+    "<PurchaseOrder><Id>1042</PurchaseOrder>",
+    "<PurchaseOrder><Id>ten</Id></PurchaseOrder>",
+];
+
+foreach (string xml in documents)
+{
+    try
+    {
+        XmlSerializer.Deserialize<PurchaseOrder>(xml);
+    }
+    catch (XmlException ex)
+    {
+        output.WriteLine(ex.Message);
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+The root element does not match 'PurchaseOrder'. Path: /PurchaseOrder | LineNumber: 1 | BytePositionInLine: 8.
+End tag does not match start tag. Path: /PurchaseOrder/Id | LineNumber: 1 | BytePositionInLine: 40.
+The value is not a valid integer. Path: /PurchaseOrder/Id | LineNumber: 1 | BytePositionInLine: 28.
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/07_DeserializeFromXml.cs)
+
+## Best Practices
+
+- **Reuse the options.** Keep one `XmlSerializerOptions` instance in a `static readonly` field and pass it to every call. The type metadata is cached on the instance. See [Configure XmlSerializerOptions](/xmlessentials/guides/configure-options).
+- **Write UTF-8 when the destination is bytes.** Use `SerializeToUtf8Bytes` or the `IBufferWriter<byte>` and `Stream` overloads instead of creating a `string` and encoding it. Read UTF-8 with the `ReadOnlySpan<byte>` and `Stream` overloads for the same reason.
+- **A value held as `object` is written as the type it has.** `Serialize<object>(value)` and `Serialize(value, value.GetType(), options)` write the same document. Reading is different: `Deserialize<object>` returns an `XmlElement`, because a document doesn't record the type. Name the type when you read.
+- **Use the source-generation overloads for trimmed and Native AOT applications.** The overloads that take an `XmlTypeInfo<TValue>` or an `XmlSerializerContext` don't use reflection. See [Use source generation](/xmlessentials/guides/source-generation).
+- **Tighten the options for XML you don't control.** Start from `XmlSerializerOptions.Strict` and set `MaxDocumentByteCount`. See [Security](/xmlessentials/guides/security).
+- **Dispose what `SerializeToDocument` returns.** The `XmlDocument` holds pooled memory.
+- **Catch `XmlException` around `Deserialize`.** It reports XML that isn't well formed, values that can't be converted, missing required members, and unmapped members when those are disallowed.
+
+## Patterns
+
+`XmlSerializer` works together with the reader, the writer, and the document types, so an object can be one part of a larger XML document.
+
+### Embed serialized objects in a document you write yourself
+
+Open a [`Utf8XmlWriter`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter), write the parts that aren't objects, and let the serializer write each object as one element.
+
+```csharp
+var buffer = new ArrayBufferWriter<byte>();
+var writerOptions = new XmlWriterOptions { Indented = true, NewLine = "\n" };
+
+using (var writer = new Utf8XmlWriter(buffer, writerOptions))
+{
+    writer.WriteStartElement("Customers");
+    XmlSerializer.Serialize(writer, new InvoiceCustomer { Name = "Contoso", Email = "ap@contoso.example" });
+    XmlSerializer.Serialize(writer, new InvoiceCustomer { Name = "Fabrikam", Email = "billing@fabrikam.example" });
+    writer.WriteEndElement();
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Customers>
+  <InvoiceCustomer>
+    <Name>Contoso</Name>
+    <Email>ap@contoso.example</Email>
+  </InvoiceCustomer>
+  <InvoiceCustomer>
+    <Name>Fabrikam</Name>
+    <Email>billing@fabrikam.example</Email>
+  </InvoiceCustomer>
+</Customers>
+```
+
+### Deserialize the interesting elements of a large document
+
+Walk the document with a [`Utf8XmlReader`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) and hand the serializer only the elements you want as objects. The reader is left on the end tag of the element that was read.
+
+```csharp
+ReadOnlySpan<byte> utf8 = """
+    <Customers exported="2026-03-14">
+      <InvoiceCustomer><Name>Contoso</Name><Email>ap@contoso.example</Email></InvoiceCustomer>
+      <InvoiceCustomer><Name>Fabrikam</Name><Email>billing@fabrikam.example</Email></InvoiceCustomer>
+    </Customers>
+    """u8;
+
+var reader = new Utf8XmlReader(utf8);
+while (reader.Read())
+{
+    if (reader.TokenType is XmlTokenType.StartElement && reader.LocalNameEquals("InvoiceCustomer"u8))
+    {
+        InvoiceCustomer? customer = XmlSerializer.Deserialize<InvoiceCustomer>(ref reader);
+        output.WriteLine($"{customer!.Name} <{customer.Email}>");
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+Contoso <ap@contoso.example>
+Fabrikam <billing@fabrikam.example>
+```
+
+### Query first, then map
+
+Parse with [`XmlDocument`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument), find an element, and deserialize that element.
+
+```csharp
+const string xml = """
+    <Response status="ok">
+      <InvoiceCustomer><Name>Contoso</Name><Email>ap@contoso.example</Email></InvoiceCustomer>
+    </Response>
+    """;
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement element = document.RootElement.GetChild("InvoiceCustomer");
+
+InvoiceCustomer? customer = XmlSerializer.Deserialize<InvoiceCustomer>(element);
+
+output.WriteLine($"{customer!.Name} <{customer.Email}>");
+```
+
+The code produces the following output:
+
+```text
+Contoso <ap@contoso.example>
+```
+
+## Considerations
+
+Keep the following in mind when you choose overloads and when you compare `XmlSerializer` with the serializers you already know.
+
+### Reflection and trimming
+
+The overloads that take `XmlSerializerOptions` find members and constructors through reflection. They are annotated with `RequiresUnreferencedCode` and `RequiresDynamicCode`, so the compiler warns when a trimmed or Native AOT application calls them. The overloads that take an `XmlTypeInfo<TValue>` or an `XmlSerializerContext` aren't annotated. Options that have no resolver are given the reflection resolver by the first of these overloads that uses them, when `XmlSerializer.IsReflectionEnabledByDefault` is `true`. When it is `false` and no resolver is set, the reflection overloads throw an `InvalidOperationException`.
+
+### Cost of the first call
+
+The first call for a type with a given options instance builds the type's XML mapping and caches it on the instance. That call costs many times what later calls with the same instance cost, so create the options once and reuse them. See [Benchmarks](/xmlessentials/benchmarks).
+
+### Buffering
+
+- `Serialize` to a `string` or a `byte[]`, and `SerializeAsync` to a `Stream`, build the whole document in a pooled buffer first. `SerializeAsync` then writes it to the stream in one asynchronous write.
+- `Deserialize` and `DeserializeAsync` from a `Stream` or a `PipeReader` read to the end into a pooled buffer before parsing. `MaxDocumentByteCount` limits how much is read.
+- `Deserialize` from an `XmlElement` or an `XmlNode` writes that element to a pooled buffer and reads it back.
+- To process a large document without holding it all in memory, use `SerializeAsyncEnumerable` and `DeserializeAsyncEnumerable`. See [Streaming](/xmlessentials/guides/streaming).
+
+### Differences from System.Text.Json
+
+- `Serialize<object>(value)` writes the value as the type it has, and names the document element after that type. `Deserialize<object>` returns an `XmlElement`.
+- `RespectRequiredConstructorParameters` defaults to `true`, so a document that lacks a value for a constructor parameter with no default value is rejected. See [Immutable types](/xmlessentials/guides/immutable-types).
+- A `null` member is written as an element marked `xsi:nil="true"` by default, because XML has no `null` literal.
+- A collection is written as repeated elements, and a document has exactly one root element.
+
+### Differences from System.Xml.Serialization.XmlSerializer
+
+- There is no instance to construct and cache per type.
+- Only the attributes in `CloudNimble.Text.Xml.Serialization` are read. Attributes from `System.Xml.Serialization`, `IXmlSerializable`, and data contract attributes are ignored.
+- Collections have no wrapper element unless you add `[XmlArray]` or set `DefaultCollectionMapping` to `Wrapped`. `XmlSerializerOptions.Bcl` sets that and the other settings that write what the old serializer writes.
+- Input and output are UTF-8. The library doesn't reference `System.Xml`.
+
+See [Migrate from XmlSerializer](/xmlessentials/guides/migrate/from-xmlserializer).
+
+### Exceptions
+
+`Deserialize` throws an [`XmlException`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException) for XML that isn't well formed and for XML that doesn't satisfy the type. A type whose mapping is not valid, such as one with `[XmlAttribute]` on an object member or with two members that share an element name, throws a `NotSupportedException` or an `InvalidOperationException` the first time the type is used, for serializing as well as deserializing.
+
+### Thread safety
+
+The methods are static and keep no state between calls. See [Thread safety](/xmlessentials/guides/thread-safety).
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsReflectionEnabledByDefault
+
+Gets a value that indicates whether unconfigured [XmlSerializerOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions) instances use the
+reflection-based [DefaultXmlTypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/DefaultXmlTypeInfoResolver).
+
+#### Syntax
+
+```csharp
+public static bool IsReflectionEnabledByDefault { get; internal set; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if options with no [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) fall back to
+[DefaultXmlTypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/DefaultXmlTypeInfoResolver); otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). The default is [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Remarks
+
+The value is [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) unless the
+`CloudNimble.Text.Xml.XmlSerializer.IsReflectionEnabledByDefault` feature switch is [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+Native AOT consumers set that switch to [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) so the trimmer can drop the reflection resolver.
+
+## Methods
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the text representing a single XML document into an instance of the type specified by a generic type parameter, using the specified options.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(string xml, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `string` | The XML text to parse. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *TValue*. |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the text representing a single XML document into a *TValue*, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(string xml, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `string` | The XML text to parse. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* or *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the text representing a single XML document into an instance of the type specified by a generic type parameter, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(string xml, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `string` | The XML text to parse. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *TValue*. |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the text representing a single XML document into an instance of a specified type, using the specified options.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(string xml, System.Type returnType, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `string` | The XML text to parse. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* or *returnType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *returnType*. |
+| `NotSupportedException` | No type metadata is available for *returnType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the text representing a single XML document into an instance of a specified type, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(string xml, System.Type returnType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `string` | The XML text to parse. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml*, *returnType*, or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *returnType*. |
+| `NotSupportedException` | *context* has no type metadata for *returnType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the UTF-16 text span representing a single XML document into an instance of the type specified by a generic type parameter, using the specified options.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(System.ReadOnlySpan<char> xml, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.ReadOnlySpan<char>` | The UTF-16 XML text to parse. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *TValue*. |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the UTF-16 text span representing a single XML document into a *TValue*, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(System.ReadOnlySpan<char> xml, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.ReadOnlySpan<char>` | The UTF-16 XML text to parse. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the UTF-16 text span representing a single XML document into an instance of the type specified by a generic type parameter, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(System.ReadOnlySpan<char> xml, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.ReadOnlySpan<char>` | The UTF-16 XML text to parse. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *TValue*. |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the UTF-16 text span representing a single XML document into an instance of a specified type, using the specified options.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(System.ReadOnlySpan<char> xml, System.Type returnType, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.ReadOnlySpan<char>` | The UTF-16 XML text to parse. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *returnType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *returnType*. |
+| `NotSupportedException` | No type metadata is available for *returnType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the UTF-16 text span representing a single XML document into an instance of a specified type, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(System.ReadOnlySpan<char> xml, System.Type returnType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.ReadOnlySpan<char>` | The UTF-16 XML text to parse. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *returnType* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *returnType*. |
+| `NotSupportedException` | *context* has no type metadata for *returnType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the UTF-8 encoded text representing a single XML document into an instance of the type specified by a generic type parameter, using the specified options.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(System.ReadOnlySpan<byte> xml, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded XML text to parse. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *TValue*. |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the UTF-8 encoded text representing a single XML document into a *TValue*, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(System.ReadOnlySpan<byte> xml, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded XML text to parse. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the UTF-8 encoded text representing a single XML document into an instance of the type specified by a generic type parameter, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(System.ReadOnlySpan<byte> xml, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded XML text to parse. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *TValue*. |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the UTF-8 encoded text representing a single XML document into an instance of a specified type, using the specified options.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(System.ReadOnlySpan<byte> xml, System.Type returnType, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded XML text to parse. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *returnType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *returnType*. |
+| `NotSupportedException` | No type metadata is available for *returnType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the UTF-8 encoded text representing a single XML document into an instance of a specified type, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(System.ReadOnlySpan<byte> xml, System.Type returnType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded XML text to parse. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *returnType* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *returnType*. |
+| `NotSupportedException` | *context* has no type metadata for *returnType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the UTF-8 encoded byte sequence representing a single XML document into an instance of the type specified by a generic type parameter, using the specified options.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(System.Buffers.ReadOnlySequence<byte> xml, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.Buffers.ReadOnlySequence<byte>` | The sequence of UTF-8 encoded XML text to parse. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *TValue*. |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the UTF-8 encoded byte sequence representing a single XML document into a *TValue*, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(System.Buffers.ReadOnlySequence<byte> xml, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.Buffers.ReadOnlySequence<byte>` | The sequence of UTF-8 encoded XML text to parse. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the UTF-8 encoded byte sequence representing a single XML document into an instance of the type specified by a generic type parameter, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(System.Buffers.ReadOnlySequence<byte> xml, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.Buffers.ReadOnlySequence<byte>` | The sequence of UTF-8 encoded XML text to parse. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *TValue*. |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the UTF-8 encoded byte sequence representing a single XML document into an instance of a specified type, using the specified options.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(System.Buffers.ReadOnlySequence<byte> xml, System.Type returnType, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.Buffers.ReadOnlySequence<byte>` | The sequence of UTF-8 encoded XML text to parse. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *returnType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *returnType*. |
+| `NotSupportedException` | No type metadata is available for *returnType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Parses the UTF-8 encoded byte sequence representing a single XML document into an instance of a specified type, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(System.Buffers.ReadOnlySequence<byte> xml, System.Type returnType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.Buffers.ReadOnlySequence<byte>` | The sequence of UTF-8 encoded XML text to parse. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *returnType* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not well formed.
+-or-
+*xml* is not valid for *returnType*. |
+| `NotSupportedException` | *context* has no type metadata for *returnType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Reads one XML element from the provided reader into an instance of the type specified by a generic type parameter, using the specified options.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(ref CloudNimble.Text.Xml.Utf8XmlReader reader, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `reader` | `CloudNimble.Text.Xml.Utf8XmlReader` | The reader to read from, passed by reference. It must be positioned on or before the start tag of the value, and it is left on the end of that element. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The XML is not well formed.
+-or-
+The XML is not valid for *TValue*. |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Reads one XML element from the provided reader into a *TValue*, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(ref CloudNimble.Text.Xml.Utf8XmlReader reader, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `reader` | `CloudNimble.Text.Xml.Utf8XmlReader` | The reader to read from, passed by reference. It must be positioned on or before the start tag of the value, and it is left on the end of that element. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The XML is not well formed.
+-or-
+The XML is not valid for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Reads one XML element from the provided reader into an instance of the type specified by a generic type parameter, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(ref CloudNimble.Text.Xml.Utf8XmlReader reader, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `reader` | `CloudNimble.Text.Xml.Utf8XmlReader` | The reader to read from, passed by reference. It must be positioned on or before the start tag of the value, and it is left on the end of that element. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The XML is not well formed.
+-or-
+The XML is not valid for *TValue*. |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Reads one XML element from the provided reader into an instance of a specified type, using the specified options.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(ref CloudNimble.Text.Xml.Utf8XmlReader reader, System.Type returnType, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `reader` | `CloudNimble.Text.Xml.Utf8XmlReader` | The reader to read from, passed by reference. It must be positioned on or before the start tag of the value, and it is left on the end of that element. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *returnType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The XML is not well formed.
+-or-
+The XML is not valid for *returnType*. |
+| `NotSupportedException` | No type metadata is available for *returnType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Reads one XML element from the provided reader into an instance of a specified type, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(ref CloudNimble.Text.Xml.Utf8XmlReader reader, System.Type returnType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `reader` | `CloudNimble.Text.Xml.Utf8XmlReader` | The reader to read from, passed by reference. It must be positioned on or before the start tag of the value, and it is left on the end of that element. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *returnType* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The XML is not well formed.
+-or-
+The XML is not valid for *returnType*. |
+| `NotSupportedException` | *context* has no type metadata for *returnType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Reads the UTF-8 encoded text representing a single XML document from a stream into an instance of the type specified by a generic type parameter, using the specified options. The stream is read to completion.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(System.IO.Stream xml, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Stream` | The stream of UTF-8 encoded XML text to parse. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The XML is not well formed.
+-or-
+The XML is not valid for *TValue*.
+-or-
+The stream holds more bytes than [XmlSerializerOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#maxdocumentbytecount) allows. |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Reads the UTF-8 encoded text representing a single XML document from a stream into a *TValue*, using the specified type metadata. The stream is read to completion.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(System.IO.Stream xml, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Stream` | The stream of UTF-8 encoded XML text to parse. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* or *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The XML is not well formed.
+-or-
+The XML is not valid for *TValue*.
+-or-
+The stream holds more bytes than [XmlSerializerOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#maxdocumentbytecount) allows. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Reads the UTF-8 encoded text representing a single XML document from a stream into an instance of the type specified by a generic type parameter, using type metadata from the specified serializer context. The stream is read to completion.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(System.IO.Stream xml, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Stream` | The stream of UTF-8 encoded XML text to parse. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The XML is not well formed.
+-or-
+The XML is not valid for *TValue*.
+-or-
+The stream holds more bytes than [XmlSerializerOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#maxdocumentbytecount) allows. |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Reads the UTF-8 encoded text representing a single XML document from a stream into an instance of a specified type, using the specified options. The stream is read to completion.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(System.IO.Stream xml, System.Type returnType, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Stream` | The stream of UTF-8 encoded XML text to parse. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* or *returnType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The XML is not well formed.
+-or-
+The XML is not valid for *returnType*.
+-or-
+The stream holds more bytes than [XmlSerializerOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#maxdocumentbytecount) allows. |
+| `NotSupportedException` | No type metadata is available for *returnType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Reads the UTF-8 encoded text representing a single XML document from a stream into an instance of a specified type, using type metadata from the specified serializer context. The stream is read to completion.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(System.IO.Stream xml, System.Type returnType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Stream` | The stream of UTF-8 encoded XML text to parse. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml*, *returnType*, or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The XML is not well formed.
+-or-
+The XML is not valid for *returnType*.
+-or-
+The stream holds more bytes than [XmlSerializerOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#maxdocumentbytecount) allows. |
+| `NotSupportedException` | *context* has no type metadata for *returnType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Converts the root element of an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) into an instance of the type specified by a generic type parameter, using the specified options.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(CloudNimble.Text.Xml.XmlDocument document, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `document` | `CloudNimble.Text.Xml.XmlDocument` | The [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) to convert. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *document* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The root element of *document* is not valid for *TValue*. |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Converts the root element of an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) into a *TValue*, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(CloudNimble.Text.Xml.XmlDocument document, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `document` | `CloudNimble.Text.Xml.XmlDocument` | The [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) to convert. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *document* or *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The root element of *document* is not valid for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Converts the root element of an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) into an instance of the type specified by a generic type parameter, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(CloudNimble.Text.Xml.XmlDocument document, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `document` | `CloudNimble.Text.Xml.XmlDocument` | The [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) to convert. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *document* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The root element of *document* is not valid for *TValue*. |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Converts the root element of an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) into an instance of a specified type, using the specified options.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(CloudNimble.Text.Xml.XmlDocument document, System.Type returnType, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `document` | `CloudNimble.Text.Xml.XmlDocument` | The [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) to convert. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *document* or *returnType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The root element of *document* is not valid for *returnType*. |
+| `NotSupportedException` | No type metadata is available for *returnType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Converts the root element of an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) into an instance of a specified type, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(CloudNimble.Text.Xml.XmlDocument document, System.Type returnType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `document` | `CloudNimble.Text.Xml.XmlDocument` | The [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) to convert. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *document*, *returnType*, or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The root element of *document* is not valid for *returnType*. |
+| `NotSupportedException` | *context* has no type metadata for *returnType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Converts the [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) representing a single XML value into an instance of the type specified by a generic type parameter, using the specified options.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(CloudNimble.Text.Xml.XmlElement element, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `CloudNimble.Text.Xml.XmlElement` | The [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) to convert. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | *element* is not valid for *TValue*. |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Converts the [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) representing a single XML value into a *TValue*, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(CloudNimble.Text.Xml.XmlElement element, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `CloudNimble.Text.Xml.XmlElement` | The [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) to convert. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *element* is not valid for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Converts the [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) representing a single XML value into an instance of the type specified by a generic type parameter, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(CloudNimble.Text.Xml.XmlElement element, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `CloudNimble.Text.Xml.XmlElement` | The [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) to convert. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *element* is not valid for *TValue*. |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Converts the [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) representing a single XML value into an instance of a specified type, using the specified options.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(CloudNimble.Text.Xml.XmlElement element, System.Type returnType, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `CloudNimble.Text.Xml.XmlElement` | The [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) to convert. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *returnType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *element* is not valid for *returnType*. |
+| `NotSupportedException` | No type metadata is available for *returnType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Converts the [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) representing a single XML value into an instance of a specified type, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(CloudNimble.Text.Xml.XmlElement element, System.Type returnType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `CloudNimble.Text.Xml.XmlElement` | The [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) to convert. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *returnType* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *element* is not valid for *returnType*. |
+| `NotSupportedException` | *context* has no type metadata for *returnType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Converts the [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) representing a single XML value into an instance of the type specified by a generic type parameter, using the specified options.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(CloudNimble.Text.Xml.Nodes.XmlNode node, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `node` | `CloudNimble.Text.Xml.Nodes.XmlNode` | The [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) to convert. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *node* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *node* is not valid for *TValue*. |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Converts the [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) representing a single XML value into a *TValue*, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(CloudNimble.Text.Xml.Nodes.XmlNode node, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `node` | `CloudNimble.Text.Xml.Nodes.XmlNode` | The [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) to convert. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *node* or *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *node* is not valid for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Converts the [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) representing a single XML value into an instance of the type specified by a generic type parameter, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static TValue Deserialize<TValue>(CloudNimble.Text.Xml.Nodes.XmlNode node, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `node` | `CloudNimble.Text.Xml.Nodes.XmlNode` | The [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) to convert. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `TValue?`
+A *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *node* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *node* is not valid for *TValue*. |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Converts the [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) representing a single XML value into an instance of a specified type, using the specified options.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(CloudNimble.Text.Xml.Nodes.XmlNode node, System.Type returnType, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `node` | `CloudNimble.Text.Xml.Nodes.XmlNode` | The [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) to convert. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *node* or *returnType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *node* is not valid for *returnType*. |
+| `NotSupportedException` | No type metadata is available for *returnType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Deserialize
+
+Converts the [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) representing a single XML value into an instance of a specified type, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static object Deserialize(CloudNimble.Text.Xml.Nodes.XmlNode node, System.Type returnType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `node` | `CloudNimble.Text.Xml.Nodes.XmlNode` | The [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) to convert. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `object?`
+A *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *node*, *returnType*, or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *node* is not valid for *returnType*. |
+| `NotSupportedException` | *context* has no type metadata for *returnType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeserializeAsync
+
+Asynchronously reads the UTF-8 encoded text representing a single XML document from a stream into an instance of the type specified by a generic type parameter, using the specified options. The stream is read to completion.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.ValueTask<TValue> DeserializeAsync<TValue>(System.IO.Stream xml, CloudNimble.Text.Xml.XmlSerializerOptions options = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Stream` | The stream of UTF-8 encoded XML text to parse. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the read operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.ValueTask<TValue?>`
+A task object that, when awaited, produces a *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is stored into the returned task. |
+| `XmlException` | The XML is not well formed.
+-or-
+The XML is not valid for *TValue*.
+-or-
+The stream holds more bytes than [XmlSerializerOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#maxdocumentbytecount) allows.
+This exception is stored into the returned task. |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeserializeAsync
+
+Asynchronously reads the UTF-8 encoded text representing a single XML document from a stream into a *TValue*, using the specified type metadata. The stream is read to completion.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.ValueTask<TValue> DeserializeAsync<TValue>(System.IO.Stream xml, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Stream` | The stream of UTF-8 encoded XML text to parse. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the read operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.ValueTask<TValue?>`
+A task object that, when awaited, produces a *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+-or-
+*xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is stored into the returned task. |
+| `XmlException` | The XML is not well formed.
+-or-
+The XML is not valid for *TValue*.
+-or-
+The stream holds more bytes than [XmlSerializerOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#maxdocumentbytecount) allows.
+This exception is stored into the returned task. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeserializeAsync
+
+Asynchronously reads the UTF-8 encoded text representing a single XML document from a stream into an instance of the type specified by a generic type parameter, using type metadata from the specified serializer context. The stream is read to completion.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.ValueTask<TValue> DeserializeAsync<TValue>(System.IO.Stream xml, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Stream` | The stream of UTF-8 encoded XML text to parse. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the read operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.ValueTask<TValue?>`
+A task object that, when awaited, produces a *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+-or-
+*xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is stored into the returned task. |
+| `XmlException` | The XML is not well formed.
+-or-
+The XML is not valid for *TValue*.
+-or-
+The stream holds more bytes than [XmlSerializerOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#maxdocumentbytecount) allows.
+This exception is stored into the returned task. |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeserializeAsync
+
+Asynchronously reads the UTF-8 encoded text representing a single XML document from a stream into an instance of a specified type, using the specified options. The stream is read to completion.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.ValueTask<object> DeserializeAsync(System.IO.Stream xml, System.Type returnType, CloudNimble.Text.Xml.XmlSerializerOptions options = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Stream` | The stream of UTF-8 encoded XML text to parse. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the read operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.ValueTask<object?>`
+A task object that, when awaited, produces a *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *returnType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+-or-
+*xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is stored into the returned task. |
+| `XmlException` | The XML is not well formed.
+-or-
+The XML is not valid for *returnType*.
+-or-
+The stream holds more bytes than [XmlSerializerOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#maxdocumentbytecount) allows.
+This exception is stored into the returned task. |
+| `NotSupportedException` | No type metadata is available for *returnType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeserializeAsync
+
+Asynchronously reads the UTF-8 encoded text representing a single XML document from a stream into an instance of a specified type, using type metadata from the specified serializer context. The stream is read to completion.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.ValueTask<object> DeserializeAsync(System.IO.Stream xml, System.Type returnType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Stream` | The stream of UTF-8 encoded XML text to parse. |
+| `returnType` | `System.Type` | The type of the object to convert to and return. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the read operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.ValueTask<object?>`
+A task object that, when awaited, produces a *returnType* representation of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *returnType* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+-or-
+*xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is stored into the returned task. |
+| `XmlException` | The XML is not well formed.
+-or-
+The XML is not valid for *returnType*.
+-or-
+The stream holds more bytes than [XmlSerializerOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#maxdocumentbytecount) allows.
+This exception is stored into the returned task. |
+| `NotSupportedException` | *context* has no type metadata for *returnType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeserializeAsync
+
+Asynchronously reads the UTF-8 encoded text representing a single XML document from a pipe into an instance of the type specified by a generic type parameter, using the specified options. The pipe is read to completion.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.ValueTask<TValue> DeserializeAsync<TValue>(System.IO.Pipelines.PipeReader xml, CloudNimble.Text.Xml.XmlSerializerOptions options = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Pipelines.PipeReader` | The pipe reader of UTF-8 encoded XML text to parse. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the read operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.ValueTask<TValue?>`
+A task object that, when awaited, produces a *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The XML is not well formed.
+-or-
+The XML is not valid for *TValue*.
+-or-
+The pipe holds more bytes than [XmlSerializerOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#maxdocumentbytecount) allows.
+This exception is stored into the returned task. |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeserializeAsync
+
+Asynchronously reads the UTF-8 encoded text representing a single XML document from a pipe into a *TValue*, using the specified type metadata. The pipe is read to completion.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.ValueTask<TValue> DeserializeAsync<TValue>(System.IO.Pipelines.PipeReader xml, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Pipelines.PipeReader` | The pipe reader of UTF-8 encoded XML text to parse. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the read operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.ValueTask<TValue?>`
+A task object that, when awaited, produces a *TValue* representation of the XML value.
+
+#### Type Parameters
+
+- `TValue` - The target type of the XML value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* or *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The XML is not well formed.
+-or-
+The XML is not valid for *TValue*.
+-or-
+The pipe holds more bytes than [XmlSerializerOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#maxdocumentbytecount) allows.
+This exception is stored into the returned task. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeserializeAsyncEnumerable
+
+Wraps the UTF-8 encoded text in a stream into an [IAsyncEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) that deserializes each child of the document element in a streaming manner, using the specified options.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IAsyncEnumerable<TValue> DeserializeAsyncEnumerable<TValue>(System.IO.Stream xml, CloudNimble.Text.Xml.XmlSerializerOptions options = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Stream` | The stream of UTF-8 encoded XML text to parse. It is read as values are requested. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the read operation. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IAsyncEnumerable<TValue?>`
+An [IAsyncEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) representation of the children of the document element.
+
+#### Type Parameters
+
+- `TValue` - The element type to deserialize asynchronously.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is thrown when enumeration starts. |
+| `XmlException` | The XML is not well formed.
+-or-
+A value is not valid for *TValue*.
+This exception is thrown during enumeration, when the invalid part is reached. |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeserializeAsyncEnumerable
+
+Wraps the UTF-8 encoded text in a stream into an [IAsyncEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) that deserializes either a sequence of documents or the children of one document element in a streaming manner, using the specified options.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IAsyncEnumerable<TValue> DeserializeAsyncEnumerable<TValue>(System.IO.Stream xml, bool topLevelValues, CloudNimble.Text.Xml.XmlSerializerOptions options = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Stream` | The stream of UTF-8 encoded XML text to parse. It is read as values are requested. |
+| `topLevelValues` | `bool` | [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to read each document in the stream as a value; [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to read each child of the document element as a value. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the read operation. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IAsyncEnumerable<TValue?>`
+An [IAsyncEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) representation of the values in the stream.
+
+#### Type Parameters
+
+- `TValue` - The element type to deserialize asynchronously.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is thrown when enumeration starts. |
+| `XmlException` | The XML is not well formed.
+-or-
+A value is not valid for *TValue*.
+This exception is thrown during enumeration, when the invalid part is reached. |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeserializeAsyncEnumerable
+
+Wraps the UTF-8 encoded text in a stream into an [IAsyncEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) that deserializes each child of the document element in a streaming manner, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IAsyncEnumerable<TValue> DeserializeAsyncEnumerable<TValue>(System.IO.Stream xml, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Stream` | The stream of UTF-8 encoded XML text to parse. It is read as values are requested. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the element type to convert. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the read operation. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IAsyncEnumerable<TValue?>`
+An [IAsyncEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) representation of the children of the document element.
+
+#### Type Parameters
+
+- `TValue` - The element type to deserialize asynchronously.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* or *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is thrown when enumeration starts. |
+| `XmlException` | The XML is not well formed.
+-or-
+A value is not valid for *TValue*.
+This exception is thrown during enumeration, when the invalid part is reached. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeserializeAsyncEnumerable
+
+Wraps the UTF-8 encoded text in a stream into an [IAsyncEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) that deserializes either a sequence of documents or the children of one document element in a streaming manner, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IAsyncEnumerable<TValue> DeserializeAsyncEnumerable<TValue>(System.IO.Stream xml, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo, bool topLevelValues, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Stream` | The stream of UTF-8 encoded XML text to parse. It is read as values are requested. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the element type to convert. |
+| `topLevelValues` | `bool` | [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to read each document in the stream as a value; [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to read each child of the document element as a value. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the read operation. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IAsyncEnumerable<TValue?>`
+An [IAsyncEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) representation of the values in the stream.
+
+#### Type Parameters
+
+- `TValue` - The element type to deserialize asynchronously.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* or *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is thrown when enumeration starts. |
+| `XmlException` | The XML is not well formed.
+-or-
+A value is not valid for *TValue*.
+This exception is thrown during enumeration, when the invalid part is reached. |
+
+#### Remarks
+
+Values are returned as the stream delivers them. Each read from the stream is followed by every
+value that is now complete, so the buffer holds one read plus at most one unfinished value, not the
+whole stream. A malformed document fails when the bad part is reached; values before it have
+already been returned.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeserializeAsyncEnumerable
+
+Wraps the UTF-8 encoded text in a pipe into an [IAsyncEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) that deserializes either a sequence of documents or the children of one document element in a streaming manner, using the specified options.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IAsyncEnumerable<TValue> DeserializeAsyncEnumerable<TValue>(System.IO.Pipelines.PipeReader xml, bool topLevelValues, CloudNimble.Text.Xml.XmlSerializerOptions options = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Pipelines.PipeReader` | The pipe reader of UTF-8 encoded XML text to parse. It is read as values are requested. |
+| `topLevelValues` | `bool` | [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to read each document in the pipe as a value; [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to read each child of the document element as a value. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control deserialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the read operation. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IAsyncEnumerable<TValue?>`
+An [IAsyncEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) representation of the values in the pipe.
+
+#### Type Parameters
+
+- `TValue` - The element type to deserialize asynchronously.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The XML is not well formed.
+-or-
+A value is not valid for *TValue*.
+This exception is thrown during enumeration, when the invalid part is reached. |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeserializeAsyncEnumerable
+
+Wraps the UTF-8 encoded text in a pipe into an [IAsyncEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) that deserializes each child of the document element in a streaming manner, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IAsyncEnumerable<TValue> DeserializeAsyncEnumerable<TValue>(System.IO.Pipelines.PipeReader xml, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Pipelines.PipeReader` | The pipe reader of UTF-8 encoded XML text to parse. It is read as values are requested. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the element type to convert. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the read operation. |
+
+#### Returns
+
+Type: `System.Collections.Generic.IAsyncEnumerable<TValue?>`
+An [IAsyncEnumerable`1](https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1) representation of the children of the document element.
+
+#### Type Parameters
+
+- `TValue` - The element type to deserialize asynchronously.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+-or-
+*xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is thrown when enumeration starts. |
+| `XmlException` | The XML is not well formed.
+-or-
+A value is not valid for *TValue*.
+This exception is thrown during enumeration, when the invalid part is reached. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Converts the value of a type specified by a generic type parameter into an XML string, using the specified options.
+
+#### Syntax
+
+```csharp
+public static string Serialize<TValue>(TValue value, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `TValue` | The value to convert. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `string`
+An XML string representation of the value.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Converts the provided value into an XML string, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static string Serialize<TValue>(TValue value, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `TValue` | The value to convert. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+
+#### Returns
+
+Type: `string`
+An XML string representation of the value.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Converts the value of a type specified by a generic type parameter into an XML string, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static string Serialize<TValue>(TValue value, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `TValue` | The value to convert. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `string`
+An XML string representation of the value.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Converts the value of a specified type into an XML string, using the specified options.
+
+#### Syntax
+
+```csharp
+public static string Serialize(object value, System.Type inputType, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `object?` | The value to convert. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `string`
+An XML string representation of the value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *inputType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | No type metadata is available for *inputType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Converts the value of a specified type into an XML string, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static string Serialize(object value, System.Type inputType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `object?` | The value to convert. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `string`
+An XML string representation of the value.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *inputType* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | *context* has no type metadata for *inputType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Writes the XML representation of a type specified by a generic type parameter to the provided writer as one element, using the specified options.
+
+#### Syntax
+
+```csharp
+public static void Serialize<TValue>(CloudNimble.Text.Xml.Utf8XmlWriter writer, TValue value, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The XML writer to write to. It is not flushed. |
+| `value` | `TValue` | The value to convert and write. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *writer* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Writes the XML representation of the provided value to the provided writer as one element, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static void Serialize<TValue>(CloudNimble.Text.Xml.Utf8XmlWriter writer, TValue value, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The XML writer to write to. It is not flushed. |
+| `value` | `TValue` | The value to convert and write. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *writer* or *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Writes the XML representation of a type specified by a generic type parameter to the provided writer as one element, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static void Serialize<TValue>(CloudNimble.Text.Xml.Utf8XmlWriter writer, TValue value, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The XML writer to write to. It is not flushed. |
+| `value` | `TValue` | The value to convert and write. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *writer* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Writes the XML representation of the specified type to the provided writer as one element, using the specified options.
+
+#### Syntax
+
+```csharp
+public static void Serialize(CloudNimble.Text.Xml.Utf8XmlWriter writer, object value, System.Type inputType, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The XML writer to write to. It is not flushed. |
+| `value` | `object?` | The value to convert and write. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *writer* or *inputType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | No type metadata is available for *inputType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Writes the XML representation of the specified type to the provided writer as one element, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static void Serialize(CloudNimble.Text.Xml.Utf8XmlWriter writer, object value, System.Type inputType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The XML writer to write to. It is not flushed. |
+| `value` | `object?` | The value to convert and write. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *writer*, *inputType*, or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | *context* has no type metadata for *inputType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Converts the value of a type specified by a generic type parameter to UTF-8 encoded XML text and writes it to a stream, using the specified options.
+
+#### Syntax
+
+```csharp
+public static void Serialize<TValue>(System.IO.Stream utf8Xml, TValue value, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.IO.Stream` | The UTF-8 stream to write to. |
+| `value` | `TValue` | The value to convert. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *utf8Xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Converts the provided value to UTF-8 encoded XML text and writes it to a stream, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static void Serialize<TValue>(System.IO.Stream utf8Xml, TValue value, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.IO.Stream` | The UTF-8 stream to write to. |
+| `value` | `TValue` | The value to convert. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *utf8Xml* or *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Converts the value of a type specified by a generic type parameter to UTF-8 encoded XML text and writes it to a stream, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static void Serialize<TValue>(System.IO.Stream utf8Xml, TValue value, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.IO.Stream` | The UTF-8 stream to write to. |
+| `value` | `TValue` | The value to convert. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *utf8Xml* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Converts the value of a specified type to UTF-8 encoded XML text and writes it to a stream, using the specified options.
+
+#### Syntax
+
+```csharp
+public static void Serialize(System.IO.Stream utf8Xml, object value, System.Type inputType, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.IO.Stream` | The UTF-8 stream to write to. |
+| `value` | `object?` | The value to convert. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *utf8Xml* or *inputType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | No type metadata is available for *inputType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Converts the value of a specified type to UTF-8 encoded XML text and writes it to a stream, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static void Serialize(System.IO.Stream utf8Xml, object value, System.Type inputType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.IO.Stream` | The UTF-8 stream to write to. |
+| `value` | `object?` | The value to convert. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *utf8Xml*, *inputType*, or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | *context* has no type metadata for *inputType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Converts the value of a type specified by a generic type parameter to UTF-8 encoded XML text and writes it to a buffer writer, using the specified options.
+
+#### Syntax
+
+```csharp
+public static void Serialize<TValue>(System.Buffers.IBufferWriter<byte> bufferWriter, TValue value, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `bufferWriter` | `System.Buffers.IBufferWriter<byte>` | The buffer writer to write the UTF-8 encoded XML text to. |
+| `value` | `TValue` | The value to convert. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *bufferWriter* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Converts the provided value to UTF-8 encoded XML text and writes it to a buffer writer, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static void Serialize<TValue>(System.Buffers.IBufferWriter<byte> bufferWriter, TValue value, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `bufferWriter` | `System.Buffers.IBufferWriter<byte>` | The buffer writer to write the UTF-8 encoded XML text to. |
+| `value` | `TValue` | The value to convert. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *bufferWriter* or *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Converts the value of a type specified by a generic type parameter to UTF-8 encoded XML text and writes it to a buffer writer, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static void Serialize<TValue>(System.Buffers.IBufferWriter<byte> bufferWriter, TValue value, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `bufferWriter` | `System.Buffers.IBufferWriter<byte>` | The buffer writer to write the UTF-8 encoded XML text to. |
+| `value` | `TValue` | The value to convert. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *bufferWriter* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Converts the value of a specified type to UTF-8 encoded XML text and writes it to a buffer writer, using the specified options.
+
+#### Syntax
+
+```csharp
+public static void Serialize(System.Buffers.IBufferWriter<byte> bufferWriter, object value, System.Type inputType, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `bufferWriter` | `System.Buffers.IBufferWriter<byte>` | The buffer writer to write the UTF-8 encoded XML text to. |
+| `value` | `object?` | The value to convert. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *bufferWriter* or *inputType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | No type metadata is available for *inputType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Serialize
+
+Converts the value of a specified type to UTF-8 encoded XML text and writes it to a buffer writer, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static void Serialize(System.Buffers.IBufferWriter<byte> bufferWriter, object value, System.Type inputType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `bufferWriter` | `System.Buffers.IBufferWriter<byte>` | The buffer writer to write the UTF-8 encoded XML text to. |
+| `value` | `object?` | The value to convert. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *bufferWriter*, *inputType*, or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | *context* has no type metadata for *inputType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeAsync
+
+Asynchronously converts a value of a type specified by a generic type parameter to UTF-8 encoded XML text and writes it to a stream, using the specified options.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.Task SerializeAsync<TValue>(System.IO.Stream utf8Xml, TValue value, CloudNimble.Text.Xml.XmlSerializerOptions options = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.IO.Stream` | The UTF-8 stream to write to. |
+| `value` | `TValue` | The value to convert. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the write operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that represents the asynchronous write operation.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *utf8Xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is stored into the returned task. |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeAsync
+
+Asynchronously converts the provided value to UTF-8 encoded XML text and writes it to a stream, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.Task SerializeAsync<TValue>(System.IO.Stream utf8Xml, TValue value, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.IO.Stream` | The UTF-8 stream to write to. |
+| `value` | `TValue` | The value to convert. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the write operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that represents the asynchronous write operation.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+-or-
+*utf8Xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is stored into the returned task. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeAsync
+
+Asynchronously converts a value of a type specified by a generic type parameter to UTF-8 encoded XML text and writes it to a stream, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.Task SerializeAsync<TValue>(System.IO.Stream utf8Xml, TValue value, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.IO.Stream` | The UTF-8 stream to write to. |
+| `value` | `TValue` | The value to convert. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the write operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that represents the asynchronous write operation.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+-or-
+*utf8Xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is stored into the returned task. |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeAsync
+
+Asynchronously converts the value of a specified type to UTF-8 encoded XML text and writes it to a stream, using the specified options.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.Task SerializeAsync(System.IO.Stream utf8Xml, object value, System.Type inputType, CloudNimble.Text.Xml.XmlSerializerOptions options = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.IO.Stream` | The UTF-8 stream to write to. |
+| `value` | `object?` | The value to convert. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the write operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that represents the asynchronous write operation.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *inputType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+-or-
+*utf8Xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is stored into the returned task. |
+| `NotSupportedException` | No type metadata is available for *inputType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeAsync
+
+Asynchronously converts the value of a specified type to UTF-8 encoded XML text and writes it to a stream, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.Task SerializeAsync(System.IO.Stream utf8Xml, object value, System.Type inputType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.IO.Stream` | The UTF-8 stream to write to. |
+| `value` | `object?` | The value to convert. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the write operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that represents the asynchronous write operation.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *inputType* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+-or-
+*utf8Xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is stored into the returned task. |
+| `NotSupportedException` | *context* has no type metadata for *inputType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeAsync
+
+Asynchronously converts a value of a type specified by a generic type parameter to UTF-8 encoded XML text, writes it to a pipe, and flushes the pipe, using the specified options.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.Task SerializeAsync<TValue>(System.IO.Pipelines.PipeWriter utf8Xml, TValue value, CloudNimble.Text.Xml.XmlSerializerOptions options = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.IO.Pipelines.PipeWriter` | The UTF-8 pipe writer to write to. |
+| `value` | `TValue` | The value to convert. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the flush operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that represents the asynchronous write operation. It completes when the pipe has been flushed.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *utf8Xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is stored into the returned task. |
+| `NotSupportedException` | No type metadata is available for *TValue*. This exception is stored into the returned task. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. This exception is stored into the returned task. |
+
+#### Remarks
+
+To write to a pipe without flushing it, pass the [PipeWriter](https://learn.microsoft.com/dotnet/api/system.io.pipelines.pipewriter) to the
+[IBufferWriter`1](https://learn.microsoft.com/dotnet/api/system.buffers.ibufferwriter-1) overload of `Serialize`.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeAsyncEnumerable
+
+Asynchronously converts a sequence of values to UTF-8 encoded XML text and writes them to a stream as the children of one `ArrayOf*` document element, using the specified options.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.Task SerializeAsyncEnumerable<TValue>(System.IO.Stream utf8Xml, System.Collections.Generic.IAsyncEnumerable<TValue> values, CloudNimble.Text.Xml.XmlSerializerOptions options = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.IO.Stream` | The UTF-8 stream to write to. |
+| `values` | `System.Collections.Generic.IAsyncEnumerable<TValue>` | The values to convert, written as they arrive. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the write operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that represents the asynchronous write operation. It completes when the document has been written.
+
+#### Type Parameters
+
+- `TValue` - The type of the values to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *utf8Xml* or *values* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is stored into the returned task. |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeAsyncEnumerable
+
+Asynchronously converts a sequence of values to UTF-8 encoded XML text and writes them to a stream, either as separate documents or as the children of one document element, using the specified options.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.Task SerializeAsyncEnumerable<TValue>(System.IO.Stream utf8Xml, System.Collections.Generic.IAsyncEnumerable<TValue> values, bool topLevelValues, CloudNimble.Text.Xml.XmlSerializerOptions options = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.IO.Stream` | The UTF-8 stream to write to. |
+| `values` | `System.Collections.Generic.IAsyncEnumerable<TValue>` | The values to convert, written as they arrive. |
+| `topLevelValues` | `bool` | [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to write each value as its own document; [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to write the values as the children of one `ArrayOf*` document element. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the write operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that represents the asynchronous write operation. It completes when every value has been written.
+
+#### Type Parameters
+
+- `TValue` - The type of the values to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *utf8Xml* or *values* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is stored into the returned task. |
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeAsyncEnumerable
+
+Asynchronously converts a sequence of values to UTF-8 encoded XML text and writes them to a stream, either as separate documents or as the children of one document element, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.Task SerializeAsyncEnumerable<TValue>(System.IO.Stream utf8Xml, System.Collections.Generic.IAsyncEnumerable<TValue> values, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo, bool topLevelValues = false, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.IO.Stream` | The UTF-8 stream to write to. |
+| `values` | `System.Collections.Generic.IAsyncEnumerable<TValue>` | The values to convert, written as they arrive. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+| `topLevelValues` | `bool` | [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to write each value as its own document; [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to write the values as the children of one `ArrayOf*` document element. The default is [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the write operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that represents the asynchronous write operation. It completes when every value has been written.
+
+#### Type Parameters
+
+- `TValue` - The type of the values to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *utf8Xml*, *values*, or *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is stored into the returned task. |
+
+#### Remarks
+
+The `ArrayOf*` document element is named `ArrayOf` followed by the local name of the root
+element of *TValue*, and it is in the same namespace as that element.
+When the options have a [XmlSerializerOptions.ReferenceHandler](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#referencehandler), the values of one document share one
+set of references, and each top-level value has its own.
+The stream is written to between values, never while one value is half written, unless a single
+value is larger than the writer's buffer. If a value fails to serialize, what was buffered is
+dropped; values already written to the stream stay there.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeAsyncEnumerable
+
+Asynchronously converts a sequence of values to UTF-8 encoded XML text, writes them to a pipe, either as separate documents or as the children of one document element, and flushes the pipe, using the specified options.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.Task SerializeAsyncEnumerable<TValue>(System.IO.Pipelines.PipeWriter utf8Xml, System.Collections.Generic.IAsyncEnumerable<TValue> values, bool topLevelValues, CloudNimble.Text.Xml.XmlSerializerOptions options = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.IO.Pipelines.PipeWriter` | The UTF-8 pipe writer to write to. |
+| `values` | `System.Collections.Generic.IAsyncEnumerable<TValue>` | The values to convert, written as they arrive. |
+| `topLevelValues` | `bool` | [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to write each value as its own document; [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to write the values as the children of one `ArrayOf*` document element. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+| `cancellationToken` | `System.Threading.CancellationToken` | A token that can be used to cancel the write operation. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task`
+A task that represents the asynchronous write operation. It completes when the pipe has been flushed.
+
+#### Type Parameters
+
+- `TValue` - The type of the values to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *utf8Xml* or *values* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). This exception is stored into the returned task. |
+| `NotSupportedException` | No type metadata is available for *TValue*. This exception is stored into the returned task. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. This exception is stored into the returned task. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToDocument
+
+Converts the value of a type specified by a generic type parameter into an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument), using the specified options.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlDocument SerializeToDocument<TValue>(TValue value, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `TValue` | The value to convert. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlDocument`
+An [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) representation of the value. The caller is responsible for disposing it.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToDocument
+
+Converts the provided value into an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument), using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlDocument SerializeToDocument<TValue>(TValue value, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `TValue` | The value to convert. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlDocument`
+An [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) representation of the value. The caller is responsible for disposing it.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToDocument
+
+Converts the value of a type specified by a generic type parameter into an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument), using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlDocument SerializeToDocument<TValue>(TValue value, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `TValue` | The value to convert. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlDocument`
+An [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) representation of the value. The caller is responsible for disposing it.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToDocument
+
+Converts the value of a specified type into an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument), using the specified options.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlDocument SerializeToDocument(object value, System.Type inputType, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `object?` | The value to convert. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlDocument`
+An [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) representation of the value. The caller is responsible for disposing it.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *inputType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | No type metadata is available for *inputType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToDocument
+
+Converts the value of a specified type into an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument), using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlDocument SerializeToDocument(object value, System.Type inputType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `object?` | The value to convert. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlDocument`
+An [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) representation of the value. The caller is responsible for disposing it.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *inputType* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | *context* has no type metadata for *inputType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToElement
+
+Converts the value of a type specified by a generic type parameter into an [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), using the specified options.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlElement SerializeToElement<TValue>(TValue value, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `TValue` | The value to convert. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlElement`
+An [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) representation of the value. It is the root element of a new document.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToElement
+
+Converts the provided value into an [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlElement SerializeToElement<TValue>(TValue value, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `TValue` | The value to convert. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlElement`
+An [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) representation of the value. It is the root element of a new document.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToElement
+
+Converts the value of a type specified by a generic type parameter into an [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlElement SerializeToElement<TValue>(TValue value, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `TValue` | The value to convert. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlElement`
+An [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) representation of the value. It is the root element of a new document.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToElement
+
+Converts the value of a specified type into an [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), using the specified options.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlElement SerializeToElement(object value, System.Type inputType, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `object?` | The value to convert. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlElement`
+An [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) representation of the value. It is the root element of a new document.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *inputType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | No type metadata is available for *inputType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToElement
+
+Converts the value of a specified type into an [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlElement SerializeToElement(object value, System.Type inputType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `object?` | The value to convert. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlElement`
+An [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) representation of the value. It is the root element of a new document.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *inputType* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | *context* has no type metadata for *inputType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToNode
+
+Converts the value of a type specified by a generic type parameter into a mutable [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode), using the specified options.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Nodes.XmlNode SerializeToNode<TValue>(TValue value, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `TValue` | The value to convert. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Nodes.XmlNode?`
+An [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) representation of the value. It is the root node of a new tree.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToNode
+
+Converts the provided value into a mutable [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode), using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Nodes.XmlNode SerializeToNode<TValue>(TValue value, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `TValue` | The value to convert. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Nodes.XmlNode?`
+An [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) representation of the value. It is the root node of a new tree.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToNode
+
+Converts the value of a type specified by a generic type parameter into a mutable [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode), using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Nodes.XmlNode SerializeToNode<TValue>(TValue value, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `TValue` | The value to convert. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Nodes.XmlNode?`
+An [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) representation of the value. It is the root node of a new tree.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToNode
+
+Converts the value of a specified type into a mutable [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode), using the specified options.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Nodes.XmlNode SerializeToNode(object value, System.Type inputType, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `object?` | The value to convert. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Nodes.XmlNode?`
+An [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) representation of the value. It is the root node of a new tree.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *inputType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | No type metadata is available for *inputType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToNode
+
+Converts the value of a specified type into a mutable [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode), using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Nodes.XmlNode SerializeToNode(object value, System.Type inputType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `object?` | The value to convert. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Nodes.XmlNode?`
+An [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) representation of the value. It is the root node of a new tree.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *inputType* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | *context* has no type metadata for *inputType*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToUtf8Bytes
+
+Converts the value of a type specified by a generic type parameter into an XML string, encoded as UTF-8 bytes, using the specified options.
+
+#### Syntax
+
+```csharp
+public static byte[] SerializeToUtf8Bytes<TValue>(TValue value, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `TValue` | The value to convert. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `byte[]`
+An XML string representation of the value, encoded as UTF-8 bytes.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `NotSupportedException` | No type metadata is available for *TValue*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToUtf8Bytes
+
+Converts the provided value into an XML string, encoded as UTF-8 bytes, using the specified type metadata.
+
+#### Syntax
+
+```csharp
+public static byte[] SerializeToUtf8Bytes<TValue>(TValue value, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue> xmlTypeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `TValue` | The value to convert. |
+| `xmlTypeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TValue>` | The metadata about the type to convert. |
+
+#### Returns
+
+Type: `byte[]`
+An XML string representation of the value, encoded as UTF-8 bytes.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xmlTypeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToUtf8Bytes
+
+Converts the value of a type specified by a generic type parameter into an XML string, encoded as UTF-8 bytes, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static byte[] SerializeToUtf8Bytes<TValue>(TValue value, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `TValue` | The value to convert. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `byte[]`
+An XML string representation of the value, encoded as UTF-8 bytes.
+
+#### Type Parameters
+
+- `TValue` - The type of the value to serialize.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | *context* has no type metadata for *TValue*. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToUtf8Bytes
+
+Converts the value of a specified type into an XML string, encoded as UTF-8 bytes, using the specified options.
+
+#### Syntax
+
+```csharp
+public static byte[] SerializeToUtf8Bytes(object value, System.Type inputType, CloudNimble.Text.Xml.XmlSerializerOptions options = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `object?` | The value to convert. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions?` | The options that control serialization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to use [XmlSerializerOptions.Default](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#default). |
+
+#### Returns
+
+Type: `byte[]`
+An XML string representation of the value, encoded as UTF-8 bytes.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *inputType* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | No type metadata is available for *inputType*. |
+| `InvalidOperationException` | No [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) is set and reflection-based serialization is disabled. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeToUtf8Bytes
+
+Converts the value of a specified type into an XML string, encoded as UTF-8 bytes, using type metadata from the specified serializer context.
+
+#### Syntax
+
+```csharp
+public static byte[] SerializeToUtf8Bytes(object value, System.Type inputType, CloudNimble.Text.Xml.Serialization.XmlSerializerContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `object?` | The value to convert. |
+| `inputType` | `System.Type` | The type to serialize *value* as. |
+| `context` | `CloudNimble.Text.Xml.Serialization.XmlSerializerContext` | A metadata provider for serializable types. |
+
+#### Returns
+
+Type: `byte[]`
+An XML string representation of the value, encoded as UTF-8 bytes.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *inputType* or *context* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | *context* has no type metadata for *inputType*. |
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlSerializerOptions
+- CloudNimble.Text.Xml.XmlSerializerDefaults
+- CloudNimble.Text.Xml.Serialization.XmlSerializerContext
+- CloudNimble.Text.Xml.Serialization.XmlTypeInfo
+- CloudNimble.Text.Xml.Utf8XmlReader
+- CloudNimble.Text.Xml.Utf8XmlWriter
+- CloudNimble.Text.Xml.XmlDocument
+- CloudNimble.Text.Xml.XmlElement
+- CloudNimble.Text.Xml.Nodes.XmlNode
+- CloudNimble.Text.Xml.XmlException
+

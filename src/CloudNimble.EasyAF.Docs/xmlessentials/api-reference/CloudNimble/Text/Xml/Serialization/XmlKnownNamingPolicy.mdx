@@ -1,0 +1,67 @@
+---
+title: XmlKnownNamingPolicy
+description: "Specifies the built-in [XmlNamingPolicy](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamingPolicy) that a source-generated context uses at run time."
+icon: list-ol
+tag: "ENUM"
+keywords: ['XmlKnownNamingPolicy', 'CloudNimble.Text.Xml.Serialization.XmlKnownNamingPolicy', 'CloudNimble.Text.Xml.Serialization', 'enum', 'System.Enum', 'CloudNimble.Text.Xml.XmlNamingPolicy', 'CloudNimble.Text.Xml.Serialization.XmlSourceGenerationOptionsAttribute', 'CloudNimble.Text.Xml.Serialization.XmlSerializerContext', 'CloudNimble.Text.Xml.XmlSerializerOptions']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlKnownNamingPolicy
+```
+
+## Summary
+
+Specifies the built-in [XmlNamingPolicy](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamingPolicy) that a source-generated context uses at run time.
+
+## Usage
+
+`XmlKnownNamingPolicy` names the built-in naming policies as an enumeration, so that you can choose one in an attribute. An attribute argument has to be a compile-time constant, and an [`XmlNamingPolicy`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamingPolicy) instance isn't one.
+
+It is the type of the `PropertyNamingPolicy`, `ElementNamingPolicy`, and `AttributeNamingPolicy` properties of [`XmlSourceGenerationOptionsAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSourceGenerationOptionsAttribute). It is the counterpart of `JsonKnownNamingPolicy`.
+
+| Value | Policy | `StreetAddress` becomes |
+| --- | --- | --- |
+| `Unspecified` | None. Names are unchanged. | `StreetAddress` |
+| `CamelCase` | `XmlNamingPolicy.CamelCase` | `streetAddress` |
+| `SnakeCaseLower` | `XmlNamingPolicy.SnakeCaseLower` | `street_address` |
+| `SnakeCaseUpper` | `XmlNamingPolicy.SnakeCaseUpper` | `STREET_ADDRESS` |
+| `KebabCaseLower` | `XmlNamingPolicy.KebabCaseLower` | `street-address` |
+| `KebabCaseUpper` | `XmlNamingPolicy.KebabCaseUpper` | `STREET-ADDRESS` |
+| `PascalCase` | `XmlNamingPolicy.PascalCase` | `StreetAddress` |
+
+When you set options in code instead, assign an `XmlNamingPolicy` to `XmlSerializerOptions` directly. See [Use source generation](/xmlessentials/guides/source-generation) and [Customize names and shape](/xmlessentials/guides/customize-names#use-a-naming-policy-for-all-names).
+
+## Remarks
+
+The values are selected through the naming policy properties of [XmlSourceGenerationOptionsAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSourceGenerationOptionsAttribute).
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Unspecified` | 0 | No naming policy. Names are not converted. |
+| `CamelCase` | 1 | The built-in [XmlNamingPolicy.CamelCase](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamingPolicy#camelcase) naming policy. |
+| `SnakeCaseLower` | 2 | The built-in [XmlNamingPolicy.SnakeCaseLower](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamingPolicy#snakecaselower) naming policy. |
+| `SnakeCaseUpper` | 3 | The built-in [XmlNamingPolicy.SnakeCaseUpper](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamingPolicy#snakecaseupper) naming policy. |
+| `KebabCaseLower` | 4 | The built-in [XmlNamingPolicy.KebabCaseLower](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamingPolicy#kebabcaselower) naming policy. |
+| `KebabCaseUpper` | 5 | The built-in [XmlNamingPolicy.KebabCaseUpper](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamingPolicy#kebabcaseupper) naming policy. |
+| `PascalCase` | 6 | The built-in [XmlNamingPolicy.PascalCase](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamingPolicy#pascalcase) naming policy. |
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlNamingPolicy
+- CloudNimble.Text.Xml.Serialization.XmlSourceGenerationOptionsAttribute
+- CloudNimble.Text.Xml.Serialization.XmlSerializerContext
+- CloudNimble.Text.Xml.XmlSerializerOptions
+

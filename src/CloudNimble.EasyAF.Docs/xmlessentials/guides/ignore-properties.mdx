@@ -1,0 +1,278 @@
+---
+title: "How to ignore properties with XmlSerializer"
+sidebarTitle: "Ignore properties"
+description: "Learn how to leave members out of XML: always, when they are null or default, when they are read-only, and how to include public fields."
+icon: "eye-slash"
+---
+
+Not every member of a type belongs in the XML. This article shows how to exclude a member completely, how to leave it out only when it has no value, and how [`XmlSerializer`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) treats read-only properties and fields. The attribute and the options mirror `[JsonIgnore]` and `JsonIgnoreCondition` in System.Text.Json.
+
+## Ignore individual properties
+
+Mark a member with [`[XmlIgnore]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlIgnoreAttribute). The serializer never writes it and never reads it.
+
+```csharp UserAccount.cs
+public sealed class UserAccount
+{
+    public string? UserName { get; set; }
+
+    [XmlIgnore]
+    public string? Password { get; set; }
+
+    public string? Email { get; set; }
+}
+```
+
+```csharp Program.cs
+var account = new UserAccount { UserName = "ada", Password = "hunter2", Email = "ada@contoso.example" };
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+
+output.WriteLine(XmlSerializer.Serialize(account, options));
+
+UserAccount? copy = XmlSerializer.Deserialize<UserAccount>(
+    "<UserAccount><UserName>ada</UserName><Password>injected</Password></UserAccount>");
+output.WriteLine($"Password: {copy!.Password ?? "(null)"}");
+```
+
+The code produces the following output:
+
+```text
+<UserAccount><UserName>ada</UserName><Email>ada@contoso.example</Email></UserAccount>
+Password: (null)
+```
+
+The second half matters as much as the first. A `Password` element in incoming XML is treated like any other element that no member maps to: it's skipped, and the property isn't set.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/09_IgnoreProperties.cs)
+
+## Ignore a property when it has no value
+
+Set the `Condition` property of `[XmlIgnore]` to one of the [`XmlIgnoreCondition`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlIgnoreCondition) values.
+
+| Condition | The member is |
+| --- | --- |
+| `Always` | Never written and never read. This is the default for `[XmlIgnore]`. |
+| `Never` | Always written and read, whatever `DefaultIgnoreCondition` says. |
+| `WhenWritingNull` | Left out when its value is `null`. |
+| `WhenWritingNullReference` | Left out when its value is a `null` reference. A nullable value type with no value, such as an `int?`, is still written, with `xsi:nil="true"`. |
+| `WhenWritingDefault` | Left out when its value is `null` or the default value of its type, such as `0` or `false`. |
+| `WhenWriting` | Never written. Still read. |
+| `WhenReading` | Never read. Still written. The XML may have the element or attribute; what it holds is skipped. |
+
+```csharp UserProfile.cs
+public sealed class UserProfile
+{
+    public string? DisplayName { get; set; }
+
+    [XmlIgnore(Condition = XmlIgnoreCondition.WhenWritingNull)]
+    public string? Bio { get; set; }
+
+    [XmlIgnore(Condition = XmlIgnoreCondition.WhenWritingDefault)]
+    public int SignInCount { get; set; }
+
+    public string? Website { get; set; }
+}
+```
+
+```csharp Program.cs
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+
+var empty = new UserProfile { DisplayName = "Ada" };
+output.WriteLine(XmlSerializer.Serialize(empty, options));
+
+var full = new UserProfile { DisplayName = "Ada", Bio = "Mathematician", SignInCount = 3, Website = "https://contoso.example" };
+output.WriteLine(XmlSerializer.Serialize(full, options));
+```
+
+The code produces the following output:
+
+```xml
+<UserProfile><DisplayName>Ada</DisplayName><Website xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/></UserProfile>
+<UserProfile><DisplayName>Ada</DisplayName><Bio>Mathematician</Bio><SignInCount>3</SignInCount><Website>https://contoso.example</Website></UserProfile>
+```
+
+In the first document, `Bio` and `SignInCount` are gone. `Website` has no condition, so its `null` is written as an element marked `xsi:nil="true"`, which is the default for a `null` member. See [Handle null values](/xmlessentials/guides/null-and-nil).
+
+A `null` collection that is wrapped with `[XmlArray]` is left out by both conditions, as any other `null` member is. See [Empty and null collections](/xmlessentials/guides/collections#empty-and-null-collections).
+
+The two `WhenWriting` conditions affect writing only. The member is still read when the XML has it:
+
+```csharp Program.cs
+UserProfile? profile = XmlSerializer.Deserialize<UserProfile>(
+    "<UserProfile><DisplayName>Ada</DisplayName><Bio>Mathematician</Bio><SignInCount>3</SignInCount></UserProfile>");
+
+output.WriteLine($"{profile!.DisplayName}: {profile.Bio}, {profile.SignInCount} sign-ins");
+```
+
+The code produces the following output:
+
+```text
+Ada: Mathematician, 3 sign-ins
+```
+
+## Ignore all null or default values
+
+To apply a condition to every member, set `DefaultIgnoreCondition` on the options. The following example serializes the same object three ways.
+
+```csharp Program.cs
+var order = new PurchaseOrder { Id = 1042 };
+
+var never = new XmlSerializerOptions { OmitXmlDeclaration = true };
+output.WriteLine(XmlSerializer.Serialize(order, never));
+
+var whenNull = new XmlSerializerOptions
+{
+    OmitXmlDeclaration = true,
+    DefaultIgnoreCondition = XmlIgnoreCondition.WhenWritingNull,
+};
+output.WriteLine(XmlSerializer.Serialize(order, whenNull));
+
+var whenDefault = new XmlSerializerOptions
+{
+    OmitXmlDeclaration = true,
+    DefaultIgnoreCondition = XmlIgnoreCondition.WhenWritingDefault,
+};
+output.WriteLine(XmlSerializer.Serialize(order, whenDefault));
+```
+
+```csharp PurchaseOrder.cs
+public sealed class PurchaseOrder
+{
+    public int Id { get; set; }
+
+    public string? Customer { get; set; }
+
+    public DateOnly Placed { get; set; }
+
+    public decimal Total { get; set; }
+}
+```
+
+The code produces the following output:
+
+```xml
+<PurchaseOrder><Id>1042</Id><Customer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/><Placed>0001-01-01</Placed><Total>0</Total></PurchaseOrder>
+<PurchaseOrder><Id>1042</Id><Placed>0001-01-01</Placed><Total>0</Total></PurchaseOrder>
+<PurchaseOrder><Id>1042</Id></PurchaseOrder>
+```
+
+- With the default, `Never`, every member is written.
+- `WhenWritingNull` drops the `null` string. Value types can't be `null`, so `Placed` and `Total` stay.
+- `WhenWritingDefault` also drops the default date and the zero.
+
+An `[XmlIgnore]` attribute on a member overrides the option for that member. For example, `[XmlIgnore(Condition = XmlIgnoreCondition.Never)]` keeps one member in every document while the option removes the rest.
+
+<Note>
+Setting `DefaultIgnoreCondition` to `XmlIgnoreCondition.Always` throws an `ArgumentException`, because it would leave out every member. `Always` only means something on the `[XmlIgnore]` attribute.
+</Note>
+
+
+## Read-only properties
+
+A property with no setter is read-only. It is written by default, which is what you want for a calculated value that the consumer of the XML needs. Set `IgnoreReadOnlyProperties` to leave such properties out.
+
+```csharp Rectangle.cs
+public sealed class Rectangle
+{
+    public double Width { get; set; }
+
+    public double Height { get; set; }
+
+    public double Area => Width * Height;
+}
+```
+
+```csharp Program.cs
+var rectangle = new Rectangle { Width = 4, Height = 3 };
+
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+output.WriteLine(XmlSerializer.Serialize(rectangle, options));
+
+var skipReadOnly = new XmlSerializerOptions { OmitXmlDeclaration = true, IgnoreReadOnlyProperties = true };
+output.WriteLine(XmlSerializer.Serialize(rectangle, skipReadOnly));
+
+Rectangle? copy = XmlSerializer.Deserialize<Rectangle>(
+    "<Rectangle><Width>4</Width><Height>3</Height><Area>99</Area></Rectangle>");
+output.WriteLine($"Area: {copy!.Area}");
+```
+
+The code produces the following output:
+
+```text
+<Rectangle><Width>4</Width><Height>3</Height><Area>12</Area></Rectangle>
+<Rectangle><Width>4</Width><Height>3</Height></Rectangle>
+Area: 12
+```
+
+When reading, a read-only property can't be set, so the `Area` element in the last document has no effect.
+
+Keep these details in mind:
+
+- A property with a public `init` accessor isn't read-only: the serializer sets it. A property whose `set` or `init` accessor isn't public is read-only to the serializer, as in System.Text.Json: it is written, and it isn't set when a document is read. Mark it with `[XmlInclude]` to have the accessor used.
+- A read-only collection property, such as `public List<string> Tags { get; } = [];`, is written. It is filled when reading only when `PreferredObjectCreationHandling`, or `[XmlObjectCreationHandling]` on the member, is `Populate`: the items are then added to the list it holds. Under the default, `Replace`, it isn't read. `IgnoreReadOnlyProperties` doesn't leave it out, because a collection or a dictionary can be populated without a setter. System.Text.Json makes the same exception.
+- `IgnoreReadOnlyProperties` also removes a read-only property that a constructor parameter sets. Don't combine the option with types that are created through a [constructor with parameters](/xmlessentials/guides/immutable-types), unless their properties have `init` accessors, as record properties do.
+
+## Include fields
+
+Fields aren't serialized by default. Set `IncludeFields` to serialize public fields, and `IgnoreReadOnlyFields` to then leave out the ones declared `readonly`.
+
+```csharp Coordinates.cs
+public sealed class Coordinates
+{
+    public readonly string Datum = "WGS84";
+
+    public double Latitude;
+
+    public double Longitude;
+}
+```
+
+```csharp Program.cs
+var position = new Coordinates { Latitude = 47.5, Longitude = -122.25 };
+
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+output.WriteLine(XmlSerializer.Serialize(position, options));
+
+var withFields = new XmlSerializerOptions { OmitXmlDeclaration = true, IncludeFields = true };
+output.WriteLine(XmlSerializer.Serialize(position, withFields));
+
+var writableFields = new XmlSerializerOptions { OmitXmlDeclaration = true, IncludeFields = true, IgnoreReadOnlyFields = true };
+output.WriteLine(XmlSerializer.Serialize(position, writableFields));
+```
+
+The code produces the following output:
+
+```xml
+<Coordinates/>
+<Coordinates><Datum>WGS84</Datum><Latitude>47.5</Latitude><Longitude>-122.25</Longitude></Coordinates>
+<Coordinates><Latitude>47.5</Latitude><Longitude>-122.25</Longitude></Coordinates>
+```
+
+Within one type, properties are written before fields.
+
+## Which members are serialized
+
+The serializer considers these members of a type and its base classes:
+
+- Public instance properties that have a public getter.
+- Public instance fields, when `IncludeFields` is `true`.
+- Non-public properties, and non-public fields when `IncludeFields` is `true`, that are marked with [`[XmlInclude]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlIncludeAttribute).
+
+Static members, indexers, and properties with no getter are never serialized.
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Handle null values" icon="ban" href="/xmlessentials/guides/null-and-nil">
+    Choose between `xsi:nil`, an empty element, and nothing.
+  </Card>
+  <Card title="Require properties" icon="asterisk" href="/xmlessentials/guides/required-properties">
+    Make a missing member an error.
+  </Card>
+  <Card title="XmlIgnoreAttribute" icon="code" href="/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlIgnoreAttribute">
+    API reference for the attribute.
+  </Card>
+  <Card title="XmlIgnoreCondition" icon="code" href="/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlIgnoreCondition">
+    API reference for the conditions.
+  </Card>
+</Columns>

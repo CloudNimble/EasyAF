@@ -1,0 +1,310 @@
+---
+title: XmlNamedValue
+description: "Represents a value together with the name of the element it is written under. This class cannot be inherited."
+icon: lock
+tag: "SEALED"
+keywords: ['XmlNamedValue', 'CloudNimble.Text.Xml.Serialization.XmlNamedValue', 'CloudNimble.Text.Xml.Serialization', 'class']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlNamedValue
+```
+
+## Summary
+
+Represents a value together with the name of the element it is written under. This class cannot be inherited.
+
+## Usage
+
+An `XmlNamedValue` is a value together with the name of the element it is written under. Use it for a member that has a choice of elements, set with several `[XmlElement<T>]` attributes, when two of the elements hold the same type. The type of the value can't say which element it belongs to, so the value carries the element's name instead.
+
+```csharp
+public sealed class ContactCard
+{
+    [XmlElement<string>("Home")]
+    [XmlElement<string>("Work")]
+    public List<XmlNamedValue> Phones { get; set; } = [];
+}
+```
+
+```csharp
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+var card = new ContactCard
+{
+    Phones = { new XmlNamedValue("Work", "555-0100"), new XmlNamedValue("Home", "555-0199") },
+};
+
+string xml = XmlSerializer.Serialize(card, options);
+output.WriteLine(xml);
+
+ContactCard read = XmlSerializer.Deserialize<ContactCard>(xml, options)!;
+foreach (XmlNamedValue phone in read.Phones)
+{
+    output.WriteLine($"{phone.Name}: {phone.Value}");
+}
+```
+
+The code produces the following output:
+
+```text
+<ContactCard><Work>555-0100</Work><Home>555-0199</Home></ContactCard>
+Work: 555-0100
+Home: 555-0199
+```
+
+Declare the member as `XmlNamedValue` for one value, or as a collection of it for a sequence. `Name` must be the name of one of the member's elements, and `Value` must be of the type that element holds; anything else throws a `NotSupportedException` when it is written. A `Value` that is `null` is written as an element marked `xsi:nil="true"`. Set `Namespace` only when two of the member's elements have one local name in two namespaces. A value that was read has the namespace its element was declared with.
+
+See [When two elements hold the same type](/xmlessentials/guides/polymorphism#when-two-elements-hold-the-same-type) and the [polymorphism sample](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/16_Polymorphism.cs).
+
+## Remarks
+
+A member that carries more than one `XmlElementAttribute`1` holds a choice of elements, and a
+value is written under the element of its type. When two of the elements hold the same type, the type does
+not say which element a value is. Declare the member as [XmlNamedValue](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlNamedValue), or as a collection of
+it, and each value says which element it is by name.
+
+[XmlNamedValue.Name](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlNamedValue#name) must be the name of one of the member's elements, and [XmlNamedValue.Value](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlNamedValue#value) must be of
+           the type that element holds. A value that is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) is written as an element marked
+           `xsi:nil`.
+
+## Examples
+
+```csharp
+public sealed class Contact
+{
+    [XmlElement<string>("Home")]
+    [XmlElement<string>("Work")]
+    public List<XmlNamedValue> Phones { get; set; } = [];
+}
+
+var contact = new Contact { Phones = { new XmlNamedValue("Work", "555-0100"), new XmlNamedValue("Home", "555-0199") } };
+string xml = XmlSerializer.Serialize(contact);
+// <Contact><Work>555-0100</Work><Home>555-0199</Home></Contact>
+```
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [XmlNamedValue](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlNamedValue) class with no name and no value.
+
+#### Syntax
+
+```csharp
+public XmlNamedValue()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [XmlNamedValue](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlNamedValue) class with the specified element name and value.
+
+#### Syntax
+
+```csharp
+public XmlNamedValue(string name, object value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The local name of the element. |
+| `value` | `object?` | The value of the element. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | *name* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null), empty, or white space. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Name
+
+Gets or sets the local name of the element.
+
+#### Syntax
+
+```csharp
+public string Name { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The local name of the element the value is written under. The default is an empty string.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Namespace
+
+Gets or sets the namespace URI of the element.
+
+#### Syntax
+
+```csharp
+public string Namespace { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The namespace URI the member gives the element, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) to find the element by its
+local name alone. The default is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+
+#### Remarks
+
+Set it when two elements of the member have one local name in two namespaces. A value that was read
+has the namespace its element was declared with.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Value
+
+Gets or sets the value of the element.
+
+#### Syntax
+
+```csharp
+public object Value { get; set; }
+```
+
+#### Property Value
+
+Type: `object?`
+The value, of the type the element holds, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). The default is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

@@ -1,0 +1,1111 @@
+---
+title: XmlDocument
+description: "Provides a mechanism for examining the structural content of an XML document without automatically instantiating data values. This class cannot be inherited."
+icon: lock
+tag: "SEALED"
+keywords: ['XmlDocument', 'CloudNimble.Text.Xml.XmlDocument', 'CloudNimble.Text.Xml', 'class', 'CloudNimble.Text.Xml.XmlElement', 'CloudNimble.Text.Xml.XmlDocumentOptions', 'CloudNimble.Text.Xml.XmlDeclarationInfo', 'CloudNimble.Text.Xml.XmlValueKind', 'CloudNimble.Text.Xml.Utf8XmlReader']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlDocument
+```
+
+## Summary
+
+Provides a mechanism for examining the structural content of an XML document without automatically
+instantiating data values. This class cannot be inherited.
+
+## Usage
+
+`XmlDocument` parses a whole XML document and gives you read-only, random access to it through [`XmlElement`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement). It's the XML counterpart of `JsonDocument`: the document rents its buffers from the shared array pool, so create it in a `using` statement.
+
+`Parse` has an overload for a `string`, a `ReadOnlySpan<char>`, UTF-8 bytes in a `ReadOnlySpan<byte>` or a `ReadOnlySequence<byte>`, and a `Stream` of UTF-8. Start every query at `RootElement`.
+
+```csharp
+const string text = """<Order id="1042"><Item>Keyboard</Item></Order>""";
+byte[] utf8 = """<Order id="1043"><Item>Mouse</Item></Order>"""u8.ToArray();
+
+using (XmlDocument fromString = XmlDocument.Parse(text))
+{
+    output.WriteLine($"string: order {fromString.RootElement.GetAttribute("id").GetInt32()}");
+}
+
+using (XmlDocument fromUtf8 = XmlDocument.Parse(utf8.AsSpan()))
+{
+    output.WriteLine($"UTF-8 span: order {fromUtf8.RootElement.GetAttribute("id").GetInt32()}");
+}
+
+using (var stream = new MemoryStream(utf8))
+using (XmlDocument fromStream = XmlDocument.Parse(stream))
+{
+    output.WriteLine($"stream: order {fromStream.RootElement.GetAttribute("id").GetInt32()}");
+}
+
+using (XmlDocument fromSequence = XmlDocument.Parse(new ReadOnlySequence<byte>(utf8)))
+{
+    output.WriteLine($"sequence: order {fromSequence.RootElement.GetAttribute("id").GetInt32()}");
+}
+```
+
+The code produces the following output:
+
+```text
+string: order 1042
+UTF-8 span: order 1043
+stream: order 1043
+sequence: order 1043
+```
+
+The other entry points are:
+
+- `ParseAsync`, which reads a `Stream` without blocking and then parses it.
+- `TryParse`, which returns `false` where `Parse` throws an `XmlException`.
+- `ParseValue`, which builds a document from the element a `Utf8XmlReader` is positioned on, and `TryParseValue`, which returns `false` and leaves the reader where it was when the element isn't all in a block that isn't the last one, or when the reader is on an end tag.
+- `DiscoverNamespaces`, which returns the prefixes and namespaces a document declares without building a document. See [Take them from an existing document](/xmlessentials/guides/namespaces#take-them-from-an-existing-document).
+
+`Declaration` is the XML declaration that was parsed, or `null`. `WriteTo` writes the document to a `Utf8XmlWriter`.
+
+A document keeps comments and the white space between elements by default, so that parsing a document and writing it back doesn't lose its comments or its indentation. Both appear among the children of an element, so check `ValueKind` when you enumerate. To leave them out, pass an [`XmlDocumentOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions) with `CommentHandling = XmlCommentHandling.Skip` and `WhitespaceHandling = XmlWhitespaceHandling.Insignificant`.
+
+For a walkthrough of every member, see [How to read XML with XmlDocument and XmlElement](/xmlessentials/guides/use-xmldocument).
+
+## Remarks
+
+This class is the XML counterpart of `JsonDocument` in System.Text.Json. The document is read-only.
+It uses buffers from the shared array pool, and [XmlDocument.Dispose](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument#dispose) returns them. A document that
+is not disposed does not return its buffers to the pool. Using the document or an
+[XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) that was obtained from it after it is disposed throws
+[ObjectDisposedException](https://learn.microsoft.com/dotnet/api/system.objectdisposedexception).
+Comments and processing instructions before and after the document element are kept for
+[XmlDocument.WriteTo](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument#writeto). They are not children of [XmlDocument.RootElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument#rootelement). Comments are kept by default, so that
+a document that is parsed and written back does not lose them. To leave them out, set
+[XmlDocumentOptions.CommentHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions#commenthandling) to [XmlCommentHandling.Skip](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling).
+The document owns a pooled copy of the UTF-8 input. Names and values that contain no entity or
+character references are stored as offsets into that copy. Only values that had references
+expanded and namespace URIs are copied a second time.
+
+## Examples
+
+### Parse a document and write it back
+
+`WriteTo` writes what was parsed, comments included. This document is already spelled the way the writer spells XML, so it comes back identical.
+
+```csharp
+const string xml = """<?xml version="1.0" encoding="utf-8"?><!-- exported nightly --><c:Catalog xmlns:c="urn:example:catalog" updated="2026-03-14"><c:Product sku="KB-1">Keyboard</c:Product><c:Discontinued></c:Discontinued><c:Spare/></c:Catalog>""";
+
+using XmlDocument document = XmlDocument.Parse(xml);
+
+var buffer = new ArrayBufferWriter<byte>();
+using (var writer = new Utf8XmlWriter(buffer))
+{
+    document.WriteTo(writer);
+}
+
+string written = Encoding.UTF8.GetString(buffer.WrittenSpan);
+output.WriteLine(written);
+output.WriteLine($"Same as the input: {written == xml}");
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?><!-- exported nightly --><c:Catalog xmlns:c="urn:example:catalog" updated="2026-03-14"><c:Product sku="KB-1">Keyboard</c:Product><c:Discontinued></c:Discontinued><c:Spare/></c:Catalog>
+Same as the input: True
+```
+
+### See what a round trip normalizes
+
+A round trip preserves the content, the comments, and the indentation inside the root element. It isn't byte for byte when the input spells something differently from the writer.
+
+```csharp
+const string xml =
+    "<?xml version='1.0'?>\r\n" +
+    "<!-- exported nightly -->\r\n" +
+    "<Order  id='1042'   status=\"open\">\r\n" +
+    "  <!-- rush -->\r\n" +
+    "  <Item>Keyboard &#65;</Item>\r\n" +
+    "  <Notes />\r\n" +
+    "</Order>\r\n";
+
+using XmlDocument document = XmlDocument.Parse(xml);
+
+var buffer = new ArrayBufferWriter<byte>();
+using (var writer = new Utf8XmlWriter(buffer, new XmlWriterOptions { NewLine = "\n" }))
+{
+    document.WriteTo(writer);
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan).Replace("\r", "\\r"));
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?><!-- exported nightly --><Order id="1042" status="open">
+  <!-- rush -->
+  <Item>Keyboard A</Item>
+  <Notes/>
+</Order>
+```
+
+The comments and the indentation inside `Order` are kept. The white space outside the root element is dropped, the declaration and the attribute quotes are written the writer's way, and `&#65;` is written as `A`. The white space inside a tag isn't kept: the attributes follow `XmlWriterOptions.AttributeStyle`, and the empty-element tag follows `EmptyElementStyle`, so with the defaults `<Notes />` becomes `<Notes/>`. The line ends follow `NewLine`, which the sample sets to `"\n"`, so the CRLF of the input becomes LF.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/28_WriteAndConvertXmlDocument.cs)
+
+### Parse one element at a time from a reader
+
+`ParseValue` reads the element a `Utf8XmlReader` is on and leaves the reader on its end tag, so only one record is in memory at a time.
+
+```csharp
+ReadOnlySpan<byte> feed = """
+    <Feed>
+      <Entry id="1"><Title>First post</Title></Entry>
+      <Entry id="2"><Title>Second post</Title></Entry>
+    </Feed>
+    """u8;
+
+var reader = new Utf8XmlReader(feed);
+while (reader.Read())
+{
+    if (reader.TokenType is XmlTokenType.StartElement && reader.LocalNameEquals("Entry"u8))
+    {
+        using XmlDocument entry = XmlDocument.ParseValue(ref reader);
+        XmlElement root = entry.RootElement;
+        output.WriteLine($"{root.GetAttribute("id").GetInt32()}: {root.GetChild("Title").GetString()}");
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+1: First post
+2: Second post
+```
+
+### Test input without an exception
+
+```csharp
+var options = new XmlDocumentOptions();
+
+if (XmlDocument.TryParse("<Order><Item>Keyboard</Item></Order>"u8, options, out XmlDocument? document))
+{
+    using (document)
+    {
+        output.WriteLine($"Parsed: {document!.RootElement.LocalName}");
+    }
+}
+
+if (!XmlDocument.TryParse("<Order><Item>Keyboard</Order>"u8, options, out XmlDocument? broken))
+{
+    output.WriteLine($"Not well formed: document is null: {broken is null}");
+}
+```
+
+The code produces the following output:
+
+```text
+Parsed: Order
+Not well formed: document is null: True
+```
+
+### Read the XML declaration
+
+```csharp
+using (XmlDocument document = XmlDocument.Parse("""<?xml version="1.1" encoding="UTF-8" standalone="yes"?><Order/>"""))
+{
+    if (document.Declaration is { } declaration)
+    {
+        output.WriteLine($"version {declaration.Version}, encoding {declaration.Encoding}, standalone {declaration.Standalone}");
+    }
+}
+
+using (XmlDocument document = XmlDocument.Parse("<Order/>"))
+{
+    output.WriteLine($"has a declaration: {document.Declaration.HasValue}");
+}
+```
+
+The code produces the following output:
+
+```text
+version 1.1, encoding utf-8, standalone True
+has a declaration: False
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/26_ParseWithXmlDocument.cs)
+
+## Best Practices
+
+- **Dispose every document.** Use a `using` statement. A document that isn't disposed never returns its buffers to the array pool. That includes a document returned by `TryParse`, `ParseValue`, and `XmlSerializer.SerializeToDocument`.
+- **Copy values out before the document is disposed.** An `XmlElement` is usable only while its document is alive. Return strings, numbers, or a `CloneNode` copy from a method, not an `XmlElement`.
+- **Pass UTF-8 when you have UTF-8.** The `string` and `ReadOnlySpan<char>` overloads convert the text to UTF-8 before they parse it.
+- **Set `MaxDocumentByteCount` for input from outside your process.** It's the only limit that is off by default, and a document holds its whole input in memory.
+- **Expect comments and white space when you enumerate.** Both are kept by default so that a round trip doesn't lose comments or indentation. Check `ValueKind` in every loop over `EnumerateChildren`.
+- **Turn them off when you only read values.** Parse with `CommentHandling = XmlCommentHandling.Skip` and `WhitespaceHandling = XmlWhitespaceHandling.Insignificant`, and the children of an element are only what carries data.
+- **Read values from leaf elements.** The text of an element that has child elements includes the white space between them.
+- **Don't rely on identical bytes after a round trip.** Content, comments, and indentation inside the root are preserved. Quote style, the declaration, and white space outside the root are written the writer's way. Line ends, the layout of attributes, and the form of an empty-element tag follow the `NewLine`, `AttributeStyle`, and `EmptyElementStyle` properties of `XmlWriterOptions`.
+- **Use `TryGetChild` and `TryGetAttribute` for optional names.** `GetChild` and `GetAttribute` throw an `XmlException` when the name is missing.
+- **Don't parse into a document only to deserialize it.** `XmlSerializer.Deserialize` reads text, bytes, and streams directly. Deserialize from a document or an element when you need to inspect the XML first.
+
+## Patterns
+
+### Read, then copy out
+
+Parse in a `using` statement, read what you need through `RootElement`, and let the document go. Only the values you copied (strings, numbers, a cloned node) leave the block.
+
+```csharp
+XmlElement item;
+string? name;
+
+using (XmlDocument document = XmlDocument.Parse("<Order><Item>Keyboard</Item></Order>"))
+{
+    item = document.RootElement.GetChild("Item");
+    name = item.GetString();
+}
+
+output.WriteLine($"The copied string is still valid: {name}");
+
+try
+{
+    item.GetString();
+}
+catch (ObjectDisposedException)
+{
+    output.WriteLine("The element is not: ObjectDisposedException");
+}
+
+XmlElement empty = default;
+output.WriteLine($"A default element is {empty.ValueKind}");
+```
+
+The code produces the following output:
+
+```text
+The copied string is still valid: Keyboard
+The element is not: ObjectDisposedException
+A default element is Undefined
+```
+
+### Stream with a reader, query with a document
+
+Read a large input forward with `Utf8XmlReader` and call `ParseValue` on each record. Each record gets random access, and only one is in memory. The examples section shows the loop.
+
+### Inspect, then deserialize
+
+Parse the document, check what it is (a root name, a version attribute), and pass the document or one of its elements to `XmlSerializer.Deserialize`.
+
+```csharp
+using (XmlDocument single = XmlDocument.Parse("<Product><Name>Keyboard</Name><Price>49.90</Price></Product>"))
+{
+    Product? product = XmlSerializer.Deserialize<Product>(single);
+    output.WriteLine($"{product!.Name}: {product.Price.ToString(CultureInfo.InvariantCulture)}");
+}
+
+const string xml = """
+    <Catalog>
+      <Product><Name>Mouse</Name><Price>19.90</Price></Product>
+      <Product><Name>Monitor</Name><Price>249.00</Price></Product>
+    </Catalog>
+    """;
+
+using XmlDocument catalog = XmlDocument.Parse(xml);
+foreach (XmlElement element in catalog.RootElement.EnumerateChildren())
+{
+    if (element.ValueKind is not (XmlValueKind.Element or XmlValueKind.EmptyElement or XmlValueKind.Nil))
+    {
+        continue;
+    }
+
+    Product? product = XmlSerializer.Deserialize<Product>(element);
+    output.WriteLine($"{product!.Name}: {product.Price.ToString(CultureInfo.InvariantCulture)}");
+}
+```
+
+The code produces the following output:
+
+```text
+Keyboard: 49.90
+Mouse: 19.90
+Monitor: 249.00
+```
+
+### Read here, edit there
+
+The document can't be changed. Call `XmlElement.CloneNode` on the element you need to edit, change the copy in the mutable tree, and write the copy. `CloneNode` copies everything under the element at once, so the copy stays valid after the document is disposed. When you parse only to edit, `XmlNode.Parse` gives you the tree directly. See [How to build and change XML with XmlNode](/xmlessentials/guides/use-xmlnode).
+
+### Copy part of a document into new output
+
+Open a `Utf8XmlWriter`, write your own elements, and call `XmlElement.WriteTo` for the parts you take from the document. The writer declares any namespace the copied element needs.
+
+## Considerations
+
+### Lifetime and memory
+
+- The document owns a pooled copy of the UTF-8 input and a pooled table with one row per node. Names and values are offsets into that copy. Only values that had entity or character references expanded, and namespace URIs, are stored a second time.
+- `Dispose` clears the buffers and returns them to `ArrayPool<T>.Shared`. After that, the document and every `XmlElement` from it throw `ObjectDisposedException`.
+- Parsing allocates the `XmlDocument` object and, in the usual case, nothing else. In the project's benchmarks, parsing four real documents is 3.1× to 3.4× faster than `System.Xml.XmlDocument` and allocates about 104 bytes, where `System.Xml.XmlDocument` allocates 127 KB to 709 KB. See [Benchmarks](/xmlessentials/benchmarks).
+- The whole document is in memory. For input that is too large for that, read it with `Utf8XmlReader` and use `ParseValue` for the parts that need random access.
+- `ParseAsync` reads the stream asynchronously and then parses it in one pass.
+
+### What is kept
+
+The defaults aim at no surprises on a round trip, for example when a file is edited and saved back to source control.
+
+- Comments are kept by default (`XmlCommentHandling.Allow`). Set `XmlDocumentOptions.CommentHandling` to `Skip` to leave them out of the document, or to `Disallow` to reject them.
+- White space that is the only text between two tags inside the root element, such as indentation, is kept by default (`XmlWhitespaceHandling.Significant`). Each run is a `Text` node among the children, and it's part of the text of the element that contains it. Set `XmlDocumentOptions.WhitespaceHandling` to `Insignificant` to leave it out.
+- Comments and processing instructions before and after the root element are kept for `WriteTo`. They aren't reachable from `RootElement`.
+- The declaration is kept as an `XmlDeclarationInfo`. Its encoding is always reported as `utf-8`.
+- White space outside the root element isn't kept: after the declaration, around comments in the prolog, and the final line break.
+
+### What is rejected
+
+`Parse` throws an `XmlException` for input that isn't well formed, has no root element or more than one, declares an encoding other than UTF-8, contains a document type declaration (`<!DOCTYPE ...>`), or exceeds a limit in the options.
+
+### Writing
+
+- `WriteTo` keeps comments, white space between elements, namespace declarations where they were, attribute order, and the difference between `<e/>` and `<e></e>`.
+- The result has the same content but isn't always the same bytes. Attribute values are written with double quotes, and a character reference such as `&#65;` is written as the character. White space inside a tag isn't kept: the attributes are laid out as `XmlWriterOptions.AttributeStyle` says (one space before each, by default), and an empty-element tag has the form `EmptyElementStyle` says (`<e/>` by default, so `<e />` is written `<e/>`). Every line end is written as `NewLine`, which defaults to `Environment.NewLine`.
+- A parsed declaration is written with the parsed version and `encoding="utf-8"`, even when the writer's `OmitXmlDeclaration` is `true`. When the document has no declaration, the writer decides: a `Utf8XmlWriter` adds one unless `XmlWriterOptions.OmitXmlDeclaration` is `true`.
+- Writing a parsed document doesn't allocate.
+
+### Thread safety
+
+A document doesn't change after it's parsed, so several threads can read it at the same time. Don't dispose it while another thread is reading.
+
+### Differences from other APIs
+
+- Unlike `System.Xml.XmlDocument` and `XDocument`, this type is read-only, and its nodes are `XmlElement` cursors into the document's buffers rather than objects. You query it with the `XmlElement` lookups and enumerators. For a tree you can change, see `CloudNimble.Text.Xml.Nodes.XmlNode`, and for the full comparison, [Migrate from XDocument and System.Xml.XmlDocument](/xmlessentials/guides/migrate/from-xdocument).
+- Unlike `JsonDocument`, the root can be preceded by a declaration, comments, and processing instructions, which the document keeps for writing.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Declaration
+
+Gets the XML declaration of this document.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlDeclarationInfo? Declaration { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlDeclarationInfo?`
+The XML declaration that was read when the document was parsed, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if the
+document has no XML declaration. The version is reported as `1.0` or `1.1`, and the
+encoding is always reported as `utf-8`.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ObjectDisposedException` | The document has been disposed. |
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> RootElement
+
+Gets the root element of this XML document.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlElement RootElement { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlElement`
+An [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) that represents the document element.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ObjectDisposedException` | The document has been disposed. |
+| `XmlException` | The document has no root element. No document that a public method returns is in that state. |
+
+## Methods
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DiscoverNamespaces
+
+Reads UTF-8 encoded XML and returns the namespaces it declares, each with the prefix it is declared
+under.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.OrderedDictionary<string, string> DiscoverNamespaces(System.ReadOnlySpan<byte> xml, CloudNimble.Text.Xml.XmlDocumentOptions options = default(CloudNimble.Text.Xml.XmlDocumentOptions))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded XML to read. |
+| `options` | `CloudNimble.Text.Xml.XmlDocumentOptions` | Options that control how the XML is read. |
+
+#### Returns
+
+Type: `System.Collections.Generic.OrderedDictionary<string, string>`
+The namespace URIs, keyed by prefix, in the order the document first declares each prefix. The default
+namespace of the document element has an empty string as its prefix.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | *xml* is not a well-formed XML document.
+-or-
+A limit set in *options* is exceeded. |
+
+#### Examples
+
+```csharp
+var options = new XmlSerializerOptions { Namespaces = XmlDocument.DiscoverNamespaces(existingFeed) };
+string xml = XmlSerializer.Serialize(feed, options);
+```
+
+#### Remarks
+
+Every start tag in the document is examined for prefixes, not only that of the document element. A
+prefix that the document binds more than once is listed with the namespace of its first declaration.
+The `xml` prefix is listed only if the document declares it.
+
+A default namespace (`xmlns="..."`) is listed only when the document element declares it. One
+that an element further in declares names the elements under that element alone, so it could not be
+declared for the whole document without renaming the rest.
+
+The result can be assigned to [XmlSerializerOptions.Namespaces](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#namespaces), so that what is serialized
+uses the prefixes of an existing document. No [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) is built.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DiscoverNamespaces
+
+Reads XML from a stream of UTF-8 bytes and returns the namespaces it declares, each with the prefix it
+is declared under.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.OrderedDictionary<string, string> DiscoverNamespaces(System.IO.Stream xml, CloudNimble.Text.Xml.XmlDocumentOptions options = default(CloudNimble.Text.Xml.XmlDocumentOptions))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Stream` | The stream to read. It is read to its end. |
+| `options` | `CloudNimble.Text.Xml.XmlDocumentOptions` | Options that control how the XML is read. |
+
+#### Returns
+
+Type: `System.Collections.Generic.OrderedDictionary<string, string>`
+The namespace URIs, keyed by prefix, in the order the document first declares each prefix. The default
+namespace of the document element has an empty string as its prefix.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The stream does not hold a well-formed XML document.
+-or-
+A limit set in *options* is exceeded. |
+
+#### Remarks
+
+See [XmlDocument.DiscoverNamespaces](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument#discovernamespaces) for what is listed.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DiscoverNamespaces
+
+Reads XML text and returns the namespaces it declares, each with the prefix it is declared under.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.OrderedDictionary<string, string> DiscoverNamespaces(string xml, CloudNimble.Text.Xml.XmlDocumentOptions options = default(CloudNimble.Text.Xml.XmlDocumentOptions))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `string` | The XML text to read. |
+| `options` | `CloudNimble.Text.Xml.XmlDocumentOptions` | Options that control how the XML is read. |
+
+#### Returns
+
+Type: `System.Collections.Generic.OrderedDictionary<string, string>`
+The namespace URIs, keyed by prefix, in the order the document first declares each prefix. The default
+namespace of the document element has an empty string as its prefix.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not a well-formed XML document.
+-or-
+A limit set in *options* is exceeded. |
+
+#### Remarks
+
+See [XmlDocument.DiscoverNamespaces](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument#discovernamespaces) for what is listed. The
+encoding that an XML declaration names is not checked, because the text is already decoded.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Dispose
+
+#### Syntax
+
+```csharp
+public void Dispose()
+```
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Parse
+
+Parses a string that holds a single XML document into an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument).
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlDocument Parse(string xml, CloudNimble.Text.Xml.XmlDocumentOptions options = default(CloudNimble.Text.Xml.XmlDocumentOptions))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `string` | The XML text to parse. |
+| `options` | `CloudNimble.Text.Xml.XmlDocumentOptions` | Options that control the parser behavior. By default, comments are kept, so that writing the
+document back does not lose them. To leave comments out, set [XmlDocumentOptions.CommentHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions#commenthandling)
+to [XmlCommentHandling.Skip](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling). |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlDocument`
+An [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) representation of the XML document.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not a well-formed XML document.
+-or-
+*xml* exceeds a limit that is set in *options*. |
+
+#### Remarks
+
+The text is converted to UTF-8 in a pooled buffer that the document owns.
+[XmlDocumentOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions#maxdocumentbytecount) applies to the UTF-8 size.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Parse
+
+Parses a span of characters that holds a single XML document into an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument).
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlDocument Parse(System.ReadOnlySpan<char> xml, CloudNimble.Text.Xml.XmlDocumentOptions options = default(CloudNimble.Text.Xml.XmlDocumentOptions))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.ReadOnlySpan<char>` | The XML text to parse. |
+| `options` | `CloudNimble.Text.Xml.XmlDocumentOptions` | Options that control the parser behavior. By default, comments are kept, so that writing the
+document back does not lose them. To leave comments out, set [XmlDocumentOptions.CommentHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions#commenthandling)
+to [XmlCommentHandling.Skip](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling). |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlDocument`
+An [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) representation of the XML document.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | *xml* is not a well-formed XML document.
+-or-
+*xml* exceeds a limit that is set in *options*. |
+
+#### Remarks
+
+The text is converted to UTF-8 in a pooled buffer that the document owns.
+[XmlDocumentOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions#maxdocumentbytecount) applies to the UTF-8 size.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Parse
+
+Parses a span of UTF-8 bytes that holds a single XML document into an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument).
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlDocument Parse(System.ReadOnlySpan<byte> xml, CloudNimble.Text.Xml.XmlDocumentOptions options = default(CloudNimble.Text.Xml.XmlDocumentOptions))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded XML text to parse. |
+| `options` | `CloudNimble.Text.Xml.XmlDocumentOptions` | Options that control the parser behavior. By default, comments are kept, so that writing the
+document back does not lose them. To leave comments out, set [XmlDocumentOptions.CommentHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions#commenthandling)
+to [XmlCommentHandling.Skip](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling). |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlDocument`
+An [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) representation of the XML document.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | *xml* is not a well-formed XML document.
+-or-
+*xml* exceeds a limit that is set in *options*. |
+
+#### Remarks
+
+The bytes are copied into a pooled buffer that the document owns, so the document does not
+depend on *xml* after this method returns.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Parse
+
+Parses a sequence of UTF-8 bytes that holds a single XML document into an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument).
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlDocument Parse(System.Buffers.ReadOnlySequence<byte> xml, CloudNimble.Text.Xml.XmlDocumentOptions options = default(CloudNimble.Text.Xml.XmlDocumentOptions))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.Buffers.ReadOnlySequence<byte>` | The UTF-8 encoded XML text to parse. |
+| `options` | `CloudNimble.Text.Xml.XmlDocumentOptions` | Options that control the parser behavior. By default, comments are kept, so that writing the
+document back does not lose them. To leave comments out, set [XmlDocumentOptions.CommentHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions#commenthandling)
+to [XmlCommentHandling.Skip](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling). |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlDocument`
+An [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) representation of the XML document.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `OverflowException` | *xml* is longer than [MaxValue](https://learn.microsoft.com/dotnet/api/system.int32.maxvalue) bytes. |
+| `XmlException` | *xml* is not a well-formed XML document.
+-or-
+*xml* exceeds a limit that is set in *options*. |
+
+#### Remarks
+
+The bytes are copied into one pooled buffer that the document owns, so the document does not
+depend on *xml* after this method returns.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Parse
+
+Parses a stream of UTF-8 bytes that holds a single XML document into an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument).
+The stream is read to completion.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlDocument Parse(System.IO.Stream xml, CloudNimble.Text.Xml.XmlDocumentOptions options = default(CloudNimble.Text.Xml.XmlDocumentOptions))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Stream` | The stream that holds the UTF-8 encoded XML text to parse. |
+| `options` | `CloudNimble.Text.Xml.XmlDocumentOptions` | Options that control the parser behavior. By default, comments are kept, so that writing the
+document back does not lose them. To leave comments out, set [XmlDocumentOptions.CommentHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions#commenthandling)
+to [XmlCommentHandling.Skip](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling). |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlDocument`
+An [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) representation of the XML document.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* does not hold a well-formed XML document.
+-or-
+*xml* exceeds a limit that is set in *options*. |
+
+#### Remarks
+
+When [XmlDocumentOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions#maxdocumentbytecount) is set, reading stops as soon as the
+stream is found to be longer than that limit. The stream is not closed.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ParseAsync
+
+Parses a stream of UTF-8 bytes that holds a single XML document into an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument),
+without blocking the calling thread. The stream is read to completion.
+
+#### Syntax
+
+```csharp
+public static System.Threading.Tasks.Task<CloudNimble.Text.Xml.XmlDocument> ParseAsync(System.IO.Stream xml, CloudNimble.Text.Xml.XmlDocumentOptions options = default(CloudNimble.Text.Xml.XmlDocumentOptions), System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.IO.Stream` | The stream that holds the UTF-8 encoded XML text to parse. |
+| `options` | `CloudNimble.Text.Xml.XmlDocumentOptions` | Options that control the parser behavior. By default, comments are kept, so that writing the
+document back does not lose them. To leave comments out, set [XmlDocumentOptions.CommentHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions#commenthandling)
+to [XmlCommentHandling.Skip](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling). |
+| `cancellationToken` | `System.Threading.CancellationToken` | The token to monitor for cancellation requests. |
+
+#### Returns
+
+Type: `System.Threading.Tasks.Task<CloudNimble.Text.Xml.XmlDocument>`
+A task that produces an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) representation of the XML document.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `OperationCanceledException` | *cancellationToken* was canceled. |
+| `XmlException` | *xml* does not hold a well-formed XML document.
+-or-
+*xml* exceeds a limit that is set in *options*. |
+
+#### Examples
+
+```csharp
+await using var stream = File.OpenRead("catalog.xml");
+using var document = await XmlDocument.ParseAsync(stream);
+var count = document.RootElement.GetChild("item").GetChild("qty").GetInt32();
+```
+
+#### Remarks
+
+A [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) stream is refused before the task is created. When
+[XmlDocumentOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions#maxdocumentbytecount) is set, reading stops as soon as the stream
+is found to be longer than that limit. The stream is not closed.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ParseValue
+
+Parses one XML element (including its attributes and descendants) from the provided reader.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlDocument ParseValue(ref CloudNimble.Text.Xml.Utf8XmlReader reader)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `reader` | `CloudNimble.Text.Xml.Utf8XmlReader` | The reader to read. It is positioned on or before the start tag of the element. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlDocument`
+An [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) representation of the element (and nested nodes) read from the reader.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | *reader* reaches an end tag before it reaches a start tag.
+-or-
+*reader* reaches the end of its input without reading an element.
+-or-
+The XML that *reader* reads is not well formed. |
+
+#### Remarks
+
+If the reader is positioned on an attribute, it is moved back to the element that owns the attribute.
+When this method returns, the reader is positioned on the end tag of the element, or on the
+element itself if it is an empty-element tag.
+The document copies the names and values it keeps, so it does not depend on the reader's input
+after this method returns.
+The reader is not restored to its original position when this method throws.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryParse
+
+Attempts to parse a span of UTF-8 bytes that holds a single XML document into an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument).
+
+#### Syntax
+
+```csharp
+public static bool TryParse(System.ReadOnlySpan<byte> xml, CloudNimble.Text.Xml.XmlDocumentOptions options, out CloudNimble.Text.Xml.XmlDocument document)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded XML text to parse. |
+| `options` | `CloudNimble.Text.Xml.XmlDocumentOptions` | Options that control the parser behavior. By default, comments are kept, so that writing the
+document back does not lose them. To leave comments out, set [XmlDocumentOptions.CommentHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions#commenthandling)
+to [XmlCommentHandling.Skip](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling). |
+| `document` | `CloudNimble.Text.Xml.XmlDocument?` | When this method returns, contains the parsed document if parsing succeeded, or
+[`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if it failed. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if *xml* is a well-formed XML document that is within
+the limits set in *options*; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Remarks
+
+This method returns [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) in every case where
+[XmlDocument.Parse](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument#parse) throws an [XmlException](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException).
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryParseValue
+
+Attempts to parse one XML element (including its attributes and descendants) from the provided reader.
+
+#### Syntax
+
+```csharp
+public static bool TryParseValue(ref CloudNimble.Text.Xml.Utf8XmlReader reader, out CloudNimble.Text.Xml.XmlDocument document)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `reader` | `CloudNimble.Text.Xml.Utf8XmlReader` | The reader to read. It is positioned on or before the start tag of the element. |
+| `document` | `CloudNimble.Text.Xml.XmlDocument?` | When this method returns, contains the parsed document if the element was read, or
+[`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if it was not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the element was read; [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the reader's input ends
+before the element does and [Utf8XmlReader.IsFinalBlock](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader#isfinalblock) is [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool),
+or if the reader is on an end tag.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | *reader* reaches an end tag before it reaches a start tag.
+-or-
+*reader* reaches the end of its input without reading an element, and
+[Utf8XmlReader.IsFinalBlock](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader#isfinalblock) is [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+-or-
+The XML that *reader* reads is not well formed. |
+
+#### Examples
+
+```csharp
+var reader = new Utf8XmlReader(block, isFinalBlock: false, state);
+if (!XmlDocument.TryParseValue(ref reader, out XmlDocument? item))
+{
+    // The element is not all in this block. Read more input and call again.
+}
+```
+
+#### Remarks
+
+This is the counterpart of `JsonDocument.TryParseValue`. When this method returns
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool), the reader is where [XmlDocument.ParseValue](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument#parsevalue) leaves it: on the end tag of
+the element, or on the element itself if it is an empty-element tag. When it returns
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) or throws, the reader is where it was before the call, so the caller can
+supply more input and call again. The element is read twice: once to find its end, and once to keep it.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> WriteTo
+
+Writes the document to the provided writer as XML.
+
+#### Syntax
+
+```csharp
+public void WriteTo(CloudNimble.Text.Xml.Utf8XmlWriter writer)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The writer to which to write the document. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *writer* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `ObjectDisposedException` | The document has been disposed. |
+
+#### Remarks
+
+The XML declaration (when the document has one) is written first, then the comments and processing
+instructions before the root element, the root element, and the comments and processing
+instructions after it. The declaration belongs to the document, so it is written whatever the writer's
+[XmlWriterOptions.OmitXmlDeclaration](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWriterOptions#omitxmldeclaration) says: that option only decides whether the writer adds a declaration
+to a document that has none. Write with it set to [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to get back what was parsed. The
+declaration is written with the version of the parsed document and
+`encoding="utf-8"`.
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlElement
+- CloudNimble.Text.Xml.XmlDocumentOptions
+- CloudNimble.Text.Xml.XmlDeclarationInfo
+- CloudNimble.Text.Xml.XmlValueKind
+- CloudNimble.Text.Xml.Utf8XmlReader
+- CloudNimble.Text.Xml.Utf8XmlWriter
+- CloudNimble.Text.Xml.XmlSerializer
+- CloudNimble.Text.Xml.XmlException
+- CloudNimble.Text.Xml.Nodes.XmlNode
+

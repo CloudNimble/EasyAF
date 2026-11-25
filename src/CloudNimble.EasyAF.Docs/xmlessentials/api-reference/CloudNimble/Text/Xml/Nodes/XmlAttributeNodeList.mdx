@@ -1,0 +1,427 @@
+---
+title: XmlAttributeNodeList
+description: "Represents the ordered list of attributes of an [XmlElementNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlElementNode). This class cannot be inherited."
+icon: lock
+tag: "SEALED"
+keywords: ['XmlAttributeNodeList', 'CloudNimble.Text.Xml.Nodes.XmlAttributeNodeList', 'CloudNimble.Text.Xml.Nodes', 'class', 'CloudNimble.Text.Xml.Nodes.XmlAttributeNode', 'CloudNimble.Text.Xml.Nodes.XmlElementNode', 'CloudNimble.Text.Xml.Nodes.XmlNodeList']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Nodes
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Nodes.XmlAttributeNodeList
+```
+
+## Summary
+
+Represents the ordered list of attributes of an [XmlElementNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlElementNode). This class cannot be inherited.
+
+## Usage
+
+`XmlAttributeNodeList` is the type of `XmlElementNode.Attributes`. It's an `IList<XmlAttributeNode>` in document order, with two indexers that find an attribute by name: `Attributes["id"]` matches a local name in any namespace, and `Attributes["language", namespaceUri]` matches one namespace. Both return `null` when there is no such attribute.
+
+```csharp
+var order = (XmlElementNode)XmlNode.Parse("""<Order id="1042" status="open" draft="true"/>""")!;
+
+order.SetAttribute("status", "shipped");
+order.SetAttribute("carrier", "Contoso Freight");
+order.Attributes["id"]!.Value = "1043";
+
+XmlAttributeNode draft = order.Attributes["draft"]!;
+order.Attributes.Remove(draft);
+
+output.WriteLine(order.ToString());
+```
+
+The code produces the following output:
+
+```xml
+<Order id="1043" status="shipped" carrier="Contoso Freight"/>
+```
+
+You don't create a list. Every `XmlElementNode` has one.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/30_ChangeWithXmlNode.cs)
+
+## Remarks
+
+An attribute can belong to one list at a time. Adding, inserting, or assigning an attribute that
+already has a parent throws an [XmlException](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException), and [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) throws an
+[ArgumentNullException](https://learn.microsoft.com/dotnet/api/system.argumentnullexception). An attribute that is removed or replaced has no parent afterward.
+The list does not check for duplicate names.
+
+## Considerations
+
+- Attributes are written in list order. `Insert` and the index setter let you control that order.
+- `Add`, `Insert`, and the index setter throw an `XmlException` when the attribute already belongs to an element. `Remove`, `RemoveAt`, `Clear`, and replacing through the index setter clear the parent of the attribute that leaves the list.
+- The list doesn't check for duplicate names. Two attributes with the same name throw "Duplicate attribute." when the element is written. `XmlElementNode.SetAttribute` updates an existing attribute instead of adding a second one.
+- The list of a parsed element includes its namespace declarations (`xmlns` and `xmlns:prefix`), so `Count` can be larger than the number of attributes you think of as data.
+- The name indexers search the list from the start each time. That's the right trade for the handful of attributes a typical element has.
+- Don't change the list while a `foreach` loop enumerates it. After a change, the loop's next step throws an `InvalidOperationException` ("Collection was modified; enumeration operation may not execute."), as a `List<T>` or a `JsonArray` does. Loop over a copy (`list.ToArray()`), or loop by index from the end. Setting an attribute's `Value` changes the attribute, not the list.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Count
+
+#### Syntax
+
+```csharp
+public int Count { get; }
+```
+
+#### Property Value
+
+Type: `int`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsReadOnly
+
+#### Syntax
+
+```csharp
+public bool IsReadOnly { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> this[]
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.Nodes.XmlAttributeNode this { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.Nodes.XmlAttributeNode`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> this[]
+
+Gets the first attribute that has the specified local name, in any namespace.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.Nodes.XmlAttributeNode this { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.Nodes.XmlAttributeNode?`
+The first attribute that has the specified local name, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if there is none.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *localName* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> this[]
+
+Gets the first attribute that has the specified local name and namespace URI.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.Nodes.XmlAttributeNode this { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.Nodes.XmlAttributeNode?`
+The first attribute that has the specified local name and namespace URI, or
+[`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if there is none.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *localName* or *namespaceUri* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Add
+
+#### Syntax
+
+```csharp
+public void Add(CloudNimble.Text.Xml.Nodes.XmlAttributeNode node)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `node` | `CloudNimble.Text.Xml.Nodes.XmlAttributeNode` | - |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Clear
+
+#### Syntax
+
+```csharp
+public void Clear()
+```
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Contains
+
+#### Syntax
+
+```csharp
+public bool Contains(CloudNimble.Text.Xml.Nodes.XmlAttributeNode item)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `item` | `CloudNimble.Text.Xml.Nodes.XmlAttributeNode` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CopyTo
+
+#### Syntax
+
+```csharp
+public void CopyTo(CloudNimble.Text.Xml.Nodes.XmlAttributeNode[] array, int arrayIndex)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `array` | `CloudNimble.Text.Xml.Nodes.XmlAttributeNode[]` | - |
+| `arrayIndex` | `int` | - |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetEnumerator
+
+Returns an enumerator that iterates through the attributes in order.
+
+#### Syntax
+
+```csharp
+public System.Collections.Generic.IEnumerator<CloudNimble.Text.Xml.Nodes.XmlAttributeNode> GetEnumerator()
+```
+
+#### Returns
+
+Type: `System.Collections.Generic.IEnumerator<CloudNimble.Text.Xml.Nodes.XmlAttributeNode>`
+An enumerator for the list.
+
+#### Remarks
+
+The list must not change while it is enumerated. After an attribute is added, inserted, removed, or
+replaced, or the list is cleared, the next call to [MoveNext](https://learn.microsoft.com/dotnet/api/system.collections.ienumerator.movenext) throws an
+[InvalidOperationException](https://learn.microsoft.com/dotnet/api/system.invalidoperationexception). To change the list in a loop, enumerate a copy of it.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IndexOf
+
+#### Syntax
+
+```csharp
+public int IndexOf(CloudNimble.Text.Xml.Nodes.XmlAttributeNode item)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `item` | `CloudNimble.Text.Xml.Nodes.XmlAttributeNode` | - |
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Insert
+
+#### Syntax
+
+```csharp
+public void Insert(int index, CloudNimble.Text.Xml.Nodes.XmlAttributeNode node)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `index` | `int` | - |
+| `node` | `CloudNimble.Text.Xml.Nodes.XmlAttributeNode` | - |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Remove
+
+#### Syntax
+
+```csharp
+public bool Remove(CloudNimble.Text.Xml.Nodes.XmlAttributeNode node)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `node` | `CloudNimble.Text.Xml.Nodes.XmlAttributeNode` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> RemoveAt
+
+#### Syntax
+
+```csharp
+public void RemoveAt(int index)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `index` | `int` | - |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Nodes.XmlAttributeNode
+- CloudNimble.Text.Xml.Nodes.XmlElementNode
+- CloudNimble.Text.Xml.Nodes.XmlNodeList
+

@@ -1,0 +1,404 @@
+---
+title: XmlPropertyInfoValues
+description: "Provides serialization metadata about a property or field. This class cannot be inherited."
+icon: code-branch
+tag: "SEALED"
+keywords: ['XmlPropertyInfoValues', 'CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<TValue>', 'CloudNimble.Text.Xml.Serialization', 'class', 'CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+**Inheritance:** CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<TValue>
+```
+
+## Summary
+
+Provides serialization metadata about a property or field. This class cannot be inherited.
+
+## Remarks
+
+Source-generated contexts create instances of this class. It is analogous to
+`JsonPropertyInfoValues<T>` in `System.Text.Json`. The names, the ignore conditions and the
+mapping of the member are not given here: the serializer works them out from [XmlPropertyInfoValues`1.Attributes](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyInfoValues#attributes) and the
+options, exactly as it does for a member it finds through reflection.
+
+## Type Parameters
+
+- `TValue` - The type of the property or field.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public XmlPropertyInfoValues()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues`</Note>
+
+Initializes a new instance of the [XmlPropertyInfoValues](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyInfoValues) class.
+
+#### Syntax
+
+```csharp
+private protected XmlPropertyInfoValues()
+```
+
+#### Remarks
+
+Only `XmlPropertyInfoValues`1` derives from this class: a class outside this library cannot.
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Attributes
+
+Gets or initializes the XmlEssentials attributes on the member.
+
+#### Syntax
+
+```csharp
+public System.Attribute[] Attributes { get; init; }
+```
+
+#### Property Value
+
+Type: `System.Attribute[]?`
+The attributes, as instances constructed with the arguments the member declares them with; or
+[`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) when the member has none.
+
+#### Remarks
+
+The serializer reads these as it reads the attributes it finds through reflection.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeclaringType
+
+Gets or initializes the type that declares the member.
+
+#### Syntax
+
+```csharp
+public System.Type DeclaringType { get; init; }
+```
+
+#### Property Value
+
+Type: `System.Type`
+The declaring type.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Getter
+
+Gets or initializes a method that gets the value of the member.
+
+#### Syntax
+
+```csharp
+public System.Func<object, TValue> Getter { get; init; }
+```
+
+#### Property Value
+
+Type: `System.Func<object, TValue>?`
+A method that takes the object, boxed when it is a value type, and returns the value of the member; or
+[`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) when the member cannot be read.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsGetNullable
+
+Gets or initializes a value that indicates whether the member may return [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+
+#### Syntax
+
+```csharp
+public bool IsGetNullable { get; init; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the nullable annotations of the member allow it to return
+[`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null), or say nothing; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Remarks
+
+The value is read when [XmlSerializerOptions.RespectNullableAnnotations](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#respectnullableannotations) is [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsProperty
+
+Gets or initializes a value that indicates whether the member is a property or a field.
+
+#### Syntax
+
+```csharp
+public bool IsProperty { get; init; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) for a property; [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) for a field.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsPublic
+
+Gets or initializes a value that indicates whether the member is public.
+
+#### Syntax
+
+```csharp
+public bool IsPublic { get; init; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the field, or the get accessor of the property, is public; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). A member that is not public is serialized only when it has
+[XmlIncludeAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlIncludeAttribute).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsRequired
+
+Gets or initializes a value that indicates whether the member is declared with the
+`required` modifier.
+
+#### Syntax
+
+```csharp
+public bool IsRequired { get; init; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the member has the `required` modifier; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsSetNullable
+
+Gets or initializes a value that indicates whether the member accepts [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+
+#### Syntax
+
+```csharp
+public bool IsSetNullable { get; init; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the nullable annotations of the member allow it to be set to
+[`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null), or say nothing; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Remarks
+
+The value is read when [XmlSerializerOptions.RespectNullableAnnotations](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#respectnullableannotations) is [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsVirtual
+
+Gets or initializes a value that indicates whether the member is a property with a virtual accessor.
+
+#### Syntax
+
+```csharp
+public bool IsVirtual { get; init; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the property is virtual, abstract, an override, or implements an interface
+member; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). The default is [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Remarks
+
+A property that overrides another is the same member, so only the most derived one is serialized. When
+that one is ignored, the property it overrides is not serialized either.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PropertyName
+
+Gets or initializes the name of the property or field as it is declared.
+
+#### Syntax
+
+```csharp
+public string PropertyName { get; init; }
+```
+
+#### Property Value
+
+Type: `string`
+The C# name of the member.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Setter
+
+Gets or initializes a method that sets the value of the member.
+
+#### Syntax
+
+```csharp
+public System.Action<object, TValue> Setter { get; init; }
+```
+
+#### Property Value
+
+Type: `System.Action<object, TValue>?`
+A method that takes the object, boxed when it is a value type, and the value to set; or
+[`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) when the member cannot be set after the object is created.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateFacts <Badge color="gray">Inherited</Badge> <Badge color="orange">Abstract</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues`</Note>
+
+Turns the values into the facts the object binder works from.
+
+#### Syntax
+
+```csharp
+internal abstract CloudNimble.Text.Xml.Serialization.XmlMemberFacts CreateFacts()
+```
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlMemberFacts`
+The facts of the member.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+

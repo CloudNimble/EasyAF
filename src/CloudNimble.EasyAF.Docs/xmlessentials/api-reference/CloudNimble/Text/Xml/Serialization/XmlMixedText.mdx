@@ -1,0 +1,236 @@
+---
+title: XmlMixedText
+description: "Represents a run of text in mixed content. This class cannot be inherited."
+icon: lock
+tag: "SEALED"
+keywords: ['XmlMixedText', 'CloudNimble.Text.Xml.Serialization.XmlMixedText', 'CloudNimble.Text.Xml.Serialization', 'class', 'CloudNimble.Text.Xml.Serialization.XmlMixedContentItem', 'CloudNimble.Text.Xml.Serialization.XmlMixedElement', 'CloudNimble.Text.Xml.Serialization.XmlMixedAttribute', 'CloudNimble.Text.Xml.XmlWhitespaceHandling']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+**Inheritance:** CloudNimble.Text.Xml.Serialization.XmlMixedContentItem
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlMixedText
+```
+
+## Summary
+
+Represents a run of text in mixed content. This class cannot be inherited.
+
+## Usage
+
+An `XmlMixedText` is a run of text inside mixed content. Its `Text` property holds the characters after entity and character references have been resolved, so `&lt;` in the document is `<` in the property.
+
+The serializer creates one item for each run of text between child elements. To add text yourself, create an item and add it to the list:
+
+```csharp
+paragraph.Content.Add(new XmlMixedText(" "));
+```
+
+When the list is written, the text is escaped as needed. See `XmlMixedContentItem` for an example that reads text runs.
+
+## Considerations
+
+- White space inside a run is kept exactly, including the spaces next to a child element. A run that is only white space is dropped when reading unless `XmlSerializerOptions.WhitespaceHandling` is `XmlWhitespaceHandling.Significant`.
+- A CDATA section is read as an `XmlMixedText`. It is written back as escaped text, not as CDATA.
+- `Text` is never `null` on an item the serializer creates, and its default is the empty string.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [XmlMixedText](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedText) class that has empty text.
+
+#### Syntax
+
+```csharp
+public XmlMixedText()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [XmlMixedText](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedText) class with the specified text.
+
+#### Syntax
+
+```csharp
+public XmlMixedText(string text)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `text` | `string` | The text of the run. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlMixedContentItem`</Note>
+
+#### Syntax
+
+```csharp
+protected XmlMixedContentItem()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Text
+
+Gets or sets the text of the run.
+
+#### Syntax
+
+```csharp
+public string Text { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The text of the run. The default is an empty string.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Serialization.XmlMixedContentItem
+- CloudNimble.Text.Xml.Serialization.XmlMixedElement
+- CloudNimble.Text.Xml.Serialization.XmlMixedAttribute
+- CloudNimble.Text.Xml.XmlWhitespaceHandling
+

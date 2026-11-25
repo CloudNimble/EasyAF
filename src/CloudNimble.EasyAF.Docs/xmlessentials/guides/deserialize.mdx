@@ -1,0 +1,385 @@
+---
+title: "How to read XML into .NET objects"
+sidebarTitle: "Deserialize"
+description: "Learn how to use XmlSerializer to read XML from a string, UTF-8 bytes, a stream, a reader, or a parsed document into .NET objects."
+icon: "arrow-right-to-bracket"
+---
+
+This article shows how to use [`XmlSerializer`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) to turn XML into .NET objects, and what the serializer does when the XML doesn't line up with the type. The API mirrors `JsonSerializer.Deserialize` in System.Text.Json: you name the target type as the type argument and pass the XML and, optionally, an [`XmlSerializerOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions) instance.
+
+## Deserialize from a string
+
+Call `XmlSerializer.Deserialize<TValue>` with the XML text.
+
+```csharp Program.cs
+const string xml = """
+    <?xml version="1.0" encoding="utf-8"?>
+    <PurchaseOrder>
+      <Id>1042</Id>
+      <Customer>Contoso</Customer>
+      <Placed>2026-03-14</Placed>
+      <Total>129.90</Total>
+    </PurchaseOrder>
+    """;
+
+PurchaseOrder? order = XmlSerializer.Deserialize<PurchaseOrder>(xml);
+
+output.WriteLine($"Order {order!.Id} for {order.Customer}");
+output.WriteLine($"Placed {order.Placed:yyyy-MM-dd}");
+output.WriteLine($"Total is 129.90: {order.Total == 129.90m}");
+```
+
+```csharp PurchaseOrder.cs
+public sealed class PurchaseOrder
+{
+    public int Id { get; set; }
+
+    public string? Customer { get; set; }
+
+    public DateOnly Placed { get; set; }
+
+    public decimal Total { get; set; }
+}
+```
+
+The code produces the following output:
+
+```text
+Order 1042 for Contoso
+Placed 2026-03-14
+Total is 129.90: True
+```
+
+Notice the following:
+
+- The XML declaration, the indentation, and the line ends are all accepted. White space between elements isn't part of any value.
+- The return type is nullable. The result is `null` when the document element is marked `xsi:nil="true"`.
+- The name of the document element must be the name the type serializes as, here `PurchaseOrder`. Otherwise the serializer throws an [`XmlException`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException). See [Handle invalid XML](#handle-invalid-xml).
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/07_DeserializeFromXml.cs)
+
+## Deserialize from UTF-8
+
+XML read from a file or the network arrives as UTF-8 bytes. Pass the bytes directly. The reader works on UTF-8, so a `string` would be converted back to UTF-8 before it is parsed.
+
+### A span of bytes
+
+The following example uses a `u8` literal. A `byte[]` or a `ReadOnlyMemory<byte>.Span` works the same way, and an overload for `ReadOnlySequence<byte>` takes data that arrives in several segments.
+
+```csharp Program.cs
+ReadOnlySpan<byte> utf8 = "<InvoiceCustomer><Name>Contoso</Name><Email>ap@contoso.example</Email></InvoiceCustomer>"u8;
+
+InvoiceCustomer? customer = XmlSerializer.Deserialize<InvoiceCustomer>(utf8);
+
+output.WriteLine($"{customer!.Name} <{customer.Email}>");
+```
+
+The code produces the following output:
+
+```text
+Contoso <ap@contoso.example>
+```
+
+### A stream
+
+Pass a `Stream`. The serializer reads the stream to its end and doesn't close it.
+
+```csharp Program.cs
+byte[] file = Encoding.UTF8.GetBytes("<InvoiceCustomer><Name>Contoso</Name><Email>ap@contoso.example</Email></InvoiceCustomer>");
+using var stream = new MemoryStream(file);
+
+InvoiceCustomer? customer = XmlSerializer.Deserialize<InvoiceCustomer>(stream);
+
+output.WriteLine($"{customer!.Name} <{customer.Email}>");
+```
+
+The code produces the following output:
+
+```text
+Contoso <ap@contoso.example>
+```
+
+To read a stream or a `PipeReader` without blocking, use `DeserializeAsync`. To receive the items of a large document one at a time, use `DeserializeAsyncEnumerable`. Both are covered in [Streaming](/xmlessentials/guides/streaming).
+
+<Tip>
+When the XML comes from a source you don't control, set `MaxDocumentByteCount` and the other limits on the options. See [Security](/xmlessentials/guides/security).
+</Tip>
+
+## Deserialize part of a document
+
+You don't have to map the whole document to a type. Read or parse the document yourself and hand the serializer only the elements you want as objects.
+
+### From a Utf8XmlReader
+
+Move a [`Utf8XmlReader`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) to a start tag and pass it by reference. The serializer reads that one element and leaves the reader on its end tag, so the loop continues with whatever follows.
+
+```csharp Program.cs
+ReadOnlySpan<byte> utf8 = """
+    <Customers exported="2026-03-14">
+      <InvoiceCustomer><Name>Contoso</Name><Email>ap@contoso.example</Email></InvoiceCustomer>
+      <InvoiceCustomer><Name>Fabrikam</Name><Email>billing@fabrikam.example</Email></InvoiceCustomer>
+    </Customers>
+    """u8;
+
+var reader = new Utf8XmlReader(utf8);
+while (reader.Read())
+{
+    if (reader.TokenType is XmlTokenType.StartElement && reader.LocalNameEquals("InvoiceCustomer"u8))
+    {
+        InvoiceCustomer? customer = XmlSerializer.Deserialize<InvoiceCustomer>(ref reader);
+        output.WriteLine($"{customer!.Name} <{customer.Email}>");
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+Contoso <ap@contoso.example>
+Fabrikam <billing@fabrikam.example>
+```
+
+### From a parsed document
+
+Pass an [`XmlElement`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) from an [`XmlDocument`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument). Overloads also take the whole `XmlDocument`, which deserializes its root element, and a mutable [`XmlNode`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode).
+
+```csharp Program.cs
+const string xml = """
+    <Response status="ok">
+      <InvoiceCustomer><Name>Contoso</Name><Email>ap@contoso.example</Email></InvoiceCustomer>
+    </Response>
+    """;
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement element = document.RootElement.GetChild("InvoiceCustomer");
+
+InvoiceCustomer? customer = XmlSerializer.Deserialize<InvoiceCustomer>(element);
+
+output.WriteLine($"{customer!.Name} <{customer.Email}>");
+```
+
+The code produces the following output:
+
+```text
+Contoso <ap@contoso.example>
+```
+
+In both cases the element you hand over is treated as a document element, so its name must be the name the type serializes as. An element called `BillTo` can't be deserialized as an `InvoiceCustomer` this way, even though its content fits.
+
+## Deserialize a type known at run time
+
+When the target type isn't known at compile time, pass a `Type`. The method returns `object`.
+
+```csharp Program.cs
+Type type = typeof(InvoiceLine);
+
+object? value = XmlSerializer.Deserialize("<InvoiceLine><Sku>KB-101</Sku><Quantity>2</Quantity></InvoiceLine>", type);
+
+var line = (InvoiceLine)value!;
+output.WriteLine($"{line.Quantity} x {line.Sku}");
+```
+
+The code produces the following output:
+
+```text
+2 x KB-101
+```
+
+## Missing, unknown, and out-of-order elements
+
+Real documents rarely match a type exactly. By default the serializer is tolerant:
+
+- Elements may appear in any order.
+- A member with no element in the XML keeps the value the type gave it.
+- An element or attribute that no member maps to is skipped.
+
+```csharp Program.cs
+const string xml = """
+    <PurchaseOrder priority="high">
+      <Customer>Contoso</Customer>
+      <Id>1042</Id>
+      <Warehouse>SEA-2</Warehouse>
+    </PurchaseOrder>
+    """;
+
+PurchaseOrder? order = XmlSerializer.Deserialize<PurchaseOrder>(xml);
+
+output.WriteLine($"Id: {order!.Id}");
+output.WriteLine($"Customer: {order.Customer}");
+output.WriteLine($"Placed: {order.Placed:yyyy-MM-dd}");
+output.WriteLine($"Total: {order.Total}");
+```
+
+The code produces the following output:
+
+```text
+Id: 1042
+Customer: Contoso
+Placed: 0001-01-01
+Total: 0
+```
+
+`Placed` and `Total` aren't in the XML, so they have their default values. The `priority` attribute and the `Warehouse` element are ignored.
+
+To make a missing member an error, mark it as required. To make an unknown element or attribute an error, set `UnmappedMemberHandling`:
+
+```csharp Program.cs
+const string xml = "<PurchaseOrder><Id>1042</Id><Warehouse>SEA-2</Warehouse></PurchaseOrder>";
+var options = new XmlSerializerOptions { UnmappedMemberHandling = XmlUnmappedMemberHandling.Disallow };
+
+try
+{
+    XmlSerializer.Deserialize<PurchaseOrder>(xml, options);
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+```
+
+The code produces the following output:
+
+```text
+Unknown element 'Warehouse'. Path: /PurchaseOrder | LineNumber: 1 | BytePositionInLine: 40.
+```
+
+Both are covered in [Require properties](/xmlessentials/guides/required-properties).
+
+## Match names without regard to case
+
+Element and attribute names are matched to members with case, as XML names are case-sensitive. Set `PropertyNameCaseInsensitive` to match them without it.
+
+```csharp Program.cs
+const string xml = "<PurchaseOrder><id>1042</id><CUSTOMER>Contoso</CUSTOMER></PurchaseOrder>";
+
+PurchaseOrder? exact = XmlSerializer.Deserialize<PurchaseOrder>(xml);
+output.WriteLine($"Exact: {exact!.Id}, {exact.Customer ?? "(null)"}");
+
+var options = new XmlSerializerOptions { PropertyNameCaseInsensitive = true };
+PurchaseOrder? relaxed = XmlSerializer.Deserialize<PurchaseOrder>(xml, options);
+output.WriteLine($"Case-insensitive: {relaxed!.Id}, {relaxed.Customer ?? "(null)"}");
+```
+
+The code produces the following output:
+
+```text
+Exact: 0, (null)
+Case-insensitive: 1042, Contoso
+```
+
+With the default options, `id` and `CUSTOMER` match no member and are skipped like any other unknown element. The comparison ignores the case of ASCII letters only: a name that holds any other character matches only when it is exactly the same. The option also applies to the name of the document element.
+
+## Handle invalid XML
+
+The serializer throws an [`XmlException`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException) when the document element has the wrong name, when the XML isn't well formed, and when a value can't be converted to the member's type.
+
+```csharp Program.cs
+string[] documents =
+[
+    "<Order><Id>1042</Id></Order>",
+    "<PurchaseOrder><Id>1042</PurchaseOrder>",
+    "<PurchaseOrder><Id>ten</Id></PurchaseOrder>",
+];
+
+foreach (string xml in documents)
+{
+    try
+    {
+        XmlSerializer.Deserialize<PurchaseOrder>(xml);
+    }
+    catch (XmlException ex)
+    {
+        output.WriteLine(ex.Message);
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+The root element does not match 'PurchaseOrder'. Path: /PurchaseOrder | LineNumber: 1 | BytePositionInLine: 8.
+End tag does not match start tag. Path: /PurchaseOrder/Id | LineNumber: 1 | BytePositionInLine: 40.
+The value is not a valid integer. Path: /PurchaseOrder/Id | LineNumber: 1 | BytePositionInLine: 28.
+```
+
+A document that isn't well formed is never partly accepted: the serializer reads to the end of the document, so content after the document element is checked too.
+
+### Find where the error is
+
+The exception says where in the document the error was. `Path` names each element from the document element down to the error, and `LineNumber` and `LinePosition` give the place in the text.
+
+```csharp Program.cs
+const string xml = """
+    <Invoice>
+      <Number>204</Number>
+      <Lines><Sku>KB-01</Sku><Quantity>1</Quantity></Lines>
+      <Lines><Sku>MS-02</Sku><Quantity>two</Quantity></Lines>
+    </Invoice>
+    """;
+
+try
+{
+    XmlSerializer.Deserialize<Invoice>(xml);
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+    output.WriteLine($"Path: {ex.Path}");
+    output.WriteLine($"Line {ex.LineNumber}, position {ex.LinePosition}");
+}
+```
+
+The code produces the following output:
+
+```text
+The value is not a valid integer. Path: /Invoice/Lines[1]/Quantity | LineNumber: 4 | BytePositionInLine: 50.
+Path: /Invoice/Lines[1]/Quantity
+Line 4, position 50
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/07_DeserializeFromXml.cs)
+
+A path reads like this:
+
+| In the path | Meaning |
+| --- | --- |
+| `/Invoice/Number` | The element `Number` in the document element `Invoice`. |
+| `Lines[1]` | The second item of a collection. Items are counted from 0, as `System.Text.Json` counts them. |
+| `@id` | The attribute `id`. |
+| `text()` | The text of an element that is mapped with `[XmlText]`. |
+
+- An entry of a dictionary is the element named for its key.
+- An item whose type is a derived type has the name its element has in the document.
+- The message ends with the path and, when it's known, the line and the byte position in the line, in the form `System.Text.Json` uses.
+- An exception that a converter of yours throws gets a path too, and its message is left as you wrote it. A path you give to the `XmlException` constructor is left as it is.
+- When an object is written, the path is made of the elements the writer has open, with no positions: `/Invoice/Lines`. A value that is written as one whole element ends the path at the element that holds it.
+- `Path` is set by `XmlSerializer`. An `XmlException` from `Utf8XmlReader`, `XmlDocument` or `XmlNode` used on its own has no path.
+
+## Deserialization behavior
+
+Unless you change it with options or attributes, `XmlSerializer` behaves as follows:
+
+- Names are matched with case. A member that is mapped to a namespace is matched by the namespace URI, never by the prefix. See [Namespaces](/xmlessentials/guides/namespaces).
+- A member is set when it has a setter, including an `init` setter, or when it is a parameter of the constructor the serializer uses. See [Immutable types](/xmlessentials/guides/immutable-types).
+- A property with no setter is left alone, even when the XML has an element for it. To add to the collection, dictionary, or object it holds, use `XmlObjectCreationHandling.Populate`. See [Serialize collections](/xmlessentials/guides/collections#populate-a-collection-that-already-holds-a-value).
+- When an element appears twice for a member that isn't a collection, the last one wins. Set `AllowDuplicateProperties` to `false` to throw instead.
+- An empty element, such as `<Customer/>`, is the empty string for a `string` member. Only `xsi:nil="true"` reads as `null`. See [Handle null values](/xmlessentials/guides/null-and-nil).
+- White space inside a text value is kept. Character references, entity references such as `&amp;`, and CDATA sections are decoded.
+- Comments are skipped. A document type declaration (DTD) is rejected. See [Security](/xmlessentials/guides/security).
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Serialize" icon="arrow-right-from-bracket" href="/xmlessentials/guides/serialize">
+    Write .NET objects as XML to each kind of destination.
+  </Card>
+  <Card title="Require properties" icon="asterisk" href="/xmlessentials/guides/required-properties">
+    Reject XML that lacks a member or holds one the type doesn't have.
+  </Card>
+  <Card title="Immutable types" icon="lock" href="/xmlessentials/guides/immutable-types">
+    Deserialize records, constructors with parameters, and structs.
+  </Card>
+  <Card title="Use Utf8XmlReader" icon="book-open" href="/xmlessentials/guides/use-utf8xmlreader">
+    Read XML token by token when you don't want objects.
+  </Card>
+</Columns>

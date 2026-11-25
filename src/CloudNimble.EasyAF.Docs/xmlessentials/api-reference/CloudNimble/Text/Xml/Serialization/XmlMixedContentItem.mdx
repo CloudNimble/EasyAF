@@ -1,0 +1,198 @@
+---
+title: XmlMixedContentItem
+description: "Defines the core behavior of an item of mixed content and provides a base for [XmlMixedText](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedText) ..."
+icon: shapes
+tag: "ABSTRACT"
+keywords: ['XmlMixedContentItem', 'CloudNimble.Text.Xml.Serialization.XmlMixedContentItem', 'CloudNimble.Text.Xml.Serialization', 'class', 'CloudNimble.Text.Xml.Serialization.XmlMixedAttribute', 'CloudNimble.Text.Xml.Serialization.XmlMixedText', 'CloudNimble.Text.Xml.Serialization.XmlMixedElement']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlMixedContentItem
+```
+
+## Summary
+
+Defines the core behavior of an item of mixed content and provides a base for [XmlMixedText](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedText) and [XmlMixedElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedElement).
+
+## Usage
+
+`XmlMixedContentItem` is the abstract base of the two kinds of item in a mixed-content list: `XmlMixedText` for a run of text and `XmlMixedElement` for a child element. Use it as the element type of the list that you mark with `[XmlMixed]`, and use pattern matching to tell the items apart.
+
+```csharp
+string xml = "<Paragraph>Press <Key>Ctrl</Key> and <Key>S</Key> to save.</Paragraph>";
+
+Paragraph? paragraph = XmlSerializer.Deserialize<Paragraph>(xml);
+foreach (XmlMixedContentItem item in paragraph!.Content)
+{
+    switch (item)
+    {
+        case XmlMixedText text:
+            output.WriteLine($"Text: \"{text.Text}\"");
+            break;
+        case XmlMixedElement { Element: { } element }:
+            output.WriteLine($"Element: {element.LocalName} = {element.InnerText}");
+            break;
+    }
+}
+```
+
+The loop prints the following:
+
+```text
+Text: "Press "
+Element: Key = Ctrl
+Text: " and "
+Element: Key = S
+Text: " to save."
+```
+
+The class has no members of its own. The serializer writes only `XmlMixedText` and `XmlMixedElement` items, and skips an item of any other derived type.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/18_MixedContent.cs)
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Serialization.XmlMixedAttribute
+- CloudNimble.Text.Xml.Serialization.XmlMixedText
+- CloudNimble.Text.Xml.Serialization.XmlMixedElement
+

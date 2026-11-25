@@ -1,0 +1,1093 @@
+---
+title: "How to read XML with Utf8XmlReader"
+sidebarTitle: "Use Utf8XmlReader"
+description: "Read UTF-8 XML one token at a time with Utf8XmlReader: names, attributes, typed values, namespaces, streams, limits, and errors."
+icon: "book-open"
+---
+
+`Utf8XmlReader` is a forward-only reader for UTF-8 encoded XML. It reads one token at a time from a span or a sequence of bytes and gives you each name and value as a slice of your own input. This article shows how to use it, from the basic loop to reading a stream in blocks and reading without allocating.
+
+Use the reader when you need the lowest overhead, when a document is too large to hold as a tree, or when you write a [custom converter](/xmlessentials/guides/custom-converters). To map XML to your own types, use [`XmlSerializer`](/xmlessentials/guides/deserialize). To query a document at random, use [`XmlDocument`](/xmlessentials/guides/use-xmldocument).
+
+If you know `Utf8JsonReader` from System.Text.Json, you already know the shape of this API: a `ref struct` with a `Read` method, a `TokenType` property, `ValueSpan`, `Get*` and `TryGet*` methods, and a state value for reading in blocks.
+
+## What a ref struct reader means for your code
+
+`Utf8XmlReader` is a `ref struct` because it holds a span over your input. The compiler enforces the rules that follow from that:
+
+- You can't store a reader in a field of a class, in an array, or in a collection.
+- You can't use a reader across an `await` or a `yield return`, and a lambda can't capture one.
+- To let another method advance your reader, pass it with `ref`. Passing it by value copies it, and the caller's reader doesn't move.
+
+```csharp
+private static int CountEscapedValues(ref Utf8XmlReader reader)
+```
+
+Two more things follow from the design:
+
+- **The input is UTF-8 bytes.** Pass a `u8` literal, a `byte[]`, a `ReadOnlySpan<byte>`, or a `ReadOnlySequence<byte>`. To read a `string`, encode it with `Encoding.UTF8.GetBytes` first, or use `XmlDocument.Parse(string)`.
+- **A copy isn't fully independent.** `var lookahead = reader;` compiles, and you can use the copy to look ahead inside the element the original is on. The copy shares the original's working memory, so don't advance two copies in turn, and don't go back to the original after the copy has read past the end of that element.
+
+<Note>
+A reader isn't thread safe, and it can't be shared between threads anyway because it's a `ref struct`. For the rules that apply to the other types, see [Thread safety](/xmlessentials/guides/thread-safety).
+</Note>
+
+## Read tokens in a loop
+
+Create a reader over the bytes and call `Read` until it returns `false`. After each successful call, `TokenType` says what the reader is on.
+
+```csharp
+ReadOnlySpan<byte> xml = """
+    <?xml version="1.0" encoding="utf-8"?>
+    <Order id="1042">
+      <Item>Keyboard</Item>
+      <Gift/>
+      <Note><![CDATA[Leave at <door>]]></Note>
+    </Order>
+    """u8;
+
+// Leave out comments and the white space between elements, so that the loop sees data only.
+var options = new XmlReaderOptions
+{
+    CommentHandling = XmlCommentHandling.Skip,
+    WhitespaceHandling = XmlWhitespaceHandling.Insignificant,
+};
+
+var reader = new Utf8XmlReader(xml, options);
+while (reader.Read())
+{
+    switch (reader.TokenType)
+    {
+        case XmlTokenType.StartElement:
+        case XmlTokenType.EndElement:
+            output.WriteLine($"{reader.TokenType} {Encoding.UTF8.GetString(reader.LocalNameSpan)} (depth {reader.CurrentDepth})");
+            break;
+
+        case XmlTokenType.Text:
+        case XmlTokenType.CData:
+            output.WriteLine($"{reader.TokenType} \"{reader.GetString()}\" (depth {reader.CurrentDepth})");
+            break;
+
+        default:
+            output.WriteLine($"{reader.TokenType} (depth {reader.CurrentDepth})");
+            break;
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+XmlDeclaration (depth 0)
+StartElement Order (depth 0)
+StartElement Item (depth 1)
+Text "Keyboard" (depth 2)
+EndElement Item (depth 1)
+StartElement Gift (depth 1)
+StartElement Note (depth 1)
+CData "Leave at <door>" (depth 2)
+EndElement Note (depth 1)
+EndElement Order (depth 0)
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/20_ReadTokensAndValues.cs)
+
+What to notice:
+
+- The sample sets two options so that the loop sees data only. By default, the reader also reports comments and the white space between elements, such as the indentation of this document, so that nothing in a document is lost when you read it and write it back. These two options are the ones to set in a loop that only wants data. See [Comments, white space, CDATA, and processing instructions](#comments-white-space-cdata-and-processing-instructions).
+- `CurrentDepth` is the number of elements the token is inside. The root element is at depth 0. A start tag and its end tag are at the same depth, and the content between them is one deeper.
+- `<Gift/>` produces one token, at the depth a `<Gift>` start tag would have. See [Handle empty elements](#handle-empty-elements).
+- Attributes aren't tokens in the loop. You visit them from the start tag, as the next section shows.
+
+The reader reports these token types:
+
+| `XmlTokenType` | The reader is on | Read it with |
+| --- | --- | --- |
+| `None` | Nothing yet, or the end of the document. | |
+| `XmlDeclaration` | `<?xml version="1.0" ...?>` | `Version` |
+| `StartElement` | A start tag or an empty element. | `LocalNameSpan`, `PrefixSpan`, `NamespaceUriSpan`, `IsEmptyElement`, `AttributeCount` |
+| `EndElement` | An end tag. | `LocalNameSpan`, `PrefixSpan`, `NamespaceUriSpan` |
+| `Attribute` | An attribute, after `MoveToNextAttribute`. | The name properties, `ValueSpan`, `Get*`, `TryGet*` |
+| `Text` | Character data, with references decoded. | `ValueSpan`, `Get*`, `TryGet*` |
+| `CData` | The content of a CDATA section. | `ValueSpan`, `Get*`, `TryGet*` |
+| `Comment` | A comment, unless comments are skipped. | `GetComment`, `ValueSpan` |
+| `ProcessingInstruction` | A processing instruction. | `LocalNameSpan` (the target), `ValueSpan` (the data) |
+
+<Warning>
+Read a value only on a token that has one: `Text`, `CData`, `Attribute`, `Comment`, or `ProcessingInstruction`. A start tag and an end tag have no value: `ValueSpan` is empty and `GetString` returns an empty string.
+</Warning>
+
+## Find elements and read attributes
+
+`LocalNameEquals` compares the name of the current element or attribute with a name you pass, without creating a string. Pass a `u8` literal to compare bytes with bytes. There are also overloads that take a `string` or a `ReadOnlySpan<char>`.
+
+On a start tag, `MoveToNextAttribute` moves to the first attribute, then to each one after it, and returns `false` when there are no more. While the reader is on an attribute, `TokenType` is `Attribute`, and the name and value members describe the attribute. `MoveToElement` puts the reader back on the start tag.
+
+```csharp
+ReadOnlySpan<byte> xml = """
+    <Order id="1042" currency="EUR">
+      <Item sku="KB-01" quantity="2">Keyboard</Item>
+      <Item sku="MS-07">Mouse</Item>
+    </Order>
+    """u8;
+
+var reader = new Utf8XmlReader(xml);
+while (reader.Read())
+{
+    if (reader.TokenType is not XmlTokenType.StartElement || !reader.LocalNameEquals("Item"u8))
+    {
+        continue;
+    }
+
+    output.WriteLine($"Item with {reader.AttributeCount} attribute(s)");
+    while (reader.MoveToNextAttribute())
+    {
+        output.WriteLine($"  {reader.TokenType} {Encoding.UTF8.GetString(reader.LocalNameSpan)} = {reader.GetString()}");
+    }
+
+    reader.MoveToElement();
+    output.WriteLine($"  Back on {reader.TokenType} {Encoding.UTF8.GetString(reader.LocalNameSpan)}");
+}
+```
+
+The code produces the following output:
+
+```text
+Item with 2 attribute(s)
+  Attribute sku = KB-01
+  Attribute quantity = 2
+  Back on StartElement Item
+Item with 1 attribute(s)
+  Attribute sku = MS-07
+  Back on StartElement Item
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/20_ReadTokensAndValues.cs)
+
+You don't have to call `MoveToElement` before the next `Read`. `Read` always continues after the start tag. Call it when you want the element's own name again, or when you want to walk the attributes a second time.
+
+`AttributeCount` and the attribute walk include namespace declarations (`xmlns` and `xmlns:prefix`). See [Read namespaces](#read-namespaces).
+
+## Handle empty elements
+
+An empty element such as `<Gift/>` is one `StartElement` token with `IsEmptyElement` set to `true`. The reader doesn't make up an `EndElement` token for it. An element written as `<Note></Note>` is two tokens.
+
+This matters whenever your code counts depth or waits for an end tag: check `IsEmptyElement` on every start tag.
+
+```csharp
+var reader = new Utf8XmlReader("<Order><Gift/><Note></Note></Order>"u8);
+var open = 0;
+while (reader.Read())
+{
+    if (reader.TokenType is XmlTokenType.StartElement)
+    {
+        if (!reader.IsEmptyElement)
+        {
+            open++;
+        }
+
+        output.WriteLine($"StartElement {Encoding.UTF8.GetString(reader.LocalNameSpan)}: IsEmptyElement = {reader.IsEmptyElement}, open elements = {open}");
+    }
+    else if (reader.TokenType is XmlTokenType.EndElement)
+    {
+        open--;
+        output.WriteLine($"EndElement {Encoding.UTF8.GetString(reader.LocalNameSpan)}: open elements = {open}");
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+StartElement Order: IsEmptyElement = False, open elements = 1
+StartElement Gift: IsEmptyElement = True, open elements = 1
+StartElement Note: IsEmptyElement = False, open elements = 2
+EndElement Note: open elements = 1
+EndElement Order: open elements = 0
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/20_ReadTokensAndValues.cs)
+
+<Note>
+This is the same rule as `System.Xml.XmlReader.IsEmptyElement`, and it's different from JSON, where every start token has an end token.
+</Note>
+
+## Read text and typed values
+
+The value of a `Text`, `CData`, or `Attribute` token is available in three ways:
+
+- `GetString` returns the value as a new `string`. It allocates.
+- `Get*` methods such as `GetInt32` parse the UTF-8 bytes in place and return a .NET value. They throw an `XmlException` when the value isn't valid for the type.
+- `TryGet*` methods do the same and return `false` instead of throwing.
+
+```csharp
+ReadOnlySpan<byte> xml = """
+    <Order id="1042" rush="true">
+      <Placed>2026-03-14T09:30:00+01:00</Placed>
+      <Total>129.90</Total>
+      <Quantity>three</Quantity>
+    </Order>
+    """u8;
+
+var reader = new Utf8XmlReader(xml);
+while (reader.Read())
+{
+    if (reader.TokenType is not XmlTokenType.StartElement)
+    {
+        continue;
+    }
+
+    if (reader.LocalNameEquals("Order"u8))
+    {
+        while (reader.MoveToNextAttribute())
+        {
+            if (reader.LocalNameEquals("id"u8))
+            {
+                output.WriteLine($"id: {reader.GetInt32()}");
+            }
+            else if (reader.LocalNameEquals("rush"u8))
+            {
+                output.WriteLine($"rush: {reader.GetBoolean()}");
+            }
+        }
+    }
+    else if (reader.LocalNameEquals("Placed"u8))
+    {
+        reader.Read();
+        output.WriteLine($"Placed: {reader.GetDateTimeOffset():O}");
+    }
+    else if (reader.LocalNameEquals("Total"u8))
+    {
+        reader.Read();
+        output.WriteLine($"Total: {reader.GetDecimal().ToString(CultureInfo.InvariantCulture)}");
+    }
+    else if (reader.LocalNameEquals("Quantity"u8))
+    {
+        reader.Read();
+        if (reader.TryGetInt32(out var quantity))
+        {
+            output.WriteLine($"Quantity: {quantity}");
+        }
+        else
+        {
+            output.WriteLine($"Quantity is not a number: {reader.GetString()}");
+        }
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+id: 1042
+rush: True
+Placed: 2026-03-14T09:30:00.0000000+01:00
+Total: 129.90
+Quantity is not a number: three
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/20_ReadTokensAndValues.cs)
+
+The sample calls `reader.Read()` after a start tag to move to the text inside it. That's safe when you know the element has text. For an element that can be empty (`<Total/>` or `<Total></Total>`), check that the token after the start tag is `Text` or `CData` before you read a value. The sample uses the default options, so the reader also reports the indentation between the elements as `Text` tokens. The loop passes over them because it acts only on start tags.
+
+The typed methods read the lexical forms of XML Schema, not the formats of the current culture:
+
+| .NET type | Methods | XML Schema type |
+| --- | --- | --- |
+| `bool` | `GetBoolean` | `xs:boolean`: `true`, `false`, `1`, or `0` |
+| `sbyte`, `short`, `int`, `long` | `GetSByte`, `GetInt16`, `GetInt32`, `GetInt64`, and `TryGet*` | `xs:byte`, `xs:short`, `xs:int`, `xs:long` |
+| `byte`, `ushort`, `uint`, `ulong` | `GetByte`, `GetUInt16`, `GetUInt32`, `GetUInt64`, and `TryGet*` | `xs:unsignedByte`, `xs:unsignedShort`, `xs:unsignedInt`, `xs:unsignedLong` |
+| `decimal` | `GetDecimal`, `TryGetDecimal` | `xs:decimal`. Exponent notation is rejected. |
+| `float`, `double` | `GetSingle`, `GetDouble`, and `TryGet*` | `xs:float`, `xs:double`, including `INF`, `-INF`, and `NaN` |
+| `DateTime`, `DateTimeOffset` | `GetDateTime`, `GetDateTimeOffset`, and `TryGet*` | `xs:dateTime` |
+| `DateOnly` | `GetDateOnly`, `TryGetDateOnly` | `xs:date` |
+| `TimeOnly` | `GetTimeOnly`, `TryGetTimeOnly` | `xs:time` |
+| `TimeSpan` | `GetTimeSpan`, `TryGetTimeSpan` | `xs:duration`. A duration with years or months is rejected. |
+| `Guid` | `GetGuid`, `TryGetGuid` | |
+| `byte[]` | `GetBytesFromBase64`, `TryGetBytesFromBase64` | `xs:base64Binary` |
+| `string` | `GetString` | |
+
+`GetString` never returns `null`: an empty value is an empty string.
+
+`GetNil` is the one method you call on a start tag. It returns `true` when the element has an `xsi:nil` attribute, in the XML Schema instance namespace, with the value `true` or `1`. For how the serializer uses it, see [Null values and xsi:nil](/xmlessentials/guides/null-and-nil).
+
+### Work with the value as bytes
+
+`ValueSpan` is the value as UTF-8 bytes. When the value has no character or entity reference and no line end to normalize, the span is a slice of your input and reading it costs nothing. When the value has one, the reader decodes it into its own buffer and `ValueIsEscaped` is `true`. Either way, `ValueSpan` is the decoded value.
+
+Three members let you use the value without creating a string:
+
+- `ValueTextEquals` compares the value with bytes, characters, or a string.
+- `CopyString` copies the value into a buffer of bytes or characters that you own and returns the length.
+- `ValueSpan` itself can go to any API that takes UTF-8, such as `Utf8Parser` or another writer.
+
+```csharp
+var reader = new Utf8XmlReader("<Items><Item>Keyboard</Item><Item>Mouse &amp; pad</Item></Items>"u8);
+Span<char> characters = stackalloc char[32];
+while (reader.Read())
+{
+    if (reader.TokenType is not XmlTokenType.Text)
+    {
+        continue;
+    }
+
+    var written = reader.CopyString(characters);
+    output.Write(characters[..written]);
+    output.WriteLine($": {reader.ValueSpan.Length} bytes, escaped in the source = {reader.ValueIsEscaped}, is Keyboard = {reader.ValueTextEquals("Keyboard"u8)}");
+}
+```
+
+The code produces the following output:
+
+```text
+Keyboard: 8 bytes, escaped in the source = False, is Keyboard = True
+Mouse & pad: 11 bytes, escaped in the source = True, is Keyboard = False
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/20_ReadTokensAndValues.cs)
+
+<Warning>
+A span from the reader is valid until the reader moves. `ValueSpan`, `LocalNameSpan`, `PrefixSpan`, and `NamespaceUriSpan` point into your input or into a buffer the reader reuses for the next decoded value. Copy what you need to keep (`CopyString`, `GetString`, or `ToArray`) before you call `Read` again. `CopyString` throws an `ArgumentException` when the destination is too small.
+</Warning>
+
+## Read namespaces
+
+The reader resolves namespaces for you. On a start tag, an end tag, or an attribute:
+
+- `LocalNameSpan` is the name without its prefix.
+- `PrefixSpan` is the prefix, or an empty span.
+- `NamespaceUriSpan` is the namespace the name belongs to, or an empty span when it has none.
+- `NamespaceUriEquals` compares the namespace with one you pass, as `LocalNameEquals` does for the local name.
+
+```csharp
+ReadOnlySpan<byte> xml = """
+    <feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+      <title lang="en">Orders</title>
+      <dc:creator>Ada</dc:creator>
+    </feed>
+    """u8;
+
+var reader = new Utf8XmlReader(xml);
+while (reader.Read())
+{
+    if (reader.TokenType is not XmlTokenType.StartElement)
+    {
+        continue;
+    }
+
+    output.WriteLine($"Element prefix='{Encoding.UTF8.GetString(reader.PrefixSpan)}' local='{Encoding.UTF8.GetString(reader.LocalNameSpan)}' namespace='{Encoding.UTF8.GetString(reader.NamespaceUriSpan)}'");
+    if (reader.LocalNameEquals("creator"u8) && reader.NamespaceUriEquals("http://purl.org/dc/elements/1.1/"u8))
+    {
+        output.WriteLine("  This is the Dublin Core creator element.");
+    }
+
+    while (reader.MoveToNextAttribute())
+    {
+        output.WriteLine($"  Attribute prefix='{Encoding.UTF8.GetString(reader.PrefixSpan)}' local='{Encoding.UTF8.GetString(reader.LocalNameSpan)}' namespace='{Encoding.UTF8.GetString(reader.NamespaceUriSpan)}'");
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+Element prefix='' local='feed' namespace='http://www.w3.org/2005/Atom'
+  Attribute prefix='' local='xmlns' namespace='http://www.w3.org/2000/xmlns/'
+  Attribute prefix='xmlns' local='dc' namespace='http://www.w3.org/2000/xmlns/'
+Element prefix='' local='title' namespace='http://www.w3.org/2005/Atom'
+  Attribute prefix='' local='lang' namespace=''
+Element prefix='dc' local='creator' namespace='http://purl.org/dc/elements/1.1/'
+  This is the Dublin Core creator element.
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/20_ReadTokensAndValues.cs)
+
+What to notice:
+
+- **An element without a prefix is in the default namespace.** `title` is in the Atom namespace because `feed` declares `xmlns="..."`.
+- **An attribute without a prefix is in no namespace.** `lang` has an empty namespace even though a default namespace is in scope. This is a rule of Namespaces in XML, and code that maps attributes gets it wrong more often than anything else.
+- **Declarations on a start tag apply to that start tag.** `feed` is resolved with the default namespace that it declares itself.
+- **Namespace declarations are attributes.** They show up in the attribute walk in the reserved namespace `http://www.w3.org/2000/xmlns/` (the constant `XmlNamespaces.Xmlns`). Skip them when you only want the element's data.
+
+Match on the namespace URI and the local name, never on the prefix. A producer is free to choose any prefix, or none, for the same namespace.
+
+A prefix that isn't declared is an error (`Undeclared namespace prefix.`), and so are two attributes on one element with the same local name and namespace (`Duplicate attribute.`). For namespaces in the serializer, see [Namespaces](/xmlessentials/guides/namespaces).
+
+## Comments, white space, CDATA, and processing instructions
+
+By default the reader reports everything in a document: comments as `Comment` tokens, and text that is only white space between elements as `Text` tokens. The XML specification asks a processor to pass all of a document's characters to the application, and `System.Xml.XmlReader` has the same default. It means that XML you read and write back keeps its comments and its layout.
+
+Code that only wants the data sets two properties of `XmlReaderOptions`. The sample reads one document with the defaults and then with both left out.
+
+```csharp
+var xml = "<?xml-stylesheet href=\"order.xsl\"?>\n<Order>\n  <!-- rush -->\n  <Note><![CDATA[a < b]]></Note>\n</Order>"u8;
+
+output.WriteLine("Default options:");
+PrintTokens(xml, new XmlReaderOptions(), output);
+
+var dataOnly = new XmlReaderOptions
+{
+    CommentHandling = XmlCommentHandling.Skip,
+    WhitespaceHandling = XmlWhitespaceHandling.Insignificant,
+};
+
+output.WriteLine("Comments skipped and white space insignificant:");
+PrintTokens(xml, dataOnly, output);
+```
+
+`PrintTokens` is the loop that reads each kind of token:
+
+```csharp
+var reader = new Utf8XmlReader(utf8Xml, options);
+while (reader.Read())
+{
+    switch (reader.TokenType)
+    {
+        case XmlTokenType.StartElement:
+        case XmlTokenType.EndElement:
+            output.WriteLine($"  {reader.TokenType} {Encoding.UTF8.GetString(reader.LocalNameSpan)}");
+            break;
+
+        case XmlTokenType.Comment:
+            output.WriteLine($"  {reader.TokenType} \"{reader.GetComment()}\"");
+            break;
+
+        case XmlTokenType.ProcessingInstruction:
+            output.WriteLine($"  {reader.TokenType} target={Encoding.UTF8.GetString(reader.LocalNameSpan)} data=\"{reader.GetString()}\"");
+            break;
+
+        default:
+            output.WriteLine($"  {reader.TokenType} \"{Escape(reader.GetString())}\"");
+            break;
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+Default options:
+  ProcessingInstruction target=xml-stylesheet data="href="order.xsl""
+  StartElement Order
+  Text "\n  "
+  Comment " rush "
+  Text "\n  "
+  StartElement Note
+  CData "a < b"
+  EndElement Note
+  Text "\n"
+  EndElement Order
+Comments skipped and white space insignificant:
+  ProcessingInstruction target=xml-stylesheet data="href="order.xsl""
+  StartElement Order
+  StartElement Note
+  CData "a < b"
+  EndElement Note
+  EndElement Order
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/21_ReadMarkupAndHandleErrors.cs)
+
+What to notice:
+
+- **Processing instructions are always reported.** The target is in `LocalNameSpan` and the data is in `ValueSpan`.
+- **A CDATA section is its own token type.** Its value is the text between the delimiters, with nothing decoded. Treat `Text` and `CData` the same way unless you need to know which one the document used.
+- **A comment is read with `GetComment`**, which returns the text between the delimiters.
+- **White space outside the root element is never reported**, whatever the options say.
+
+`XmlReaderOptions.CommentHandling` takes one of these values:
+
+| `XmlCommentHandling` | What the reader does with a comment |
+| --- | --- |
+| `Allow` | Reports it as a `Comment` token. This is the default. |
+| `Skip` | Reads past it and reports nothing. |
+| `Disallow` | Throws an `XmlException` (`Comments are not allowed.`). |
+
+`XmlReaderOptions.WhitespaceHandling` takes one of these values:
+
+| `XmlWhitespaceHandling` | What the reader does with white-space-only text between elements |
+| --- | --- |
+| `Significant` | Reports it as a `Text` token. This is the default. |
+| `Insignificant` | Skips it when it's indentation. |
+| `None` | Throws an `XmlException` (`Whitespace-only text is not allowed.`) where `Insignificant` would skip it. |
+
+White space inside a value is always kept. `<Name> Ada </Name>` has the value `" Ada "` under every setting. Line ends in a value are always read as a line feed, as XML requires.
+
+`Insignificant` and `None` treat white-space-only text as indentation only when it carries no content. The reader still reports it as a `Text` token, under every setting, when:
+
+- **It's the whole content of the element.** `<Code> </Code>` has the value `" "`.
+- **The element already has text before it.** In `<p>Hello <b>you</b> <i>there</i></p>`, the space between `</b>` and `<i>` is part of the sentence, and so is reported. A CDATA section counts as text.
+- **`xml:space="preserve"` is in force.** It applies to the element that has it and to everything inside, until an element sets `xml:space="default"`.
+
+<Note>
+`new XmlReaderOptions()`, `default(XmlReaderOptions)`, a reader created without options, and `new XmlReaderState()` all mean the same thing: comments and white space are reported. The serializer is different. `XmlSerializerOptions` skips comments and treats white space between elements as insignificant by default, so a [custom converter](/xmlessentials/guides/custom-converters) sees data only.
+</Note>
+
+## The XML declaration and XML 1.0 or 1.1
+
+When a document starts with an XML declaration, the reader reports it as an `XmlDeclaration` token and sets `Version`. A document with no declaration is XML 1.0. You don't tell the reader which version to expect. It applies the rules of the version the document names.
+
+```csharp
+var reader = new Utf8XmlReader("<?xml version=\"1.1\" encoding=\"utf-8\" standalone=\"yes\"?><Note>one\u0085two</Note>"u8);
+output.WriteLine($"Before the first read: {reader.Version}");
+
+reader.Read();
+output.WriteLine($"{reader.TokenType}: {reader.Version}");
+
+reader.Read();
+reader.Read();
+output.WriteLine($"XML 1.1 text: {Escape(reader.GetString())}");
+
+reader = new Utf8XmlReader("<Note>one\u0085two</Note>"u8);
+reader.Read();
+reader.Read();
+output.WriteLine($"XML 1.0 text: {Escape(reader.GetString())} ({reader.Version})");
+```
+
+The code produces the following output:
+
+```text
+Before the first read: Version10
+XmlDeclaration: Version11
+XML 1.1 text: one\ntwo
+XML 1.0 text: one\u0085two (Version10)
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/21_ReadMarkupAndHandleErrors.cs)
+
+The same bytes read differently in the two versions. U+0085 (next line) is a line end in XML 1.1, so the reader turns it into a line feed, as it does with a carriage return in either version. In XML 1.0 it's an ordinary character. XML 1.1 isn't a superset of 1.0. The differences that reach your code are these:
+
+| | XML 1.0 | XML 1.1 |
+| --- | --- | --- |
+| U+0085 and U+2028 in text | Ordinary characters. | Line ends, read as a line feed. |
+| Control characters U+0001 to U+001F (other than tab, line feed, and carriage return) | Not allowed, even as a character reference. | Allowed only as a character reference such as `&#x1;`. |
+| Control characters U+007F to U+009F (other than U+0085) | Allowed. | Allowed only as a character reference such as `&#x7F;`. |
+| `xmlns:p=""` | An error. | Removes the binding of the prefix `p`. |
+
+The rules for the declaration itself:
+
+- It must be the first thing in the document, after an optional byte order mark. White space, a comment, or anything else before it is an error.
+- The version must have the form `1.x`. `1.1` selects XML 1.1. Any other version number is read as XML 1.0, as the XML 1.0 specification asks.
+- The encoding, when it's named, must be UTF-8. See [What the reader doesn't support](#what-the-reader-doesnt-support).
+- On the `XmlDeclaration` token, `ValueSpan` holds the pseudo-attributes as they were written, such as `version="1.0" encoding="utf-8"`. To get the version, the encoding, and `standalone` as values, parse the document with `XmlDocument` and read `XmlDocument.Declaration`, an [`XmlDeclarationInfo`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDeclarationInfo).
+
+For everything the reader checks, see [XML conformance](/xmlessentials/guides/xml-conformance).
+
+## Skip elements
+
+When you don't need an element, call `Skip` on its start tag. The reader moves over the element's attributes, its text, and all of its descendants, checking that they're well formed as it goes, and stops on the element's end tag. The next `Read` moves to whatever follows.
+
+```csharp
+ReadOnlySpan<byte> xml = """
+    <Order>
+      <Customer>
+        <Name>Ada</Name>
+        <Address><City>London</City></Address>
+      </Customer>
+      <Total>129.90</Total>
+    </Order>
+    """u8;
+
+var reader = new Utf8XmlReader(xml);
+while (reader.Read())
+{
+    if (reader.TokenType is not XmlTokenType.StartElement)
+    {
+        continue;
+    }
+
+    if (reader.LocalNameEquals("Customer"u8))
+    {
+        reader.Skip();
+        output.WriteLine($"Skipped Customer. Now on {reader.TokenType} {Encoding.UTF8.GetString(reader.LocalNameSpan)} at depth {reader.CurrentDepth}.");
+    }
+    else
+    {
+        output.WriteLine($"Read {Encoding.UTF8.GetString(reader.LocalNameSpan)}");
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+Read Order
+Skipped Customer. Now on EndElement Customer at depth 1.
+Read Total
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/21_ReadMarkupAndHandleErrors.cs)
+
+Details worth knowing:
+
+- On an empty element, `Skip` does nothing, because the element is already complete.
+- Call `Skip` on a start tag. On any other token it does nothing, because only a start tag has children.
+- When you read in blocks and the element isn't all in the current block, `Skip` throws an `XmlException` (`Cannot skip: more data is required.`). Use `TrySkip` there instead. It returns `false` and puts the reader back on the start tag, with its attributes, as `Utf8JsonReader.TrySkip` does.
+
+After `TrySkip` returns `false`, `BytesConsumed` and `CurrentState` describe the point just after the start tag, so a reader you create from them with more data reads the element's content one token at a time. To skip the element whole once more data has arrived, keep a copy of the reader from before the `Read` that reached the start tag, and continue from the copy instead:
+
+```csharp
+var reader = new Utf8XmlReader(block, isFinalBlock, state);
+while (true)
+{
+    var before = reader;
+    if (!reader.Read())
+    {
+        break;
+    }
+
+    if (reader.TokenType is XmlTokenType.StartElement && !reader.TrySkip())
+    {
+        // The element doesn't end in this block. The next block starts again at its start tag.
+        reader = before;
+        break;
+    }
+}
+
+state = reader.CurrentState;
+// Keep the bytes after reader.BytesConsumed for the next block.
+```
+
+This is the look-ahead that a copy allows: `reader` reads ahead inside the element that `before` is in, and is then dropped.
+
+## Read a fragment
+
+A document has exactly one root element. To read a fragment that has several top-level elements, or none, set `AllowMultipleRoots`.
+
+```csharp
+var options = new XmlReaderOptions { AllowMultipleRoots = true };
+var reader = new Utf8XmlReader("<Item>Keyboard</Item><Item>Mouse</Item>"u8, options);
+while (reader.Read())
+{
+    if (reader.TokenType is XmlTokenType.Text)
+    {
+        output.WriteLine(reader.GetString());
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+Keyboard
+Mouse
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/21_ReadMarkupAndHandleErrors.cs)
+
+Without the option, the second `Item` throws `Multiple root elements are not allowed.`, and an input with no element throws `Document does not have a root element.` Text outside an element is an error with or without the option.
+
+## Read from a ReadOnlySequence
+
+A `ReadOnlySequence<byte>` is what `System.IO.Pipelines` and many network APIs hand you: one logical buffer made of several blocks. Pass it to the reader as it is.
+
+```csharp
+var first = new BufferSegment("<Order><Item>Keyb"u8.ToArray());
+var last = first.Append("oard</Item><Item>Mouse</Item></Order>"u8.ToArray());
+var sequence = new ReadOnlySequence<byte>(first, 0, last, last.Memory.Length);
+
+var reader = new Utf8XmlReader(sequence);
+while (reader.Read())
+{
+    if (reader.TokenType is XmlTokenType.Text)
+    {
+        output.WriteLine($"Item: {reader.GetString()}");
+    }
+}
+
+output.WriteLine($"Single segment: {sequence.IsSingleSegment}");
+output.WriteLine($"Consumed {reader.BytesConsumed} of {sequence.Length} bytes");
+```
+
+The sample builds the sequence from two blocks with a small helper class:
+
+```csharp BufferSegment.cs
+public sealed class BufferSegment : ReadOnlySequenceSegment<byte>
+{
+    public BufferSegment(ReadOnlyMemory<byte> memory)
+    {
+        Memory = memory;
+    }
+
+    public BufferSegment Append(ReadOnlyMemory<byte> memory)
+    {
+        var next = new BufferSegment(memory)
+        {
+            RunningIndex = RunningIndex + Memory.Length,
+        };
+
+        Next = next;
+        return next;
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+Item: Keyboard
+Item: Mouse
+Single segment: False
+Consumed 54 of 54 bytes
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/22_ReadFromSequencesAndStreams.cs)
+
+The value `Keyboard` is split between the two blocks, and the reader still returns it whole. Here's what happens to your input:
+
+- **One block:** the reader reads the sequence where it lies and copies nothing.
+- **More than one block:** the reader copies the sequence into one array first, and then reads the array. That costs one allocation the size of the input. This is where `Utf8XmlReader` differs from `Utf8JsonReader`, which reads across blocks in place.
+
+`Position` gives the reader's place as a `SequencePosition`, so you can tell a `PipeReader` how much was consumed. The sequence constructors also come in an `isFinalBlock` form, which works as the next section describes.
+
+## Read a stream in blocks
+
+The reader works on memory, not on a `Stream`. To read a stream without loading all of it, read a block into a buffer, give the block to a reader, and carry the reader's state to the next block. Three members make that work:
+
+- The `isFinalBlock` constructor argument tells the reader whether more data follows. When it's `false` and the block ends in the middle of a token, `Read` returns `false` instead of throwing.
+- `BytesConsumed` is how many bytes of the block the reader finished with. The bytes after it are the start of a token that isn't complete yet.
+- `CurrentState` is an [`XmlReaderState`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState): everything the next reader needs to continue, including the open elements, the namespaces in scope, the XML version, and the line count.
+
+This is the same pattern as `Utf8JsonReader` with `JsonReaderState`.
+
+<Steps>
+  <Step title="Create the first state from your options">
+    Use `new XmlReaderState(options)`. The state carries the options to every reader that you create from it.
+  </Step>
+  <Step title="Fill the buffer and create a reader over it">
+    Read from the stream into the free part of the buffer. Pass `isFinalBlock: true` only when the stream has ended.
+  </Step>
+  <Step title="Read tokens until Read returns false">
+    Keep what you know about your place in the document in your own variables, not in the flow of the code. A token and the one after it can arrive in different blocks.
+  </Step>
+  <Step title="Save the state and keep the unread bytes">
+    Take `CurrentState`, move the bytes after `BytesConsumed` to the front of the buffer, and grow the buffer if it's full.
+  </Step>
+</Steps>
+
+```csharp
+using var stream = new MemoryStream(Encoding.UTF8.GetBytes(
+    "<Orders><Order id=\"1042\"><Item>Keyboard</Item><Item>Mouse &amp; pad</Item></Order><Order id=\"1043\"><Item>Monitor stand</Item></Order></Orders>"));
+
+// The buffer is small so that the sample has to refill it and grow it. Use 4096 bytes or more in an application.
+var buffer = new byte[16];
+var buffered = 0;
+var isFinalBlock = false;
+var state = new XmlReaderState(new XmlReaderOptions());
+
+// What the application knows about its place in the document. The reader does not keep this between blocks.
+var inItem = false;
+var blocks = 0;
+
+while (!isFinalBlock)
+{
+    var read = stream.Read(buffer, buffered, buffer.Length - buffered);
+    buffered += read;
+    isFinalBlock = read == 0;
+    blocks++;
+
+    var reader = new Utf8XmlReader(buffer.AsSpan(0, buffered), isFinalBlock, state);
+    while (reader.Read())
+    {
+        switch (reader.TokenType)
+        {
+            case XmlTokenType.StartElement when reader.LocalNameEquals("Order"u8):
+                while (reader.MoveToNextAttribute())
+                {
+                    if (reader.LocalNameEquals("id"u8))
+                    {
+                        output.WriteLine($"Order {reader.GetInt32()}");
+                    }
+                }
+
+                break;
+
+            case XmlTokenType.StartElement:
+                inItem = reader.LocalNameEquals("Item"u8);
+                break;
+
+            case XmlTokenType.Text when inItem:
+                output.WriteLine($"  Item: {reader.GetString()}");
+                break;
+
+            case XmlTokenType.EndElement:
+                inItem = false;
+                break;
+        }
+    }
+
+    // Keep the bytes the reader did not consume. They are the start of a token that is not complete yet.
+    state = reader.CurrentState;
+    var consumed = (int)reader.BytesConsumed;
+    buffer.AsSpan(consumed, buffered - consumed).CopyTo(buffer);
+    buffered -= consumed;
+
+    // A full buffer with nothing consumed means the next token is larger than the buffer.
+    if (buffered == buffer.Length)
+    {
+        Array.Resize(ref buffer, buffer.Length * 2);
+    }
+}
+
+output.WriteLine($"Read {stream.Length} bytes in {blocks} blocks. The buffer grew to {buffer.Length} bytes.");
+```
+
+The code produces the following output:
+
+```text
+Order 1042
+  Item: Keyboard
+  Item: Mouse & pad
+Order 1043
+  Item: Monitor stand
+Read 142 bytes in 8 blocks. The buffer grew to 32 bytes.
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/22_ReadFromSequencesAndStreams.cs)
+
+What to notice:
+
+- **A token is never split.** A start tag arrives with all of its attributes, and a text value arrives whole. That's why the buffer must be able to grow to the size of the largest token: here the 16-byte buffer grew once, to hold the 17 bytes of the start tag `<Order id="1042">`.
+- **The last pass has no new bytes.** When the stream returns 0, the loop runs once more with `isFinalBlock: true`. That pass is what reports an incomplete document: with `isFinalBlock: true`, a document that ends early throws `Unexpected end of XML.`
+- **`BytesConsumed` counts from the start of the current block.** `TokenStartIndex` and the positions on an `XmlException` count from the start of the document.
+- **The reader lives inside one pass of the loop.** Because it's a `ref struct`, it can't cross an `await`. In an `async` method, do the `await stream.ReadAsync(...)` between passes and keep the reader in a synchronous helper method that takes the buffer and the state.
+- **`CurrentState` allocates.** It copies the names of the open elements and the namespace bindings so that the state doesn't depend on a buffer you're about to overwrite. Read it once per block, not once per token.
+- **The state keeps the context of the open elements.** `xml:space`, and whether an element already has text, carry over to the next block, so white space is reported the same way as when the document is read in one piece.
+
+<Tip>
+You often don't need this loop. `XmlSerializer.DeserializeAsync` and `XmlDocument.Parse(Stream)` read from a stream for you. See [Streaming](/xmlessentials/guides/streaming). Write the loop when the document is too large to hold in memory or when you process it as it arrives.
+</Tip>
+
+## Read without allocating
+
+Reading tokens, comparing names with `u8` literals, and parsing typed values don't allocate. (`GetString`, `GetComment`, and `GetBytesFromBase64` return new objects, so they do.) A reader needs memory of its own in only four cases:
+
+- A value has a character or entity reference, or a line end other than a line feed, and has to be decoded.
+- A start tag has more than eight attributes.
+- More than eight namespace declarations are in scope.
+- Elements are nested more than eight deep.
+
+Without help, the reader allocates an array for each of those and keeps it for the tokens that follow, growing it only when a later token needs more. To avoid even that, give it a *scratch buffer*: memory that it uses before it allocates any. Two constructors take one.
+
+```csharp
+var xml = "<Orders><Order a=\"1\" b=\"2\" c=\"3\" d=\"4\" e=\"5\" f=\"6\" g=\"7\" h=\"8\" i=\"9\"><Item>Fish &amp; chips</Item><Item>Tea &amp; toast</Item></Order></Orders>"u8;
+Span<byte> scratch = stackalloc byte[1024];
+
+// Run each path once first, so that the measurement does not include one-time setup.
+CountEscapedValues(xml);
+CountEscapedValues(xml, scratch);
+
+var before = GC.GetAllocatedBytesForCurrentThread();
+var count = CountEscapedValues(xml);
+var withoutScratch = GC.GetAllocatedBytesForCurrentThread() - before;
+
+before = GC.GetAllocatedBytesForCurrentThread();
+count += CountEscapedValues(xml, scratch);
+var withScratch = GC.GetAllocatedBytesForCurrentThread() - before;
+
+output.WriteLine($"Escaped values found in two passes: {count}");
+output.WriteLine($"Without a scratch buffer, the reader allocated: {(withoutScratch > 0 ? "yes" : "no")}");
+output.WriteLine($"With a scratch buffer, the reader allocated: {withScratch} bytes");
+```
+
+The two helper methods differ only in the constructor they call:
+
+```csharp
+private static int CountEscapedValues(ReadOnlySpan<byte> utf8Xml)
+{
+    var reader = new Utf8XmlReader(utf8Xml, new XmlReaderOptions());
+    return CountEscapedValues(ref reader);
+}
+
+private static int CountEscapedValues(ReadOnlySpan<byte> utf8Xml, Span<byte> scratch)
+{
+    var reader = new Utf8XmlReader(utf8Xml, scratch, new XmlReaderOptions());
+    return CountEscapedValues(ref reader);
+}
+```
+
+The code produces the following output:
+
+```text
+Escaped values found in two passes: 4
+Without a scratch buffer, the reader allocated: yes
+With a scratch buffer, the reader allocated: 0 bytes
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/22_ReadFromSequencesAndStreams.cs)
+
+How to use a scratch buffer:
+
+- **Any size is correct.** The reader takes what it can from the buffer and allocates only when the buffer runs out, so a buffer that's too small costs an allocation and never an error. A larger buffer covers more documents.
+- **The contents on entry don't matter.** You don't have to clear the buffer, and you can pass the same one to the reader for every block of a document, with the `(utf8Xml, scratch, isFinalBlock, state)` constructor.
+- **The buffer can come from anywhere:** `stackalloc`, a pooled array, or a field you reuse.
+- **The reader may overwrite the buffer for as long as you use the reader.** Don't use it for anything else in the meantime. A copy of the reader uses the same buffer, under the rules for copies at the top of this article.
+- **The scratch constructors take a `ReadOnlySpan<byte>`.** To read a `ReadOnlySequence<byte>` with one, pass `sequence.FirstSpan` when `IsSingleSegment` is `true`.
+
+On four real documents, the reader is 1.5× to 2.3× faster than `System.Xml.XmlReader`, and with a scratch buffer it allocates nothing. For the numbers, with and without a scratch buffer, see [Benchmarks](/xmlessentials/benchmarks#read-real-documents).
+
+## Set limits
+
+The reader enforces limits so that a hostile document can't make it use unbounded memory or stack. Each limit is a property of `XmlReaderOptions`, and exceeding one throws an `XmlException` whose message names the property.
+
+```csharp
+var xml = "<Order note=\"gift\" rush=\"true\"><Customer><Name>Ada Lovelace</Name></Customer></Order>"u8;
+
+output.WriteLine(Drain(xml, new XmlReaderOptions { MaxDepth = 2 }));
+output.WriteLine(Drain(xml, new XmlReaderOptions { MaxAttributeCount = 1 }));
+output.WriteLine(Drain(xml, new XmlReaderOptions { MaxNameByteCount = 4 }));
+output.WriteLine(Drain(xml, new XmlReaderOptions { MaxTextByteCount = 8 }));
+output.WriteLine(Drain(xml, new XmlReaderOptions { MaxDocumentByteCount = 64 }));
+output.WriteLine(Drain(xml, new XmlReaderOptions()));
+```
+
+`Drain` reads the document to the end and returns the message of the exception, if there is one:
+
+```csharp
+try
+{
+    var tokens = 0;
+    var reader = new Utf8XmlReader(utf8Xml, options);
+    while (reader.Read())
+    {
+        tokens++;
+    }
+
+    return $"Read {tokens} tokens.";
+}
+catch (XmlException ex)
+{
+    return $"XmlException: {ex.Message}";
+}
+```
+
+The code produces the following output:
+
+```text
+XmlException: MaxDepth exceeded (2).
+XmlException: MaxAttributeCount exceeded (1).
+XmlException: MaxNameByteCount exceeded (4).
+XmlException: MaxTextByteCount exceeded (8).
+XmlException: MaxDocumentByteCount exceeded (64).
+Read 7 tokens.
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/21_ReadMarkupAndHandleErrors.cs)
+
+A limit that's 0 uses its default. That's why `new XmlReaderOptions()` is already protected.
+
+| Property | Limits | Default when 0 |
+| --- | --- | --- |
+| `MaxDepth` | How deep elements can nest. | 64 |
+| `MaxAttributeCount` | Attributes on one element, including namespace declarations. | 1,000 |
+| `MaxNameByteCount` | The length of an element or attribute name, in UTF-8 bytes. | 1,024 |
+| `MaxTextByteCount` | The length of one text or CDATA value, attribute value, or processing instruction's data, in UTF-8 bytes. | 16,777,216 (16 MB) |
+| `MaxCommentByteCount` | The length of one comment, in UTF-8 bytes. It applies to comments that are skipped too. | 1,048,576 (1 MB) |
+| `MaxDocumentByteCount` | The length of the whole document, in bytes. | No limit |
+
+`MaxDocumentByteCount` is the one limit where 0 means no limit. The reader checks it when you construct it, against the bytes read so far plus the length of the block you pass. When you read a stream in blocks, the state carries the count from block to block.
+
+The text, comment, and processing instruction limits count the bytes as they are in the document, before references are expanded. When you read in blocks, a value, a comment, or a processing instruction that is already longer than its limit throws as soon as the reader sees it, without waiting for its end, so a sender can't make you buffer a token that never ends.
+
+For how to choose limits for input you don't trust, see [Security](/xmlessentials/guides/security).
+
+## Handle errors
+
+The reader throws `CloudNimble.Text.Xml.XmlException` when the input isn't well formed, when a limit is exceeded, and when a `Get*` method can't parse a value. The exception says where the reader was.
+
+```csharp
+var xml = "<Order>\n  <Item>Keyboard</Itm>\n</Order>"u8;
+
+try
+{
+    var reader = new Utf8XmlReader(xml);
+    while (reader.Read())
+    {
+    }
+}
+catch (XmlException ex)
+{
+    output.WriteLine($"Message: {ex.Message}");
+    output.WriteLine($"Line {ex.LineNumber}, position {ex.LinePosition} (byte {ex.BytePosition} of the document)");
+    output.WriteLine($"Path: {ex.Path ?? "(not set)"}");
+}
+```
+
+The code produces the following output:
+
+```text
+Message: End tag does not match start tag.
+Line 2, position 23 (byte 30 of the document)
+Path: (not set)
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/21_ReadMarkupAndHandleErrors.cs)
+
+| Property | Value |
+| --- | --- |
+| `Message` | What's wrong. The message doesn't include the position. |
+| `LineNumber` | The line, counting from 1. |
+| `LinePosition` | The position in the line, counting from 1, in UTF-8 bytes and not in characters. |
+| `BytePosition` | The offset from the start of the document, counting from 0. When you read in blocks, it includes the earlier blocks. |
+| `Path` | `null`. The reader doesn't set it. Use the line and the position to find the error. `XmlSerializer` sets it: see [Find where the error is](/xmlessentials/guides/deserialize#find-where-the-error-is). |
+
+What to know about errors:
+
+- **The position is where the reader stopped,** which is at the problem or right after it. In the sample it's the end of the bad end tag.
+- **An error ends the read.** Don't call `Read` again on a reader that threw. Start over with a corrected document.
+- **This isn't `System.Xml.XmlException`.** The two types are unrelated, so a `catch` for one doesn't catch the other. If a file imports both `System.Xml` and `CloudNimble.Text.Xml`, name the type in full.
+- **The reader checks as it goes.** An error at the end of a large document is thrown after your code has handled everything before it. If you must not act on a document that's malformed, read it to the end first, or parse it with [`XmlDocument`](/xmlessentials/guides/use-xmldocument).
+
+## What the reader doesn't support
+
+`Utf8XmlReader` is a non-validating reader for UTF-8 documents without a document type declaration. It rejects what it doesn't support with an exception. It never skips it silently.
+
+```csharp
+output.WriteLine(Drain("<!DOCTYPE Order [<!ENTITY shop \"Contoso\">]><Order>&shop;</Order>"u8, new XmlReaderOptions()));
+output.WriteLine(Drain("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?><Order/>"u8, new XmlReaderOptions()));
+output.WriteLine(Drain("<Order>Fish&nbsp;chips</Order>"u8, new XmlReaderOptions()));
+output.WriteLine(Drain("<Order>Fish &amp; chips &#169; &#x2014;</Order>"u8, new XmlReaderOptions()));
+```
+
+The code produces the following output:
+
+```text
+XmlException: DTD is not allowed.
+XmlException: XmlEssentials is UTF-8 only. Declared encoding 'iso-8859-1' is not supported.
+XmlException: Undefined entity.
+Read 3 tokens.
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/21_ReadMarkupAndHandleErrors.cs)
+
+- **No DTDs.** A `<!DOCTYPE` declaration throws. There's no option to allow one, so a document can't define entities, and entity-expansion and external-entity attacks have nothing to work with. See [Security](/xmlessentials/guides/security).
+- **Only the five predefined entities and character references.** `&amp;`, `&lt;`, `&gt;`, `&quot;`, `&apos;`, and references such as `&#169;` and `&#x2014;` are decoded. Any other entity, including HTML ones such as `&nbsp;`, throws.
+- **UTF-8 only.** A declaration that names another encoding throws, and so do bytes that aren't valid UTF-8. UTF-16 and UTF-32 input is recognized from its first bytes and throws `XmlEssentials is UTF-8 only. The input is UTF-16 or UTF-32.` A UTF-8 byte order mark is accepted and skipped. To read a document in another encoding, transcode it to UTF-8 first, for example with `Encoding.CreateTranscodingStream`, and remove or rewrite the encoding in its declaration.
+- **No validation.** The reader checks that a document is well formed. It doesn't validate against a DTD or an XML Schema.
+- **No `Stream` or `TextReader` constructor, and no asynchronous `Read`.** Use the block loop in this article, or let `XmlSerializer` or `XmlDocument` read the stream.
+- **Forward only.** There's no way to go back. Copy the reader to look ahead, within the limits given at the top of this article.
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Use Utf8XmlWriter" icon="pen" href="/xmlessentials/guides/use-utf8xmlwriter">
+    Write UTF-8 XML with the writer that pairs with this reader.
+  </Card>
+  <Card title="Use XmlDocument" icon="sitemap" href="/xmlessentials/guides/use-xmldocument">
+    Parse a whole document and query it at random.
+  </Card>
+  <Card title="Custom converters" icon="arrows-rotate" href="/xmlessentials/guides/custom-converters">
+    Use the reader and the writer inside a converter for your own type.
+  </Card>
+  <Card title="Migrate from XmlReader and XmlWriter" icon="right-left" href="/xmlessentials/guides/migrate/from-xmlreader-xmlwriter">
+    Map `System.Xml.XmlReader` code to `Utf8XmlReader`.
+  </Card>
+  <Card title="XML conformance" icon="circle-check" href="/xmlessentials/guides/xml-conformance">
+    See what the reader accepts and rejects, and why.
+  </Card>
+  <Card title="Security" icon="shield" href="/xmlessentials/guides/security">
+    Choose limits for input you don't trust.
+  </Card>
+</Columns>
+
+API reference: [`Utf8XmlReader`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader), [`XmlReaderOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions), [`XmlReaderState`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState), [`XmlTokenType`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlTokenType), [`XmlCommentHandling`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling), [`XmlWhitespaceHandling`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWhitespaceHandling), [`XmlVersion`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlVersion), [`XmlException`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException).

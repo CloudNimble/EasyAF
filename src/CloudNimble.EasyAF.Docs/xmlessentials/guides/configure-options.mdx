@@ -1,0 +1,409 @@
+---
+title: "How to create and reuse XmlSerializerOptions"
+sidebarTitle: "Configure options"
+description: "Learn how to create, reuse, copy, and freeze XmlSerializerOptions, what the built-in defaults are, and what every option does."
+icon: "sliders"
+---
+
+[`XmlSerializerOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions) holds every setting that changes how [`XmlSerializer`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) writes and reads XML. It is the counterpart of `JsonSerializerOptions` in System.Text.Json and follows the same rules: create an instance once, reuse it, and don't change it after its first use. This article covers those rules and lists every option with its default.
+
+## Reuse options instances
+
+An options instance is more than a bag of settings. The first time you serialize or deserialize a type with it, the serializer works out how the type maps to XML and stores the result on the instance. Every later call with the same instance reuses that work. A new instance starts again from nothing.
+
+Create the options once, keep them in a `static readonly` field or register them as a singleton, and pass the same instance to every call.
+
+```csharp Program.cs
+private static readonly XmlSerializerOptions s_compact = new()
+{
+    OmitXmlDeclaration = true,
+    PropertyNamingPolicy = XmlNamingPolicy.CamelCase,
+};
+```
+
+```csharp Program.cs
+output.WriteLine(XmlSerializer.Serialize(new InvoiceLine { Sku = "KB-101", Quantity = 2 }, s_compact));
+output.WriteLine(XmlSerializer.Serialize(new InvoiceCustomer { Name = "Contoso", Email = "ap@contoso.example" }, s_compact));
+```
+
+The code produces the following output:
+
+```xml
+<invoiceLine><sku>KB-101</sku><quantity>2</quantity></invoiceLine>
+<invoiceCustomer><name>Contoso</name><email>ap@contoso.example</email></invoiceCustomer>
+```
+
+<Warning>
+Don't create an `XmlSerializerOptions` instance inside a method that runs often. A new instance works out the mapping of every type it meets again, so each call pays the first-use cost, which is many times the cost of the call itself. See [Benchmarks](/xmlessentials/benchmarks).
+</Warning>
+
+When you pass no options, the serializer uses `XmlSerializerOptions.Default`, which is a shared instance, so calls without options are cached too.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/13_ConfigureOptions.cs)
+
+## Built-in instances
+
+Four ready-made, read-only instances cover common cases, so you often don't need to create your own.
+
+| Instance | Equivalent constructor | Differences from a new instance |
+| --- | --- | --- |
+| `XmlSerializerOptions.Default` | `new XmlSerializerOptions()` | None. |
+| `XmlSerializerOptions.Web` | `new XmlSerializerOptions(XmlSerializerDefaults.Web)` | `PropertyNamingPolicy` is `XmlNamingPolicy.CamelCase` and `OmitXmlDeclaration` is `true`. |
+| `XmlSerializerOptions.Strict` | `new XmlSerializerOptions(XmlSerializerDefaults.Strict)` | `AllowDuplicateProperties` is `false`, `RespectNullableAnnotations` is `true`, `ReadCommentHandling` is `Disallow`, and `UnmappedMemberHandling` is `Disallow`. |
+| `XmlSerializerOptions.Bcl` | `new XmlSerializerOptions(XmlSerializerDefaults.Bcl)` | The settings that write what `System.Xml.Serialization.XmlSerializer` writes. See [Keep the old defaults](/xmlessentials/guides/migrate/from-xmlserializer#keep-the-old-defaults). |
+
+```csharp Program.cs
+var line = new InvoiceLine { Sku = "KB-101", Quantity = 2 };
+
+output.WriteLine(XmlSerializer.Serialize(line, XmlSerializerOptions.Default));
+output.WriteLine(XmlSerializer.Serialize(line, XmlSerializerOptions.Web));
+output.WriteLine(XmlSerializer.Serialize(line, XmlSerializerOptions.Strict));
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?><InvoiceLine><Sku>KB-101</Sku><Quantity>2</Quantity></InvoiceLine>
+<invoiceLine><sku>KB-101</sku><quantity>2</quantity></invoiceLine>
+<?xml version="1.0" encoding="utf-8"?><InvoiceLine><Sku>KB-101</Sku><Quantity>2</Quantity></InvoiceLine>
+```
+
+<Note>
+`XmlSerializerDefaults.Web` is smaller than `JsonSerializerDefaults.Web`. It doesn't turn on case-insensitive name matching, and it doesn't change how numbers are read.
+</Note>
+
+The strict defaults change reading, which is why the third line matches the first. The one exception for writing is `RespectNullableAnnotations`: a member annotated non-nullable that holds `null` throws when it is written. The following example reads three documents with the general defaults and then with the strict ones.
+
+```csharp Program.cs
+string[] documents =
+[
+    "<InvoiceLine><Sku>KB-101</Sku><Sku>MS-220</Sku></InvoiceLine>",
+    "<InvoiceLine><!-- checked --><Sku>KB-101</Sku></InvoiceLine>",
+    "<InvoiceLine><Sku>KB-101</Sku><Colour>black</Colour></InvoiceLine>",
+];
+
+foreach (string xml in documents)
+{
+    InvoiceLine? line = XmlSerializer.Deserialize<InvoiceLine>(xml);
+    output.WriteLine($"General: {line!.Sku}");
+
+    try
+    {
+        XmlSerializer.Deserialize<InvoiceLine>(xml, XmlSerializerOptions.Strict);
+    }
+    catch (XmlException ex)
+    {
+        output.WriteLine($"Strict: {ex.Message}");
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+General: MS-220
+Strict: Duplicate property 'Sku'. Path: /InvoiceLine | LineNumber: 1 | BytePositionInLine: 36.
+General: KB-101
+Strict: Comments are not allowed. Path: /InvoiceLine | LineNumber: 1 | BytePositionInLine: 30.
+General: KB-101
+Strict: Unknown element 'Colour'. Path: /InvoiceLine | LineNumber: 1 | BytePositionInLine: 39.
+```
+
+With the general defaults, a repeated element overwrites the earlier value, a comment is skipped, and an unknown element is skipped. Use the strict defaults when the XML comes from outside your control and a surprise should be an error.
+
+## Start from defaults or copy an instance
+
+To change one setting of a set of defaults, pass an [`XmlSerializerDefaults`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerDefaults) value to the constructor and set what you need. To derive a variation of options you already have, use the copy constructor.
+
+```csharp Program.cs
+var web = new XmlSerializerOptions(XmlSerializerDefaults.Web)
+{
+    WriteIndented = true,
+    NewLine = "\n",
+};
+
+var line = new InvoiceLine { Sku = "KB-101", Quantity = 2 };
+output.WriteLine(XmlSerializer.Serialize(line, web));
+
+var flat = new XmlSerializerOptions(web) { WriteIndented = false };
+output.WriteLine($"Source is read-only: {web.IsReadOnly}. Copy is read-only: {flat.IsReadOnly}.");
+output.WriteLine(XmlSerializer.Serialize(line, flat));
+```
+
+The code produces the following output:
+
+```text
+<invoiceLine>
+  <sku>KB-101</sku>
+  <quantity>2</quantity>
+</invoiceLine>
+Source is read-only: True. Copy is read-only: False.
+<invoiceLine><sku>KB-101</sku><quantity>2</quantity></invoiceLine>
+```
+
+The copy has every setting, the converters, and the type info resolver of the source. It can be changed even when the source is read-only, and it shares none of the source's cached type information, so it pays the first-use cost again. Make copies at startup, not per call.
+
+## Options become read-only
+
+An instance becomes read-only the first time it is used to serialize or deserialize, or when you call `MakeReadOnly`. After that, every setter throws an `InvalidOperationException`, and so does changing the `Converters` list. `IsReadOnly` tells you which state an instance is in.
+
+```csharp Program.cs
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+output.WriteLine($"Before first use: {options.IsReadOnly}");
+
+XmlSerializer.Serialize(new InvoiceLine { Sku = "KB-101", Quantity = 2 }, options);
+output.WriteLine($"After first use: {options.IsReadOnly}");
+
+try
+{
+    options.WriteIndented = true;
+}
+catch (InvalidOperationException ex)
+{
+    output.WriteLine(ex.Message);
+}
+
+var frozen = new XmlSerializerOptions();
+frozen.MakeReadOnly();
+output.WriteLine($"After MakeReadOnly: {frozen.IsReadOnly}");
+```
+
+The code produces the following output:
+
+```text
+Before first use: False
+After first use: True
+This XmlSerializerOptions instance is read-only.
+After MakeReadOnly: True
+```
+
+The reason is the cache. Type information that was built under one set of options would be wrong under another, so the settings are locked as soon as any exists. Call `MakeReadOnly` yourself when you hand an instance to other code and want to be sure nobody changes it before its first use.
+
+A read-only instance is meant to be shared. See [Thread safety](/xmlessentials/guides/thread-safety).
+
+## Default values
+
+The following sample prints the value of each option on a new instance. The test for the sample compares the whole output, so this list can't drift from the code.
+
+```csharp Program.cs
+var options = new XmlSerializerOptions();
+
+output.WriteLine($"AllowDuplicateProperties = {options.AllowDuplicateProperties}");
+output.WriteLine($"AttributeNamingPolicy = {options.AttributeNamingPolicy?.ToString() ?? "null"}");
+output.WriteLine($"AttributeStyle = {options.AttributeStyle}");
+output.WriteLine($"AttributesPerLine = {options.AttributesPerLine}");
+output.WriteLine($"CharHandling = {options.CharHandling}");
+output.WriteLine($"Converters.Count = {options.Converters.Count}");
+output.WriteLine($"DefaultBufferSize = {options.DefaultBufferSize}");
+output.WriteLine($"DefaultCollectionMapping = {options.DefaultCollectionMapping}");
+output.WriteLine($"DefaultIgnoreCondition = {options.DefaultIgnoreCondition}");
+output.WriteLine($"DefaultNamespace = {options.DefaultNamespace ?? "null"}");
+output.WriteLine($"DefaultPropertyMapping = {options.DefaultPropertyMapping}");
+output.WriteLine($"DictionaryKeyPolicy = {options.DictionaryKeyPolicy?.ToString() ?? "null"}");
+output.WriteLine($"ElementNamingPolicy = {options.ElementNamingPolicy?.ToString() ?? "null"}");
+output.WriteLine($"EmitByteOrderMark = {options.EmitByteOrderMark}");
+output.WriteLine($"EmptyElementStyle = {options.EmptyElementStyle}");
+output.WriteLine($"EnumHandling = {options.EnumHandling}");
+output.WriteLine($"IgnoreReadOnlyFields = {options.IgnoreReadOnlyFields}");
+output.WriteLine($"IgnoreReadOnlyProperties = {options.IgnoreReadOnlyProperties}");
+output.WriteLine($"IncludeFields = {options.IncludeFields}");
+output.WriteLine($"IndentCharacter = '{options.IndentCharacter}'");
+output.WriteLine($"IndentSize = {options.IndentSize}");
+output.WriteLine($"InferClosedTypePolymorphism = {options.InferClosedTypePolymorphism}");
+output.WriteLine($"IsReadOnly = {options.IsReadOnly}");
+output.WriteLine($"MaxAttributeCount = {options.MaxAttributeCount}");
+output.WriteLine($"MaxCommentByteCount = {options.MaxCommentByteCount}");
+output.WriteLine($"MaxDepth = {options.MaxDepth}");
+output.WriteLine($"MaxDocumentByteCount = {options.MaxDocumentByteCount}");
+output.WriteLine($"MaxNameByteCount = {options.MaxNameByteCount}");
+output.WriteLine($"MaxTextByteCount = {options.MaxTextByteCount}");
+output.WriteLine($"MemberOrder = {options.MemberOrder}");
+output.WriteLine($"Namespaces = {options.Namespaces?.Count.ToString() ?? "null"}");
+output.WriteLine($"NewLine is Environment.NewLine = {options.NewLine == Environment.NewLine}");
+output.WriteLine($"NumberHandling = {options.NumberHandling}");
+output.WriteLine($"OmitXmlDeclaration = {options.OmitXmlDeclaration}");
+output.WriteLine($"PreferredObjectCreationHandling = {options.PreferredObjectCreationHandling}");
+output.WriteLine($"PropertyNameCaseInsensitive = {options.PropertyNameCaseInsensitive}");
+output.WriteLine($"PropertyNamingPolicy = {options.PropertyNamingPolicy?.ToString() ?? "null"}");
+output.WriteLine($"ReadCommentHandling = {options.ReadCommentHandling}");
+output.WriteLine($"ReferenceHandler = {options.ReferenceHandler?.ToString() ?? "null"}");
+output.WriteLine($"RespectNullableAnnotations = {options.RespectNullableAnnotations}");
+output.WriteLine($"RespectRequiredConstructorParameters = {options.RespectRequiredConstructorParameters}");
+output.WriteLine($"TypeInfoResolverChain.Count = {options.TypeInfoResolverChain.Count}");
+output.WriteLine($"UnknownTypeHandling = {options.UnknownTypeHandling}");
+output.WriteLine($"UnmappedMemberHandling = {options.UnmappedMemberHandling}");
+output.WriteLine($"UtcOffsetHandling = {options.UtcOffsetHandling}");
+output.WriteLine($"WhitespaceHandling = {options.WhitespaceHandling}");
+output.WriteLine($"WriteIndented = {options.WriteIndented}");
+output.WriteLine($"XmlVersion = {options.XmlVersion}");
+```
+
+The code produces the following output:
+
+```text
+AllowDuplicateProperties = True
+AttributeNamingPolicy = null
+AttributeStyle = Inline
+AttributesPerLine = 1
+CharHandling = Character
+Converters.Count = 0
+DefaultBufferSize = 0
+DefaultCollectionMapping = Unwrapped
+DefaultIgnoreCondition = Never
+DefaultNamespace = null
+DefaultPropertyMapping = Element
+DictionaryKeyPolicy = null
+ElementNamingPolicy = null
+EmitByteOrderMark = False
+EmptyElementStyle = SelfClosing
+EnumHandling = Name
+IgnoreReadOnlyFields = False
+IgnoreReadOnlyProperties = False
+IncludeFields = False
+IndentCharacter = ' '
+IndentSize = 0
+InferClosedTypePolymorphism = False
+IsReadOnly = False
+MaxAttributeCount = 0
+MaxCommentByteCount = 0
+MaxDepth = 0
+MaxDocumentByteCount = 0
+MaxNameByteCount = 0
+MaxTextByteCount = 0
+MemberOrder = PropertiesFirst
+Namespaces = null
+NewLine is Environment.NewLine = True
+NumberHandling = AllowNamedFloatingPointLiterals
+OmitXmlDeclaration = False
+PreferredObjectCreationHandling = Replace
+PropertyNameCaseInsensitive = False
+PropertyNamingPolicy = null
+ReadCommentHandling = Skip
+ReferenceHandler = null
+RespectNullableAnnotations = False
+RespectRequiredConstructorParameters = True
+TypeInfoResolverChain.Count = 0
+UnknownTypeHandling = XmlElement
+UnmappedMemberHandling = Skip
+UtcOffsetHandling = WriteOffset
+WhitespaceHandling = Insignificant
+WriteIndented = False
+XmlVersion = Version10
+```
+
+For the sizes and limits, a value of `0` means "use the built-in default". The tables that follow give the value that is then used.
+
+## Options reference
+
+The tables in this section group the options by what they affect. Each row gives the value on a new instance.
+
+### Output
+
+These options take effect when writing.
+
+| Option | Default | What it does |
+| --- | --- | --- |
+| `WriteIndented` | `false` | Puts each element on its own line and indents nested elements. |
+| `IndentCharacter` | `' '` (space) | The character used to indent: a space or a tab. |
+| `IndentSize` | `0`, which means 2 | How many indent characters each level gets. |
+| `NewLine` | `Environment.NewLine` | The line end written for every line break: the ones indentation and `AttributeStyle` add, and the ones inside values. It must be `"\n"` or `"\r\n"`. Set it to `"\n"` for output that is the same on every operating system. |
+| `EmptyElementStyle` | `XmlEmptyElementStyle.SelfClosing` | The form of an element that has no content: `<e/>`, `<e />` (`SelfClosingWithSpace`), or `<e></e>` (`StartAndEndTag`). |
+| `AttributeStyle` | `XmlAttributeStyle.Inline` | Whether the XML attributes of an element are all on the line of its start tag, or `AttributesPerLine` to a line (`PerLine`), lined up under the first one. |
+| `AttributesPerLine` | `1` | How many XML attributes each line gets when `AttributeStyle` is `PerLine`. It must be at least 1. |
+| `OmitXmlDeclaration` | `false` | Leaves out the `<?xml ...?>` declaration. |
+| `XmlVersion` | `XmlVersion.Version10` | The XML version in the declaration. See [XML conformance](/xmlessentials/guides/xml-conformance). |
+| `EmitByteOrderMark` | `false` | Starts the output with the UTF-8 byte order mark. With the overload that returns a `string`, the string then starts with the character U+FEFF. |
+| `DefaultBufferSize` | `0`, which means 16,384 bytes | The size of the first buffer rented for the output. |
+
+### Names and shape
+
+These options decide how members map to XML. They apply to writing and reading alike. See [Customize names and shape](/xmlessentials/guides/customize-names) and [Serialize collections](/xmlessentials/guides/collections).
+
+| Option | Default | What it does |
+| --- | --- | --- |
+| `PropertyNamingPolicy` | `null` (names unchanged) | Converts member and type names to element and attribute names. |
+| `ElementNamingPolicy` | `null` | Overrides `PropertyNamingPolicy` for elements, including the document element. |
+| `AttributeNamingPolicy` | `null` | Overrides `PropertyNamingPolicy` for XML attributes. |
+| `DictionaryKeyPolicy` | `null` | Converts string dictionary keys when writing. Falls back to `PropertyNamingPolicy`. |
+| `DefaultPropertyMapping` | `XmlPropertyMapping.Element` | Whether a simple member with no mapping attribute is a child element or an XML attribute. |
+| `DefaultCollectionMapping` | `XmlCollectionMapping.Unwrapped` | Whether a collection member with no mapping attribute is repeated elements, or one wrapper element with an element for each item. See [Collections](/xmlessentials/guides/collections). |
+| `DefaultNamespace` | `null` | The namespace of the document element when `[XmlRoot]` doesn't set one. See [Namespaces](/xmlessentials/guides/namespaces). |
+| `Namespaces` | `null` | Prefixes and the namespaces they are bound to, declared on the document element and used everywhere below it. Affects writing only. Takes precedence over `[XmlNamespaceDeclaration]` on the type. See [Namespaces](/xmlessentials/guides/namespaces). |
+| `EnumHandling` | `XmlEnumHandling.Name` | Whether an enumeration value is written as its name or its number. |
+
+### Which members are included
+
+See [Ignore properties](/xmlessentials/guides/ignore-properties) and [Handle null values](/xmlessentials/guides/null-and-nil).
+
+| Option | Default | What it does |
+| --- | --- | --- |
+| `DefaultIgnoreCondition` | `XmlIgnoreCondition.Never` | Leaves members out when writing, if they are `null` (`WhenWritingNull`), a `null` reference (`WhenWritingNullReference`), or have their default value (`WhenWritingDefault`). `WhenWriting` and `WhenReading` have no effect as the default, as in System.Text.Json; use them on `[XmlIgnore]`. `[XmlIgnore]` on a member takes precedence. |
+| `IncludeFields` | `false` | Serializes public fields as well as properties. |
+| `MemberOrder` | `XmlMemberOrder.PropertiesFirst` | Whether the fields of a class come after its properties or before them. Only matters for a type that has both, when `IncludeFields` is `true` or a field is included with `[XmlInclude]`. An explicit `[XmlPropertyOrder]` takes precedence. |
+| `IgnoreReadOnlyProperties` | `false` | Leaves out properties that have no setter. A collection or a dictionary is not left out. |
+| `IgnoreReadOnlyFields` | `false` | Leaves out `readonly` fields. Only matters when `IncludeFields` is `true`. |
+| `RespectNullableAnnotations` | `false` | Refuses a `null` for a member or constructor parameter annotated non-nullable, when reading and when writing. See [Handle null values](/xmlessentials/guides/null-and-nil#respect-nullable-annotations). |
+
+### Reading
+
+These options take effect when reading. See [Deserialize](/xmlessentials/guides/deserialize) and [Require properties](/xmlessentials/guides/required-properties).
+
+| Option | Default | What it does |
+| --- | --- | --- |
+| `PropertyNameCaseInsensitive` | `false` | Matches element and attribute names in the document to members without regard to the case of ASCII letters. Constructor parameters always match members without regard to case. |
+| `UnmappedMemberHandling` | `XmlUnmappedMemberHandling.Skip` | Whether an element or attribute that no member maps to is skipped or rejected. |
+| `UnknownTypeHandling` | `XmlUnknownTypeHandling.XmlElement` | What a value declared as `object` is read as: a read-only `XmlElement`, or an `XmlNode` that can be changed. |
+| `AllowDuplicateProperties` | `true` | When `true`, a repeated element overwrites the earlier value. When `false`, it throws an `XmlException`. |
+| `PreferredObjectCreationHandling` | `XmlObjectCreationHandling.Replace` | Whether a member that already holds a value is given a new one (`Replace`) or has its value populated (`Populate`). Under `Replace`, a property with no setter isn't read. See [Collections](/xmlessentials/guides/collections#populate-a-collection-that-already-holds-a-value). |
+| `RespectRequiredConstructorParameters` | `true` | Rejects XML that lacks a value for a constructor parameter with no default value. |
+| `ReadCommentHandling` | `XmlCommentHandling.Skip` | Whether comments in the XML are skipped or rejected. |
+| `WhitespaceHandling` | `XmlWhitespaceHandling.Insignificant` | How the reader treats white space between elements. See [`XmlWhitespaceHandling`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWhitespaceHandling). |
+
+### Values
+
+| Option | Default | What it does |
+| --- | --- | --- |
+| `NumberHandling` | `XmlNumberHandling.AllowNamedFloatingPointLiterals` | Whether `INF`, `-INF`, and `NaN` are written and read for `float` and `double`. With `Strict`, they throw an `XmlException`. |
+| `CharHandling` | `XmlCharHandling.Character` | Whether a `char` is written and read as the character or as the number of its UTF-16 code unit. |
+| `UtcOffsetHandling` | `XmlUtcOffsetHandling.WriteOffset` | Whether a `DateTimeOffset` with a zero offset ends with `+00:00` or with `Z`. Both are read under either value. |
+| `ReferenceHandler` | `null` | How an object that appears more than once, or a cycle, is handled. See [Preserve references](/xmlessentials/guides/preserve-references). |
+| `Converters` | Empty | Your own converters, tried before the built-in ones. See [Custom converters](/xmlessentials/guides/custom-converters). |
+| `InferClosedTypePolymorphism` | `false` | Takes the derived types of a closed type from the list the compiler makes, for a type that declares none. Needs C# 15 and .NET 11. See [Polymorphism](/xmlessentials/guides/polymorphism#infer-the-derived-types-of-a-closed-type). |
+
+### Limits
+
+The limits protect against oversized or hostile input. See [Security](/xmlessentials/guides/security).
+
+| Option | Default | Limit that is used |
+| --- | --- | --- |
+| `MaxDepth` | `0` | 64 nested elements. Applies to writing as well, which is what stops a cyclic object graph. |
+| `MaxAttributeCount` | `0` | 1,000 attributes on one element. |
+| `MaxNameByteCount` | `0` | 1,024 bytes in one name. |
+| `MaxTextByteCount` | `0` | 16,777,216 bytes in one text node, CDATA section, attribute value, or processing instruction. |
+| `MaxCommentByteCount` | `0` | 1,048,576 bytes in one comment. |
+| `MaxDocumentByteCount` | `0` | No limit. Set it when you read from a stream you don't control. |
+
+### Type metadata
+
+| Option | Default | What it does |
+| --- | --- | --- |
+| `TypeInfoResolver` | `null` | Supplies the XML mapping for each type. Set it to a source-generated context to avoid reflection. Options that have none get the reflection resolver the first time an `XmlSerializer` method that takes options uses them, or when you call `MakeReadOnly(populateMissingResolver: true)`. See [Use source generation](/xmlessentials/guides/source-generation). |
+| `TypeInfoResolverChain` | Empty | The same resolver as a list, for combining several contexts. |
+| `IsReadOnly` | `false` | Read-only. Tells you whether the instance can still be changed. |
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Serialize" icon="arrow-right-from-bracket" href="/xmlessentials/guides/serialize">
+    Write .NET objects as XML.
+  </Card>
+  <Card title="Deserialize" icon="arrow-right-to-bracket" href="/xmlessentials/guides/deserialize">
+    Read XML into .NET objects.
+  </Card>
+  <Card title="Thread safety" icon="shield-halved" href="/xmlessentials/guides/thread-safety">
+    Share options and other types between threads.
+  </Card>
+  <Card title="XmlSerializerOptions" icon="code" href="/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions">
+    API reference for every property.
+  </Card>
+</Columns>

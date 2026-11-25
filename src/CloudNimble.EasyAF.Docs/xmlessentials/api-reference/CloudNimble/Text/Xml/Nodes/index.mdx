@@ -1,0 +1,232 @@
+---
+title: Overview
+description: "Summary of the CloudNimble.Text.Xml.Nodes Namespace"
+icon: folder-tree
+mode: wide
+keywords: ['CloudNimble.Text.Xml.Nodes', 'namespace', 'XmlAttributeNode', 'XmlAttributeNodeList', 'XmlCDataNode', 'XmlCommentNode', 'XmlDeclarationNode', 'XmlElementNode', 'XmlNode', 'XmlNodeList', 'XmlProcessingInstructionNode', 'XmlTextNode']
+---
+
+## Summary
+
+The `CloudNimble.Text.Xml.Nodes` namespace contains the mutable XML tree: `XmlNode` and the types that derive from it for elements, attributes, text, CDATA sections, comments, processing instructions, and the XML declaration, together with the two list types that hold an element's children and attributes. It's the XML counterpart of `System.Text.Json.Nodes`. Use it to build XML node by node or to change XML that you parsed. To read XML without changing it, use `XmlDocument` in the `CloudNimble.Text.Xml` namespace.
+
+## Usage
+
+Create an `XmlElementNode` and add to it, or parse existing XML with `XmlNode.Parse`. `ToString` returns the markup.
+
+```csharp
+var order = new XmlElementNode("Order");
+order.SetAttribute("id", "1042");
+
+XmlElementNode customer = order.AddElement("Customer");
+customer.Add(new XmlTextNode("Ada Lovelace"));
+
+order.AddElement("Item").InnerText = "Keyboard";
+order.AddElement("Item").InnerText = "Mouse & pad";
+order.AddElement("Notes");
+
+output.WriteLine(order.ToString());
+```
+
+The code produces the following output:
+
+```xml
+<Order id="1042"><Customer>Ada Lovelace</Customer><Item>Keyboard</Item><Item>Mouse &amp; pad</Item><Notes/></Order>
+```
+
+| Type | Represents |
+| --- | --- |
+| `XmlElementNode` | An element, with `Attributes` and `Children` |
+| `XmlAttributeNode` | An attribute |
+| `XmlTextNode` | Character data |
+| `XmlCDataNode` | A CDATA section |
+| `XmlCommentNode` | A comment |
+| `XmlProcessingInstructionNode` | A processing instruction |
+| `XmlDeclarationNode` | The XML declaration |
+| `XmlNodeList`, `XmlAttributeNodeList` | The lists behind `Children` and `Attributes` |
+
+For a walkthrough, see [How to build and change XML with XmlNode](/xmlessentials/guides/use-xmlnode).
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/29_BuildWithXmlNode.cs)
+
+## Examples
+
+### Parse a document and read from the tree
+
+```csharp
+const string xml = """
+    <Order id="1042" status="open">
+      <Customer>Ada Lovelace</Customer>
+      <Item sku="KB-1">Keyboard</Item>
+      <Item sku="MS-2">Mouse</Item>
+    </Order>
+    """;
+
+var order = (XmlElementNode)XmlNode.Parse(xml);
+
+output.WriteLine($"Customer: {order["Customer"]!.InnerText}");
+output.WriteLine($"Status: {order.Attributes["status"]!.Value}");
+output.WriteLine($"Discount element found: {order["Discount"] is not null}");
+output.WriteLine($"{order.Children.Count} child nodes, {order.OfType<XmlElementNode>().Count()} of them elements, {order.Attributes.Count} attributes");
+
+foreach (XmlNode child in order.Children)
+{
+    if (child is XmlElementNode { LocalName: "Item" } item)
+    {
+        output.WriteLine($"{item.Attributes["sku"]!.Value}: {item.InnerText}");
+    }
+}
+
+XmlNode first = order.Children[0];
+output.WriteLine($"The first child is a {first.ValueKind} node, and its parent is <{((XmlElementNode)first.Parent!).LocalName}>");
+```
+
+The code produces the following output:
+
+```text
+Customer: Ada Lovelace
+Status: open
+Discount element found: False
+7 child nodes, 3 of them elements, 2 attributes
+KB-1: Keyboard
+MS-2: Mouse
+The first child is a Text node, and its parent is <Order>
+```
+
+Four of the seven child nodes are the white space between the elements, which the tree keeps.
+
+### Add each kind of node
+
+```csharp
+var note = new XmlElementNode("Note");
+note.Add(new XmlCommentNode(" reviewed "));
+note.Add(new XmlTextNode("Use ** & ** for bold. "));
+note.Add(new XmlCDataNode("**Raw** & unescaped"));
+note.Add(new XmlProcessingInstructionNode("print", "copies=\"2\""));
+note.AddElement("Signature");
+
+output.WriteLine(note.ToString());
+
+foreach (XmlNode child in note.Children)
+{
+    output.WriteLine($"{child.GetType().Name}: {child.ValueKind}");
+}
+
+output.WriteLine($"InnerText: {note.InnerText}");
+```
+
+The code produces the following output:
+
+```text
+<Note><!-- reviewed -->Use &lt;b> &amp; &lt;/b> for bold. <![CDATA[**Raw** & unescaped]]><?print copies="2"?><Signature/></Note>
+XmlCommentNode: Comment
+XmlTextNode: Text
+XmlCDataNode: CData
+XmlProcessingInstructionNode: ProcessingInstruction
+XmlElementNode: Element
+InnerText: Use ** & ** for bold. **Raw** & unescaped
+```
+
+[View sample 29](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/29_BuildWithXmlNode.cs) and [sample 30](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/30_ChangeWithXmlNode.cs) on GitHub.
+
+## Best Practices
+
+- **Use the tree to change or build XML, and `XmlDocument` to read it.** The tree has an object for every node it makes and a string for every name and value in it. The document doesn't.
+- **Reach into only what you edit.** A tree from `XmlNode.Parse` makes the nodes under an element when you first reach into it, through `Children`, `Attributes`, `InnerText`, an indexer, or a change. An element you never reach into is written from the parsed input.
+- **Clone the element you edit when you parse with `XmlDocument`.** `XmlElement.CloneNode` copies everything under the element at once, so clone the smallest element that changes.
+- **Find elements by name or type, not by position.** A tree parsed from an indented document has a text node for each run of indentation, so `Children[0]` is often white space.
+- **Use `SetAttribute` to add or change an attribute.** It updates an attribute that exists. `Attributes.Add` doesn't check for a duplicate, and a duplicate fails when the tree is written.
+- **Give every namespaced element its namespace.** A child doesn't inherit the namespace of its parent.
+- **Copy with `DeepClone` to use a node in two places.** A node has one parent, and adding a node that already has one throws.
+- **Write to a `Utf8XmlWriter` for anything but a quick look.** `ToString` builds a string with no declaration and no indentation of its own. `WriteTo` writes UTF-8 to a stream or a buffer with the options you choose.
+
+## Patterns
+
+### Parse, change, write
+
+Parse with `XmlNode.Parse`, change the tree, and write it with `ToString` or `WriteTo`. Comments and indentation inside the root element survive, and the elements you didn't reach into are written from the parsed input.
+
+### Read with the document, edit a copy
+
+Parse with `XmlDocument` when you need `XmlDocumentOptions`, a `Stream`, or the typed getters to find what to change. Find the element with `GetChild` and call `CloneNode`. The copy holds everything under the element and outlives the document.
+
+```csharp
+XmlElementNode product;
+
+using (XmlDocument document = XmlDocument.Parse("""<Catalog><Product sku="KB-1"><Name>Keyboard</Name></Product></Catalog>"""))
+{
+    product = (XmlElementNode)document.RootElement.GetChild("Product").CloneNode();
+}
+
+product.SetAttribute("sku", "KB-2");
+product.AddElement("Price").InnerText = "49.90";
+
+output.WriteLine(product.ToString());
+```
+
+The code produces the following output:
+
+```xml
+<Product sku="KB-2"><Name>Keyboard</Name><Price>49.90</Price></Product>
+```
+
+### Adjust what the serializer produced
+
+`XmlSerializer.SerializeToNode` gives you an object's XML as a tree, and `XmlSerializer.Deserialize` accepts a node.
+
+```csharp
+var product = new Product { Name = "Keyboard", Price = 49.90m };
+
+var node = (XmlElementNode)XmlSerializer.SerializeToNode(product)!;
+output.WriteLine(node.ToString());
+
+node["Price"]!.InnerText = "44.90";
+
+Product? discounted = XmlSerializer.Deserialize<Product>(node);
+output.WriteLine($"{discounted!.Name}: {discounted.Price.ToString(CultureInfo.InvariantCulture)}");
+```
+
+The code produces the following output:
+
+```text
+<Product><Name>Keyboard</Name><Price>49.90</Price></Product>
+Keyboard: 44.90
+```
+
+## Considerations
+
+- **XML isn't a property bag.** An element's children are an ordered list that can mix elements, text, comments, and more, and names can repeat. An element holds that list and a separate list of attributes, where a `JsonObject` holds one value per name.
+- **What `XmlNode.Parse` keeps.** The root element and everything inside it, including comments, the white space between elements, and whether an element with no content was `<e/>` or `<e></e>`. The XML declaration and anything outside the root element aren't part of the tree.
+- **A parsed tree is made as you reach into it.** `XmlNode.Parse` and `ParseValue` keep the parsed input, and an element makes its attributes and child nodes the first time you reach into it. What the tree reads, copies, and writes is the same either way. The parsed input stays in memory while an element that nothing has reached into is reachable.
+- **Little is validated until the tree is written.** The constructors and name setters reject a `null`, empty, or white-space name. An invalid name, a duplicate attribute, a prefix without a namespace, a comment that contains `--`, or a CDATA section that contains `]]>` throws an `XmlException` from `ToString` or `WriteTo`.
+- **Values are strings.** Convert them yourself, or read the XML with `XmlDocument`, whose `XmlElement` has typed getters such as `GetInt32`.
+- **Nodes are ordinary objects.** There is nothing to dispose, and a tree stays valid after the `XmlDocument` it was cloned from is disposed.
+- **Several threads can read; one thread at a time can change.** A tree that no thread is changing can be read from several threads at once, as a `JsonNode` tree can. That includes a parsed tree that is still being made as it's reached into: every thread gets the same nodes. While any thread adds, removes, or changes a node, no other thread can use the tree, not even to read it. Use your own lock.
+- **A list can't change while it's enumerated.** Changing `Children` or `Attributes` inside a `foreach` over that list throws an `InvalidOperationException` at the loop's next step. Loop over a copy, such as `Children.ToArray()`.
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Nodes.XmlNode
+- CloudNimble.Text.Xml.Nodes.XmlElementNode
+- CloudNimble.Text.Xml.XmlDocument
+- CloudNimble.Text.Xml.XmlElement
+- CloudNimble.Text.Xml.Utf8XmlWriter
+- CloudNimble.Text.Xml.XmlSerializer
+
+## Types
+
+### <Icon icon="file-brackets-curly" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} /> Classes
+
+| Name | Summary |
+| ---- | ------- |
+| [XmlAttributeNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlAttributeNode) | Represents a mutable XML attribute. This class cannot be inherited. |
+| [XmlAttributeNodeList](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlAttributeNodeList) | Represents the ordered list of attributes of an [XmlElementNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlElementNode). This class cannot be inherited. |
+| [XmlCDataNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlCDataNode) | Represents a mutable XML CDATA section. This class cannot be inherited. |
+| [XmlCommentNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlCommentNode) | Represents a mutable XML comment. This class cannot be inherited. |
+| [XmlDeclarationNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlDeclarationNode) | Represents a mutable XML declaration. This class cannot be inherited. |
+| [XmlElementNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlElementNode) | Represents a mutable XML element with attributes and child nodes. This class cannot be inherited. |
+| [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) | Defines the core behavior of a node in a mutable XML tree and provides a base for the classes that  represent elements, attributes, text, CDATA sections, comments, processing instructions, and the  XML declaration. |
+| [XmlNodeList](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNodeList) | Represents the ordered list of child nodes of an [XmlElementNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlElementNode). This class cannot be inherited. |
+| [XmlProcessingInstructionNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlProcessingInstructionNode) | Represents a mutable XML processing instruction. This class cannot be inherited. |
+| [XmlTextNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlTextNode) | Represents a mutable XML text node. This class cannot be inherited. |
+

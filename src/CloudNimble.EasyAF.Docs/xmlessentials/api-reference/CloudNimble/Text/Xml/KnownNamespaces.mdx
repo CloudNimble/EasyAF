@@ -1,0 +1,221 @@
+---
+title: KnownNamespaces
+description: "Provides the namespace declarations of well-known XML formats, each as the prefixes the format is customarily written with and the namespace URIs they are bo..."
+icon: bolt
+tag: "STATIC"
+keywords: ['KnownNamespaces', 'CloudNimble.Text.Xml.KnownNamespaces', 'CloudNimble.Text.Xml', 'class', 'CloudNimble.Text.Xml.XmlSerializerOptions', 'CloudNimble.Text.Xml.XmlNamespaces', 'CloudNimble.Text.Xml.XmlDocument']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.KnownNamespaces
+```
+
+## Summary
+
+Provides the namespace declarations of well-known XML formats, each as the prefixes the format is
+customarily written with and the namespace URIs they are bound to.
+
+## Usage
+
+`KnownNamespaces` holds the namespace declarations of well-known XML formats, each as the prefixes the format is customarily written with and the namespace URIs they're bound to. Assign one to `XmlSerializerOptions.Namespaces`, and the serializer declares every namespace of the set on the document element and writes each element and attribute in one of them with the set's prefix.
+
+In the sample, `PodcastShow` is written as `rss`, and its `Author` property is an element in the iTunes namespace:
+
+```csharp
+var options = new XmlSerializerOptions { Namespaces = KnownNamespaces.Podcast, WriteIndented = true, NewLine = "\n", OmitXmlDeclaration = true };
+var show = new PodcastShow { Title = "Field Notes", Author = "Contoso Radio" };
+
+output.WriteLine(XmlSerializer.Serialize(show, options));
+```
+
+```xml
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:media="http://search.yahoo.com/mrss/" xmlns:podcast="https://podcastindex.org/namespace/1.0" xmlns:psc="http://podlove.org/simple-chapters" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
+  <itunes:author>Contoso Radio</itunes:author>
+  <title>Field Notes</title>
+</rss>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/14_Namespaces.cs)
+
+What to know:
+
+- **Every declaration of the set is written,** whether or not the document uses it. The sample uses only `itunes`.
+- **A set holds the namespaces a format adds to its own.** A format whose own elements have no namespace, such as RSS, or are customarily in the default namespace, such as a sitemap, isn't in its set.
+- **The sets are read-only,** and their declarations are in alphabetical order of prefix.
+- **The prefixes matter only when the serializer writes.** When it reads, it compares namespace URIs, so a document that uses other prefixes reads the same.
+- **To use the prefixes of a particular document instead,** pass it to `XmlDocument.DiscoverNamespaces` and assign the result to `XmlSerializerOptions.Namespaces`.
+
+For the other ways to choose prefixes, see [Use XML namespaces](/xmlessentials/guides/namespaces).
+
+## Remarks
+
+Assign one of these to [XmlSerializerOptions.Namespaces](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#namespaces) to have the serializer declare the
+namespaces on the document element and write the customary prefixes. Every declaration of a set is
+written, whether or not the document uses it. The sets are read-only, and their declarations are in
+alphabetical order of prefix.
+
+A set holds the namespaces a format adds to its own. A format whose own elements have no namespace, such
+as RSS, or are customarily written in the default namespace, such as a sitemap, is not in its set. To use
+the prefixes of a particular document instead, see
+[XmlDocument.DiscoverNamespaces](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument#discovernamespaces).
+
+## Examples
+
+```csharp
+var options = new XmlSerializerOptions { Namespaces = KnownNamespaces.Podcast };
+string xml = XmlSerializer.Serialize(feed, options);
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Edmx
+
+Gets the namespace of an OData version 4 metadata document (CSDL in XML), which is customarily written
+with the `edmx` prefix.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IReadOnlyDictionary<string, string> Edmx { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.IReadOnlyDictionary<string, string>`
+`edmx`. The Entity Data Model namespace of the `Schema` element is not in the set: it is
+customarily the default namespace of that element.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Podcast
+
+Gets the namespaces of a podcast feed: the iTunes and Podcasting 2.0 extensions to RSS, and the modules
+that podcast hosts add.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IReadOnlyDictionary<string, string> Podcast { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.IReadOnlyDictionary<string, string>`
+`atom`, `content`, `dc`, `googleplay`, `itunes`, `media`,
+`podcast` (Podcasting 2.0, the Podcast Index namespace), `psc` (Podlove Simple Chapters)
+and `sy`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Rss
+
+Gets the namespaces of the modules that RSS 2.0 feeds commonly use.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IReadOnlyDictionary<string, string> Rss { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.IReadOnlyDictionary<string, string>`
+`atom`, `content`, `dc`, `georss`, `media`, `slash`, `sy` and
+`wfw`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Sitemap
+
+Gets the namespaces of the extensions to a sitemap.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IReadOnlyDictionary<string, string> Sitemap { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.IReadOnlyDictionary<string, string>`
+`image`, `news`, `video` and `xhtml`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Soap11
+
+Gets the namespaces of a SOAP 1.1 message.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IReadOnlyDictionary<string, string> Soap11 { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.IReadOnlyDictionary<string, string>`
+`soap`, `xsd` and `xsi`.
+
+#### Remarks
+
+The `soap` prefix is the one .NET and most toolkits write. The specification's own examples use
+`SOAP-ENV`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Soap12
+
+Gets the namespaces of a SOAP 1.2 message.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IReadOnlyDictionary<string, string> Soap12 { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.IReadOnlyDictionary<string, string>`
+`soap`, `xsd` and `xsi`.
+
+#### Remarks
+
+The `soap` prefix is the one .NET and most toolkits write. The specification's own examples use
+`env`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Svg
+
+Gets the namespaces of an SVG picture.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IReadOnlyDictionary<string, string> Svg { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.IReadOnlyDictionary<string, string>`
+`svg` and `xlink`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> XmlSchema
+
+Gets the namespaces of XML Schema: the schema language, and the attributes an instance document takes
+from it.
+
+#### Syntax
+
+```csharp
+public static System.Collections.Generic.IReadOnlyDictionary<string, string> XmlSchema { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.IReadOnlyDictionary<string, string>`
+`xsd` and `xsi`.
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlSerializerOptions
+- CloudNimble.Text.Xml.XmlNamespaces
+- CloudNimble.Text.Xml.XmlDocument
+

@@ -1,0 +1,638 @@
+---
+title: "Migrate from XmlReader and XmlWriter"
+sidebarTitle: "From XmlReader and XmlWriter"
+description: "Map System.Xml.XmlReader and XmlWriter code to Utf8XmlReader and Utf8XmlWriter, member by member, and learn what changes in kind."
+icon: "right-left"
+---
+
+This article is for developers who read XML with `System.Xml.XmlReader` or write it with `System.Xml.XmlWriter` and want to move that code to `Utf8XmlReader` and `Utf8XmlWriter`. It maps each member you use to its counterpart, and then covers the differences that a rename doesn't fix.
+
+`Utf8XmlReader` and `Utf8XmlWriter` are the XML counterparts of `Utf8JsonReader` and `Utf8JsonWriter` in System.Text.Json. If you've used those, you already know the model: a `ref struct` reader over UTF-8 bytes, and a writer over an `IBufferWriter<byte>` or a `Stream`.
+
+In the project's [benchmarks](/xmlessentials/benchmarks#read-real-documents), `Utf8XmlReader` reads four real documents 1.5× to 2.3× faster than `XmlReader`, and a reused `Utf8XmlWriter` writes a 200-item catalog 2.0× faster than `XmlWriter` while allocating nothing.
+
+## Table of differences
+
+| Feature | `System.Xml` | XmlEssentials | More information |
+| --- | --- | --- | --- |
+| Reader type | `XmlReader`, an abstract class | `Utf8XmlReader`, a `ref struct` | [The reader is a ref struct](#the-reader-is-a-ref-struct) |
+| Reader input | `Stream`, `TextReader`, URI, another reader | `ReadOnlySpan<byte>` or `ReadOnlySequence<byte>` of UTF-8 | [Read from a stream](#read-from-a-stream) |
+| Names and values | `string` | UTF-8 spans, with methods that compare or convert | [Reader members](#reader-members) |
+| Reader settings | `XmlReaderSettings` | `XmlReaderOptions`, a struct | [Reader settings](#reader-settings) |
+| Comments and white space between elements | Reported by default | Reported by default | [Reader settings](#reader-settings) |
+| DTD | `DtdProcessing.Prohibit`, `Ignore`, or `Parse` | Always an error | [DTDs are rejected](#dtds-are-rejected) |
+| Name table | `XmlNameTable`, reference comparison of atomized strings | None. Compare names as UTF-8 | [Reader members](#reader-members) |
+| Schema validation | `XmlReaderSettings.Schemas` | Not supported | [What isn't supported](#what-isnt-supported) |
+| Writer type | `XmlWriter`, an abstract class made by `XmlWriter.Create` | `Utf8XmlWriter`, a sealed class with public constructors | [Writer members](#writer-members) |
+| Writer output | `Stream`, `TextWriter`, `StringBuilder`, file name | `Stream` or `IBufferWriter<byte>` | [Writer members](#writer-members) |
+| Writer settings | `XmlWriterSettings` | `XmlWriterOptions`, a struct | [Writer settings](#writer-settings) |
+| Encoding | Any .NET encoding | UTF-8 | [Writer settings](#writer-settings) |
+| Open elements at the end | Closed for you | An error | [Close every element](#close-every-element) |
+| Asynchronous members | `ReadAsync`, `WriteStartElementAsync`, and so on | `FlushAsync` and `DisposeAsync` on the writer only | [The reader is a ref struct](#the-reader-is-a-ref-struct) |
+| XML 1.1 | Not supported | Read and written | [XML conformance](/xmlessentials/guides/xml-conformance) |
+
+## Read a document
+
+The following pair reads the same inventory document: a namespace, two attributes on each item, typed values, and a subtree that the code skips.
+
+<CodeGroup>
+
+```csharp System.Xml
+using var reader = XmlReader.Create(new StringReader(inventory));
+while (reader.Read())
+{
+    if (reader.NodeType != XmlNodeType.Element || reader.NamespaceURI != "urn:contoso:inventory")
+    {
+        continue;
+    }
+
+    if (reader.LocalName == "Item")
+    {
+        Console.WriteLine($"Item at depth {reader.Depth} with {reader.AttributeCount} attributes");
+        while (reader.MoveToNextAttribute())
+        {
+            if (reader.LocalName == "sku")
+            {
+                Console.WriteLine($"  Sku: {reader.Value}");
+            }
+            else if (reader.LocalName == "discontinued")
+            {
+                Console.WriteLine($"  Discontinued: {reader.ReadContentAsBoolean()}");
+            }
+        }
+
+        reader.MoveToElement();
+    }
+    else if (reader.LocalName == "Name")
+    {
+        reader.Read();
+        Console.WriteLine($"  Name: {reader.Value}");
+    }
+    else if (reader.LocalName == "Price")
+    {
+        reader.Read();
+        Console.WriteLine($"  Price: {XmlConvert.ToDecimal(reader.Value)}");
+    }
+    else if (reader.LocalName == "History")
+    {
+        reader.Skip();
+    }
+}
+```
+
+```csharp XmlEssentials
+ReadOnlySpan<byte> xml = """
+    <?xml version="1.0" encoding="utf-8"?>
+    <inv:Inventory xmlns:inv="urn:contoso:inventory">
+      <inv:Item sku="KB-01" discontinued="false">
+        <inv:Name>Keyboard</inv:Name>
+        <inv:Price>49.90</inv:Price>
+        <inv:History><inv:Change>Price raised</inv:Change></inv:History>
+      </inv:Item>
+      <inv:Item sku="MS-02" discontinued="true">
+        <inv:Name>Mouse</inv:Name>
+        <inv:Price>19.50</inv:Price>
+      </inv:Item>
+    </inv:Inventory>
+    """u8;
+
+var reader = new Utf8XmlReader(xml);
+while (reader.Read())
+{
+    if (reader.TokenType is not XmlTokenType.StartElement || !reader.NamespaceUriEquals("urn:contoso:inventory"u8))
+    {
+        continue;
+    }
+
+    if (reader.LocalNameEquals("Item"u8))
+    {
+        output.WriteLine($"Item at depth {reader.CurrentDepth} with {reader.AttributeCount} attributes");
+        while (reader.MoveToNextAttribute())
+        {
+            if (reader.LocalNameEquals("sku"u8))
+            {
+                output.WriteLine($"  Sku: {reader.GetString()}");
+            }
+            else if (reader.LocalNameEquals("discontinued"u8))
+            {
+                output.WriteLine($"  Discontinued: {reader.GetBoolean()}");
+            }
+        }
+
+        reader.MoveToElement();
+    }
+    else if (reader.LocalNameEquals("Name"u8))
+    {
+        reader.Read();
+        output.WriteLine($"  Name: {reader.GetString()}");
+    }
+    else if (reader.LocalNameEquals("Price"u8))
+    {
+        reader.Read();
+        if (reader.TryGetDecimal(out decimal price))
+        {
+            output.WriteLine($"  Price: {price.ToString(CultureInfo.InvariantCulture)}");
+        }
+    }
+    else if (reader.LocalNameEquals("History"u8))
+    {
+        reader.Skip();
+    }
+}
+```
+
+</CodeGroup>
+
+The XmlEssentials code produces the following output:
+
+```text
+Item at depth 1 with 2 attributes
+  Sku: KB-01
+  Discontinued: False
+  Name: Keyboard
+  Price: 49.90
+Item at depth 1 with 2 attributes
+  Sku: MS-02
+  Discontinued: True
+  Name: Mouse
+  Price: 19.50
+```
+
+The loop has the same shape in both. Three things are different:
+
+- Names are compared with `LocalNameEquals` and `NamespaceUriEquals`, against UTF-8 literals (`"Item"u8`). No string is created for a name.
+- A value is read with a typed method, `GetBoolean` or `TryGetDecimal`, that parses the XSD lexical form. You don't call `XmlConvert`.
+- The input is UTF-8 bytes in a span, not a `TextReader`. See [Read from a stream](#read-from-a-stream).
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/41_MigrateFromXmlReader.cs)
+
+## Reader members
+
+| `XmlReader` | `Utf8XmlReader` | Notes |
+| --- | --- | --- |
+| `XmlReader.Create(...)` | `new Utf8XmlReader(utf8Xml)` or `new Utf8XmlReader(utf8Xml, options)` | The input is UTF-8 bytes that you already hold. See [Read from a stream](#read-from-a-stream). |
+| `Read()` | `Read()` | Returns `false` at the end of the input. |
+| `NodeType` | `TokenType` | `XmlNodeType.Element` is `XmlTokenType.StartElement`. `Whitespace` and `SignificantWhitespace` are `Text`. The other names match: `EndElement`, `Text`, `CData`, `Comment`, `ProcessingInstruction`, `XmlDeclaration`, `Attribute`. |
+| `LocalName` | `LocalNameSpan`, `LocalNameEquals(...)` | `LocalNameEquals` takes UTF-8, a `ReadOnlySpan<char>`, or a `string`. |
+| `NamespaceURI` | `NamespaceUriSpan`, `NamespaceUriEquals(...)` | The reader resolves prefixes, as `XmlReader` does. |
+| `Prefix` | `PrefixSpan` | |
+| `Name` | No single member | Combine `PrefixSpan` and `LocalNameSpan`. Compare names by local name and namespace URI, not by prefix. |
+| `Value` | `GetString()`, `ValueSpan`, `CopyString(...)` | `GetString` resolves entity and character references. `ValueSpan` is the raw bytes: check `ValueIsEscaped` before you use them as text. |
+| `ReadContentAsInt()`, `ReadContentAsBoolean()`, and the other `ReadContentAs` methods | `GetInt32()`, `GetBoolean()`, and the other `Get` methods | Most have a `TryGet` form (`GetBoolean` and `GetString` don't). A `Get` method throws `XmlException` for a value that isn't in the lexical form. |
+| `ReadElementContentAsString()`, `ReadElementContentAsInt()`, and so on | `Read()`, then a `Get` method on the `Text` token | No method reads a start tag and its content in one call. |
+| `MoveToNextAttribute()` | `MoveToNextAttribute()` | On an attribute, `TokenType` is `Attribute`, and the name and value members describe the attribute. |
+| `MoveToElement()` | `MoveToElement()` | |
+| `MoveToFirstAttribute()`, `MoveToAttribute(name)`, `GetAttribute(name)` | No counterpart | Loop with `MoveToNextAttribute` and compare names. |
+| `AttributeCount`, `HasAttributes` | `AttributeCount`, `HasAttributes` | |
+| `IsEmptyElement` | `IsEmptyElement` | As with `XmlReader`, an empty element (`<Item/>`) has no `EndElement` token. |
+| `Depth` | `CurrentDepth` | The same values for elements, text, comments, and processing instructions. An attribute is at the depth of its element. See [Depth](#depth). |
+| `Skip()` | `Skip()`, `TrySkip()` | On a start tag, the reader stops on the matching end tag; `XmlReader.Skip` moves past it. On any other token, `Skip` does nothing, where `XmlReader.Skip` reads the next node. `TrySkip` returns `false` when the rest of the element isn't in the buffer yet. |
+| `ReadSubtree()`, `ReadOuterXml()` | `XmlDocument.ParseValue(ref reader)`, `XmlNode.ParseValue(ref reader)` | Reads the current element into a DOM. See [Use XmlDocument](/xmlessentials/guides/use-xmldocument). |
+| `ReadToFollowing`, `ReadToDescendant`, `IsStartElement`, `MoveToContent` | No counterpart | Write the loop. |
+| `IXmlLineInfo.LineNumber`, `LinePosition` | `XmlException.LineNumber`, `LinePosition`, `BytePosition` | The reader has `TokenStartIndex` and `BytesConsumed`, which are byte offsets. |
+| `NameTable` | No counterpart | Names stay in the input buffer as UTF-8. |
+| `EOF`, `ReadState` | No counterpart | `Read` returns `false`. |
+
+### Depth
+
+`CurrentDepth` counts the elements the token is inside, as `XmlReader.Depth` does. The root element is at depth 0, and a start tag, its end tag, and an empty element in the same place are at the same depth.
+
+The following code prints every token of a small document:
+
+```csharp Program.cs
+ReadOnlySpan<byte> xml = """<?xml version="1.0"?><Order> <!-- rush --><Item/><Note>Fragile &amp; heavy</Note></Order>"""u8;
+
+var reader = new Utf8XmlReader(xml);
+while (reader.Read())
+{
+    string name = Encoding.UTF8.GetString(reader.LocalNameSpan);
+    string detail = reader.TokenType switch
+    {
+        XmlTokenType.StartElement => $": {name}, empty: {reader.IsEmptyElement}",
+        XmlTokenType.EndElement => $": {name}",
+        XmlTokenType.Text => $": '{reader.GetString()}'",
+        _ => "",
+    };
+
+    output.WriteLine($"{reader.TokenType} at depth {reader.CurrentDepth}{detail}");
+}
+```
+
+The code produces the following output:
+
+```text
+XmlDeclaration at depth 0
+StartElement at depth 0: Order, empty: False
+Text at depth 1: ' '
+Comment at depth 1
+StartElement at depth 1: Item, empty: True
+StartElement at depth 1: Note, empty: False
+Text at depth 2: 'Fragile & heavy'
+EndElement at depth 1: Note
+EndElement at depth 0: Order
+```
+
+What to notice:
+
+- Every depth is the one `XmlReader.Depth` reports. The empty `Item` element and the `Note` start tag are both children of `Order`, so both are at depth 1.
+- The white space after `<Order>` and the comment are reported, as `XmlReader` reports them by default. White space is a `Text` token; there is no separate `Whitespace` token type.
+- `Item` has one token. Check `IsEmptyElement` before you wait for an end tag.
+- `GetString` returns `Fragile & heavy`, with the entity reference resolved.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/41_MigrateFromXmlReader.cs)
+
+## Reader settings
+
+`XmlReaderSettings` is a class that you pass to `XmlReader.Create`. `XmlReaderOptions` is a struct that you pass to the constructor.
+
+The defaults for comments and white space are the same in both: the reader reports them. `new XmlReaderOptions()`, `default(XmlReaderOptions)`, and the constructor that takes only the XML all behave the same way.
+
+| `XmlReaderSettings` | `XmlReaderOptions` | Notes |
+| --- | --- | --- |
+| `IgnoreComments = false` (default) | `CommentHandling = XmlCommentHandling.Allow` (default) | Comments are reported as `Comment` tokens. |
+| `IgnoreComments = true` | `CommentHandling = XmlCommentHandling.Skip` | `Disallow` makes a comment an error. |
+| `IgnoreWhitespace = false` (default) | `WhitespaceHandling = XmlWhitespaceHandling.Significant` (default) | Text that is only white space is reported as a `Text` token. |
+| `IgnoreWhitespace = true` | `WhitespaceHandling = XmlWhitespaceHandling.Insignificant` | Text that is only white space is skipped. |
+| `ConformanceLevel.Fragment` | `AllowMultipleRoots` | |
+| `MaxCharactersInDocument` | `MaxDocumentByteCount` | Counted in bytes. |
+| No counterpart | `MaxDepth`, `MaxAttributeCount`, `MaxNameByteCount`, `MaxTextByteCount`, `MaxCommentByteCount` | Limits for untrusted input. `0` means the documented default. See [Security](/xmlessentials/guides/security). |
+| `DtdProcessing`, `XmlResolver`, `MaxCharactersFromEntities` | No counterpart | A DTD is always an error. |
+| `IgnoreProcessingInstructions` | No counterpart | Processing instructions are always reported. |
+| `Schemas`, `ValidationType`, `ValidationFlags` | No counterpart | The reader checks well-formedness, not validity. |
+| `NameTable`, `Async`, `CloseInput`, `CheckCharacters` | No counterpart | Characters are always checked. |
+
+The following code is the counterpart of `IgnoreComments = true` and `IgnoreWhitespace = true`:
+
+```csharp Program.cs
+ReadOnlySpan<byte> xml = "<Order><!-- rush --> <Item>Keyboard</Item></Order>"u8;
+
+var options = new XmlReaderOptions
+{
+    CommentHandling = XmlCommentHandling.Skip,
+    MaxDepth = 16,
+    WhitespaceHandling = XmlWhitespaceHandling.Insignificant,
+};
+
+var reader = new Utf8XmlReader(xml, options);
+while (reader.Read())
+{
+    switch (reader.TokenType)
+    {
+        case XmlTokenType.Comment:
+            output.WriteLine($"Comment: '{reader.GetComment()}'");
+            break;
+        case XmlTokenType.Text:
+            output.WriteLine($"Text: '{reader.GetString()}'");
+            break;
+        default:
+            output.WriteLine(reader.TokenType);
+            break;
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+StartElement
+StartElement
+Text: 'Keyboard'
+EndElement
+EndElement
+```
+
+The comment and the space after it are gone. With the default options, the reader reports both, between the two `StartElement` tokens.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/41_MigrateFromXmlReader.cs)
+
+## The reader is a ref struct
+
+`XmlReader` is a class: you can store it in a field, pass it to an `async` method, and keep it alive as long as its stream. `Utf8XmlReader` is a `ref struct`, as `Utf8JsonReader` is. That has consequences for how you structure code:
+
+- Pass it by reference (`ref Utf8XmlReader reader`). Passing it by value copies the reader, and the caller's copy doesn't advance.
+- It can't be a field of a class, can't be boxed, and can't be used across an `await`. Read synchronously from a buffer, and do the asynchronous I/O between buffers.
+- It has no `Dispose` method. It owns nothing that needs to be released.
+- It doesn't own or read a stream. See the next section.
+
+## Read from a stream
+
+No constructor takes a `Stream`. You have three choices, from the least code to the most control.
+
+**Let a higher-level API read the stream.** `XmlSerializer.Deserialize`, `XmlSerializer.DeserializeAsync`, and `XmlDocument.Parse` all take a `Stream` and use `Utf8XmlReader` inside. If your `XmlReader` code fills in objects or walks a whole document, this replaces all of it. See [Deserialize](/xmlessentials/guides/deserialize) and [Use XmlDocument](/xmlessentials/guides/use-xmldocument).
+
+**Read the stream into a buffer, then read the buffer.** This is the direct replacement when the document fits in memory:
+
+```csharp Program.cs
+using Stream stream = new MemoryStream("""<Order id="1042"><Total>129.90</Total></Order>"""u8.ToArray());
+
+using var buffer = new MemoryStream();
+stream.CopyTo(buffer);
+
+var reader = new Utf8XmlReader(buffer.GetBuffer().AsSpan(0, (int)buffer.Length));
+while (reader.Read())
+{
+    if (reader.TokenType is XmlTokenType.StartElement && reader.LocalNameEquals("Total"u8))
+    {
+        reader.Read();
+        output.WriteLine($"Total: {reader.GetDecimal().ToString(CultureInfo.InvariantCulture)}");
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+Total: 129.90
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/41_MigrateFromXmlReader.cs)
+
+**Read the stream in pieces.** For a document that is too large to buffer, read a block, create a reader over it with `isFinalBlock: false`, read tokens until `Read` returns `false`, save `CurrentState`, and continue with the next block. This is the pattern `Utf8JsonReader` uses with `JsonReaderState`. [Use Utf8XmlReader](/xmlessentials/guides/use-utf8xmlreader) and [Streaming](/xmlessentials/guides/streaming) show the complete loop.
+
+## DTDs are rejected
+
+`XmlReader` can prohibit, ignore, or parse a document type declaration. `Utf8XmlReader` has no setting: a `<!DOCTYPE` is an error, and so is a reference to an entity other than the five predefined ones. This closes XML external entity (XXE) and entity expansion attacks without any configuration.
+
+```csharp Program.cs
+ReadOnlySpan<byte> xml = """
+    <!DOCTYPE note [<!ENTITY company "Contoso">]>
+    <note>&company;</note>
+    """u8;
+
+try
+{
+    var reader = new Utf8XmlReader(xml);
+    while (reader.Read())
+    {
+    }
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+```
+
+The code produces the following output:
+
+```text
+DTD is not allowed.
+```
+
+If your documents depend on a DTD for entities or default attribute values, XmlEssentials can't read them. See [Security](/xmlessentials/guides/security) and [XML conformance](/xmlessentials/guides/xml-conformance).
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/41_MigrateFromXmlReader.cs)
+
+## Write a document
+
+The following pair writes the same inventory document to a stream.
+
+<CodeGroup>
+
+```csharp System.Xml
+const string ns = "urn:contoso:inventory";
+
+using var stream = new MemoryStream();
+var settings = new XmlWriterSettings { Indent = true, NewLineChars = "\n", Encoding = new UTF8Encoding(false) };
+
+using (var writer = XmlWriter.Create(stream, settings))
+{
+    writer.WriteStartDocument();
+    writer.WriteStartElement("inv", "Inventory", ns);
+
+    writer.WriteStartElement("inv", "Item", ns);
+    writer.WriteAttributeString("sku", "KB-01");
+    writer.WriteElementString("Name", ns, "Keyboard & stand");
+
+    writer.WriteStartElement("Price", ns);
+    writer.WriteValue(49.90m);
+    writer.WriteEndElement();
+
+    writer.WriteStartElement("InStock", ns);
+    writer.WriteValue(true);
+    writer.WriteEndElement();
+
+    writer.WriteStartElement("Notes", ns);
+    writer.WriteCData("<b>Ships in 2 days</b>");
+    writer.WriteEndElement();
+
+    writer.WriteEndElement();
+    writer.WriteEndElement();
+    writer.WriteEndDocument();
+    writer.Flush();
+}
+```
+
+```csharp XmlEssentials
+const string ns = "urn:contoso:inventory";
+
+using var stream = new MemoryStream();
+var options = new XmlWriterOptions { Indented = true, NewLine = "\n" };
+
+using (var writer = new Utf8XmlWriter(stream, options))
+{
+    writer.WriteStartElement("inv", "Inventory", ns);
+
+    writer.WriteStartElement("inv", "Item", ns);
+    writer.WriteAttributeString("sku", "KB-01");
+    writer.WriteElementString("Name", ns, "Keyboard & stand");
+
+    writer.WriteStartElement("Price", ns);
+    writer.WriteNumberValue(49.90m);
+    writer.WriteEndElement();
+
+    writer.WriteStartElement("InStock", ns);
+    writer.WriteBooleanValue(true);
+    writer.WriteEndElement();
+
+    writer.WriteStartElement("Notes", ns);
+    writer.WriteCData("<b>Ships in 2 days</b>");
+    writer.WriteEndElement();
+
+    writer.WriteEndElement();
+    writer.WriteEndElement();
+    writer.Flush();
+}
+
+output.WriteLine(Encoding.UTF8.GetString(stream.ToArray()));
+```
+
+</CodeGroup>
+
+Both produce the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<inv:Inventory xmlns:inv="urn:contoso:inventory">
+  <inv:Item sku="KB-01">
+    <inv:Name>Keyboard &amp; stand</inv:Name>
+    <inv:Price>49.90</inv:Price>
+    <inv:InStock>true</inv:InStock>
+    <inv:Notes><![CDATA[<b>Ships in 2 days</b>]]></inv:Notes>
+  </inv:Item>
+</inv:Inventory>
+```
+
+What changed:
+
+- You construct the writer. There's no `Create` factory.
+- `WriteStartDocument` and `WriteEndDocument` are gone. The XML declaration is written before the first content unless `OmitXmlDeclaration` is `true`.
+- `WriteValue` becomes `WriteNumberValue`, `WriteBooleanValue`, or `WriteStringValue`, as in `Utf8JsonWriter`.
+- No encoding is set, and no byte order mark is written. The `System.Xml` code has to ask for UTF-8 without one.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/42_MigrateFromXmlWriter.cs)
+
+## Writer members
+
+Where a `Utf8XmlWriter` method takes a name or text as a `string`, it usually has overloads for `ReadOnlySpan<char>` and for UTF-8 in a `ReadOnlySpan<byte>` too.
+
+| `XmlWriter` | `Utf8XmlWriter` | Notes |
+| --- | --- | --- |
+| `XmlWriter.Create(stream, settings)` | `new Utf8XmlWriter(stream, options)` | Or `new Utf8XmlWriter(bufferWriter, options)` for an `IBufferWriter<byte>`. Not a `TextWriter`, a `StringBuilder`, or a file name. |
+| `WriteStartDocument()` | Not needed | `WriteXmlDeclaration()` writes the declaration at a point you choose. `XmlWriterOptions.Standalone` adds `standalone`. |
+| `WriteEndDocument()` | No counterpart | Call `WriteEndElement` for every element. See [Close every element](#close-every-element). |
+| `WriteStartElement(localName)`, `(localName, ns)`, `(prefix, localName, ns)` | The same three overloads | The writer declares the namespace on the element when it isn't in scope. |
+| `WriteEndElement()`, `WriteFullEndElement()` | `WriteEndElement()`, `WriteFullEndElement()` | `WriteEndElement` writes `<a/>` for an element with no content, where `XmlWriter` writes `<a />`. Set `EmptyElementStyle = XmlEmptyElementStyle.SelfClosingWithSpace` for the `<a />` form. `WriteFullEndElement` writes `<a></a>`. |
+| `WriteAttributeString(localName, value)`, `(localName, ns, value)`, `(prefix, localName, ns, value)` | The same three overloads | Also `WriteAttributeNumber(name, value)`. |
+| `WriteStartAttribute(...)`, `WriteEndAttribute()` | `WriteStartAttribute(...)`, `WriteEndAttribute()` | |
+| `WriteElementString(localName, value)`, `(localName, ns, value)` | The same two overloads | Also `WriteElementNumber`, `WriteElementBoolean`, `WriteElementBase64String`, `WriteEmptyElement`, and `WriteNilElement`. |
+| `WriteString(text)` | `WriteStringValue(text)` | Escapes the text, as the `&amp;` in the output above shows. |
+| `WriteValue(...)` | `WriteStringValue`, `WriteNumberValue`, `WriteBooleanValue` | `WriteStringValue` has overloads for `DateTime`, `DateTimeOffset`, `DateOnly`, `TimeOnly`, `TimeSpan`, and `Guid`. Each writes the XSD lexical form. |
+| `WriteBase64(buffer, index, count)` | `WriteBase64StringValue(bytes)`, `WriteBase64StringSegment(bytes, isFinalSegment)` | |
+| `WriteCData(text)` | `WriteCData(text)` | |
+| `WriteComment(text)` | `WriteComment(text)` | |
+| `WriteProcessingInstruction(name, text)` | `WriteProcessingInstruction(target, data)` | |
+| `WriteRaw(data)` | `WriteRawValue(xml, skipInputValidation)` | The XML is checked unless you pass `skipInputValidation: true`. Don't skip validation for input you don't trust. |
+| `WriteNode(reader, defattr)` | `XmlDocument.WriteTo(writer)`, `XmlElement.WriteTo(writer)`, `XmlNode.WriteTo(writer)` | |
+| `WriteDocType`, `WriteEntityRef`, `WriteCharEntity`, `WriteQualifiedName`, `WriteName`, `WriteNmToken`, `LookupPrefix` | No counterpart | |
+| `Flush()`, `FlushAsync()` | `Flush()`, `FlushAsync(cancellationToken)` | |
+| `Close()`, `Dispose()` | `Dispose()`, `DisposeAsync()` | Flushes. Doesn't close the stream. |
+| `WriteStartElementAsync` and the other `Async` write methods | No counterpart | Write synchronously into the writer's buffer, and call `FlushAsync` to send it to the stream. |
+| `WriteState`, `XmlLang`, `XmlSpace` | No counterpart | `CurrentDepth`, `BytesPending`, and `BytesCommitted` report progress. |
+
+For `xsi:nil`, `WriteNilElement(localName)` writes an empty element with the attribute, and `WriteNilValue()` adds it to the element you've started. See [Use Utf8XmlWriter](/xmlessentials/guides/use-utf8xmlwriter).
+
+## Writer settings
+
+<Note>
+`new XmlWriterOptions()` and `default(XmlWriterOptions)` write the same XML. The default line ending is `Environment.NewLine`, so set `NewLine` when the output must be the same on every operating system.
+</Note>
+
+| `XmlWriterSettings` | `XmlWriterOptions` | Notes |
+| --- | --- | --- |
+| `Indent` | `Indented` | |
+| `IndentChars` | `IndentCharacter`, `IndentSize` | One character, repeated. The default is two spaces. |
+| `NewLineChars` | `NewLine` | Only `"\n"` and `"\r\n"` are accepted. The value is written for every line break, including the ones inside text, CDATA sections, comments, and processing instructions. |
+| `OmitXmlDeclaration` | `OmitXmlDeclaration` | |
+| `Encoding` | No counterpart | The output is UTF-8. `EmitByteOrderMark` (default `false`) adds a byte order mark. |
+| `CheckCharacters` | `SkipValidation` | With `SkipValidation`, the writer doesn't check names, namespace declarations, duplicate attributes, or unclosed elements. It still enforces a single root element. |
+| `ConformanceLevel` | No counterpart | The writer writes one root element. |
+| `NewLineOnAttributes` | `AttributeStyle = XmlAttributeStyle.PerLine` | The layout is different. `XmlWriter` puts every attribute on a line of its own, indented one level under the tag. `PerLine` keeps the first attribute on the line of the tag and puts the others under it. `AttributesPerLine` sets how many go on a line. |
+| `NewLineHandling` | `NewLine` | A line feed in text is always written as `NewLine`, which is close to `NewLineHandling.Replace`. A carriage return in a value is written as `&#xD;`, so it is read back. The other two values have no counterpart. |
+| `NamespaceHandling`, `CloseOutput`, `WriteEndDocumentOnClose`, `Async` | No counterpart | |
+| No counterpart | `EmptyElementStyle` | The form of an element with no content. The default writes `<e/>`. `XmlEmptyElementStyle.SelfClosingWithSpace` gives the `<e />` form that `XmlWriter` writes. |
+| No counterpart | `Version`, `Standalone`, `MaxDepth`, `MaxAttributeCount`, `MaxNameByteCount` | `Version` chooses XML 1.0 or 1.1. |
+
+To write a fragment with no declaration into a buffer:
+
+```csharp Program.cs
+var buffer = new ArrayBufferWriter<byte>();
+var options = new XmlWriterOptions { OmitXmlDeclaration = true };
+
+using (var writer = new Utf8XmlWriter(buffer, options))
+{
+    writer.WriteStartElement("Item");
+    writer.WriteAttributeString("sku", "KB-01");
+    writer.WriteStringValue("Keyboard");
+    writer.WriteEndElement();
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+```
+
+The code produces the following output:
+
+```xml
+<Item sku="KB-01">Keyboard</Item>
+```
+
+The writer holds output in its own buffer until you call `Flush` or dispose it. Read the destination after that, as this sample does.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/42_MigrateFromXmlWriter.cs)
+
+## Close every element
+
+`XmlWriter` closes the elements that are still open when you call `WriteEndDocument`, `Close`, or `Dispose`. `Utf8XmlWriter` doesn't: an open element at `Dispose` is an error, so a missing `WriteEndElement` can't produce a document that looks complete.
+
+```csharp Program.cs
+var buffer = new ArrayBufferWriter<byte>();
+var writer = new Utf8XmlWriter(buffer);
+
+writer.WriteStartElement("Order");
+writer.WriteStartElement("Item");
+
+try
+{
+    writer.Dispose();
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+```
+
+The code produces the following output:
+
+```text
+The document has unclosed elements.
+```
+
+Code that relied on the old behavior, for example a `using` block that ends inside a loop, needs a `WriteEndElement` call for each `WriteStartElement`.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/42_MigrateFromXmlWriter.cs)
+
+## What isn't supported
+
+| `System.Xml` feature | Status in XmlEssentials |
+| --- | --- |
+| DTD processing, entity declarations, external entities, default attribute values from a DTD | A DTD is an error. |
+| Encodings other than UTF-8 | A declaration that names another encoding is an error. Transcode the input to UTF-8 first. |
+| XSD validation while reading (`XmlSchemaSet`, `ValidationType.Schema`) | Not supported. |
+| `XmlNameTable` and atomized name comparison | Not needed. Names are compared as UTF-8. |
+| `XmlReader` over a `TextReader`, a URI, or another `XmlReader` | Not supported. The input is UTF-8 bytes. |
+| `XmlWriter` over a `TextWriter` or `StringBuilder` | Not supported. Write to an `ArrayBufferWriter<byte>` and decode it. |
+| `XmlResolver`, `XmlParserContext`, `XmlNamespaceManager` | Not supported. |
+| Asynchronous read and write members | The reader is synchronous over a buffer. The writer has `FlushAsync` and `DisposeAsync`. |
+| Subclassing (`XmlReader` and `XmlWriter` wrappers and filters) | `Utf8XmlReader` is a struct and `Utf8XmlWriter` is sealed. |
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Use Utf8XmlReader" icon="book-open" href="/xmlessentials/guides/use-utf8xmlreader">
+    The complete guide to the reader, including reading in pieces.
+  </Card>
+  <Card title="Use Utf8XmlWriter" icon="pen" href="/xmlessentials/guides/use-utf8xmlwriter">
+    The complete guide to the writer.
+  </Card>
+  <Card title="Streaming" icon="water" href="/xmlessentials/guides/streaming">
+    Large documents, pipes, and asynchronous sequences.
+  </Card>
+  <Card title="Security" icon="shield-halved" href="/xmlessentials/guides/security">
+    Limits and defaults for untrusted input.
+  </Card>
+  <Card title="Namespaces" icon="tags" href="/xmlessentials/guides/namespaces">
+    How prefixes and URIs are read and written.
+  </Card>
+  <Card title="Migrate from XDocument and XmlDocument" icon="right-left" href="/xmlessentials/guides/migrate/from-xdocument">
+    Move DOM code.
+  </Card>
+</Columns>
+
+API reference:
+
+- [`Utf8XmlReader`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader)
+- [`XmlReaderOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions)
+- [`XmlReaderState`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState)
+- [`XmlTokenType`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlTokenType)
+- [`Utf8XmlWriter`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter)
+- [`XmlWriterOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWriterOptions)
+- [`XmlException`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException)

@@ -1,0 +1,268 @@
+---
+title: XmlParameterInfoValues
+description: "Provides information about a constructor parameter that is required for serialization and deserialization. This class cannot be inherited."
+icon: lock
+tag: "SEALED"
+keywords: ['XmlParameterInfoValues', 'CloudNimble.Text.Xml.Serialization.XmlParameterInfoValues', 'CloudNimble.Text.Xml.Serialization', 'class']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlParameterInfoValues
+```
+
+## Summary
+
+Provides information about a constructor parameter that is required for serialization and deserialization.
+This class cannot be inherited.
+
+## Remarks
+
+Source-generated contexts create instances of this class. It is analogous to `JsonParameterInfoValues` in
+`System.Text.Json`.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public XmlParameterInfoValues()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DefaultValue
+
+Gets or initializes the default value of the parameter.
+
+#### Syntax
+
+```csharp
+public object DefaultValue { get; init; }
+```
+
+#### Property Value
+
+Type: `object?`
+The value the parameter takes when the document has none for it. It is used only when
+[XmlParameterInfoValues.HasDefaultValue](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlParameterInfoValues#hasdefaultvalue) is [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> HasDefaultValue
+
+Gets or initializes a value that specifies whether a default value was specified for the parameter.
+
+#### Syntax
+
+```csharp
+public bool HasDefaultValue { get; init; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the parameter has a default value; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsNullable
+
+Gets or initializes a value that indicates whether the parameter accepts [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+
+#### Syntax
+
+```csharp
+public bool IsNullable { get; init; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the nullable annotations of the parameter allow [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null), or say
+nothing; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Remarks
+
+The value is read when [XmlSerializerOptions.RespectNullableAnnotations](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#respectnullableannotations) is [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Name
+
+Gets or initializes the name of the parameter.
+
+#### Syntax
+
+```csharp
+public string Name { get; init; }
+```
+
+#### Property Value
+
+Type: `string`
+The name, which is matched to a member of the type without regard to case.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ParameterType
+
+Gets or initializes the type of the parameter.
+
+#### Syntax
+
+```csharp
+public System.Type ParameterType { get; init; }
+```
+
+#### Property Value
+
+Type: `System.Type`
+The type of the parameter.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Position
+
+Gets or initializes the zero-based position of the parameter in the formal parameter list.
+
+#### Syntax
+
+```csharp
+public int Position { get; init; }
+```
+
+#### Property Value
+
+Type: `int`
+The position. The arguments are passed to the object creator in this order.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
