@@ -209,7 +209,7 @@ CatalogItem? copy = XmlSerializer.Deserialize<CatalogItem>(xml, options);`,
           color: var(--xe-ink);
         }
         html.dark .xe-from {
-          --xe-accent: rgb(var(--primary-dark, 60 208 226));
+          --xe-accent: rgb(var(--primary-light, 65 154 197));
           --xe-ink: #f3f4f6;
           --xe-muted: #a3acb9;
           --xe-line: rgba(243, 244, 246, 0.16);
@@ -265,7 +265,7 @@ CatalogItem? copy = XmlSerializer.Deserialize<CatalogItem>(xml, options);`,
           color: #9aa4b2;
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .xe-pane-ours .xe-pane-head { color: #7fdcee; }
+        .xe-pane-ours .xe-pane-head { color: var(--xe-accent); }
         .xe-pane-lines { font-weight: 400; white-space: nowrap; }
         .xe-code {
           flex: 1 1 auto;

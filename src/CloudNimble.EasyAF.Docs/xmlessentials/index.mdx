@@ -11,6 +11,18 @@ For the better part of a decade, .NET developers have asked for XML that works t
 
 ### The System.Text.Json equivalent for XML that .NET developers have been begging for!
 
+<Columns cols={3}>
+  <Card title="3.0× faster on average" icon="bolt">
+    Than `System.Xml`, across 67 comparisons. The range is 1.1× to 19×, with one exception.
+  </Card>
+  <Card title="85% less memory" icon="memory">
+    On average. 32 of the 67 comparisons allocate 0 bytes.
+  </Card>
+  <Card title="104 bytes" icon="feather">
+    To parse a document of any size into a DOM. `System.Xml` needs 127 KB to 709 KB for the same files.
+  </Card>
+</Columns>
+
 ```csharp
 using CloudNimble.Text.Xml;
 
