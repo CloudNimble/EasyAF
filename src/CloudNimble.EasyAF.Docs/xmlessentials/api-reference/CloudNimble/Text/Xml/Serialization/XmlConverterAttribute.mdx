@@ -1,0 +1,1079 @@
+---
+title: XmlConverterAttribute
+description: "Specifies the converter type to use when placed on a property, field, or type. This class cannot be inherited."
+icon: code-branch
+tag: "SEALED"
+keywords: ['XmlConverterAttribute', 'CloudNimble.Text.Xml.Serialization.XmlConverterAttribute<TConverter>', 'CloudNimble.Text.Xml.Serialization', 'class', 'CloudNimble.Text.Xml.Serialization.XmlConverterAttribute', 'CloudNimble.Text.Xml.Serialization.XmlConverter', 'CloudNimble.Text.Xml.Serialization.XmlConverterFactory', 'CloudNimble.Text.Xml.XmlSerializerOptions']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+**Inheritance:** CloudNimble.Text.Xml.Serialization.XmlConverterAttribute
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlConverterAttribute<TConverter>
+```
+
+## Summary
+
+Specifies the converter type to use when placed on a property, field, or type. This class cannot be inherited.
+
+## Usage
+
+Apply `[XmlConverter]` to a class, struct, or enumeration to name the converter the serializer uses for it. Every `XmlSerializerOptions` instance then uses that converter, with nothing to register. Apply it to a property or field instead to convert that one member.
+
+```csharp
+[XmlConverter<GeoPointConverter>]
+public readonly struct GeoPoint
+{
+    public GeoPoint(double latitude, double longitude)
+    {
+        Latitude = latitude;
+        Longitude = longitude;
+    }
+
+    public double Latitude { get; }
+
+    public double Longitude { get; }
+}
+```
+
+```csharp
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+var warehouse = new Warehouse { Name = "North", Location = new GeoPoint(47.61, -122.33) };
+
+string xml = XmlSerializer.Serialize(warehouse, options);
+output.WriteLine(xml);
+
+Warehouse? copy = XmlSerializer.Deserialize<Warehouse>(xml, options);
+output.WriteLine($"{copy!.Name}: {copy.Location.Latitude}, {copy.Location.Longitude}");
+```
+
+The code produces the following output:
+
+```text
+<Warehouse><Location><Lat>47.61</Lat><Lon>-122.33</Lon></Location><Name>North</Name></Warehouse>
+North: 47.61, -122.33
+```
+
+The converter type must derive from `XmlConverter<T>` or `XmlConverterFactory` and have a public parameterless constructor. The attribute is the counterpart of `JsonConverterAttribute` in System.Text.Json.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/35_CustomConverters.cs)
+
+## Remarks
+
+On a type, the converter reads and writes every value of the type, unless [XmlSerializerOptions.Converters](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#converters)
+holds a converter for it. On a property or field, the converter reads and writes that member only, and comes before
+both. It handles the whole value of the member: a collection is not taken apart into items, the member may be an
+attribute or text, and a converter for `T` serves a member of type `T?`. A source-generated context applies
+the attribute on a type and on a member, as the reflection resolver does. The converter is a type argument, so the
+compiler checks that it is a converter and can be created, and no reflection is needed to create it.
+
+## Type Parameters
+
+- `TConverter` - The type of the converter. It derives from [XmlConverter](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverter) and has a public parameterless constructor.
+
+## Examples
+
+```csharp
+[XmlConverter<MoneyConverter>]
+public readonly record struct Money(decimal Amount, string Currency);
+```
+
+## Considerations
+
+- **On a property or field, the converter serves that member only.** It reads and writes the whole value of the member, as `[JsonConverter]` does in System.Text.Json: a collection isn't taken apart into items, the member may be an attribute or text, and a converter for `T` serves a member of type `T?`. A member attribute comes before `XmlSerializerOptions.Converters` and before an attribute on the type.
+- **A converter in the options wins over the attribute on a type.** `XmlSerializerOptions.Converters` is searched before the attribute on the type, so a caller can override the converter a type names. It doesn't override an attribute on a member.
+- **One instance for each options instance.** The serializer creates the converter the first time the options need it and keeps it. A converter named on a property or field is created once for that member.
+- **The converter is a type argument.** `[XmlConverter<MoneyConverter>]` names the converter, and the compiler checks that it derives from `XmlConverter` and has a public parameterless constructor. A converter that can't convert the annotated type still fails at run time: the serializer throws `InvalidOperationException` when it first needs it.
+- **Source generation reads the attribute on a type and on a member.** A generated context reads and writes a type that carries `[XmlConverter]` with that converter, in place of generated metadata for the type. On a property or field, the attribute is carried in the generated metadata, and the converter reads and writes that member.
+- **The converter is created without reflection.** The converter type is a type argument with a `new()` constraint, so the attribute creates it directly and trimming and Native AOT need nothing extra.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+#### Syntax
+
+```csharp
+public XmlConverterAttribute()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlConverterAttribute`</Note>
+
+Initializes a new instance of the [XmlConverterAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterAttribute) class.
+
+#### Syntax
+
+```csharp
+protected XmlConverterAttribute()
+```
+
+#### Remarks
+
+Only `XmlConverterAttribute`1` derives from this class: a class outside this library cannot.
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+protected Attribute()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ConverterType <Badge color="blue">Override</Badge>
+
+#### Syntax
+
+```csharp
+public override System.Type ConverterType { get; }
+```
+
+#### Property Value
+
+Type: `System.Type`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ConverterType <Badge color="gray">Inherited</Badge> <Badge color="orange">Abstract</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlConverterAttribute`</Note>
+
+When overridden in a derived class, gets the type of the converter to use.
+
+#### Syntax
+
+```csharp
+public abstract System.Type ConverterType { get; }
+```
+
+#### Property Value
+
+Type: `System.Type`
+The type of the converter, which derives from [XmlConverter](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverter).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TypeId <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public virtual object TypeId { get; }
+```
+
+#### Property Value
+
+Type: `object`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateConverter <Badge color="gray">Inherited</Badge> <Badge color="orange">Abstract</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlConverterAttribute`</Note>
+
+Creates the converter the attribute names.
+
+#### Syntax
+
+```csharp
+internal abstract CloudNimble.Text.Xml.Serialization.XmlConverter CreateConverter()
+```
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlConverter`
+A new converter.
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttribute <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute GetCustomAttribute(System.Reflection.MemberInfo element, System.Type attributeType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.MemberInfo` | - |
+| `attributeType` | `System.Type` | - |
+
+#### Returns
+
+Type: `System.Attribute?`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttribute <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute GetCustomAttribute(System.Reflection.MemberInfo element, System.Type attributeType, bool inherit)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.MemberInfo` | - |
+| `attributeType` | `System.Type` | - |
+| `inherit` | `bool` | - |
+
+#### Returns
+
+Type: `System.Attribute?`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttribute <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute GetCustomAttribute(System.Reflection.ParameterInfo element, System.Type attributeType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.ParameterInfo` | - |
+| `attributeType` | `System.Type` | - |
+
+#### Returns
+
+Type: `System.Attribute?`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttribute <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute GetCustomAttribute(System.Reflection.ParameterInfo element, System.Type attributeType, bool inherit)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.ParameterInfo` | - |
+| `attributeType` | `System.Type` | - |
+| `inherit` | `bool` | - |
+
+#### Returns
+
+Type: `System.Attribute?`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttribute <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute GetCustomAttribute(System.Reflection.Module element, System.Type attributeType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.Module` | - |
+| `attributeType` | `System.Type` | - |
+
+#### Returns
+
+Type: `System.Attribute?`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttribute <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute GetCustomAttribute(System.Reflection.Module element, System.Type attributeType, bool inherit)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.Module` | - |
+| `attributeType` | `System.Type` | - |
+| `inherit` | `bool` | - |
+
+#### Returns
+
+Type: `System.Attribute?`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttribute <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute GetCustomAttribute(System.Reflection.Assembly element, System.Type attributeType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.Assembly` | - |
+| `attributeType` | `System.Type` | - |
+
+#### Returns
+
+Type: `System.Attribute?`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttribute <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute GetCustomAttribute(System.Reflection.Assembly element, System.Type attributeType, bool inherit)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.Assembly` | - |
+| `attributeType` | `System.Type` | - |
+| `inherit` | `bool` | - |
+
+#### Returns
+
+Type: `System.Attribute?`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttributes <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute[] GetCustomAttributes(System.Reflection.MemberInfo element, System.Type attributeType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.MemberInfo` | - |
+| `attributeType` | `System.Type` | - |
+
+#### Returns
+
+Type: `System.Attribute[]`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttributes <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute[] GetCustomAttributes(System.Reflection.MemberInfo element, System.Type attributeType, bool inherit)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.MemberInfo` | - |
+| `attributeType` | `System.Type` | - |
+| `inherit` | `bool` | - |
+
+#### Returns
+
+Type: `System.Attribute[]`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttributes <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute[] GetCustomAttributes(System.Reflection.MemberInfo element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.MemberInfo` | - |
+
+#### Returns
+
+Type: `System.Attribute[]`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttributes <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute[] GetCustomAttributes(System.Reflection.MemberInfo element, bool inherit)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.MemberInfo` | - |
+| `inherit` | `bool` | - |
+
+#### Returns
+
+Type: `System.Attribute[]`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttributes <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute[] GetCustomAttributes(System.Reflection.ParameterInfo element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.ParameterInfo` | - |
+
+#### Returns
+
+Type: `System.Attribute[]`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttributes <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute[] GetCustomAttributes(System.Reflection.ParameterInfo element, System.Type attributeType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.ParameterInfo` | - |
+| `attributeType` | `System.Type` | - |
+
+#### Returns
+
+Type: `System.Attribute[]`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttributes <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute[] GetCustomAttributes(System.Reflection.ParameterInfo element, System.Type attributeType, bool inherit)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.ParameterInfo` | - |
+| `attributeType` | `System.Type` | - |
+| `inherit` | `bool` | - |
+
+#### Returns
+
+Type: `System.Attribute[]`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttributes <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute[] GetCustomAttributes(System.Reflection.ParameterInfo element, bool inherit)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.ParameterInfo` | - |
+| `inherit` | `bool` | - |
+
+#### Returns
+
+Type: `System.Attribute[]`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttributes <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute[] GetCustomAttributes(System.Reflection.Module element, System.Type attributeType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.Module` | - |
+| `attributeType` | `System.Type` | - |
+
+#### Returns
+
+Type: `System.Attribute[]`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttributes <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute[] GetCustomAttributes(System.Reflection.Module element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.Module` | - |
+
+#### Returns
+
+Type: `System.Attribute[]`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttributes <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute[] GetCustomAttributes(System.Reflection.Module element, bool inherit)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.Module` | - |
+| `inherit` | `bool` | - |
+
+#### Returns
+
+Type: `System.Attribute[]`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttributes <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute[] GetCustomAttributes(System.Reflection.Module element, System.Type attributeType, bool inherit)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.Module` | - |
+| `attributeType` | `System.Type` | - |
+| `inherit` | `bool` | - |
+
+#### Returns
+
+Type: `System.Attribute[]`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttributes <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute[] GetCustomAttributes(System.Reflection.Assembly element, System.Type attributeType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.Assembly` | - |
+| `attributeType` | `System.Type` | - |
+
+#### Returns
+
+Type: `System.Attribute[]`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttributes <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute[] GetCustomAttributes(System.Reflection.Assembly element, System.Type attributeType, bool inherit)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.Assembly` | - |
+| `attributeType` | `System.Type` | - |
+| `inherit` | `bool` | - |
+
+#### Returns
+
+Type: `System.Attribute[]`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttributes <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute[] GetCustomAttributes(System.Reflection.Assembly element)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.Assembly` | - |
+
+#### Returns
+
+Type: `System.Attribute[]`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetCustomAttributes <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static System.Attribute[] GetCustomAttributes(System.Reflection.Assembly element, bool inherit)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.Assembly` | - |
+| `inherit` | `bool` | - |
+
+#### Returns
+
+Type: `System.Attribute[]`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsDefaultAttribute <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool IsDefaultAttribute()
+```
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsDefined <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static bool IsDefined(System.Reflection.MemberInfo element, System.Type attributeType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.MemberInfo` | - |
+| `attributeType` | `System.Type` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsDefined <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static bool IsDefined(System.Reflection.MemberInfo element, System.Type attributeType, bool inherit)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.MemberInfo` | - |
+| `attributeType` | `System.Type` | - |
+| `inherit` | `bool` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsDefined <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static bool IsDefined(System.Reflection.ParameterInfo element, System.Type attributeType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.ParameterInfo` | - |
+| `attributeType` | `System.Type` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsDefined <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static bool IsDefined(System.Reflection.ParameterInfo element, System.Type attributeType, bool inherit)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.ParameterInfo` | - |
+| `attributeType` | `System.Type` | - |
+| `inherit` | `bool` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsDefined <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static bool IsDefined(System.Reflection.Module element, System.Type attributeType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.Module` | - |
+| `attributeType` | `System.Type` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsDefined <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static bool IsDefined(System.Reflection.Module element, System.Type attributeType, bool inherit)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.Module` | - |
+| `attributeType` | `System.Type` | - |
+| `inherit` | `bool` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsDefined <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static bool IsDefined(System.Reflection.Assembly element, System.Type attributeType)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.Assembly` | - |
+| `attributeType` | `System.Type` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsDefined <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public static bool IsDefined(System.Reflection.Assembly element, System.Type attributeType, bool inherit)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `element` | `System.Reflection.Assembly` | - |
+| `attributeType` | `System.Type` | - |
+| `inherit` | `bool` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Match <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `System.Attribute`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Match(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Serialization.XmlConverter
+- CloudNimble.Text.Xml.Serialization.XmlConverterFactory
+- CloudNimble.Text.Xml.XmlSerializerOptions
+

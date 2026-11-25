@@ -1,0 +1,588 @@
+---
+title: "How XmlEssentials maps to the System.Text.Xml proposal"
+sidebarTitle: "System.Text.Xml proposal map"
+description: "A name-by-name comparison of XmlEssentials with the System.Text.Xml API proposed in dotnet/runtime issue 125299, with the status of each member."
+icon: "table"
+---
+
+This article compares XmlEssentials with the `System.Text.Xml` API proposed in [dotnet/runtime issue 125299](https://github.com/dotnet/runtime/issues/125299). It goes through the proposal section by section and gives, for each proposed type and member, the XmlEssentials name and a status. It's for readers who know the proposal and want to see how much of it this library implements, and where it differs.
+
+The comparison is against the proposal text as of November 2026 and the current XmlEssentials source. Each row was checked against the source.
+
+## How to read the tables
+
+The proposal puts its types in `System.Text.Xml` and `System.Text.Xml.Serialization`. XmlEssentials uses `CloudNimble.Text.Xml`, `CloudNimble.Text.Xml.Serialization`, and `CloudNimble.Text.Xml.Nodes`.
+
+The proposal names its types with `XmlData` (`XmlDataSerializer`, `Utf8XmlDataReader`, `XmlDataElementAttribute`) to keep them apart from the types in `System.Xml`. XmlEssentials uses the shorter names without `Data` (`XmlSerializer`, `Utf8XmlReader`, `XmlElementAttribute`), which follow the System.Text.Json names with `Json` replaced by `Xml`. Several of those names are also names in `System.Xml` and `System.Xml.Serialization`, so a file that imports both namespaces needs an alias.
+
+| Status | Meaning |
+| --- | --- |
+| Same | The name and the signature match the proposal. |
+| Renamed | The signature matches. Only the name differs, in the way the previous paragraph describes. |
+| Different shape | The capability exists with a different signature, type, or default. The row says how. |
+| Partial | Some of the proposed overloads exist. The row says which. |
+| Not implemented | XmlEssentials has no counterpart. |
+| Added | XmlEssentials has a member that the proposal doesn't list. |
+
+## Summary
+
+| Proposal section | Result |
+| --- | --- |
+| Enums | `XmlTokenType` is the same. `XmlCommentHandling` has the same members with different values. |
+| Reader options and state | Renamed. Every proposed member exists. The default comment handling differs. |
+| Reader | Renamed. Every proposed member exists. The constructors have a different shape. |
+| Writer options | Renamed. Every proposed member exists. |
+| Writer | Renamed. Every proposed method group exists. One group, `WriteAttributeString`, has one overload fewer than proposed. |
+| Mapping attributes | Seven of twelve are renamed. Three have a different shape. Two are not implemented. |
+| Serializer options | Renamed. Every proposed member exists. `TypeInfoResolver` has a different type. |
+| Serializer | Renamed. Every proposed overload exists. |
+| Converters | Renamed. Every proposed member exists. |
+| Source generation | Renamed. Every proposed member exists. |
+
+## Enums
+
+| Proposed | XmlEssentials | Status |
+| --- | --- | --- |
+| `XmlTokenType : byte` with `None`, `StartElement`, `EndElement`, `Attribute`, `Text`, `CData`, `Comment`, `ProcessingInstruction`, `XmlDeclaration` (0 to 8) | [`XmlTokenType`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlTokenType) | Same. The members and values match. |
+| `XmlCommentHandling : byte` with `Disallow = 0`, `Skip = 1`, `Allow = 2` | [`XmlCommentHandling`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling) with `Allow = 0`, `Skip = 1`, `Disallow = 2` | Different shape. The same three members, in the opposite order, so that the zero value reports comments. A default reader then reports what `System.Xml.XmlReader` reports by default. |
+| | `XmlWhitespaceHandling`, `XmlVersion`, `XmlValueKind` | Added. They support white-space handling in the reader, XML 1.1, and the document model. |
+
+## Reader options and state
+
+| Proposed | XmlEssentials | Status |
+| --- | --- | --- |
+| `struct Utf8XmlDataReaderOptions` | [`XmlReaderOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions) | Renamed. |
+| `CommentHandling` | `CommentHandling` | Different shape. The default is `Allow`. The proposal's enum order makes the default `Disallow`. |
+| `MaxDepth` | `MaxDepth` | Same. `0` means 64. |
+| `AllowMultipleRoots` | `AllowMultipleRoots` | Same. |
+| | `MaxAttributeCount`, `MaxCommentByteCount`, `MaxDocumentByteCount`, `MaxNameByteCount`, `MaxTextByteCount`, `WhitespaceHandling` | Added. Limits for untrusted input, and whether white-space-only text is reported (it is, by default). See [Security](/xmlessentials/guides/security). |
+| `readonly struct Utf8XmlDataReaderState` | [`XmlReaderState`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState) | Renamed. |
+| `Utf8XmlDataReaderState(Utf8XmlDataReaderOptions options = default)` | `XmlReaderState(XmlReaderOptions options = default)` | Renamed. |
+| `Options` | `Options` | Same. |
+
+The state holds more than `JsonReaderState` does. To resume inside a document, the reader needs the names of the open elements and the namespace declarations in scope, so `CurrentState` copies them. Only `Options` is public.
+
+## Reader
+
+`Utf8XmlDataReader` is [`Utf8XmlReader`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader), a `ref struct`.
+
+### Constructors
+
+| Proposed | XmlEssentials | Status |
+| --- | --- | --- |
+| `(ReadOnlySpan<byte> utf8Xml, Utf8XmlDataReaderOptions options = default)` | `(ReadOnlySpan<byte> utf8Xml)` and `(ReadOnlySpan<byte> utf8Xml, XmlReaderOptions options)` | Different shape. Two overloads in place of an optional parameter. The call sites compile the same way. |
+| `(ReadOnlySpan<byte> utf8Xml, bool isFinalBlock, Utf8XmlDataReaderState state)` | `(ReadOnlySpan<byte> utf8Xml, bool isFinalBlock, XmlReaderState state)` | Renamed. |
+| `(ReadOnlySequence<byte> utf8Xml, Utf8XmlDataReaderOptions options = default)` | `(ReadOnlySequence<byte> utf8Xml)` and `(ReadOnlySequence<byte> utf8Xml, XmlReaderOptions options)` | Different shape, for the same reason. |
+| `(ReadOnlySequence<byte> utf8Xml, bool isFinalBlock, Utf8XmlDataReaderState state)` | `(ReadOnlySequence<byte> utf8Xml, bool isFinalBlock, XmlReaderState state)` | Renamed. |
+| | `(ReadOnlySpan<byte> utf8Xml, Span<byte> scratch, XmlReaderOptions options)` and `(ReadOnlySpan<byte> utf8Xml, Span<byte> scratch, bool isFinalBlock, XmlReaderState state)` | Added. The caller supplies the memory the reader uses for its element and namespace stacks. |
+
+### Properties
+
+| Proposed | XmlEssentials | Status |
+| --- | --- | --- |
+| `BytesConsumed`, `CurrentDepth`, `CurrentState`, `IsFinalBlock`, `Position`, `TokenStartIndex`, `TokenType`, `ValueIsEscaped`, `ValueSpan` | The same names | Same. `CurrentState` returns `XmlReaderState`. |
+| `HasValueSequence`, `ValueSequence` | No counterpart | A multi-segment sequence is copied into one buffer before it is read, so every value is in `ValueSpan`. |
+| `IsEmptyElement`, `AttributeCount` | The same names | Same. |
+| `LocalNameSpan`, `NamespaceUriSpan`, `PrefixSpan` | The same names | Same. |
+| | `HasAttributes`, `Version` | Added. `Version` is the XML version of the document being read. |
+
+### Methods
+
+| Proposed | XmlEssentials | Status |
+| --- | --- | --- |
+| `Read()`, `Skip()`, `TrySkip()`, `MoveToNextAttribute()`, `MoveToElement()` | The same names | Same. |
+| `CopyString(Span<byte>)`, `CopyString(Span<char>)` | The same names | Same. |
+| `GetBoolean()`, `GetByte()`, `GetBytesFromBase64()`, `GetDateTime()`, `GetDateTimeOffset()`, `GetDecimal()`, `GetDouble()`, `GetGuid()`, `GetInt16()`, `GetInt32()`, `GetInt64()`, `GetSByte()`, `GetSingle()`, `GetString()`, `GetUInt16()`, `GetUInt32()`, `GetUInt64()`, `GetComment()` | The same names | Same. They are declared `readonly`. Each parses the XML Schema lexical form of its type. |
+| `TryGetByte`, `TryGetBytesFromBase64`, `TryGetDateTime`, `TryGetDateTimeOffset`, `TryGetDecimal`, `TryGetDouble`, `TryGetGuid`, `TryGetInt16`, `TryGetInt32`, `TryGetInt64`, `TryGetSByte`, `TryGetSingle`, `TryGetUInt16`, `TryGetUInt32`, `TryGetUInt64` | The same names | Same. |
+| | `GetDateOnly()`, `GetTimeOnly()`, `GetTimeSpan()`, `GetNil()`, `TryGetDateOnly`, `TryGetTimeOnly`, `TryGetTimeSpan` | Added. `xs:date`, `xs:time`, `xs:duration`, and a test for `xsi:nil="true"`. |
+| `ValueTextEquals` (UTF-8, characters, string) | The same three overloads | Same. |
+| `LocalNameEquals` (UTF-8, characters, string) | The same three overloads | Same. |
+| `NamespaceUriEquals` (UTF-8, characters, string) | The same three overloads | Same. |
+
+## Writer options
+
+| Proposed | XmlEssentials | Status |
+| --- | --- | --- |
+| `struct XmlDataWriterOptions` | [`XmlWriterOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWriterOptions) | Renamed. |
+| `Indented`, `IndentCharacter`, `IndentSize`, `MaxDepth`, `SkipValidation`, `OmitXmlDeclaration` | The same names | Same. |
+| `string NewLine` | `string NewLine` | Same name. The value is never `null`, and the default is `Environment.NewLine`. The value must be `"\n"` or `"\r\n"`, as for `JsonWriterOptions.NewLine`, and it is written for every line break, including the ones inside text. |
+| | `EmitByteOrderMark`, `MaxAttributeCount`, `MaxNameByteCount`, `Standalone`, `Version` | Added. `Version` selects XML 1.0 or 1.1. `Standalone` adds the `standalone` attribute to the declaration. |
+| | `EmptyElementStyle`, `AttributeStyle`, `AttributesPerLine` | Added. The form of an element with no content, and the layout of attributes. |
+
+## Writer
+
+`Utf8XmlDataWriter` is [`Utf8XmlWriter`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter), a sealed class that implements `IDisposable` and `IAsyncDisposable`.
+
+| Proposed | XmlEssentials | Status |
+| --- | --- | --- |
+| Constructors for `IBufferWriter<byte>` and `Stream`, each with `options = default` | The same two constructors, with `XmlWriterOptions` | Renamed. |
+| `BytesCommitted`, `BytesPending`, `CurrentDepth`, `Options` | The same names | Same. |
+| `Dispose()`, `DisposeAsync()`, `Flush()`, `FlushAsync(CancellationToken)`, `Reset()`, `Reset(IBufferWriter<byte>)`, `Reset(Stream)` | The same names | Same. |
+| `WriteXmlDeclaration()` | `WriteXmlDeclaration()` | Same. The declaration is also written before the first content when you don't call it, unless `OmitXmlDeclaration` is `true`. |
+| `WriteStartElement`, 8 overloads: a local name, and a local name with a namespace URI, each as UTF-8, characters, or a string; and a prefix with both, as UTF-8 or strings | The same 8 overloads | Same. |
+| | `WriteStartElement(XmlEncodedText)` | Added. |
+| `WriteEndElement()`, `WriteFullEndElement()` | The same names | Same. |
+| `WriteElementString`, 18 overloads: a name as UTF-8, characters, or a string, with a value as UTF-8, characters, a string, `DateTime`, `DateTimeOffset`, or `Guid` | The same 18 overloads, the same 6 values with a name as `XmlEncodedText`, and `(string localName, string? namespaceUri, string? value)` | Same. 7 overloads added. |
+| `WriteElementNumber`, 21 overloads: a name as UTF-8, characters, or a string, with `int`, `long`, `double`, `float`, `decimal`, `uint`, or `ulong` | The same 21 overloads, and the same 7 numbers with a name as `XmlEncodedText` | Same. 7 overloads added. |
+| `WriteElementBoolean`, 3 overloads | The same 3 overloads, and `(XmlEncodedText, bool)` | Same. One overload added. |
+| `WriteElementBase64String`, 3 overloads | The same 3 overloads, and `(XmlEncodedText, ReadOnlySpan<byte>)` | Same. One overload added. |
+| `WriteNilElement`, 3 overloads | The same 3 overloads, `(string localName, string? namespaceUri)`, and `(XmlEncodedText)` | Same. Two overloads added. |
+| `WriteAttributeString`, 6 overloads | 5 overloads | Partial. `(ReadOnlySpan<byte> utf8LocalName, ReadOnlySpan<byte> utf8NamespaceUri, ReadOnlySpan<byte> utf8Value)` is not implemented. |
+| | `WriteAttributeNumber(string, int)`, `(string, long)`, `(string, double)` | Added. |
+| `WriteStartAttribute`, 3 overloads, and `WriteEndAttribute()` | The same names and overloads | Same. |
+| `WriteNamespaceDeclaration`, 2 overloads, and `WriteDefaultNamespace`, 2 overloads | The same names and overloads | Same. |
+| `WriteStringValue`, 6 overloads | The same 6 overloads, and `DateOnly`, `TimeOnly`, `TimeSpan` | Same. Three overloads added. |
+| `WriteNumberValue`, 7 overloads | The same 7 overloads | Same. |
+| `WriteBooleanValue(bool)`, `WriteBase64StringValue(ReadOnlySpan<byte>)`, `WriteNilValue()` | The same names | Same. |
+| `WriteStringValueSegment`, 2 overloads, and `WriteBase64StringSegment` | The same names and overloads | Same. |
+| `WriteCData`, 3 overloads, and `WriteComment`, 3 overloads | The same names and overloads | Same. |
+| `WriteRawValue`, 3 overloads with `skipInputValidation = false` | The same names and overloads | Same. |
+| | `WriteEmptyElement`, 9 overloads, and `WriteProcessingInstruction(string target, string? data)` | Added. |
+
+## Serialization mapping attributes
+
+The proposed attributes are in `System.Text.Xml.Serialization` and are named `XmlData...Attribute`. The XmlEssentials attributes are in `CloudNimble.Text.Xml.Serialization`.
+
+| Proposed | XmlEssentials | Status |
+| --- | --- | --- |
+| `XmlDataRootAttribute` with `ElementName`, `Namespace`, `IsNullable` | [`XmlRootAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlRootAttribute) | Renamed. No `IsNullable`: a `null` root is always written as an element marked `xsi:nil="true"`. Can also be applied to an interface. |
+| `XmlDataElementAttribute` with `ElementName`, `Namespace`, `Order`, `IsNullable`, `Type` | [`XmlElementAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlElementAttribute) and `XmlElementAttribute<T>` | Different shape. `Type` is read-only. To name a type, use the generic attribute: `[XmlElement<Book>("Book")]`. The non-generic class isn't sealed, so that the generic one can derive from it. An unset `Order` is `-1`. |
+| `XmlDataAttributeAttribute` with `AttributeName`, `Namespace` | [`XmlAttributeAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlAttributeAttribute) | Renamed. |
+| `XmlDataTextAttribute` | [`XmlTextAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTextAttribute) | Renamed. |
+| `XmlDataArrayAttribute` with `ElementName`, `Namespace`, `Order`, `IsNullable` | [`XmlArrayAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlArrayAttribute) | Renamed. No `IsNullable`: a `null` collection is always written as the wrapper marked `xsi:nil="true"`. An unset `Order` is `-1`. |
+| `XmlDataIgnoreAttribute` | [`XmlIgnoreAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlIgnoreAttribute) | Renamed. Adds `Condition`, as `JsonIgnoreAttribute` has. |
+| `XmlDataTypeAttribute` with `TypeName`, `Namespace` | | Not implemented. |
+| `XmlDataIncludeAttribute(Type)` with `TypeName`, `Namespace` | [`XmlDerivedTypeAttribute<T>`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlDerivedTypeAttribute) with a discriminator argument and `Namespace` | Different shape. A generic attribute named after `JsonDerivedTypeAttribute`. `[XmlPolymorphic]` chooses whether the discriminator is the element name, an attribute, or `xsi:type`. |
+| `XmlDataNamespaceDeclarationAttribute(prefix, namespaceUri)` with `Prefix`, `NamespaceUri` | [`XmlNamespaceDeclarationAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlNamespaceDeclarationAttribute) | Renamed. It declares the prefix on the document element when the type is serialized as a document. `XmlSerializerOptions.Namespaces` does the same for every type. |
+| `XmlDataCDataAttribute` | [`XmlCDataAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlCDataAttribute) | Renamed. |
+| `XmlDataDefaultValueAttribute(object?)` | | Not implemented. `[XmlIgnore(Condition = XmlIgnoreCondition.WhenWritingDefault)]` leaves out a member that has the default value of its type. |
+| `XmlDataEnumAttribute` with `Name` | [`XmlPropertyNameAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyNameAttribute) on the enum member | Different shape. The attribute that renames a member also renames an enum value, as `JsonStringEnumMemberNameAttribute` does. See [Enumeration values](/xmlessentials/guides/customize-names#enumeration-values). |
+| | `XmlArrayItemAttribute`, `XmlArrayItemAttribute<T>` | Added. Names the item elements of a collection. |
+| | `XmlPropertyNameAttribute`, `XmlPropertyOrderAttribute`, `XmlRequiredAttribute`, `XmlConstructorAttribute`, `XmlConverterAttribute`, `XmlExtensionDataAttribute`, `XmlPolymorphicAttribute` | Added. Counterparts of the System.Text.Json attributes with the same names. |
+| | `XmlIncludeAttribute` | Added, with a different meaning from the proposed `XmlDataIncludeAttribute`: it includes a non-public member, as `JsonIncludeAttribute` does. |
+| | `XmlMixedAttribute` | Added. Maps interleaved text and elements. |
+
+One default differs from what the proposal's examples show. A collection member with no attribute is written as one element for each item, with no wrapper element. `[XmlArray]` adds the wrapper, as in the proposal's `Catalog` example.
+
+## Serializer options
+
+`XmlDataSerializerOptions` is [`XmlSerializerOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions). It's a sealed class; the proposal doesn't seal it.
+
+| Proposed | XmlEssentials | Status |
+| --- | --- | --- |
+| `WriteIndented`, `IndentCharacter`, `IndentSize`, `OmitXmlDeclaration` | The same names | Same. |
+| `NewLine` | `NewLine` | Same name. The value must be `"\n"` or `"\r\n"`, and it is written for every line break, including the ones inside text. |
+| `MaxDepth`, `IgnoreReadOnlyProperties`, `IgnoreReadOnlyFields`, `IncludeFields` | The same names | Same. |
+| `XmlDataNumberHandling NumberHandling` | `XmlNumberHandling NumberHandling` | Renamed. The proposal doesn't define the enum. Here it has `Strict` and `AllowNamedFloatingPointLiterals`. |
+| `XmlDataUnmappedMemberHandling UnmappedMemberHandling` | `XmlUnmappedMemberHandling UnmappedMemberHandling` | Renamed. The proposal doesn't define the enum. Here it has `Skip` and `Disallow`. |
+| `DefaultNamespace` | `DefaultNamespace` | Same. |
+| `IList<XmlDataConverter> Converters` | `IList<XmlConverter> Converters` | Renamed. |
+| `XmlDataSerializerContext? TypeInfoResolver` | `IXmlTypeInfoResolver? TypeInfoResolver` | Different shape. The property takes the interface that `XmlSerializerContext` implements, as `JsonSerializerOptions.TypeInfoResolver` takes `IJsonTypeInfoResolver`. `TypeInfoResolverChain` combines several. |
+| | `Default`, `Web`, `Strict`, the constructors that take `XmlSerializerDefaults` or another options instance, `MakeReadOnly`, `IsReadOnly`, `GetTypeInfo`, `TryGetTypeInfo`, `GetConverter`, `TypeInfoResolverChain` | Added. Counterparts of the `JsonSerializerOptions` members. |
+| | `PropertyNamingPolicy`, `ElementNamingPolicy`, `AttributeNamingPolicy`, `DictionaryKeyPolicy`, `PropertyNameCaseInsensitive`, `DefaultIgnoreCondition`, `ReferenceHandler`, `RespectNullableAnnotations`, `RespectRequiredConstructorParameters`, `AllowDuplicateProperties`, `ReadCommentHandling`, `DefaultBufferSize`, `PreferredObjectCreationHandling`, `UnknownTypeHandling` | Added. Counterparts of the `JsonSerializerOptions` members. |
+| | `Bcl` | Added. Read-only options that write what `System.Xml.Serialization.XmlSerializer` writes. |
+| | `DefaultPropertyMapping`, `DefaultCollectionMapping`, `EnumHandling`, `CharHandling`, `UtcOffsetHandling`, `MemberOrder`, `Namespaces`, `InferClosedTypePolymorphism`, `WhitespaceHandling`, `XmlVersion`, `EmitByteOrderMark`, `EmptyElementStyle`, `AttributeStyle`, `AttributesPerLine`, `MaxAttributeCount`, `MaxCommentByteCount`, `MaxDocumentByteCount`, `MaxNameByteCount`, `MaxTextByteCount` | Added. XML-specific settings and input limits. |
+
+## Serializer
+
+`XmlDataSerializer` is [`XmlSerializer`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer), a static class. The type parameter is named `TValue` and the metadata parameter `xmlTypeInfo`.
+
+| Proposed | XmlEssentials | Status |
+| --- | --- | --- |
+| `string Serialize<T>(T value, options)` and `(T value, XmlTypeInfo<T>)` | The same overloads | Renamed. |
+| `byte[] SerializeToUtf8Bytes<T>`, both forms | The same overloads | Renamed. |
+| `void Serialize<T>(Utf8XmlDataWriter writer, T value, ...)`, both forms | The same overloads, with `Utf8XmlWriter` | Renamed. |
+| `Task SerializeAsync<T>(Stream utf8Xml, T value, ...)`, both forms | The same overloads | Renamed. |
+| `T? Deserialize<T>(string xml, ...)`, both forms | The same overloads | Renamed. |
+| `T? Deserialize<T>(ReadOnlySpan<char> xml, ...)`, both forms | The same overloads | Renamed. |
+| `T? Deserialize<T>(ReadOnlySpan<byte> utf8Xml, ...)`, both forms | The same overloads, with the parameter named `xml` | Renamed. |
+| `ValueTask<T?> DeserializeAsync<T>(Stream utf8Xml, ...)`, both forms | The same overloads, with the parameter named `xml` | Renamed. |
+| `Deserialize<T>(ref reader)`, used in the proposal's examples | `Deserialize<TValue>(ref Utf8XmlReader reader, ...)` | Renamed. |
+| `XmlTypeInfo<T>`, used in the signatures and not defined in the proposal | [`XmlTypeInfo<T>`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo) and the non-generic `XmlTypeInfo` | Same name. |
+| | Overloads that take an `XmlSerializerContext` | Added. |
+| | Overloads that take `object` and a `Type` | Added. |
+| | Synchronous `Serialize` and `Deserialize` for a `Stream`, and overloads for `IBufferWriter<byte>` and `ReadOnlySequence<byte>` | Added. |
+| | `SerializeToDocument`, `SerializeToElement`, `SerializeToNode`, and `Deserialize` from `XmlDocument`, `XmlElement`, and `XmlNode` | Added. |
+| | `SerializeAsync` and `DeserializeAsync` for `PipeWriter` and `PipeReader`; `SerializeAsyncEnumerable` and `DeserializeAsyncEnumerable` | Added. |
+| | `IsReflectionEnabledByDefault` | Added. |
+
+The overloads that take options use reflection and are marked with `RequiresUnreferencedCode` and `RequiresDynamicCode`. The overloads that take an `XmlTypeInfo<T>` or a context aren't.
+
+## Custom converters
+
+| Proposed | XmlEssentials | Status |
+| --- | --- | --- |
+| `abstract class XmlDataConverter` with `abstract bool CanConvert(Type)` | [`XmlConverter`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverter) | Renamed. As with `JsonConverter`, you derive from `XmlConverter<T>` or `XmlConverterFactory`, not from this class. |
+| `abstract class XmlDataConverter<T>` | `XmlConverter<T>` | Renamed. |
+| `abstract T? Read(ref Utf8XmlDataReader reader, Type typeToConvert, XmlDataSerializerOptions options)` | `abstract T? Read(ref Utf8XmlReader reader, Type typeToConvert, XmlSerializerOptions options)` | Renamed. |
+| `abstract void Write(Utf8XmlDataWriter writer, T value, XmlDataSerializerOptions options)` | `abstract void Write(Utf8XmlWriter writer, T value, XmlSerializerOptions options)` | Renamed. |
+| `override bool CanConvert(Type typeToConvert)` | The same override | Same. |
+| | `HandleNull`, `ReadAsAttribute`, `WriteAsAttribute`, `ReadLexical` | Added. A value can be an attribute as well as an element, so a converter can handle both. |
+| | `XmlConverterFactory`, `XmlConverterAttribute` | Added. |
+
+## Source generation
+
+| Proposed | XmlEssentials | Status |
+| --- | --- | --- |
+| `abstract class XmlDataSerializerContext` | [`XmlSerializerContext`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializerContext) | Renamed. Implements `IXmlTypeInfoResolver`. Has a protected constructor that takes options. |
+| `Options` | `Options` | Same. |
+| `abstract XmlTypeInfo? GetTypeInfo(Type type)` | The same member | Same. |
+| `XmlDataSerializableAttribute(Type)` with `TypeInfoPropertyName` | `XmlSerializableAttribute<T>` with `TypeInfoPropertyName` | Renamed, and the type is a type argument, not a constructor argument. Adds `GenerationMode`. |
+| `XmlDataSourceGenerationOptionsAttribute` with `WriteIndented`, `OmitXmlDeclaration`, `DefaultNamespace`, `IncludeFields`, `IgnoreReadOnlyProperties`, `IgnoreReadOnlyFields` | `XmlSourceGenerationOptionsAttribute` with the same six properties | Renamed. |
+| | `PropertyNamingPolicy`, `ElementNamingPolicy`, `AttributeNamingPolicy`, `DefaultIgnoreCondition`, `DefaultPropertyMapping`, `DefaultCollectionMapping`, `CharHandling`, `EmitByteOrderMark`, `EnumHandling`, `GenerationMode`, `MaxDepth`, `MemberOrder`, `PreferredObjectCreationHandling`, `PropertyNameCaseInsensitive`, `RespectNullableAnnotations`, `UnknownTypeHandling`, `UtcOffsetHandling`, `XmlVersion` on the options attribute | Added. |
+| | `XmlSourceGenerationMode`, `XmlKnownNamingPolicy`, `XmlMetadataServices`, `DefaultXmlTypeInfoResolver`, `XmlPropertyInfo` | Added. |
+
+## Beyond the proposal
+
+XmlEssentials also has these types, which the proposal doesn't cover:
+
+| Area | Types | More information |
+| --- | --- | --- |
+| Read-only document model | `XmlDocument`, `XmlElement`, `XmlDocumentOptions`, `XmlValueKind`, `XmlDeclarationInfo` | [Use XmlDocument](/xmlessentials/guides/use-xmldocument) |
+| Mutable document model | `XmlNode`, `XmlElementNode`, `XmlAttributeNode`, `XmlTextNode`, `XmlCDataNode`, `XmlCommentNode`, `XmlProcessingInstructionNode`, `XmlDeclarationNode`, `XmlNodeList`, `XmlAttributeNodeList` | [Use XmlNode](/xmlessentials/guides/use-xmlnode) |
+| Names | `XmlName`, `XmlEncodedText`, `XmlNamespaces`, `XmlAttributes`, `XmlNamingPolicy` | [Namespaces](/xmlessentials/guides/namespaces) |
+| References | `XmlReferenceHandler`, `XmlReferenceResolver` | [Preserve references](/xmlessentials/guides/preserve-references) |
+| Mixed content and extension data | `XmlMixedContentItem`, `XmlMixedText`, `XmlMixedElement`, `XmlExtensionData` | [Mixed content](/xmlessentials/guides/mixed-content) |
+| Errors | `XmlException`, with `BytePosition`, `LineNumber`, `LinePosition`, and `Path` | [Deserialize](/xmlessentials/guides/deserialize) |
+| Types from a schema | A source generator that reads XSD files at build time | [Generate types from XSD](/xmlessentials/guides/xsd-source-generation) |
+| XML 1.1 | `XmlVersion`, read and written | [XML conformance](/xmlessentials/guides/xml-conformance) |
+
+## The proposal's usage examples
+
+The following sections run the examples from the proposal's "API Usage" section with XmlEssentials. Each is a tested sample, and the output shown is the real output.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/45_SystemTextXmlProposal.cs)
+
+### Basic and span-based serialization
+
+The proposal's `Person` is the `Contact` class here, with `[XmlRoot("Person")]`.
+
+```csharp Program.cs
+var person = new Contact { Name = "Alice", Age = 30 };
+
+string xml = XmlSerializer.Serialize(person);
+Contact? p = XmlSerializer.Deserialize<Contact>(xml);
+output.WriteLine(xml);
+output.WriteLine($"{p!.Name} is {p.Age}");
+
+ReadOnlySpan<byte> utf8XmlSpan = "<Person><Name>Bob</Name></Person>"u8;
+Contact? p2 = XmlSerializer.Deserialize<Contact>(utf8XmlSpan);
+output.WriteLine($"{p2!.Name} is {p2.Age}");
+
+ReadOnlySpan<char> xmlSpan = "<Person><Name>Alice</Name><Age>30</Age></Person>".AsSpan();
+Contact? p3 = XmlSerializer.Deserialize<Contact>(xmlSpan);
+output.WriteLine($"{p3!.Name} is {p3.Age}");
+```
+
+The code produces the following output:
+
+```text
+<?xml version="1.0" encoding="utf-8"?><Person><Age>30</Age><Name>Alice</Name></Person>
+Alice is 30
+Bob is 0
+Alice is 30
+```
+
+`Age` comes before `Name` because `Contact` declares it first.
+
+### A reader over a sequence
+
+```csharp Program.cs
+var utf8XmlSequence = new ReadOnlySequence<byte>("<Person><Name>Carol</Name><Age>41</Age></Person>"u8.ToArray());
+
+var reader = new Utf8XmlReader(utf8XmlSequence);
+Contact? person = XmlSerializer.Deserialize<Contact>(ref reader);
+
+output.WriteLine($"{person!.Name} is {person.Age}");
+```
+
+The code produces the following output:
+
+```text
+Carol is 41
+```
+
+### Partial reads with reader state
+
+The proposal's loop reads each chunk with a new reader. This version also carries over the bytes that the previous reader didn't consume, which the proposal's loop leaves out.
+
+```csharp Program.cs
+byte[] xml = """<Order id="1042"><Item>Keyboard</Item><Item>Mouse</Item></Order>"""u8.ToArray();
+
+var state = new XmlReaderState(new XmlReaderOptions { MaxDepth = 64 });
+int start = 0;
+int end = 0;
+
+while (end < xml.Length)
+{
+    end = Math.Min(end + 24, xml.Length);
+    bool isFinal = end == xml.Length;
+
+    var reader = new Utf8XmlReader(xml.AsSpan(start, end - start), isFinalBlock: isFinal, state);
+    while (reader.Read())
+    {
+        output.WriteLine($"Token: {reader.TokenType}, Depth: {reader.CurrentDepth}, Consumed: {reader.BytesConsumed}");
+    }
+
+    start += (int)reader.BytesConsumed;
+    state = reader.CurrentState;
+}
+```
+
+The code produces the following output:
+
+```text
+Token: StartElement, Depth: 0, Consumed: 17
+Token: StartElement, Depth: 1, Consumed: 23
+Token: Text, Depth: 2, Consumed: 8
+Token: EndElement, Depth: 1, Consumed: 15
+Token: StartElement, Depth: 1, Consumed: 21
+Token: Text, Depth: 2, Consumed: 5
+Token: EndElement, Depth: 1, Consumed: 12
+Token: EndElement, Depth: 0, Consumed: 20
+```
+
+`BytesConsumed` counts from the start of the current buffer, as it does in `Utf8JsonReader`.
+
+### Namespace-aware mapping
+
+The proposal's example uses `XmlDataNamespaceDeclaration` to choose the prefix `addr`, and `XmlDataType` to put the members of `Address` in a namespace. `XmlDataType` has no counterpart, so this mapping names the namespace on each member, and it leaves the prefix to the writer:
+
+```csharp Employee.cs
+[XmlRoot("Person", Namespace = "http://example.com/person")]
+public sealed class Employee
+{
+    [XmlAttribute("age")]
+    public int Age { get; set; }
+
+    [XmlElement("Address", "http://example.com/address")]
+    public Address? HomeAddress { get; set; }
+
+    [XmlElement("FullName")]
+    public string? Name { get; set; }
+}
+
+public sealed class Address
+{
+    [XmlElement(Namespace = "http://example.com/address")]
+    public string? City { get; set; }
+
+    [XmlElement(Namespace = "http://example.com/address")]
+    public string? Country { get; set; }
+}
+```
+
+```csharp Program.cs
+var person = new Employee
+{
+    Name = "Alice",
+    Age = 30,
+    HomeAddress = new Address { City = "Seattle", Country = "US" },
+};
+
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n", OmitXmlDeclaration = true };
+output.WriteLine(XmlSerializer.Serialize(person, options));
+```
+
+The code produces the following output:
+
+```xml
+<Person xmlns="http://example.com/person" age="30">
+  <Address xmlns="http://example.com/address">
+    <City>Seattle</City>
+    <Country>US</Country>
+  </Address>
+  <FullName>Alice</FullName>
+</Person>
+```
+
+Every element has the same namespace as in the proposal's expected output. The spelling is different: the address namespace is the default namespace of the `Address` element, where the proposal's output declares the prefix `addr` on the root. To declare that prefix on the document element, add `[XmlNamespaceDeclaration("addr", "http://example.com/address")]` to `Employee`. `Address` comes before `FullName` because the class declares `HomeAddress` first.
+
+### Polymorphic collections
+
+```csharp Product.cs
+[XmlPolymorphic]
+[XmlDerivedType<Book>("Book")]
+[XmlDerivedType<Dvd>("DVD")]
+public class Product
+{
+    public string? Title { get; set; }
+}
+
+public sealed class Book : Product
+{
+    public string? Author { get; set; }
+}
+
+public sealed class Dvd : Product
+{
+    public int Runtime { get; set; }
+}
+
+public sealed class Catalog
+{
+    [XmlArray("Items")]
+    public List<Product> Products { get; set; } = [];
+}
+```
+
+```csharp Program.cs
+var catalog = new Catalog
+{
+    Products =
+    [
+        new Book { Title = "Clean Code", Author = "Robert C. Martin" },
+        new Dvd { Title = "The Matrix", Runtime = 136 },
+    ],
+};
+
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n", OmitXmlDeclaration = true };
+string xml = XmlSerializer.Serialize(catalog, options);
+output.WriteLine(xml);
+
+Catalog? copy = XmlSerializer.Deserialize<Catalog>(xml, options);
+output.WriteLine($"{copy!.Products[0].GetType().Name}, {copy.Products[1].GetType().Name}");
+```
+
+The code produces the following output:
+
+```text
+<Catalog>
+  <Items>
+    <Book>
+      <Title>Clean Code</Title>
+      <Author>Robert C. Martin</Author>
+    </Book>
+    <DVD>
+      <Title>The Matrix</Title>
+      <Runtime>136</Runtime>
+    </DVD>
+  </Items>
+</Catalog>
+Book, Dvd
+```
+
+The XML is the proposal's expected output.
+
+### A reader with namespace comparison
+
+```csharp Program.cs
+ReadOnlySpan<byte> utf8Xml = """
+    <root xmlns:ns="http://example.com">
+      <ns:Child>value</ns:Child>
+    </root>
+    """u8;
+
+var reader = new Utf8XmlReader(utf8Xml);
+while (reader.Read())
+{
+    if (reader.TokenType == XmlTokenType.StartElement)
+    {
+        if (reader.LocalNameEquals("Child"u8) &&
+            reader.NamespaceUriEquals("http://example.com"u8))
+        {
+            reader.Read();
+            string? value = reader.GetString();
+            output.WriteLine(value);
+        }
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+value
+```
+
+Apart from the type name, this is the proposal's code.
+
+### A writer with namespaces
+
+```csharp Program.cs
+using var stream = new MemoryStream();
+
+using (var writer = new Utf8XmlWriter(stream, new XmlWriterOptions { Indented = true, NewLine = "\n" }))
+{
+    writer.WriteXmlDeclaration();
+    writer.WriteStartElement("root");
+    writer.WriteNamespaceDeclaration("ns", "http://example.com");
+    writer.WriteDefaultNamespace("http://example.com/default");
+
+    writer.WriteStartElement("ns", "Child", "http://example.com");
+    writer.WriteAttributeString("ns", "id", "http://example.com", "42");
+    writer.WriteStringValue("Hello");
+    writer.WriteEndElement();
+
+    writer.WriteEndElement();
+    writer.Flush();
+}
+
+output.WriteLine(Encoding.UTF8.GetString(stream.ToArray()));
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns:ns="http://example.com" xmlns="http://example.com/default">
+  <ns:Child ns:id="42">Hello</ns:Child>
+</root>
+```
+
+The method calls are the proposal's, and the XML is the proposal's expected output.
+
+### Source generation
+
+```csharp MigrationXmlContext.cs
+[XmlSerializable<OrderLine>]
+internal sealed partial class MigrationXmlContext : XmlSerializerContext
+{
+}
+```
+
+```csharp Program.cs
+var line = new OrderLine { Sku = "KB-01", Description = "Keyboard" };
+
+string xml = XmlSerializer.Serialize(line, MigrationXmlContext.Default.OrderLine);
+OrderLine? copy = XmlSerializer.Deserialize(xml, MigrationXmlContext.Default.OrderLine);
+output.WriteLine(xml);
+output.WriteLine($"{copy!.Sku}: {copy.Description}");
+
+ReadOnlySpan<byte> utf8 = Encoding.UTF8.GetBytes(xml);
+OrderLine? copy2 = XmlSerializer.Deserialize(utf8, MigrationXmlContext.Default.OrderLine);
+output.WriteLine($"{copy2!.Sku}: {copy2.Description}");
+```
+
+The code produces the following output:
+
+```text
+<?xml version="1.0" encoding="utf-8"?><OrderLine sku="KB-01">Keyboard</OrderLine>
+KB-01: Keyboard
+KB-01: Keyboard
+```
+
+`OrderLine` has an `[XmlAttribute("sku")]` member and an `[XmlText]` member. The context exposes `Default` and one `XmlTypeInfo<T>` property for each listed type, as the proposal's `AppXmlContext.Default.Person` does.
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Why XmlEssentials" icon="lightbulb" href="/xmlessentials/why-xmlessentials">
+    The background to the proposal and to this library.
+  </Card>
+  <Card title="Coming from System.Text.Json" icon="code" href="/xmlessentials/guides/migrate/from-system-text-json">
+    The same API, mapped from the System.Text.Json names.
+  </Card>
+  <Card title="Use Utf8XmlReader" icon="book-open" href="/xmlessentials/guides/use-utf8xmlreader">
+    The reader in detail.
+  </Card>
+  <Card title="Use Utf8XmlWriter" icon="pen" href="/xmlessentials/guides/use-utf8xmlwriter">
+    The writer in detail.
+  </Card>
+  <Card title="Use source generation" icon="microchip" href="/xmlessentials/guides/source-generation">
+    Contexts, modes, and Native AOT.
+  </Card>
+  <Card title="XML conformance" icon="circle-check" href="/xmlessentials/guides/xml-conformance">
+    What the reader accepts and rejects.
+  </Card>
+</Columns>

@@ -1,0 +1,47 @@
+---
+title: XmlMemberOrder
+description: "Specifies where the fields of a type come among its members, when [XmlSerializerOptions.IncludeFields](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptio..."
+icon: list-ol
+tag: "ENUM"
+keywords: ['XmlMemberOrder', 'CloudNimble.Text.Xml.XmlMemberOrder', 'CloudNimble.Text.Xml', 'enum', 'System.Enum', 'System.IComparable', 'System.ISpanFormattable', 'System.IFormattable', 'System.IConvertible']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlMemberOrder
+```
+
+## Summary
+
+Specifies where the fields of a type come among its members, when
+[XmlSerializerOptions.IncludeFields](/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#includefields) includes them.
+
+## Remarks
+
+Under either value, the members of a base class come before those of a class derived from it, the members
+of one kind keep the order they are declared in, and an explicit order on a member takes precedence.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `PropertiesFirst` | 0 | The properties of a class, then its fields. This is the default. |
+| `FieldsFirst` | 1 | The fields of a class, then its properties. This is the order
+`System.Xml.Serialization.XmlSerializer` writes. |
+
+## Related APIs
+
+- System.IComparable
+- System.ISpanFormattable
+- System.IFormattable
+- System.IConvertible
+

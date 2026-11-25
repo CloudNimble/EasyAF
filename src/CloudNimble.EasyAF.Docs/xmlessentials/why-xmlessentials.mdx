@@ -1,0 +1,103 @@
+---
+title: "Why XmlEssentials?"
+sidebarTitle: "Why XmlEssentials?"
+description: "A decade of requests for a modern XML stack in .NET, what Microsoft decided, and why you don't have to wait for it any longer."
+icon: "lightbulb"
+---
+
+.NET got a modern JSON stack in 2019. System.Text.Json brought a UTF-8 reader and writer, a one-call serializer, a source generator, and Native AOT support. XML, which still runs invoices, health records, government filings, office documents, feeds, and configuration, stayed where it was in the .NET Framework era.
+
+Developers noticed, and they have been asking for the better part of a decade. This page tells that story, and explains why XmlEssentials exists.
+
+## A decade of asking
+
+Every item in this timeline is a public issue you can read.
+
+<Steps>
+  <Step title="2015: build-time serializers for .NET Core">
+    The first request for XML serialization code that's generated at build time on modern .NET arrives when .NET Core is brand new ([dotnet/runtime#15728](https://github.com/dotnet/runtime/issues/15728)). Microsoft answers it with the `Microsoft.XmlSerializer.Generator` package: a post-build tool that produces a second assembly, which isn't the same thing as a source generator.
+  </Step>
+  <Step title="2016: the schema tool">
+    Developers ask for `xsd.exe`, the tool that turns a schema into classes, on .NET Core ([#1391](https://github.com/dotnet/runtime/issues/1391)). Ten years later, the issue is still open with 80 upvotes.
+  </Step>
+  <Step title="2019: “Add System.Text.Xml”">
+    Weeks before System.Text.Json ships, a developer asks for its XML twin: "Just as we got System.Text.Json, we should have a high-performance low-allocation XmlSerializer" ([#30718](https://github.com/dotnet/runtime/issues/30718)). In 2022, the issue is closed as not planned.
+  </Step>
+  <Step title="2020: async, records, and trimming">
+    A request for async XML serialization opens ([#32555](https://github.com/dotnet/runtime/issues/32555)). It's still open, with 38 upvotes. Records arrive in C# 9, and a record with get-only properties doesn't round-trip through `XmlSerializer` ([#46251](https://github.com/dotnet/runtime/issues/46251)). The trimming work begins, and a source generator for `XmlSerializer` is named as one way to make it trim-safe ([#44768](https://github.com/dotnet/runtime/issues/44768)). The issue is closed by adding trim warnings to the API instead.
+  </Step>
+  <Step title="2021 and 2022: spans and allocations">
+    Developers ask for spans in the reader ([#59829](https://github.com/dotnet/runtime/issues/59829)) and for typed reads and writes that don't allocate strings ([#75515](https://github.com/dotnet/runtime/issues/75515)). `System.Private.Xml` is listed with 78 Native AOT warnings in the runtime's own tracking issue ([#75480](https://github.com/dotnet/runtime/issues/75480)).
+  </Step>
+  <Step title="2024: Native AOT">
+    With Native AOT now a mainstream way to publish, developers report that `XmlSerializer` can't be used with it ([#106580](https://github.com/dotnet/runtime/issues/106580)). One comment sums up the request: "It would be amazing if XML serialization could get the same treatment as JSON and have a source-generated AOT-safe {de}serializer." The issue is still open.
+  </Step>
+  <Step title="2026: the full proposal">
+    A community member writes the whole design down: a `System.Text.Xml` namespace with a UTF-8 `ref struct` reader, a buffer writer, a serializer with options and a source-generated context, namespace support, and an API that mirrors System.Text.Json ([#125299](https://github.com/dotnet/runtime/issues/125299)). It's closed as not planned the next day.
+  </Step>
+</Steps>
+
+## What Microsoft decided, and why
+
+The .NET team has been consistent and open about its position. From the closing comment on the 2026 proposal:
+
+> …we don't plan to introduce a parallel XML serialization stack under a new namespace. Introducing `System.Text.Xml` alongside the existing `System.Xml` would effectively create a second XML subsystem in the BCL, and the scope of this effort would be comparable to building `System.Text.Json` as a replacement for `Json.NET`.
+
+The same comment calls the motivation "legitimate", and says that future work would most likely be additions to `System.Xml`. No release is committed. The XML libraries' own README sets their contribution bar at "lower-risk or high-impact fixes to maintain or improve quality", which means fixes are welcome and new APIs generally aren't.
+
+That's a reasonable decision for a team with a platform to run. System.Text.Json took many developer-years, and the XML specification is larger than JSON's. `System.Xml` works, and it keeps receiving fixes.
+
+It also leaves the gap exactly where it was:
+
+| If you need | With System.Xml today |
+| --- | --- |
+| XML serialization in a Native AOT or trimmed app | `XmlSerializer` is marked as requiring dynamic code and unreferenced code |
+| A Roslyn source generator for your XML types | Not available |
+| To read or write UTF-8 without transcoding and allocating | Not available: the reader and writer are built on UTF-16 strings |
+| Positional records, constructor parameters, internal types, or dictionaries | Not supported by `XmlSerializer` |
+| Async serialization or `IAsyncEnumerable<T>` | Not available |
+| XML 1.1 | Not implemented |
+
+## You don't have to wait
+
+The estimate that stopped `System.Text.Xml` was the cost: a second System.Text.Json's worth of engineering. That estimate was right for the way software had always been built.
+
+XmlEssentials is what happens when that cost changes. It was built by [CloudNimble](https://github.com/CloudNimble) with AI agents working under an engineer's direction, against a written specification, the W3C conformance suite, and a rule that every line and every branch has a test. The first commit landed on November 21, 2026. Version 1.0 shipped on November 25, with:
+
+- A UTF-8 reader, a writer, a read-only DOM, a mutable DOM, and a serializer.
+- A Roslyn source generator, Native AOT support, and a generator, in preview, that turns XSD files into types.
+- XML 1.0 and XML 1.1, with Namespaces in XML.
+- 100% line and branch coverage.
+- [Benchmarks](/xmlessentials/benchmarks) that beat `System.Xml` in 66 of 67 like-for-like comparisons: 3.0× faster on average, with 85% less memory allocated.
+
+In the age of superintelligence, "that's too much work" has stopped being the end of the conversation. The cost that a platform team couldn't justify is now something a small team can pay: build the stack, test it to a platform standard, and give it away.
+
+So this is the stack the community described, shaped the way they asked for it, available today on NuGet under the MIT license.
+
+## Designed to be adopted
+
+XmlEssentials follows the System.Text.Json design on purpose, and it follows the 2026 proposal closely. The [proposal map](/xmlessentials/guides/migrate/system-text-xml-proposal) shows each proposed API beside its XmlEssentials counterpart.
+
+- **Familiar shape.** `XmlSerializer.Serialize<T>`, `Utf8XmlReader`, `Utf8XmlWriter`, `XmlDocument`, `XmlSerializerContext`. If you know the JSON types, you know these.
+- **No dependency on `System.Xml`.** The library has its own tokenizer, writer, attributes, and exception type, so none of the old stack is pulled into a trimmed app.
+- **A namespace that leaves the door open.** The types live in `CloudNimble.Text.Xml`. If `System.Text.Xml` ever exists, moving is a change of `using` directives.
+- **Platform-library discipline.** The code follows the specifications first, and the documentation follows Microsoft's API reference and writing guidelines.
+
+If Microsoft decides one day that .NET should have this in the box, we'd be glad to see it happen, and glad to help.
+
+## Start here
+
+<Columns cols={2}>
+  <Card title="Quickstart" icon="play" href="/xmlessentials/quickstart">
+    Install the package and serialize your first object.
+  </Card>
+  <Card title="Benchmarks" icon="gauge-high" href="/xmlessentials/benchmarks">
+    The measurements behind the claims.
+  </Card>
+  <Card title="Migrate from XmlSerializer" icon="right-left" href="/xmlessentials/guides/migrate/from-xmlserializer">
+    Bring an existing codebase across.
+  </Card>
+  <Card title="Coming from System.Text.Json" icon="code-compare" href="/xmlessentials/guides/migrate/from-system-text-json">
+    What carries over, and what XML adds.
+  </Card>
+</Columns>

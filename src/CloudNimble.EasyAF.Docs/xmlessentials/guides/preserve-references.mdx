@@ -1,0 +1,362 @@
+---
+title: "How to preserve references and handle circular references"
+sidebarTitle: "Preserve references"
+description: "Serialize object graphs that hold the same object twice or contain cycles, by preserving references or by ignoring the repeated objects."
+icon: "link"
+---
+
+This article shows how to serialize an object graph in which the same object appears more than once. By default, `XmlSerializer` writes an object every time it meets it, so a shared object becomes two copies and a cycle never ends. A *reference handler* changes that.
+
+The API mirrors System.Text.Json: set `XmlSerializerOptions.ReferenceHandler` to [`XmlReferenceHandler.Preserve`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlReferenceHandler) or `XmlReferenceHandler.IgnoreCycles`, as you would set `JsonSerializerOptions.ReferenceHandler`. The markup is different, because XML has attributes and namespaces where JSON has `$id` and `$ref` properties.
+
+<Note>
+The examples on this page use the reflection-based serializer. A source-generated context handles references in the same way when its options have a `ReferenceHandler`. See [Source generation](/xmlessentials/guides/source-generation).
+</Note>
+
+## See what happens without a handler
+
+The examples on this page use an `Employee` type that points to its manager and to its direct reports, so a manager and a report refer to each other.
+
+```csharp Employee.cs
+public sealed class Employee
+{
+    public string? Name { get; set; }
+
+    public Employee? Manager { get; set; }
+
+    [XmlArray]
+    public List<Employee> DirectReports { get; set; } = [];
+}
+```
+
+With no reference handler, the serializer follows the cycle until the writer reaches its depth limit:
+
+```csharp Program.cs
+var tyler = new Employee { Name = "Tyler Stein" };
+var adrian = new Employee { Name = "Adrian King", Manager = tyler };
+tyler.DirectReports.Add(adrian);
+
+try
+{
+    XmlSerializer.Serialize(tyler);
+}
+catch (Exception ex)
+{
+    output.WriteLine(ex.GetType().Name);
+    output.WriteLine(ex.Message);
+}
+```
+
+The code produces the following output:
+
+```text
+XmlException
+MaxDepth exceeded (64). Path: /Employee/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager/DirectReports/Employee/Manager.
+```
+
+The limit is `XmlSerializerOptions.MaxDepth`, which is 64 unless you change it. The serializer doesn't detect the cycle itself. It stops because the document became too deep.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/17_PreserveReferences.cs)
+
+## Preserve references
+
+Set `ReferenceHandler` to `XmlReferenceHandler.Preserve` to keep object identity. The serializer gives each object an identifier the first time it writes it. When a member holds an object that was already written, the serializer writes a reference to that identifier instead of the object.
+
+```csharp Program.cs
+var tyler = new Employee { Name = "Tyler Stein" };
+var adrian = new Employee { Name = "Adrian King", Manager = tyler };
+tyler.DirectReports.Add(adrian);
+
+var options = new XmlSerializerOptions
+{
+    ReferenceHandler = XmlReferenceHandler.Preserve,
+    WriteIndented = true,
+    NewLine = "\n",
+};
+
+string xml = XmlSerializer.Serialize(tyler, options);
+output.WriteLine(xml);
+
+Employee? copy = XmlSerializer.Deserialize<Employee>(xml, options);
+output.WriteLine(ReferenceEquals(copy, copy!.DirectReports[0].Manager));
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Employee xmlns:ns1="urn:CloudNimble.Text.Xml:refs" ns1:id="1">
+  <Name>Tyler Stein</Name>
+  <Manager xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+  <DirectReports>
+    <Employee ns1:id="2">
+      <Name>Adrian King</Name>
+      <Manager ns1:ref="1"/>
+      <DirectReports/>
+    </Employee>
+  </DirectReports>
+</Employee>
+True
+```
+
+The last line shows that the cycle is restored: the report's manager is the same instance as the root.
+
+### What the markup looks like
+
+| Markup | Meaning |
+| --- | --- |
+| `ns1:id="1"` | This element is the first appearance of an object. The value is its identifier. |
+| `ns1:ref="1"` | This element stands for the object with that identifier. The element is empty. |
+| `xmlns:ns1="urn:CloudNimble.Text.Xml:refs"` | The namespace of both attributes. The constant is [`XmlNamespaces.Refs`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamespaces). |
+
+- The built-in identifiers are the numbers 1, 2, 3, and so on, in the order the objects are written. Numbering starts again for every call to `Serialize`.
+- The writer generates the prefix. When the serializer reads, only the namespace URI matters, so a document can bind the namespace to any prefix.
+- The attributes are in a namespace of their own so that they can't collide with an `id` or `ref` attribute that belongs to your type.
+- Only objects with members get an identifier. Strings, numbers, other simple values, and the collections themselves do not.
+
+### Keep one object as one object
+
+A cycle is the case that fails loudly. A shared object fails quietly: without a handler it is written twice and read back as two objects. With `Preserve`, it stays one object.
+
+```csharp Program.cs
+var dana = new Employee { Name = "Dana Birkby" };
+var project = new Project { Name = "Atlas", Owner = dana, Reviewer = dana };
+
+var preserve = new XmlSerializerOptions
+{
+    ReferenceHandler = XmlReferenceHandler.Preserve,
+    OmitXmlDeclaration = true,
+    DefaultIgnoreCondition = XmlIgnoreCondition.WhenWritingNull,
+};
+
+string xml = XmlSerializer.Serialize(project, preserve);
+output.WriteLine(xml);
+
+Project? shared = XmlSerializer.Deserialize<Project>(xml, preserve);
+output.WriteLine(ReferenceEquals(shared!.Owner, shared.Reviewer));
+
+var plain = new XmlSerializerOptions { OmitXmlDeclaration = true, DefaultIgnoreCondition = XmlIgnoreCondition.WhenWritingNull };
+xml = XmlSerializer.Serialize(project, plain);
+output.WriteLine(xml);
+
+Project? copied = XmlSerializer.Deserialize<Project>(xml, plain);
+output.WriteLine(ReferenceEquals(copied!.Owner, copied.Reviewer));
+```
+
+```csharp Project.cs
+public sealed class Project
+{
+    public string? Name { get; set; }
+
+    public Employee? Owner { get; set; }
+
+    public Employee? Reviewer { get; set; }
+}
+```
+
+The code produces the following output:
+
+```text
+<Project xmlns:ns1="urn:CloudNimble.Text.Xml:refs" ns1:id="1"><Name>Atlas</Name><Owner ns1:id="2"><Name>Dana Birkby</Name><DirectReports/></Owner><Reviewer ns1:ref="2"/></Project>
+True
+<Project><Name>Atlas</Name><Owner><Name>Dana Birkby</Name><DirectReports/></Owner><Reviewer><Name>Dana Birkby</Name><DirectReports/></Reviewer></Project>
+False
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/17_PreserveReferences.cs)
+
+### Rules for reading
+
+- Use options with the same handler to read the document. Without a handler, an `id` attribute is ignored and a `ref` attribute is an `XmlException`.
+- A `ref` must point to an `id` that appears earlier in the document. A reference to an unknown identifier is an `XmlException` with the message `Unknown reference '...'.`
+- An element with a `ref` attribute is replaced by the referenced object. Any content it has is skipped.
+- An object that is created through a constructor with parameters is registered under its identifier after the constructor runs. A document can refer to it later, but the object can't hold a reference to itself: reading one that does throws an `XmlException` whose message starts with `Unknown reference '1'.`
+
+### Where Preserve applies
+
+`Preserve` replaces a repeated object wherever it appears: as the value of a member, as an item of a collection, and as an item inside a wrapper element. If the same object is in a list twice, the second item is written as an empty element with a `ref` attribute, and the list reads back as one object held twice.
+
+Value types and the collections themselves have no identifier. A list that two members share is written in full each time, and its items are still written once.
+
+## Ignore cycles
+
+`XmlReferenceHandler.IgnoreCycles` writes no identifiers. When the serializer reaches an object from inside that same object, it writes nil in its place and goes no deeper.
+
+```csharp Program.cs
+var tyler = new Employee { Name = "Tyler Stein" };
+var adrian = new Employee { Name = "Adrian King", Manager = tyler };
+tyler.DirectReports.Add(adrian);
+
+var options = new XmlSerializerOptions
+{
+    ReferenceHandler = XmlReferenceHandler.IgnoreCycles,
+    WriteIndented = true,
+    NewLine = "\n",
+};
+
+string xml = XmlSerializer.Serialize(tyler, options);
+output.WriteLine(xml);
+
+Employee? copy = XmlSerializer.Deserialize<Employee>(xml, options);
+output.WriteLine(copy!.DirectReports[0].Manager is null);
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Employee>
+  <Name>Tyler Stein</Name>
+  <Manager xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+  <DirectReports>
+    <Employee>
+      <Name>Adrian King</Name>
+      <Manager xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+      <DirectReports/>
+    </Employee>
+  </DirectReports>
+</Employee>
+True
+```
+
+The document is plain XML that any consumer can read, and it is no longer the same graph: the report's `Manager` is `null` after a round trip.
+
+Only a cycle is written as nil. An object that two members share, or that is in a list twice, is written in full each time, as System.Text.Json writes it. In the `Project` example above, `Owner` and `Reviewer` would both hold the whole employee, and the document would read back as two separate objects. To keep them as one object, use `Preserve`.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/17_PreserveReferences.cs)
+
+## Choose a handler
+
+| | No handler (default) | `Preserve` | `IgnoreCycles` |
+| --- | --- | --- | --- |
+| A cycle | `XmlException` at `MaxDepth` | Written once, then referenced | The object that closes the cycle is written as nil |
+| A shared object in two members or two list items | Written twice | Written once, then referenced | Written twice |
+| Round trip gives back the same graph | No | Yes | No |
+| Extra markup | None | `id` and `ref` attributes | `xsi:nil` where a cycle closes |
+| Readable by a consumer that doesn't know XmlEssentials | Yes | Only if it resolves `id` and `ref` itself | Yes |
+
+## Use a custom resolver
+
+To control how identifiers are resolved, derive from [`XmlReferenceHandler`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlReferenceHandler) and [`XmlReferenceResolver`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlReferenceResolver), as you would derive from `ReferenceHandler` and `ReferenceResolver` in System.Text.Json. The serializer calls `CreateResolver` once for each call to `Serialize` or `Deserialize`.
+
+| Method | Called when |
+| --- | --- |
+| `AddReference(referenceId, value)` | Reading: an element has an `id` attribute. |
+| `ResolveReference(referenceId)` | Reading: an element has a `ref` attribute. Return `null` for an identifier you don't know, and the serializer throws `XmlException`. |
+| `GetReference(value, out alreadyExists)` | Writing: an object is about to be written. |
+
+The following handler keeps every identified object in a dictionary, so that the caller can look objects up by identifier after the document has been read.
+
+```csharp Program.cs
+private sealed class DirectoryReferenceHandler : XmlReferenceHandler
+{
+    public Dictionary<string, object> Directory { get; } = new(StringComparer.Ordinal);
+
+    public override XmlReferenceResolver CreateResolver()
+    {
+        return new DirectoryReferenceResolver(Directory);
+    }
+}
+
+private sealed class DirectoryReferenceResolver(Dictionary<string, object> directory) : XmlReferenceResolver
+{
+    public override void AddReference(string referenceId, object value)
+    {
+        directory[referenceId] = value;
+    }
+
+    public override string GetReference(object value, out bool alreadyExists)
+    {
+        foreach (KeyValuePair<string, object> pair in directory)
+        {
+            if (ReferenceEquals(pair.Value, value))
+            {
+                alreadyExists = true;
+                return pair.Key;
+            }
+        }
+
+        alreadyExists = false;
+        string id = $"object-{directory.Count + 1}";
+        directory[id] = value;
+        return id;
+    }
+
+    public override object? ResolveReference(string referenceId)
+    {
+        return directory.TryGetValue(referenceId, out object? value) ? value : null;
+    }
+}
+```
+
+```csharp Program.cs
+string xml = """
+    <Project xmlns:r="urn:CloudNimble.Text.Xml:refs" r:id="atlas">
+      <Name>Atlas</Name>
+      <Owner r:id="dana">
+        <Name>Dana Birkby</Name>
+      </Owner>
+      <Reviewer r:ref="dana" />
+    </Project>
+    """;
+
+var handler = new DirectoryReferenceHandler();
+var options = new XmlSerializerOptions { ReferenceHandler = handler };
+
+Project? project = XmlSerializer.Deserialize<Project>(xml, options);
+output.WriteLine(ReferenceEquals(project!.Owner, project.Reviewer));
+
+var dana = (Employee)handler.Directory["dana"];
+output.WriteLine(dana.Name);
+output.WriteLine(string.Join(", ", handler.Directory.Keys));
+
+var writeOptions = new XmlSerializerOptions
+{
+    ReferenceHandler = new DirectoryReferenceHandler(),
+    OmitXmlDeclaration = true,
+};
+
+output.WriteLine(XmlSerializer.Serialize(project, writeOptions));
+```
+
+The code produces the following output:
+
+```text
+True
+Dana Birkby
+atlas, dana
+<Project xmlns:ns1="urn:CloudNimble.Text.Xml:refs" ns1:id="object-1"><Name>Atlas</Name><Owner ns1:id="object-2"><Name>Dana Birkby</Name><Manager xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/><DirectReports/></Owner><Reviewer ns1:ref="object-2"/></Project>
+```
+
+The first three lines show the custom resolver at work while reading: identifiers don't have to be numbers, and the handler's dictionary holds both objects afterward. The last line shows it at work while writing: the serializer writes the identifiers that `GetReference` returns as `id` attributes, and writes `ref` for an object the resolver says it has already seen.
+
+<Note>
+If `GetReference` returns an empty string, the serializer writes no `id`. For an object that the resolver reports as already seen, an empty string makes the serializer write nil in its place.
+</Note>
+
+A resolver holds state for one call. If your handler shares state between calls, as this one does, don't use the same options for calls that run at the same time.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/17_PreserveReferences.cs)
+
+## Understand the cost
+
+A reference handler makes the serializer look up every object it writes. Writing with `Preserve` takes noticeably longer than writing with no handler. The cost is a dictionary lookup, an identifier string, and a namespaced attribute for each object.
+
+Leave `ReferenceHandler` unset, which is the default, unless the graph needs it. With no handler, the serializer does no reference tracking at all.
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Null and nil" icon="ban" href="/xmlessentials/guides/null-and-nil">
+    How `xsi:nil` is written and read.
+  </Card>
+  <Card title="Configure options" icon="sliders" href="/xmlessentials/guides/configure-options">
+    Create and reuse `XmlSerializerOptions`.
+  </Card>
+  <Card title="Use XML namespaces" icon="tags" href="/xmlessentials/guides/namespaces">
+    How the serializer declares and matches namespaces.
+  </Card>
+  <Card title="XmlReferenceHandler" icon="code" href="/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlReferenceHandler">
+    API reference for the handler.
+  </Card>
+</Columns>

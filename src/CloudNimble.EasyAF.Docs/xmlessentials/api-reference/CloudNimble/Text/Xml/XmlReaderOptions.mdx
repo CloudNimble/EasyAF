@@ -1,0 +1,532 @@
+---
+title: XmlReaderOptions
+description: "Provides options that control how a [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) reads XML."
+icon: cubes
+tag: "SEALED"
+keywords: ['XmlReaderOptions', 'CloudNimble.Text.Xml.XmlReaderOptions', 'CloudNimble.Text.Xml', 'struct', 'System.ValueType', 'CloudNimble.Text.Xml.Utf8XmlReader', 'CloudNimble.Text.Xml.XmlReaderState', 'CloudNimble.Text.Xml.XmlCommentHandling', 'CloudNimble.Text.Xml.XmlWhitespaceHandling', 'CloudNimble.Text.Xml.XmlDocumentOptions']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.ValueType
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlReaderOptions
+```
+
+## Summary
+
+Provides options that control how a [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) reads XML.
+
+## Usage
+
+Create the options, set the properties you need, and pass the value to a `Utf8XmlReader` constructor. The reader copies the options, so later changes to your variable don't affect it.
+
+The most common use is a reader that reports data only, without comments and without the white space between elements:
+
+```csharp
+var dataOnly = new XmlReaderOptions
+{
+    CommentHandling = XmlCommentHandling.Skip,
+    WhitespaceHandling = XmlWhitespaceHandling.Insignificant,
+};
+```
+
+```csharp
+var reader = new Utf8XmlReader(utf8Xml, dataOnly);
+```
+
+The properties fall into three groups:
+
+| Group | Properties |
+| --- | --- |
+| What the reader reports | `CommentHandling`, `WhitespaceHandling` |
+| What counts as a document | `AllowMultipleRoots` |
+| Limits | `MaxDepth`, `MaxAttributeCount`, `MaxNameByteCount`, `MaxTextByteCount`, `MaxCommentByteCount`, `MaxDocumentByteCount` |
+
+When you read in blocks, the options travel in the [`XmlReaderState`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState): `new XmlReaderState(options)`.
+
+## Remarks
+
+A limit property set to 0 uses the default limit stated on that property, except
+[XmlReaderOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions#maxdocumentbytecount), where 0 means no limit.
+`default` and `new XmlReaderOptions()` are the same options. By default, the reader
+reports comments and whitespace-only text between elements, so that XML that is read and written back
+keeps its comments and its layout. For a read loop that wants data only, set
+[XmlReaderOptions.CommentHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions#commenthandling) to [XmlCommentHandling.Skip](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling) and
+[XmlReaderOptions.WhitespaceHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions#whitespacehandling) to [XmlWhitespaceHandling.Insignificant](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWhitespaceHandling).
+
+## Examples
+
+Each example is a sample in the repository whose output is checked by a test.
+
+### Set limits
+
+Each call reads the same document with one limit lowered. The last call uses the defaults.
+
+```csharp
+var xml = "<Order note=\"gift\" rush=\"true\"><Customer><Name>Ada Lovelace</Name></Customer></Order>"u8;
+
+output.WriteLine(Drain(xml, new XmlReaderOptions { MaxDepth = 2 }));
+output.WriteLine(Drain(xml, new XmlReaderOptions { MaxAttributeCount = 1 }));
+output.WriteLine(Drain(xml, new XmlReaderOptions { MaxNameByteCount = 4 }));
+output.WriteLine(Drain(xml, new XmlReaderOptions { MaxTextByteCount = 8 }));
+output.WriteLine(Drain(xml, new XmlReaderOptions { MaxDocumentByteCount = 64 }));
+output.WriteLine(Drain(xml, new XmlReaderOptions()));
+```
+
+```text
+XmlException: MaxDepth exceeded (2).
+XmlException: MaxAttributeCount exceeded (1).
+XmlException: MaxNameByteCount exceeded (4).
+XmlException: MaxTextByteCount exceeded (8).
+XmlException: MaxDocumentByteCount exceeded (64).
+Read 7 tokens.
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/21_ReadMarkupAndHandleErrors.cs)
+
+### Read a fragment
+
+```csharp
+var options = new XmlReaderOptions { AllowMultipleRoots = true };
+var reader = new Utf8XmlReader("<Item>Keyboard</Item><Item>Mouse</Item>"u8, options);
+while (reader.Read())
+{
+    if (reader.TokenType is XmlTokenType.Text)
+    {
+        output.WriteLine(reader.GetString());
+    }
+}
+```
+
+```text
+Keyboard
+Mouse
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/21_ReadMarkupAndHandleErrors.cs)
+
+## Best Practices
+
+- **Set `CommentHandling` to `Skip` and `WhitespaceHandling` to `Insignificant` when your code only wants data.** The defaults report comments and the white space between elements, which is what code that copies or edits a document needs.
+- **Leave the limits at their defaults unless you have a reason.** The defaults already protect against documents that nest too deep, carry too many attributes, or hold a name or a value that's too large.
+- **Set `MaxDocumentByteCount` for input you don't trust.** It's the one limit that's off by default.
+- **Lower `MaxDepth` when you know the shape of your documents.** A document format that nests five levels has no need for 64.
+- **Use `XmlCommentHandling.Disallow` and `XmlWhitespaceHandling.None` only for a strict contract** between programs, where a comment or indentation means that the producer is wrong.
+
+See [Security](/xmlessentials/guides/security) for how the limits fit together.
+
+## Considerations
+
+Know the following about the defaults and the limits.
+
+### The defaults keep everything
+
+`new XmlReaderOptions()` and `default(XmlReaderOptions)` are the same value. `CommentHandling` is `Allow` and `WhitespaceHandling` is `Significant`, so the reader reports comments as `Comment` tokens and white-space-only text between elements as `Text` tokens. The XML specification asks a processor to pass all of a document's characters to the application, and XML that's read and written back then keeps its comments and layout. `XmlSerializerOptions` has the opposite defaults, because neither belongs in an object.
+
+### A limit of 0 means the default
+
+| Property | When it's 0 |
+| --- | --- |
+| `MaxDepth` | 64 |
+| `MaxAttributeCount` | 1,000 |
+| `MaxNameByteCount` | 1,024 bytes |
+| `MaxTextByteCount` | 16,777,216 bytes |
+| `MaxCommentByteCount` | 1,048,576 bytes |
+| `MaxDocumentByteCount` | No limit |
+
+`MaxDocumentByteCount` is the exception: 0 means no limit. The reader checks it in its constructor, against the bytes read in earlier blocks plus the length of the block it's given.
+
+### What the limits count
+
+- `MaxAttributeCount` includes namespace declarations.
+- `MaxNameByteCount`, `MaxTextByteCount`, and `MaxCommentByteCount` are in UTF-8 bytes, not characters, counted as they are in the document, before references are expanded.
+- `MaxTextByteCount` applies to each text node, CDATA section, attribute value, and processing instruction's data on its own.
+- When the document is read in blocks, a token that is already longer than its limit throws before its end arrives.
+- `MaxCommentByteCount` applies to comments that are skipped as well as to comments that are reported.
+- Exceeding a limit throws an `XmlException` whose message names the property and the limit, such as `MaxDepth exceeded (64).`
+
+### Where else the options apply
+
+These options are for `Utf8XmlReader`. `XmlDocument` and `XmlSerializer` have their own options types, `XmlDocumentOptions` and `XmlSerializerOptions`.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [XmlReaderOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions) struct.
+
+#### Syntax
+
+```csharp
+public XmlReaderOptions()
+```
+
+#### Remarks
+
+The result is the same as `default`: [XmlReaderOptions.CommentHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions#commenthandling) is
+[XmlCommentHandling.Allow](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling), [XmlReaderOptions.WhitespaceHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions#whitespacehandling) is
+[XmlWhitespaceHandling.Significant](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWhitespaceHandling), and every limit property is 0, which selects
+its default limit.
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+protected ValueType()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> AllowMultipleRoots
+
+Gets or sets a value that indicates whether the reader accepts a document fragment, which can
+have more than one top-level element or none.
+
+#### Syntax
+
+```csharp
+public bool AllowMultipleRoots { get; set; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if more than one top-level element, or none, is allowed; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). The default is [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CommentHandling
+
+Gets or sets a value that defines how the reader handles comments.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlCommentHandling CommentHandling { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlCommentHandling`
+One of the enumeration values that indicates how comments are handled. The default is
+[XmlCommentHandling.Allow](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling).
+
+#### Remarks
+
+Comments are reported by default so that XML that is read and written back does not lose them.
+Set this property to [XmlCommentHandling.Skip](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling) when your code does not want to
+see [XmlTokenType.Comment](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlTokenType) tokens.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MaxAttributeCount
+
+Gets or sets the maximum number of attributes allowed on one element, including namespace
+declarations.
+
+#### Syntax
+
+```csharp
+public int MaxAttributeCount { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum number of attributes on one element. The default is 0, which means a maximum of 1000.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MaxCommentByteCount
+
+Gets or sets the maximum size of the content of a comment.
+
+#### Syntax
+
+```csharp
+public int MaxCommentByteCount { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum size of a comment's content, in UTF-8 bytes. The default is 0, which means a maximum
+of 1,048,576.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MaxDepth
+
+Gets or sets the maximum depth of nested elements allowed when reading XML.
+
+#### Syntax
+
+```csharp
+public int MaxDepth { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum element depth. The default is 0, which means a maximum depth of 64.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MaxDocumentByteCount
+
+Gets or sets the maximum size of the document.
+
+#### Syntax
+
+```csharp
+public int MaxDocumentByteCount { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum size of the document, in bytes. The default is 0, which means no limit.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MaxNameByteCount
+
+Gets or sets the maximum length of an element or attribute name.
+
+#### Syntax
+
+```csharp
+public int MaxNameByteCount { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum length of a name, in UTF-8 bytes. The default is 0, which means a maximum of 1024.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MaxTextByteCount
+
+Gets or sets the maximum length of a text node, a CDATA section, an attribute value, or the data of a processing instruction.
+
+#### Syntax
+
+```csharp
+public int MaxTextByteCount { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+The maximum length of each, in UTF-8 bytes as they appear in the document. The default is 0, which
+means a maximum of 16,777,216.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> WhitespaceHandling
+
+Gets or sets a value that defines how the reader handles whitespace-only text between elements.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlWhitespaceHandling WhitespaceHandling { get; set; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlWhitespaceHandling`
+One of the enumeration values that indicates how whitespace-only text is handled. The default is
+[XmlWhitespaceHandling.Significant](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWhitespaceHandling).
+
+#### Remarks
+
+Whitespace-only text between elements is reported by default so that XML that is read and written
+back does not change its layout. Set this property to [XmlWhitespaceHandling.Insignificant](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWhitespaceHandling)
+when your code does not want to see those [XmlTokenType.Text](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlTokenType) tokens.
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Utf8XmlReader
+- CloudNimble.Text.Xml.XmlReaderState
+- CloudNimble.Text.Xml.XmlCommentHandling
+- CloudNimble.Text.Xml.XmlWhitespaceHandling
+- CloudNimble.Text.Xml.XmlDocumentOptions
+- CloudNimble.Text.Xml.XmlSerializerOptions
+- CloudNimble.Text.Xml.XmlException
+

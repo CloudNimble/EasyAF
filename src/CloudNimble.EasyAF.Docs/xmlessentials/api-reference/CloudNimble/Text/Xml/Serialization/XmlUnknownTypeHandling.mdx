@@ -1,0 +1,66 @@
+---
+title: XmlUnknownTypeHandling
+description: "Defines how [XmlSerializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) reads an element into a value declared as [Object](https://learn.microsoft.com..."
+icon: list-ol
+tag: "ENUM"
+keywords: ['XmlUnknownTypeHandling', 'CloudNimble.Text.Xml.Serialization.XmlUnknownTypeHandling', 'CloudNimble.Text.Xml.Serialization', 'enum', 'System.Enum', 'System.IComparable', 'System.ISpanFormattable', 'System.IFormattable', 'System.IConvertible']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlUnknownTypeHandling
+```
+
+## Summary
+
+Defines how [XmlSerializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) reads an element into a value declared as [Object](https://learn.microsoft.com/dotnet/api/system.object).
+
+## Usage
+
+`XmlUnknownTypeHandling` is the type of `XmlSerializerOptions.UnknownTypeHandling`. It says what an element is read as when the declared type is `object`, where the XML can't say which type wrote it. It is the counterpart of `JsonUnknownTypeHandling`.
+
+| Value | A value declared as `object` is read as |
+| --- | --- |
+| `XmlElement` | An [`XmlElement`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which is read-only. This is the default. |
+| `XmlNode` | An [`XmlNode`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) that can be changed. The node is an `XmlElementNode`. |
+
+```csharp
+var options = new XmlSerializerOptions
+{
+    UnknownTypeHandling = XmlUnknownTypeHandling.XmlNode,
+};
+```
+
+The option applies to a member, an item of a collection, a value of a dictionary, and the document root. An element marked `xsi:nil="true"` is read as `null` under both values. Writing isn't affected.
+
+## Remarks
+
+A document does not record the type a value had when it was written, so a value declared as
+[Object](https://learn.microsoft.com/dotnet/api/system.object) is read as XML. This is the counterpart of
+`System.Text.Json.Serialization.JsonUnknownTypeHandling`, whose values are `JsonElement` and
+`JsonNode`.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `XmlElement` | 0 | The element is read as an [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which is read-only. |
+| `XmlNode` | 1 | The element is read as an [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode), which can be changed. The node is an
+[XmlElementNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlElementNode). |
+
+## Related APIs
+
+- System.IComparable
+- System.ISpanFormattable
+- System.IFormattable
+- System.IConvertible
+

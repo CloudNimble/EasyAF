@@ -1,0 +1,247 @@
+---
+title: "How to write and read null values with XmlSerializer"
+sidebarTitle: "Handle null values"
+description: "Learn how XmlSerializer writes a null value as xsi:nil or leaves it out, and how it reads a missing, empty, or nil element back."
+icon: "ban"
+---
+
+JSON has one way to say that a value is missing: `null`. XML has three, and they mean different things. This article shows which one `XmlSerializer` writes for a `null` member, how to leave it out with [`XmlIgnoreCondition`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlIgnoreCondition), and what each shape becomes when you deserialize.
+
+| XML | Meaning when read into a `string?` member |
+| --- | --- |
+| The element is left out | The member keeps the value the type gave it, usually `null`. |
+| `<Nickname />` or `<Nickname></Nickname>` | The empty string. |
+| `<Nickname xsi:nil="true" />` | `null`. |
+
+`xsi:nil` is an attribute defined by XML Schema. The `xsi` prefix is bound to `http://www.w3.org/2001/XMLSchema-instance`, which the library exposes as [`XmlNamespaces.Xsi`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamespaces).
+
+## Write null as xsi:nil
+
+By default, the serializer writes a `null` member as an empty element marked `xsi:nil="true"`. A reader can then tell `null` apart from an empty string, and the document round-trips exactly.
+
+```csharp Program.cs
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n" };
+var contact = new Contact { Name = "Ada", Nickname = null, Age = null };
+
+string xml = XmlSerializer.Serialize(contact, options);
+output.WriteLine(xml);
+
+Contact? copy = XmlSerializer.Deserialize<Contact>(xml, options);
+output.WriteLine($"Nickname is null: {copy!.Nickname is null}");
+output.WriteLine($"Age is null: {copy.Age is null}");
+```
+
+```csharp Contact.cs
+public sealed class Contact
+{
+    public string? Name { get; set; }
+
+    public string? Nickname { get; set; }
+
+    public int? Age { get; set; }
+}
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Contact>
+  <Name>Ada</Name>
+  <Nickname xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+  <Age xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+</Contact>
+Nickname is null: True
+Age is null: True
+```
+
+Each nil element declares the `xsi` prefix itself. The serializer doesn't move the declaration to the document element.
+
+Only an element can be nil. A `null` member that is mapped to an attribute or to the element's text is left out, whatever the options say.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/15_NullAndNil.cs)
+
+## Leave null members out
+
+Set `XmlSerializerOptions.DefaultIgnoreCondition` to `XmlIgnoreCondition.WhenWritingNull` to write nothing for a `null` member. This gives the smallest document. It is the same option, with the same meaning, as `JsonSerializerOptions.DefaultIgnoreCondition` set to `JsonIgnoreCondition.WhenWritingNull`.
+
+```csharp Program.cs
+var options = new XmlSerializerOptions
+{
+    DefaultIgnoreCondition = XmlIgnoreCondition.WhenWritingNull,
+    WriteIndented = true,
+    NewLine = "\n",
+};
+
+var contact = new Contact { Name = "Ada", Nickname = null, Age = null };
+output.WriteLine(XmlSerializer.Serialize(contact, options));
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Contact>
+  <Name>Ada</Name>
+</Contact>
+```
+
+When this document is read, `Nickname` and `Age` are never assigned. They are `null` here because that is their initial value. If the type's constructor or a property initializer assigns something else, the member keeps that value.
+
+To leave out one member instead of all of them, use `[XmlIgnore(Condition = XmlIgnoreCondition.WhenWritingNull)]`. See [Ignore properties](/xmlessentials/guides/ignore-properties).
+
+`XmlIgnoreCondition.WhenWritingNullReference` leaves out `null` references only. A nullable value type with no value, such as an `int?`, is still written with `xsi:nil="true"`. That is how `System.Xml.Serialization.XmlSerializer` treats the two, and it is the condition [`XmlSerializerOptions.Bcl`](/xmlessentials/guides/migrate/from-xmlserializer#keep-the-old-defaults) uses.
+
+<Note>
+A `null` collection that has an `[XmlArray]` wrapper is a `null` member like any other. `WhenWritingNull` leaves the wrapper out, and by default the wrapper is written with `xsi:nil="true"`, which reads back as `null`. An empty collection is different: it is written as an empty wrapper and reads back as an empty collection. The ignore condition applies to members only. A `null` item of a collection and a `null` value of a dictionary are always written, marked `xsi:nil="true"`, as System.Text.Json always writes them as `null`. See [Collections](/xmlessentials/guides/collections).
+</Note>
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/15_NullAndNil.cs)
+
+## Read the three shapes
+
+Reading doesn't depend on the ignore condition. Whatever the options are, the serializer reads each shape the same way.
+
+```csharp Program.cs
+Contact? omitted = XmlSerializer.Deserialize<Contact>(
+    "<Contact><Name>Ada</Name></Contact>");
+output.WriteLine($"Omitted: {Describe(omitted!.Nickname)}");
+
+Contact? empty = XmlSerializer.Deserialize<Contact>(
+    "<Contact><Name>Ada</Name><Nickname /></Contact>");
+output.WriteLine($"Empty: {Describe(empty!.Nickname)}");
+
+Contact? nil = XmlSerializer.Deserialize<Contact>(
+    """<Contact xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><Name>Ada</Name><Nickname xsi:nil="true" /></Contact>""");
+output.WriteLine($"Nil: {Describe(nil!.Nickname)}");
+
+try
+{
+    XmlSerializer.Deserialize<Contact>("<Contact><Name>Ada</Name><Age /></Contact>");
+}
+catch (XmlException ex)
+{
+    output.WriteLine($"Empty number: {ex.Message}");
+}
+```
+
+`Describe` is a helper in the sample that prints `null`, `empty string`, or the quoted text.
+
+The code produces the following output:
+
+```text
+Omitted: null
+Empty: empty string
+Nil: null
+Empty number: The value is not a valid integer. Path: /Contact/Age | LineNumber: 1 | BytePositionInLine: 33.
+```
+
+Keep these rules in mind when you read documents that other systems produce:
+
+- `xsi:nil` accepts the values `true` and `1`. With `false` or `0`, the element is read normally.
+- An empty element is the empty string. That is a valid `string`, and it is an `XmlException` for a type whose text can't be empty, such as a number.
+- `xsi:nil="true"` on a member that can't be `null`, such as an `int`, is an `XmlException`: `The element is nil but type 'System.Int32' is not nillable.`
+- A member marked `[XmlRequired]` or declared with the `required` keyword can't be nil. See [Required properties](/xmlessentials/guides/required-properties).
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/15_NullAndNil.cs)
+
+## Respect nullable annotations
+
+By default the serializer doesn't look at nullable annotations: a member declared `string` accepts `xsi:nil` and can be written as `xsi:nil`. Set `XmlSerializerOptions.RespectNullableAnnotations` to `true` to refuse a `null` where the annotation says there is none. It is the same option, with the same rules, as `JsonSerializerOptions.RespectNullableAnnotations`.
+
+```csharp
+public sealed class Annotated
+{
+    public string? Maybe { get; set; }
+
+    public string Name { get; set; } = "n";
+}
+
+var options = new XmlSerializerOptions { RespectNullableAnnotations = true };
+
+// Throws XmlException: The property or field 'Name' on type '<namespace>.Annotated' doesn't allow setting null values.
+// Consider updating its nullability annotation. Path: /Annotated/Name | LineNumber: 1 | BytePositionInLine: ...
+XmlSerializer.Deserialize<Annotated>(
+    """<Annotated xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><Name xsi:nil="true"/></Annotated>""", options);
+
+// Throws XmlException: The property or field 'Name' on type '<namespace>.Annotated' doesn't allow getting null values.
+// Consider updating its nullability annotation. Path: /Annotated.
+XmlSerializer.Serialize(new Annotated { Name = null! }, options);
+```
+
+The serializer checks the following:
+
+- **Reading:** an element marked `xsi:nil="true"` for a member, or for the constructor parameter the member fills, that doesn't accept `null`.
+- **Writing:** a `null` held by a member annotated as never returning `null`, whether the member is an element, an XML attribute, or text. A `null` that the ignore condition leaves out isn't written, so it isn't refused.
+
+`[AllowNull]` and `[DisallowNull]` change what a member accepts. `[MaybeNull]` and `[NotNull]` change what it returns.
+
+The serializer doesn't check the following:
+
+- A member the document leaves out. Use [required properties](/xmlessentials/guides/required-properties) for that.
+- The items of a collection and the values of a dictionary.
+- The document root.
+- A member compiled without nullable annotations.
+- A member whose type is a type parameter with no `class`, `struct`, or `notnull` constraint.
+
+A source-generated context applies the same rules, and `[XmlSourceGenerationOptions(RespectNullableAnnotations = true)]` sets the option on the options of `Default`.
+
+## Nullable value types
+
+A `Nullable<T>` member, such as `int?`, follows the same rules as a reference type. When it has a value, the element is written exactly as for `T`. When it is `null`, it is written as `xsi:nil`, or left out when the ignore condition says so. The first example on this page shows an `int?` written as `xsi:nil` and read back as `null`.
+
+A value type that isn't nullable is always written, because it always has a value. To leave out a value type that holds its default value, use `XmlIgnoreCondition.WhenWritingDefault`. See [Ignore properties](/xmlessentials/guides/ignore-properties).
+
+## Serialize a null root
+
+When the value you pass to `Serialize` is itself `null`, the serializer writes the document element of the declared type, marked nil. Deserializing that document returns `null`. System.Text.Json writes the literal `null` in the same situation.
+
+```csharp Program.cs
+Contact? nobody = null;
+
+string xml = XmlSerializer.Serialize(nobody);
+output.WriteLine(xml);
+output.WriteLine(XmlSerializer.Deserialize<Contact>(xml) is null);
+
+// An ignore condition is about members. The document still needs its root, so a null root is written.
+var omitNulls = new XmlSerializerOptions { DefaultIgnoreCondition = XmlIgnoreCondition.WhenWritingNull };
+output.WriteLine(XmlSerializer.Serialize(nobody, omitNulls) == xml);
+```
+
+The code produces the following output:
+
+```text
+<?xml version="1.0" encoding="utf-8"?><Contact xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+True
+True
+```
+
+A document must have a document element, so an ignore condition doesn't apply to the root. System.Text.Json behaves the same way: it writes `null` for a `null` root whatever `DefaultIgnoreCondition` is.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/15_NullAndNil.cs)
+
+## Choose a setting
+
+| `DefaultIgnoreCondition` | A `null` member is written as | Reads back as `null` | Use it when |
+| --- | --- | --- | --- |
+| `Never` (default) | `<Name xsi:nil="true"/>` | Yes | You want an exact round trip, or the schema declares the element nillable. |
+| `WhenWritingNull` | Nothing | Yes, if the member starts as `null` | You want small documents and the reader treats a missing element as no value. |
+| `WhenWritingNullReference` | Nothing for a `null` reference; `<Name xsi:nil="true"/>` for a nullable value type with no value | Yes, if the member starts as `null` | You need what `System.Xml.Serialization.XmlSerializer` writes. `XmlSerializerOptions.Bcl` uses it. |
+| `WhenWritingDefault` | Nothing, and a value type that holds its default value is left out too | Yes, if the member starts as `null` | You want the smallest documents. |
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Ignore properties" icon="eye-slash" href="/xmlessentials/guides/ignore-properties">
+    Leave out individual members that are null or have a default value.
+  </Card>
+  <Card title="Required properties" icon="asterisk" href="/xmlessentials/guides/required-properties">
+    Reject a document that omits a member or marks it nil.
+  </Card>
+  <Card title="Configure options" icon="sliders" href="/xmlessentials/guides/configure-options">
+    Create and reuse `XmlSerializerOptions`.
+  </Card>
+  <Card title="XmlIgnoreCondition" icon="code" href="/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlIgnoreCondition">
+    API reference for the enumeration.
+  </Card>
+</Columns>

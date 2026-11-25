@@ -12,3 +12,6 @@
 [submodule "external/BlazorEssentials"]
 	path = external/BlazorEssentials
 	url = https://github.com/CloudNimble/BlazorEssentials.git
+[submodule "external/XmlEssentials"]
+	path = external/XmlEssentials
+	url = https://github.com/CloudNimble/XmlEssentials.git

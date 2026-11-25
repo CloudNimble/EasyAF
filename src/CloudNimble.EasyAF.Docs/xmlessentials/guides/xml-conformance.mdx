@@ -1,0 +1,507 @@
+---
+title: "XML conformance"
+sidebarTitle: "XML conformance"
+description: "Which XML specifications the reader and writer implement, how they normalize text, and the constructs they reject with which message."
+icon: "badge-check"
+---
+
+XmlEssentials reads and writes well-formed XML 1.0 and XML 1.1 with namespaces, in UTF-8. It doesn't process document type definitions (DTDs), and it doesn't read other encodings. This page states what is implemented, what is rejected, and the exact exception message for each rejection, so that you can decide whether the library fits the documents you exchange.
+
+`Utf8XmlReader` applies every rule on this page. `XmlDocument`, `XmlNode`, and `XmlSerializer` read through `Utf8XmlReader` and write through `Utf8XmlWriter`, so the same rules hold for them.
+
+## Specifications
+
+| Specification | Status |
+| --- | --- |
+| [XML 1.0 (Fifth Edition)](https://www.w3.org/TR/xml/) | Well-formedness is implemented, without DTDs. The Fifth Edition name characters are used. |
+| [XML 1.1 (Second Edition)](https://www.w3.org/TR/xml11/) | Well-formedness is implemented, without DTDs. A document is XML 1.1 when its declaration says `version="1.1"`. |
+| [Namespaces in XML 1.0 (Third Edition)](https://www.w3.org/TR/xml-names/) | Implemented. |
+| [Namespaces in XML 1.1 (Second Edition)](https://www.w3.org/TR/xml-names11/) | Implemented for XML 1.1 documents, including prefix undeclaration (`xmlns:p=""`). |
+| [XML Schema Part 2: Datatypes](https://www.w3.org/TR/xmlschema-2/) | The lexical forms of typed values follow it. See [Supported types](/xmlessentials/guides/supported-types). |
+| DTD validation, XML Schema validation, XInclude, XPath, XSLT | Not implemented. |
+
+XmlEssentials is a non-validating processor that doesn't read the DTD. The XML specification requires a processor to at least read the internal DTD subset, so this is a deliberate departure, made for [security](/xmlessentials/guides/security). A document that has a `<!DOCTYPE` is rejected. It isn't read with the DTD skipped.
+
+## Conformance tests
+
+The test project runs cases from the [W3C XML Conformance Test Suite](https://www.w3.org/XML/Test/) (`xmlts20130923`) in `XmlConformanceSuiteTests`. The test reads each W3C manifest and checks every case whose document is present against the result the manifest states.
+
+| | Cases |
+| --- | --- |
+| Cases that run | 283 |
+| UTF-8 without a DTD, judged on well-formedness | 205 |
+| Use a DTD or another encoding, and must be rejected with the documented message | 78 |
+
+The cases come from these manifests:
+
+| Manifest | Cases in the suite | Documents in the tests |
+| --- | --- | --- |
+| `eduni/xml-1.1/xml11.xml` (XML 1.1) | 57 | All |
+| `eduni/namespaces/1.0/rmt-ns10.xml` and `eduni/namespaces/1.1/rmt-ns11.xml` | 48 and 8 | All |
+| `xmltest/xmltest.xml` (XML 1.0) | 365 | 85 |
+| `ibm/xml-1.1/ibm_not-wf.xml` | 154 | 64 |
+| `eduni/errata-4e/errata4e.xml` (Fifth Edition names) | 393 | 10 |
+| `sun/sun-not-wf.xml` | 56 | 8 |
+| `ibm/ibm_oasis_not-wf.xml` | 731 | 2 |
+| `eduni/errata-2e/errata2e.xml` | 34 | 1 |
+
+For the XML 1.0 sections, only the documents that this library can judge were taken. Nearly all the others need a DTD.
+
+For each case that is judged on well-formedness:
+
+- A document the manifest marks `not-wf` must throw from `Utf8XmlReader` and must fail `XmlDocument.TryParse`.
+- A document marked `valid` or `invalid` must be read. Validity is a DTD notion, and this isn't a validating parser.
+- A document that is read must produce the same tokens when the input arrives in 1-byte and in 3-byte pieces, and the same tokens again after it is parsed into an `XmlDocument` and written back.
+
+The tests also read real documents taken from the test suites of other XML parsers, and compare element, attribute, comment, and processing instruction counts and SHA-256 digests with values produced by `System.Xml.XmlReader`.
+
+## Encoding
+
+Input and output are UTF-8.
+
+| Input | Result |
+| --- | --- |
+| UTF-8, with or without a byte order mark (`EF BB BF`) | Read. The byte order mark is consumed. |
+| Declaration with `encoding="utf-8"`, `"UTF-8"`, or `"utf8"` in any letter case | Read. |
+| Declaration that names any other encoding | `XmlException`: `XmlEssentials is UTF-8 only. Declared encoding 'iso-8859-1' is not supported.` The name in the message is the declared name in lowercase. |
+| Bytes that aren't valid UTF-8 | `XmlException`: `Invalid UTF-8.` |
+| UTF-16 or UTF-32 bytes, with or without a byte order mark | `XmlException`: `XmlEssentials is UTF-8 only. The input is UTF-16 or UTF-32.` |
+
+<Note>
+The declared encoding is checked for bytes only. A .NET `string` or a span of characters has no encoding of its own, so `XmlSerializer.Deserialize`, `XmlDocument.Parse`, and `XmlNode.Parse` read a string that starts with `<?xml version="1.0" encoding="utf-16"?>`, which is what `System.Xml` writes to a `StringWriter`.
+</Note>
+
+The writer writes `<?xml version="1.0" encoding="utf-8"?>`, or `version="1.1"` when `XmlWriterOptions.Version` is `XmlVersion.Version11`, and adds `standalone="yes"` or `standalone="no"` when `XmlWriterOptions.Standalone` is set. It writes a byte order mark only when `EmitByteOrderMark` is `true`. To convert a document in another encoding, transcode it to UTF-8 first, for example with `Encoding.CreateTranscodingStream`, and fix the declaration.
+
+## The XML declaration
+
+The declaration must match [production 23](https://www.w3.org/TR/xml/#NT-XMLDecl) of the specification: `version` first and required, then optional `encoding`, then optional `standalone` with the value `yes` or `no`. It must be the first thing in the document, after an optional byte order mark.
+
+| Declaration | Result |
+| --- | --- |
+| None, or `version="1.0"` | XML 1.0. `Utf8XmlReader.Version` is `XmlVersion.Version10`. |
+| `version="1.1"` | XML 1.1. `Utf8XmlReader.Version` is `XmlVersion.Version11`. |
+| Any other `1.x`, such as `version="1.2"` | Read as XML 1.0, as the Fifth Edition requires. |
+| Anything else, such as `version="2.0"` | `XmlException`: `The XML declaration is malformed.` |
+| A declaration that isn't first | `XmlException`: `The XML declaration must be the first token in the document.` |
+
+## Line ends
+
+The reader replaces every line end with one line feed (`U+000A`) before it reports a value, as [section 2.11](https://www.w3.org/TR/xml/#sec-line-ends) of the specification requires. XML 1.1 has more line ends than XML 1.0.
+
+| In the document | XML 1.0 | XML 1.1 |
+| --- | --- | --- |
+| CR LF (`U+000D U+000A`) | One line feed | One line feed |
+| CR (`U+000D`) | Line feed | Line feed |
+| CR NEL (`U+000D U+0085`) | Line feed, then `U+0085` | One line feed |
+| NEL (`U+0085`) | Unchanged | Line feed |
+| LS (`U+2028`) | Unchanged | Line feed |
+
+The following sample reads the same text in both versions.
+
+```csharp
+ReadOnlySpan<byte> xml10 = "<note>one\r\ntwo\rthree\u0085four</note>"u8;
+ReadOnlySpan<byte> xml11 = "<?xml version=\"1.1\"?><note>one\r\ntwo\rthree\u0085four</note>"u8;
+
+output.WriteLine($"XML 1.0: {ReadText(xml10)}");
+output.WriteLine($"XML 1.1: {ReadText(xml11)}");
+```
+
+`ReadText` returns the first text token, with control characters replaced by their C# escapes so that you can see them:
+
+```csharp
+private static string ReadText(ReadOnlySpan<byte> utf8Xml)
+{
+    var reader = new Utf8XmlReader(utf8Xml);
+    while (reader.Read())
+    {
+        if (reader.TokenType is XmlTokenType.Text)
+        {
+            return MakeVisible(reader.GetString()!);
+        }
+    }
+
+    return string.Empty;
+}
+```
+
+The code produces the following output:
+
+```text
+XML 1.0: one\ntwo\nthree\u0085four
+XML 1.1: one\ntwo\nthree\nfour
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/38_XmlConformance.cs)
+
+Line ends are normalized in text, CDATA sections, comments, and processing instructions. `XmlException.LineNumber` counts lines after this step. `XmlException.LinePosition` is the one-based offset in the line in UTF-8 bytes, not in characters.
+
+A line end that is written as a character reference, such as `&#xD;`, isn't a line end in the document. It is read as the character it names.
+
+## Attribute values
+
+Because there is no DTD, every attribute is treated as character data (`CDATA`), and its value is normalized as [section 3.3.3](https://www.w3.org/TR/xml/#AVNormalize) of the specification describes:
+
+1. Line ends are normalized as above.
+2. Each tab, line feed, and carriage return that is written literally becomes one space.
+3. Character references and the predefined entities are expanded. A tab or line end written as a reference stays what it is.
+
+Leading, trailing, and repeated spaces are kept.
+
+```csharp
+ReadOnlySpan<byte> xml = "<item note=\"a\tb\r\nc&#xA;d\"/>"u8;
+
+var reader = new Utf8XmlReader(xml);
+reader.Read();
+reader.MoveToNextAttribute();
+
+output.WriteLine(MakeVisible(reader.GetString()!));
+```
+
+The code produces the following output:
+
+```text
+a b c\nd
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/38_XmlConformance.cs)
+
+The tab became a space, the CR LF pair became one space, and the line feed that was written as `&#xA;` is still a line feed.
+
+## Whitespace
+
+Whitespace inside an element that has other text is always part of the value: the text of `<item> a </item>` is `" a "`. What you choose is how the reader treats text that is only whitespace and sits between elements, which is usually indentation. Set `WhitespaceHandling` on [`XmlReaderOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions), `XmlDocumentOptions`, or `XmlSerializerOptions`.
+
+| `XmlWhitespaceHandling` | Whitespace-only text between elements |
+| --- | --- |
+| `Significant` | Reported as a `Text` token. This is the zero value of the enumeration. |
+| `Insignificant` | Skipped when it's indentation. No token is reported. |
+| `None` | Rejected, where `Insignificant` would skip it, with `XmlException`: `Whitespace-only text is not allowed.` |
+
+Whitespace-only text is indentation only when it carries no content. Under every setting it's reported as a `Text` token when it's the whole content of its element (`<item> </item>` is `" "`), when its element already has text or a CDATA section before it (the space between `</b>` and `<i>` in `<p>a <b>b</b> <i>c</i></p>`), or when `xml:space="preserve"` is in force. `xml:space="preserve"` applies to the element that has it and to everything inside, until an element sets `xml:space="default"` ([section 2.10](https://www.w3.org/TR/xml/#sec-white-space)).
+
+The default depends on the API:
+
+| API | Default | Why |
+| --- | --- | --- |
+| `Utf8XmlReader` (`XmlReaderOptions`) | `Significant` | The reader passes all character data to your code, as [XML 1.0 section 2.10](https://www.w3.org/TR/xml/#sec-white-space) requires, so that XML you read and write back keeps its layout. Set `Insignificant` in a loop that only wants data. |
+| `XmlSerializer` (`XmlSerializerOptions.WhitespaceHandling`) | `Insignificant` | Indentation isn't part of an object. |
+| `XmlDocument.Parse` (`XmlDocumentOptions`) | `Significant` | The document keeps the indentation inside the root element, so that writing it back doesn't lose it. Set `Insignificant` to leave it out. |
+
+`default` and `new` give the same options for the reader and for the document.
+
+```csharp
+XmlWhitespaceHandling[] choices =
+[
+    XmlWhitespaceHandling.Insignificant,
+    XmlWhitespaceHandling.Significant,
+    XmlWhitespaceHandling.None,
+];
+
+foreach (XmlWhitespaceHandling choice in choices)
+{
+    var options = new XmlReaderOptions { WhitespaceHandling = choice };
+    output.WriteLine($"{choice}: {ReadTokens("<list>\n  <item> a </item>\n</list>"u8, options)}");
+}
+```
+
+`ReadTokens` reads a whole document and lists its tokens, or returns the error that stopped the reader:
+
+```csharp
+private static string ReadTokens(ReadOnlySpan<byte> utf8Xml, XmlReaderOptions options)
+{
+    var tokens = new StringBuilder();
+    try
+    {
+        var reader = new Utf8XmlReader(utf8Xml, options);
+        while (reader.Read())
+        {
+            tokens.Append(reader.TokenType);
+            if (reader.TokenType is XmlTokenType.Text)
+            {
+                tokens.Append($"(\"{MakeVisible(reader.GetString()!)}\")");
+            }
+
+            tokens.Append(' ');
+        }
+    }
+    catch (XmlException ex)
+    {
+        return $"XmlException at line {ex.LineNumber}, position {ex.LinePosition}: {ex.Message}";
+    }
+
+    return tokens.ToString().TrimEnd();
+}
+```
+
+The code produces the following output:
+
+```text
+Insignificant: StartElement StartElement Text(" a ") EndElement EndElement
+Significant: StartElement Text("\n  ") StartElement Text(" a ") EndElement Text("\n") EndElement
+None: XmlException at line 2, position 3: Whitespace-only text is not allowed.
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/38_XmlConformance.cs)
+
+Whitespace outside the root element is never reported, under any setting.
+
+The writer adds whitespace to content only when `Indented` is `true`, and only between elements. An element that holds text is written on one line, so indentation never changes a value. `AttributeStyle = XmlAttributeStyle.PerLine` adds line breaks inside start tags, between attributes, where whitespace isn't content.
+
+## Comments and processing instructions
+
+Comments and processing instructions are read inside the root element and before and after it. A processing instruction is always reported as a token. How comments are treated depends on `XmlCommentHandling`, and the default depends on the API:
+
+| API | Default | Effect |
+| --- | --- | --- |
+| `Utf8XmlReader` (`XmlReaderOptions` and `XmlReaderState`, created with `new` or as `default`) | `Allow` | Comments are reported as `Comment` tokens, so that XML you read and write back keeps them. Set `Skip` in a loop that only wants data. `Allow` is the zero value of the enumeration. |
+| `XmlDocument.Parse` and `XmlDocumentOptions` | `Allow` | Comments are kept, so that writing the document back doesn't lose them. `default(XmlDocumentOptions)` and `new XmlDocumentOptions()` are the same. |
+| `XmlSerializerOptions.ReadCommentHandling` | `Skip` | `XmlSerializerOptions.Strict` uses `Disallow`. |
+
+## Character and entity references
+
+The reader expands the five predefined entities and numeric character references, in text and in attribute values.
+
+| Reference | Result |
+| --- | --- |
+| `&lt;` `&gt;` `&amp;` `&quot;` `&apos;` | `<` `>` `&` `"` `'` |
+| `&#65;` (decimal) and `&#x41;` (hexadecimal) | The character with that code point, if the document's XML version allows it |
+| Any other name, such as `&nbsp;` or `&copy;` | `XmlException`: `Undefined entity.` |
+| A reference that isn't a number, or that names a code point above `U+10FFFF` | `XmlException`: `Invalid character reference.` |
+
+```csharp
+ReadOnlySpan<byte> xml = "<text>&lt;p&gt; &amp; &quot;q&quot; &apos;a&apos; &#65;&#x42;</text>"u8;
+
+var reader = new Utf8XmlReader(xml);
+reader.Read();
+reader.Read();
+
+output.WriteLine(reader.GetString());
+```
+
+The code produces the following output:
+
+```text
+<p> & "q" 'a' AB
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/38_XmlConformance.cs)
+
+<Note>
+HTML entities such as `&nbsp;` are defined by a DTD, so they aren't available. Use the character itself or a numeric reference such as `&#xA0;`.
+</Note>
+
+## What isn't supported
+
+These are the deliberate departures from the specifications. Each one is an error. Nothing is skipped silently.
+
+| Construct | Exception message |
+| --- | --- |
+| `<!DOCTYPE ...>`, with or without an internal subset | `DTD is not allowed.` |
+| `<!ENTITY`, `<!ELEMENT`, `<!ATTLIST`, `<!NOTATION`, and any other `<!` markup that isn't a comment or a CDATA section | `DTD is not allowed.` |
+| A general entity other than the five predefined ones | `Undefined entity.` |
+| External entities and external DTD subsets | Never loaded. The `<!DOCTYPE` that would declare them is rejected. |
+| An encoding other than UTF-8 | `XmlEssentials is UTF-8 only. Declared encoding '<name>' is not supported.` |
+
+```csharp
+var options = new XmlReaderOptions();
+
+output.WriteLine(ReadTokens("<!DOCTYPE note SYSTEM \"note.dtd\"><note/>"u8, options));
+output.WriteLine(ReadTokens("<note>&nbsp;</note>"u8, options));
+output.WriteLine(ReadTokens("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><note/>"u8, options));
+```
+
+The code produces the following output:
+
+```text
+XmlException at line 1, position 1: DTD is not allowed.
+XmlException at line 1, position 13: Undefined entity.
+XmlException at line 1, position 44: XmlEssentials is UTF-8 only. Declared encoding 'iso-8859-1' is not supported.
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/38_XmlConformance.cs)
+
+Because there is no DTD, these DTD features are absent too: default attribute values, attribute types other than `CDATA` (so no `ID` or `NMTOKENS` normalization), and the `standalone` checks. The `standalone` value is read and reported, and has no other effect.
+
+## Well-formedness errors
+
+The reader throws an [`XmlException`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException) for a document that isn't well formed. These are the messages for the errors you are most likely to meet:
+
+| Error | Message |
+| --- | --- |
+| The input ends inside a token or before an end tag | `Unexpected end of XML.` |
+| No root element | `Document does not have a root element.` |
+| A second root element | `Multiple root elements are not allowed.` |
+| Text or a CDATA section outside the root element | `Unexpected content outside the root element.` or `A CDATA section is not allowed outside the root element.` |
+| An end tag whose name differs from the start tag, prefix included | `End tag does not match start tag.` |
+| The same attribute twice on one element | `Duplicate attribute.` |
+| `<` in an attribute value | `'<' is not allowed in attribute values.` |
+| A prefix with no namespace declaration in scope | `Undeclared namespace prefix.` |
+| A name that isn't an XML name, or has more than one colon | `Invalid name.`, `Invalid attribute name.`, or `Multiple colons in name.` |
+| `--` inside a comment | `Comments must not contain '--'.` |
+| `]]>` in text | `']]>' is not allowed in character data.` |
+| A processing instruction named `xml` in any letter case | `Processing instruction targets that match 'xml' in any letter case are reserved.` |
+| A NUL character, written literally or as a reference | `NUL is not allowed.` |
+| A character the XML version doesn't allow | `Invalid XML 1.0 character.` or `Invalid XML 1.1 character.` |
+
+An end tag must repeat the prefix of its start tag. `<a:e xmlns:a="urn:u" xmlns:b="urn:u"></b:e>` is an error although both prefixes are bound to the same namespace ([XML 1.0 section 3](https://www.w3.org/TR/xml/#GIMatch)). Everywhere else, a name is its local name and namespace URI, and the prefix doesn't matter.
+
+Two attributes are duplicates when they have the same local name and the same namespace URI, even with different prefixes.
+
+The reader also enforces limits on depth, attribute count, and the size of names, text, and comments. See [Security](/xmlessentials/guides/security#limits).
+
+## XML 1.1 differences
+
+XML 1.1 isn't a superset of XML 1.0. The reader and writer apply the rules of the version the document declares.
+
+| | XML 1.0 | XML 1.1 |
+| --- | --- | --- |
+| Control characters `U+0001` to `U+001F`, except tab, line feed, and carriage return | Not allowed, literally or as a reference | Allowed only as a character reference (`&#x1;`). A literal one throws `XML 1.1 RestrictedChar must be a character reference.` |
+| Control characters `U+007F` to `U+009F`, except NEL | Allowed | Allowed only as a character reference |
+| NEL (`U+0085`) and LS (`U+2028`) | Ordinary characters | Line ends |
+| `xmlns:p=""` | `XmlException`: `Prefix undeclaration is not allowed in XML 1.0.` | Removes the binding of prefix `p` |
+
+```csharp
+var options = new XmlReaderOptions();
+
+output.WriteLine($"1.0 control: {ReadTokens("<a>&#x1;</a>"u8, options)}");
+output.WriteLine($"1.1 control: {ReadTokens("<?xml version=\"1.1\"?><a>&#x1;</a>"u8, options)}");
+output.WriteLine($"1.0 unbind:  {ReadTokens("<a xmlns:p=\"urn:p\"><b xmlns:p=\"\"/></a>"u8, options)}");
+output.WriteLine($"1.1 unbind:  {ReadTokens("<?xml version=\"1.1\"?><a xmlns:p=\"urn:p\"><b xmlns:p=\"\"/></a>"u8, options)}");
+```
+
+The code produces the following output:
+
+```text
+1.0 control: XmlException at line 1, position 9: Invalid XML 1.0 character.
+1.1 control: XmlDeclaration StartElement Text("\u0001") EndElement
+1.0 unbind:  XmlException at line 1, position 35: Prefix undeclaration is not allowed in XML 1.0.
+1.1 unbind:  XmlDeclaration StartElement StartElement EndElement
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/38_XmlConformance.cs)
+
+To write XML 1.1, set `XmlWriterOptions.Version` or `XmlSerializerOptions.XmlVersion` to `XmlVersion.Version11`. `System.Xml` doesn't read XML 1.1 documents.
+
+## Namespaces
+
+| Rule | Behavior |
+| --- | --- |
+| `xmlns="uri"` and `xmlns:p="uri"` | Bind the default namespace and a prefix for the element and its descendants. An inner declaration hides an outer one. |
+| `xmlns=""` | Removes the default namespace. |
+| Unprefixed attributes | In no namespace. The default namespace doesn't apply to attributes. |
+| The `xml` prefix | Always bound to `http://www.w3.org/XML/1998/namespace`. Binding it to another namespace throws `The xml prefix must not be bound to another namespace.` |
+| The `xmlns` prefix | Can't be declared (`The xmlns prefix must not be declared.`) or used on an element name (`Element names must not use the xmlns prefix.`). |
+| The two reserved namespace names | Can't be bound to another prefix or used as the default namespace. |
+
+For how to read and write namespaces, see [Work with namespaces](/xmlessentials/guides/namespaces).
+
+## What the writer escapes
+
+Reading normalizes values, so the writer protects everything that normalization would change. Any string the writer accepts as a value is returned unchanged by the reader.
+
+| The value contains | In element text | In an attribute value |
+| --- | --- | --- |
+| `&`, `<` | `&amp;`, `&lt;` | `&amp;`, `&lt;` |
+| `"` | Written as is | `&quot;` |
+| `>` | Written as is, except after `]]`, where it is `&gt;` | Written as is |
+| Carriage return | `&#xD;` | `&#xD;` |
+| Tab | Written as is | `&#x9;` |
+| Line feed | Written as the line ending in `XmlWriterOptions.NewLine`, `"\n"` or `"\r\n"`. A reader gives either back as a line feed | `&#xA;` |
+| NEL, LS in XML 1.1 | `&#x85;`, `&#x2028;` | `&#x85;`, `&#x2028;` |
+| A control character that XML 1.1 allows only as a reference | `&#x1;` and so on | The same |
+| A character the version doesn't allow, such as `U+0001` in XML 1.0 | `XmlException`: `Illegal character in XML value.` | The same |
+
+Attribute values are always written in double quotation marks.
+
+```csharp
+const string attributeValue = "say \"hi\"\tthen\r\nleave";
+const string textValue = "1 < 2 && ]]> ends\r";
+
+var buffer = new ArrayBufferWriter<byte>();
+using (var writer = new Utf8XmlWriter(buffer, new XmlWriterOptions { OmitXmlDeclaration = true }))
+{
+    writer.WriteStartElement("note");
+    writer.WriteAttributeString("title", attributeValue);
+    writer.WriteStringValue(textValue);
+    writer.WriteEndElement();
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+
+var reader = new Utf8XmlReader(buffer.WrittenSpan);
+reader.Read();
+reader.MoveToNextAttribute();
+output.WriteLine(reader.GetString() == attributeValue);
+reader.MoveToElement();
+reader.Read();
+output.WriteLine(reader.GetString() == textValue);
+```
+
+The code produces the following output:
+
+```text
+<note title="say &quot;hi&quot;&#x9;then&#xD;&#xA;leave">1 &lt; 2 &amp;&amp; ]]&gt; ends&#xD;</note>
+True
+True
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/38_XmlConformance.cs)
+
+The writer also refuses to produce a document that isn't well formed:
+
+| Call | Message |
+| --- | --- |
+| A name that isn't an XML name | `Invalid XML name.` |
+| The same attribute twice | `Duplicate attribute.` |
+| A second root element | `Multiple root elements are not allowed.` |
+| A CDATA section whose text contains `]]>` | `CDATA must not contain ']]>'.` The writer doesn't split the section. |
+| A comment that contains `--` or ends with `-` | `Comments must not contain '--' or end with '-'.` |
+| `Dispose` while elements are still open | `The document has unclosed elements.` |
+
+Two things switch these checks off: `XmlWriterOptions.SkipValidation`, and `WriteRawValue`, which copies its input to the output without checking it. See [Use Utf8XmlWriter](/xmlessentials/guides/use-utf8xmlwriter).
+
+A lone UTF-16 surrogate in a .NET string isn't a character. The writer throws `XmlException` with the message `The text contains half of a surrogate pair.`
+
+## Round trips through XmlDocument
+
+With its default options, `XmlDocument.Parse` keeps comments and the whitespace-only text between elements, and `XmlDocument.WriteTo` writes the document it parsed with the same elements, attributes, namespace declarations, comments, processing instructions, and text, in the same order. An empty element (`<e/>`) and a start tag followed by an end tag (`<e></e>`) stay as they were, unless `XmlWriterOptions.EmptyElementStyle` is `StartAndEndTag`, which writes both as `<e></e>`.
+
+The output isn't always the same bytes as the input. These details of the original text carry no information in XML, and they aren't kept:
+
+| In the input | In the output |
+| --- | --- |
+| Whitespace outside the root element | Dropped |
+| Whitespace inside a tag, such as `<B />` or two spaces between attributes | Not kept. An empty-element tag has the form `XmlWriterOptions.EmptyElementStyle` says, `<B/>` by default. The attributes are laid out as `AttributeStyle` says, with one space before each by default |
+| Attribute values in single quotation marks | Double quotation marks |
+| CR LF and CR line ends | The line ending in `XmlWriterOptions.NewLine`, which defaults to `Environment.NewLine`. The reader normalizes them to line feeds, and the writer writes every line feed as that line ending |
+| Character references, such as `&#65;` | The character itself, escaped only where XML requires it |
+| The spelling of the XML declaration | `version`, then `encoding="utf-8"`, then `standalone` when it was present |
+
+See [Use XmlDocument](/xmlessentials/guides/use-xmldocument).
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Security" icon="shield-halved" href="/xmlessentials/guides/security">
+    Limits, DTD rejection, and guidance for untrusted input.
+  </Card>
+  <Card title="Supported types" icon="table-list" href="/xmlessentials/guides/supported-types">
+    The text each .NET type is written as and read from.
+  </Card>
+  <Card title="Use Utf8XmlReader" icon="book-open" href="/xmlessentials/guides/use-utf8xmlreader">
+    Read tokens, values, and errors.
+  </Card>
+  <Card title="Use Utf8XmlWriter" icon="pen" href="/xmlessentials/guides/use-utf8xmlwriter">
+    Write elements, attributes, and values.
+  </Card>
+</Columns>
+
+- [`Utf8XmlReader`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader)
+- [`Utf8XmlWriter`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter)
+- [`XmlReaderOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions)
+- [`XmlWriterOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWriterOptions)
+- [`XmlException`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException)
+- [`XmlVersion`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlVersion)
+- [`XmlWhitespaceHandling`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWhitespaceHandling)
+- [`XmlCommentHandling`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling)

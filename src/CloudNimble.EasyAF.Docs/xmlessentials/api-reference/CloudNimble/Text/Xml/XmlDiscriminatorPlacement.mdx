@@ -1,0 +1,88 @@
+---
+title: XmlDiscriminatorPlacement
+description: "Specifies where a polymorphic type discriminator is written."
+icon: list-ol
+tag: "ENUM"
+keywords: ['XmlDiscriminatorPlacement', 'CloudNimble.Text.Xml.XmlDiscriminatorPlacement', 'CloudNimble.Text.Xml', 'enum', 'System.Enum', 'CloudNimble.Text.Xml.Serialization.XmlPolymorphicAttribute', 'CloudNimble.Text.Xml.Serialization.XmlDerivedTypeAttribute', 'CloudNimble.Text.Xml.Serialization.XmlUnknownDerivedTypeHandling', 'CloudNimble.Text.Xml.XmlNamespaces', 'CloudNimble.Text.Xml.XmlAttributes']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlDiscriminatorPlacement
+```
+
+## Summary
+
+Specifies where a polymorphic type discriminator is written.
+
+## Usage
+
+`XmlDiscriminatorPlacement` is the type of `XmlPolymorphicAttribute.DiscriminatorPlacement`. It decides how a document says which derived type an element holds.
+
+| Value | The derived type is identified by | Example |
+| --- | --- | --- |
+| `ElementName` (default) | The name of the element | `<Book>...</Book>` |
+| `Attribute` | An attribute named by `TypeDiscriminatorPropertyName` | `<Payment kind="card">...</Payment>` |
+| `XsiType` | The `xsi:type` attribute | `<Vehicle xsi:type="Truck">...</Vehicle>` |
+
+The following base type identifies its derived types with a `kind` attribute:
+
+```csharp
+[XmlPolymorphic(DiscriminatorPlacement = XmlDiscriminatorPlacement.Attribute, TypeDiscriminatorPropertyName = "kind")]
+[XmlDerivedType<CardPayment>("card")]
+[XmlDerivedType<BankTransfer>("transfer")]
+public class Payment
+{
+    public decimal Amount { get; set; }
+}
+```
+
+A `Checkout` object whose `Payment` member holds a `CardPayment` is written as follows:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Checkout>
+  <OrderId>1042</OrderId>
+  <Payment kind="card">
+    <Amount>59.90</Amount>
+    <LastFour>4242</LastFour>
+  </Payment>
+</Checkout>
+```
+
+For complete examples of each placement, see [Serialize derived classes](/xmlessentials/guides/polymorphism) and the [polymorphism sample](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/16_Polymorphism.cs).
+
+## Considerations
+
+- `ElementName` changes the name of the element, so it suits a list or a member whose element name isn't fixed by a schema. An object of the base type itself keeps the member's own element name.
+- Under every placement, a value whose type is the declared type of the member, the item or the document element is written with no discriminator, even when that declared type is itself one of the derived types. Only a type below the declared type is identified. With `Attribute` or `XsiType`, and for the items of a wrapped collection, a discriminator that names a type that isn't the declared type or below it throws an `XmlException`: `The element identifies the type '...', which is not a '...'.` With `ElementName`, an element named for such a type isn't an element of the member at all: it is content that no member maps, skipped by default and an error under `XmlUnmappedMemberHandling.Disallow`.
+- `Attribute` requires `XmlPolymorphicAttribute.TypeDiscriminatorPropertyName`. Without it, the serializer throws `NotSupportedException` when it builds the type's metadata. The attribute is in no namespace.
+- `XsiType` writes the discriminator string as the value of `xsi:type`, with no namespace prefix inside the value. It matches the attribute that `System.Xml.Serialization` writes, but the serializer doesn't resolve the value as a schema type name.
+- With `Attribute` and `XsiType`, the discriminator can be anywhere in the start tag. With `ElementName`, an element whose name isn't declared is treated as content that no member maps.
+- The placement is set for each base type, on its `[XmlPolymorphic]` attribute. `XmlSerializerOptions` has no property for it.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `ElementName` | 0 | The element name of the derived type, which serves as the discriminator. |
+| `Attribute` | 1 | An attribute on the element. |
+| `XsiType` | 2 | An `xsi:type` attribute. |
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Serialization.XmlPolymorphicAttribute
+- CloudNimble.Text.Xml.Serialization.XmlDerivedTypeAttribute
+- CloudNimble.Text.Xml.Serialization.XmlUnknownDerivedTypeHandling
+- CloudNimble.Text.Xml.XmlNamespaces
+- CloudNimble.Text.Xml.XmlAttributes
+

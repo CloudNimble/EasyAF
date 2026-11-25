@@ -1,0 +1,108 @@
+---
+title: XmlValueKind
+description: "Specifies the kind of XML node that an [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) or a [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/..."
+icon: list-ol
+tag: "ENUM"
+keywords: ['XmlValueKind', 'CloudNimble.Text.Xml.XmlValueKind', 'CloudNimble.Text.Xml', 'enum', 'System.Enum', 'CloudNimble.Text.Xml.XmlElement', 'CloudNimble.Text.Xml.XmlTokenType', 'CloudNimble.Text.Xml.XmlDocument', 'CloudNimble.Text.Xml.Nodes.XmlNode']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlValueKind
+```
+
+## Summary
+
+Specifies the kind of XML node that an [XmlElement](/api-reference/CloudNimble/Text/Xml/XmlElement) or a
+[XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) represents.
+
+## Usage
+
+`XmlValueKind` says what kind of node an `XmlElement` or an `XmlNode` is. Read it from `XmlElement.ValueKind` or `XmlNode.ValueKind` before you treat a node as an element or read its value.
+
+```csharp
+const string xml = """
+    <Order xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><!-- packed by hand --><Item>Keyboard</Item><Gift/><Coupon xsi:nil="true"/>Leave at the door<![CDATA[**fragile**]]><?print label?></Order>
+    """;
+
+using XmlDocument document = XmlDocument.Parse(xml);
+
+foreach (XmlElement child in document.RootElement.EnumerateChildren())
+{
+    string description = child.ValueKind switch
+    {
+        XmlValueKind.Element or XmlValueKind.EmptyElement or XmlValueKind.Nil => $"<{child.LocalName}>",
+        XmlValueKind.ProcessingInstruction => $"target '{child.LocalName}', data '{child.GetString()}'",
+        _ => $"'{child.GetString()}'",
+    };
+
+    output.WriteLine($"{child.ValueKind,-21} {child.TokenType,-21} {description}");
+}
+```
+
+The code produces the following output. The first column is the `ValueKind`, and the second is the matching `XmlTokenType`.
+
+```text
+Comment               Comment               ' packed by hand '
+Element               StartElement          <Item>
+EmptyElement          StartElement          <Gift>
+Nil                   StartElement          <Coupon>
+Text                  Text                  'Leave at the door'
+CData                 CData                 '**fragile**'
+ProcessingInstruction ProcessingInstruction target 'print', data 'label'
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/27_QueryWithXmlElement.cs)
+
+## Considerations
+
+Not every value is reported by both DOMs:
+
+| Value | `XmlElement` (read-only document) | `XmlNode` (mutable tree) |
+| --- | --- | --- |
+| `Undefined` | A default `XmlElement`, which refers to no node | Never |
+| `Element` | An element with a start tag and an end tag | Every `XmlElementNode` |
+| `EmptyElement` | An element written as `<e/>` | Never |
+| `Nil` | An element whose `xsi:nil` is `true` or `1` | Never |
+| `Attribute` | An attribute | `XmlAttributeNode` |
+| `Text` | A text node | `XmlTextNode` |
+| `CData` | A CDATA section | `XmlCDataNode` |
+| `Comment` | A comment | `XmlCommentNode` |
+| `ProcessingInstruction` | A processing instruction | `XmlProcessingInstructionNode` |
+| `XmlDeclaration` | Never | `XmlDeclarationNode` |
+
+- In a document, an element has one of three kinds, so a test for elements must accept `Element`, `EmptyElement`, and `Nil`. An element that is nil reports `Nil` whether it's written as `<e xsi:nil="true"/>` or with an end tag; read `XmlElement.IsEmptyElement` for the form.
+- A document keeps comments and the white space between elements by default, so `Comment` and `Text` appear among the children of an indented element unless you parse with `XmlCommentHandling.Skip` and `XmlWhitespaceHandling.Insignificant`. `XmlNode.Parse` keeps both as well.
+- The declaration of a parsed document is `XmlDocument.Declaration`, not a node with the `XmlDeclaration` kind.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Undefined` | 0 | No node. This is the kind of a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement). |
+| `Element` | 2 | An element with a start tag and an end tag. |
+| `EmptyElement` | 3 | An empty-element tag (`<e/>`). |
+| `Attribute` | 4 | An attribute. |
+| `Text` | 5 | Character data. |
+| `CData` | 6 | A CDATA section. |
+| `Comment` | 7 | A comment. |
+| `ProcessingInstruction` | 8 | A processing instruction other than the XML declaration. |
+| `XmlDeclaration` | 9 | The XML declaration. Only [XmlDeclarationNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlDeclarationNode) reports this kind. |
+| `Nil` | 10 | An element whose `xsi:nil` attribute is `true` or `1`. Only [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) reports this kind. |
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlElement
+- CloudNimble.Text.Xml.XmlTokenType
+- CloudNimble.Text.Xml.XmlDocument
+- CloudNimble.Text.Xml.Nodes.XmlNode
+

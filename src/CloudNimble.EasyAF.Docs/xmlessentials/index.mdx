@@ -1,0 +1,140 @@
+---
+title: "XmlEssentials: The XML API .NET developers begged for"
+sidebarTitle: "Welcome"
+description: "System.Text.Json-shaped, UTF-8 first, 3x faster, 85% less memorysource generated, Native AOT ready, with XML 1.0 and 1.1 support."
+icon: "house"
+---
+
+For the better part of a decade, .NET developers have asked for XML that works the way JSON does in System.Text.Json: one static call to serialize, a UTF-8 reader that doesn't allocate, a source generator, and Native AOT that works. **XmlEssentials is that library.** It's a complete XML stack written from scratch, with no dependency on `System.Xml`, and it's ready for production today.
+
+### The System.Text.Json equivalent for XML that .NET developers have been begging for!
+
+```csharp
+using CloudNimble.Text.Xml;
+
+var person = new Person { Name = "Ada", Age = 36 };
+
+string xml = XmlSerializer.Serialize(person);
+Person? copy = XmlSerializer.Deserialize<Person>(xml);
+```
+
+```xml
+<?xml version="1.0" encoding="utf-8"?><Person><Name>Ada</Name><Age>36</Age></Person>
+```
+
+<Columns cols={2}>
+  <Card title="Get started in five minutes" icon="play" href="/xmlessentials/quickstart">
+    Install the package and read, write, and serialize your first document.
+  </Card>
+  <Card title="See the numbers" icon="gauge-high" href="/xmlessentials/benchmarks">
+    3.0× faster than `System.Xml` on average, with 85% less memory allocated.
+  </Card>
+</Columns>
+
+## Everything System.Text.Json taught you, now for XML
+
+If you know System.Text.Json, you already know XmlEssentials. The types, the method names, and the patterns carry straight over.
+
+| System.Text.Json | XmlEssentials | What it does |
+| --- | --- | --- |
+| `JsonSerializer` | [`XmlSerializer`](/xmlessentials/guides/serialize) | Turns objects into XML and back with one static call |
+| `Utf8JsonReader` | [`Utf8XmlReader`](/xmlessentials/guides/use-utf8xmlreader) | Reads UTF-8 one token at a time, without allocating |
+| `Utf8JsonWriter` | [`Utf8XmlWriter`](/xmlessentials/guides/use-utf8xmlwriter) | Writes UTF-8 straight into your buffer or stream |
+| `JsonDocument` | [`XmlDocument`](/xmlessentials/guides/use-xmldocument) | A read-only, pooled document you can query |
+| `JsonNode` | [`XmlNode`](/xmlessentials/guides/use-xmlnode) | A document you can build and change in memory |
+| `JsonSerializerContext` | [`XmlSerializerContext`](/xmlessentials/guides/source-generation) | Source-generated serialization with no reflection |
+| `JsonSerializerOptions` | [`XmlSerializerOptions`](/xmlessentials/guides/configure-options) | Naming policies, converters, and limits in one place |
+| `JsonConverter<T>` | [`XmlConverter<T>`](/xmlessentials/guides/custom-converters) | Your own reading and writing for any type |
+
+Coming from JSON? [Start with what's different about XML](/xmlessentials/guides/migrate/from-system-text-json).
+
+## Lightning fast, and light on memory
+
+XmlEssentials reads and writes UTF-8 directly. There's no transcoding to UTF-16, no string for every name, and no object for every node. Across 67 like-for-like benchmarks against `System.Xml`, it's 3.0× faster on average and allocates 85% less memory.
+
+<Columns cols={3}>
+  <Card title="Up to 19× faster" icon="bolt" href="/xmlessentials/benchmarks">
+    Reading a value takes 56 ns. `System.Xml` takes 1,068 ns.
+  </Card>
+  <Card title="3.1× to 3.4× faster parsing" icon="file-code" href="/xmlessentials/benchmarks">
+    Real documents into a DOM, in 104 bytes instead of hundreds of kilobytes.
+  </Card>
+  <Card title="Zero-allocation writes" icon="memory" href="/xmlessentials/benchmarks">
+    Serialize into a buffer you own and the library allocates 0 bytes.
+  </Card>
+</Columns>
+
+On lists and graphs of objects it runs level with System.Text.Json, which is remarkable for a format that demands much more of a parser. The [benchmarks page](/xmlessentials/benchmarks) shows every row, including the ones where JSON still wins and the one where `System.Xml` does.
+
+## Built for how you ship .NET today
+
+<Columns cols={4}>
+  <Card title="Source generation" icon="wand-magic-sparkles" href="/xmlessentials/guides/source-generation">
+    List your types on a context and a Roslyn incremental generator writes their metadata at build time. The serializer uses no reflection and generates no code at run time.
+  </Card>
+  <Card title="Native AOT and trimming" icon="rocket" href="/xmlessentials/guides/native-aot">
+    Publish with `PublishAot` and it works. A test in the suite publishes a real app with Native AOT and runs it.
+  </Card>
+  <Card title="XML 1.0 and XML 1.1" icon="check-double" href="/xmlessentials/guides/xml-conformance">
+    Both versions of the specification, plus Namespaces in XML, verified against the W3C conformance suite. `System.Xml` never implemented XML 1.1.
+  </Card>
+  <Card title="Your types, as you write them" icon="cubes" href="/xmlessentials/guides/immutable-types">
+    Records, constructors, `init` and `required` members, internal types, dictionaries, and polymorphism. No public parameterless constructor needed.
+  </Card>
+  <Card title="Streaming and async" icon="water" href="/xmlessentials/guides/streaming">
+    Streams, pipes, and `IAsyncEnumerable<T>`, so you can read a huge feed one item at a time.
+  </Card>
+  <Card title="Classes from your schema (preview)" icon="diagram-project" href="/xmlessentials/guides/xsd-source-generation">
+    Add an `.xsd` file to your project and get types and a serialization context generated for you. In preview.
+  </Card>
+  <Card title="Safe by default" icon="shield-halved" href="/xmlessentials/guides/security">
+    No DTDs, no external entities, and limits on depth and size. Billion-laughs and XXE attacks have nothing to attack.
+  </Card>
+  <Card title="No System.Xml" icon="feather" href="/xmlessentials/why-xmlessentials">
+    One package with no dependency on the old XML stack, so nothing of it lands in your trimmed app.
+  </Card>
+</Columns>
+
+## How it compares
+
+| | System.Xml | System.Text.Json | XmlEssentials |
+| --- | --- | --- | --- |
+| Format | XML | JSON | XML |
+| One-call static serializer | No | Yes | Yes |
+| UTF-8 span reader and `IBufferWriter<byte>` writer | No | Yes | Yes |
+| Read-only DOM in pooled memory | No | Yes | Yes |
+| DOM you can edit | Yes | Yes | Yes |
+| Roslyn source generator | No | Yes | Yes |
+| Native AOT serialization | No | Yes | Yes |
+| Positional records and constructor parameters | No | Yes | Yes |
+| Non-public types | No | Yes | Yes |
+| Dictionaries | No | Yes | Yes |
+| `IAsyncEnumerable<T>` streaming | No | Yes | Yes |
+| XML 1.1 | No | | Yes |
+| DTD processing and XSLT | Yes | | No |
+
+XmlEssentials is deliberately not a drop-in copy of `System.Xml`. It leaves out DTDs, XPath, XSLT, and encodings other than UTF-8. If you need those, keep `System.Xml` for that part of your app. See [XML conformance](/xmlessentials/guides/xml-conformance) for the exact boundary.
+
+## Tested like a platform library
+
+- **100% line coverage and 100% branch coverage**, enforced on every build.
+- **Thousands of tests**, run on both .NET 10 and .NET 11.
+- **283 cases from the W3C XML Conformance Test Suite**, plus real documents from other parsers' test suites.
+- **Documents are read split at every byte offset**, so XML that arrives in pieces reads the same as XML that arrives whole.
+- **Every sample in these docs is compiled and tested.** If the docs show output, a test asserts it.
+
+## Dive in
+
+<Columns cols={3}>
+  <Card title="Quickstart" icon="play" href="/xmlessentials/quickstart">
+    Install and write your first XML.
+  </Card>
+  <Card title="Why XmlEssentials?" icon="lightbulb" href="/xmlessentials/why-xmlessentials">
+    The story behind the library.
+  </Card>
+  <Card title="Migrate" icon="right-left" href="/xmlessentials/guides/migrate/from-xmlserializer">
+    Move over from `System.Xml`.
+  </Card>
+</Columns>
+
+<GitHub.Repo repo="CloudNimble/XmlEssentials" />

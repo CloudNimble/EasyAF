@@ -1,0 +1,120 @@
+---
+title: XmlVersion
+description: "Specifies the version of the XML recommendation that is in force for a document."
+icon: list-ol
+tag: "ENUM"
+keywords: ['XmlVersion', 'CloudNimble.Text.Xml.XmlVersion', 'CloudNimble.Text.Xml', 'enum', 'System.Enum', 'CloudNimble.Text.Xml.Utf8XmlReader', 'CloudNimble.Text.Xml.Utf8XmlWriter', 'CloudNimble.Text.Xml.XmlWriterOptions', 'CloudNimble.Text.Xml.XmlDeclarationInfo', 'CloudNimble.Text.Xml.XmlReaderState']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlVersion
+```
+
+## Summary
+
+Specifies the version of the XML recommendation that is in force for a document.
+
+## Usage
+
+`XmlVersion` names the version of XML whose rules apply to a document. You meet it in two places.
+
+**When you read,** you don't set it. `Utf8XmlReader` takes the version from the XML declaration, reports it in `Utf8XmlReader.Version`, and applies that version's rules to the rest of the document. A document with no declaration is XML 1.0.
+
+```csharp
+var reader = new Utf8XmlReader("<?xml version=\"1.1\" encoding=\"utf-8\" standalone=\"yes\"?><Note>one\u0085two</Note>"u8);
+output.WriteLine($"Before the first read: {reader.Version}");
+
+reader.Read();
+output.WriteLine($"{reader.TokenType}: {reader.Version}");
+
+reader.Read();
+reader.Read();
+output.WriteLine($"XML 1.1 text: {Escape(reader.GetString())}");
+
+reader = new Utf8XmlReader("<Note>one\u0085two</Note>"u8);
+reader.Read();
+reader.Read();
+output.WriteLine($"XML 1.0 text: {Escape(reader.GetString())} ({reader.Version})");
+```
+
+```text
+Before the first read: Version10
+XmlDeclaration: Version11
+XML 1.1 text: one\ntwo
+XML 1.0 text: one\u0085two (Version10)
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/21_ReadMarkupAndHandleErrors.cs)
+
+**When you write,** you choose it with `XmlWriterOptions.Version`. The writer puts the version in the declaration and applies that version's character rules to what you write.
+
+```csharp
+var buffer = new ArrayBufferWriter<byte>();
+
+using (var writer = new Utf8XmlWriter(buffer, new XmlWriterOptions { Version = XmlVersion.Version11 }))
+{
+    writer.WriteElementString("Note", "bell\u0007 next line\u0085end");
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+```
+
+```text
+<?xml version="1.1" encoding="utf-8"?><Note>bell&#x7; next line&#x85;end</Note>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/24_WriteNamespacesAndMarkup.cs)
+
+## Remarks
+
+[Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) takes the version from the XML declaration. An omitted declaration
+means [XmlVersion.Version10](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlVersion). XML 1.1 is not a superset of 1.0: NEL and LS are line endings
+only in 1.1, RestrictedChar must be a character reference in 1.1, and `xmlns:p=""` is
+legal only in Namespaces in XML 1.1.
+
+## Considerations
+
+XML 1.1 isn't a superset of XML 1.0. The same bytes can mean different things in the two versions, which is why the library tracks the version instead of treating every document alike.
+
+| | XML 1.0 | XML 1.1 |
+| --- | --- | --- |
+| U+0085 (next line) and U+2028 (line separator) in text | Ordinary characters. | Line ends. The reader reports them as a line feed, and the writer writes them as character references so that they're read back unchanged. |
+| Control characters U+0001 to U+001F, other than tab, line feed, and carriage return | Not allowed, even as a character reference. The writer throws. | Allowed only as a character reference. The writer writes one. |
+| Control characters U+007F to U+009F, other than U+0085 | Ordinary characters. | Allowed only as a character reference. The writer writes one. |
+| `xmlns:p=""` | An error. | Removes the binding of the prefix `p`. |
+
+Other things to know:
+
+- **`Version10` is the default** for the writer, and for a reader until it has read a declaration that says otherwise.
+- **U+0000 isn't allowed in either version.**
+- **Write XML 1.1 only when your data needs it.** Not every XML tool reads it.
+- **A version number other than `1.1` is read as XML 1.0,** provided it has the form `1.x`.
+- **The version survives reading in blocks.** `XmlReaderState` carries it from one reader to the next.
+
+See [XML conformance](/xmlessentials/guides/xml-conformance) for the full list of rules.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Version10` | 0 | XML 1.0 Fifth Edition. This is the version when the declaration is omitted or says `version="1.0"`. |
+| `Version11` | 1 | XML 1.1 Second Edition. Selected by `version="1.1"` in the XML declaration. |
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Utf8XmlReader
+- CloudNimble.Text.Xml.Utf8XmlWriter
+- CloudNimble.Text.Xml.XmlWriterOptions
+- CloudNimble.Text.Xml.XmlDeclarationInfo
+- CloudNimble.Text.Xml.XmlReaderState
+

@@ -1,0 +1,107 @@
+---
+title: XmlIgnoreCondition
+description: "Specifies when a property or field is ignored on serialization and deserialization."
+icon: list-ol
+tag: "ENUM"
+keywords: ['XmlIgnoreCondition', 'CloudNimble.Text.Xml.Serialization.XmlIgnoreCondition', 'CloudNimble.Text.Xml.Serialization', 'enum', 'System.Enum', 'CloudNimble.Text.Xml.Serialization.XmlIgnoreAttribute', 'CloudNimble.Text.Xml.XmlSerializerOptions']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlIgnoreCondition
+```
+
+## Summary
+
+Specifies when a property or field is ignored on serialization and deserialization.
+
+## Usage
+
+`XmlIgnoreCondition` says when a member is left out. Use it in two places: the `Condition` property of [`[XmlIgnore]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlIgnoreAttribute), for one member, and `XmlSerializerOptions.DefaultIgnoreCondition`, for every member. It is the counterpart of `JsonIgnoreCondition`.
+
+| Value | The member is |
+| --- | --- |
+| `Never` | Always written and read. This is the default for `DefaultIgnoreCondition`. |
+| `Always` | Never written and never read. This is the default for `[XmlIgnore]`. |
+| `WhenWritingDefault` | Left out when its value is `null` or the default value of its type. |
+| `WhenWriting` | Never written. Still read. |
+| `WhenReading` | Never read. Still written. |
+| `WhenWritingNull` | Left out when its value is `null`. |
+| `WhenWritingNullReference` | Left out when its value is a `null` reference. A nullable value type with no value, such as an `int?` that is `null`, is still written, as an element marked `xsi:nil="true"`. This is what `System.Xml.Serialization.XmlSerializer` does, and what `XmlSerializerOptions.Bcl` uses. |
+
+The following example serializes one object with three of the values that make sense as a default:
+
+```csharp
+var order = new PurchaseOrder { Id = 1042 };
+
+var never = new XmlSerializerOptions { OmitXmlDeclaration = true };
+output.WriteLine(XmlSerializer.Serialize(order, never));
+
+var whenNull = new XmlSerializerOptions
+{
+    OmitXmlDeclaration = true,
+    DefaultIgnoreCondition = XmlIgnoreCondition.WhenWritingNull,
+};
+output.WriteLine(XmlSerializer.Serialize(order, whenNull));
+
+var whenDefault = new XmlSerializerOptions
+{
+    OmitXmlDeclaration = true,
+    DefaultIgnoreCondition = XmlIgnoreCondition.WhenWritingDefault,
+};
+output.WriteLine(XmlSerializer.Serialize(order, whenDefault));
+```
+
+The code produces the following output:
+
+```xml
+<PurchaseOrder><Id>1042</Id><Customer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/><Placed>0001-01-01</Placed><Total>0</Total></PurchaseOrder>
+<PurchaseOrder><Id>1042</Id><Placed>0001-01-01</Placed><Total>0</Total></PurchaseOrder>
+<PurchaseOrder><Id>1042</Id></PurchaseOrder>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/09_IgnoreProperties.cs)
+
+## Remarks
+
+The values and their meaning are those of `System.Text.Json.Serialization.JsonIgnoreCondition`.
+
+## Considerations
+
+- `Always` has an effect only on `[XmlIgnore]`. Setting `DefaultIgnoreCondition` to `Always` throws an `ArgumentException`, because it would leave out every member.
+- `WhenWritingDefault` includes `null`. For a value type it compares with the default value, so `0`, `false`, and `0001-01-01` are left out. Be careful with it when a default value is meaningful to the reader of the XML.
+- A `null` collection wrapped with `[XmlArray]` is left out by `WhenWritingNull`, `WhenWritingNullReference`, and `WhenWritingDefault`, as any other `null` member is.
+- `WhenReading` doesn't stop a constructor parameter of the same name from being filled. On a required member it is an error, because the member could never be read: the serializer throws an `InvalidOperationException` when the type is first used.
+- `WhenWritingNull`, `WhenWritingNullReference`, `WhenWritingDefault`, and `WhenWriting` don't affect reading. There are no conditions that apply to reading only.
+- A member that is left out can't be told apart from a member that was never set. If the reader needs to see an explicit `null`, keep `Never` and let the serializer write `xsi:nil="true"`. See [Handle null values](/xmlessentials/guides/null-and-nil).
+- Collections follow their own rules for empty and `null`. See [Serialize collections](/xmlessentials/guides/collections#empty-and-null-collections).
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Never` | 0 | A member that is always serialized and deserialized. |
+| `Always` | 1 | A member that is always ignored, on both serialization and deserialization. |
+| `WhenWritingDefault` | 2 | A member that is not written when its value is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) or equals the default value for its type. |
+| `WhenWritingNull` | 3 | A member that is not written when its value is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `WhenWriting` | 4 | A member that is never written and is still read. |
+| `WhenReading` | 5 | A member that is never read and is still written. A document that gives it is accepted, and what it gives is
+skipped. A constructor parameter of the same name is still filled. |
+| `WhenWritingNullReference` | 6 | A member that is not written when its value is a [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) reference. A nullable value
+type with no value, such as an [Int32](https://learn.microsoft.com/dotnet/api/system.int32)? that is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null), is still written,
+as an element marked `xsi:nil`. This is what `System.Xml.Serialization.XmlSerializer` does. |
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Serialization.XmlIgnoreAttribute
+- CloudNimble.Text.Xml.XmlSerializerOptions
+

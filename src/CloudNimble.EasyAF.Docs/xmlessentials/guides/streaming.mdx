@@ -1,0 +1,261 @@
+---
+title: "How to serialize with streams, pipes, and async sequences"
+sidebarTitle: "Streams and pipes"
+description: "Serialize to and from streams and pipes without blocking, and read or write a long sequence one value at a time with IAsyncEnumerable."
+icon: "water"
+---
+
+This article shows how to use `XmlSerializer` with a `Stream`, a `PipeReader`, or a `PipeWriter`, and how to move a sequence of values through one of them without holding the whole sequence in memory. You need it for HTTP bodies, files, sockets, and feeds that are too large or too slow to treat as one string.
+
+The method names are the ones System.Text.Json uses: `SerializeAsync`, `DeserializeAsync`, `SerializeAsyncEnumerable`, and `DeserializeAsyncEnumerable`. The examples use this type:
+
+```csharp SensorReading.cs
+public sealed class SensorReading
+{
+    public string? Sensor { get; set; }
+
+    public double Value { get; set; }
+}
+```
+
+## Serialize one document to a stream
+
+`SerializeAsync` writes one document to a stream, and `DeserializeAsync` reads one document from a stream. Neither blocks a thread while the stream is busy.
+
+```csharp Program.cs
+var reading = new SensorReading { Sensor = "boiler", Value = 71.5 };
+
+using var stream = new MemoryStream();
+await XmlSerializer.SerializeAsync(stream, reading);
+output.WriteLine(Encoding.UTF8.GetString(stream.ToArray()));
+
+stream.Position = 0;
+SensorReading? copy = await XmlSerializer.DeserializeAsync<SensorReading>(stream);
+output.WriteLine($"{copy!.Sensor}: {copy.Value}");
+```
+
+The code produces the following output:
+
+```text
+<?xml version="1.0" encoding="utf-8"?><SensorReading><Sensor>boiler</Sensor><Value>71.5</Value></SensorReading>
+boiler: 71.5
+```
+
+The stream carries UTF-8. Both methods leave the stream open, so you decide when to dispose it.
+
+<Note>
+These two methods are asynchronous, but they are not incremental. `SerializeAsync` builds the document in a pooled buffer and then writes it to the stream with one asynchronous write. `DeserializeAsync` reads the stream to its end into a pooled buffer and then deserializes. Memory use grows with the size of the document. `XmlSerializerOptions.MaxDocumentByteCount` stops a read as soon as the limit is exceeded. To process a large document piece by piece, use the sequence methods in the next section.
+</Note>
+
+The synchronous overloads, `Serialize(Stream, ...)` and `Deserialize<T>(Stream, ...)`, are the blocking equivalents.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/19_Streaming.cs)
+
+## Write and read a sequence
+
+`SerializeAsyncEnumerable` takes an `IAsyncEnumerable<T>` and writes each value as it arrives. `DeserializeAsyncEnumerable` returns an `IAsyncEnumerable<T>` that produces each value as soon as the stream has delivered all of its bytes. By default, the values are the children of one document element.
+
+The examples use this method as the source of values:
+
+```csharp Program.cs
+private static async IAsyncEnumerable<SensorReading> ReadSensor([EnumeratorCancellation] CancellationToken cancellationToken = default)
+{
+    double[] values = [71.5, 72.25, 73];
+    foreach (double value in values)
+    {
+        await Task.Yield();
+        cancellationToken.ThrowIfCancellationRequested();
+        yield return new SensorReading { Sensor = "boiler", Value = value };
+    }
+}
+```
+
+```csharp Program.cs
+using var stream = new MemoryStream();
+await XmlSerializer.SerializeAsyncEnumerable(stream, ReadSensor());
+output.WriteLine(Encoding.UTF8.GetString(stream.ToArray()));
+
+stream.Position = 0;
+await foreach (SensorReading? reading in XmlSerializer.DeserializeAsyncEnumerable<SensorReading>(stream))
+{
+    output.WriteLine($"{reading!.Sensor}: {reading.Value}");
+}
+```
+
+The code produces the following output:
+
+```text
+<?xml version="1.0" encoding="utf-8"?><ArrayOfSensorReading><SensorReading><Sensor>boiler</Sensor><Value>71.5</Value></SensorReading><SensorReading><Sensor>boiler</Sensor><Value>72.25</Value></SensorReading><SensorReading><Sensor>boiler</Sensor><Value>73</Value></SensorReading></ArrayOfSensorReading>
+boiler: 71.5
+boiler: 72.25
+boiler: 73
+```
+
+Know the following about the wrapped form:
+
+- The document element is named `ArrayOf` followed by the root name of `T` with a capital first letter, which is the name a `List<T>` or a `T[]` has at the root. The whole name then goes through the element naming policy, so under `CamelCase` it starts with `arrayOf`. Each value is written under the root name of `T`. You can't change the wrapper's name. The wrapper is in the same namespace as the values, so `XmlSerializerOptions.DefaultNamespace` is declared once, on the wrapper.
+- With a `ReferenceHandler`, the values of the document share one set of references: an object that two values hold is written once, and it is read back as one object. With `topLevelValues` each value is a document of its own, with references of its own.
+- `DeserializeAsyncEnumerable` reads every child of the document element as a `T`. It doesn't check the name of the document element or the names of its children, so it can read a sequence that another system wrapped in an element of its own, such as `<Feed>`.
+- `Deserialize<List<T>>` and `Deserialize<T[]>` read this document, and `DeserializeAsyncEnumerable` reads what `Serialize` writes for a `List<T>` or a `T[]`: the three write the same thing.
+- An empty sequence writes an empty document element, and reading it produces no values.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/19_Streaming.cs)
+
+## Write each value as its own document
+
+Pass `topLevelValues: true` to write every value as a complete document, one after another in the same stream. This is the counterpart of the JSON Lines form that System.Text.Json reads and writes with the parameter of the same name. It suits a log or a feed that is appended to and never closed.
+
+```csharp Program.cs
+using var stream = new MemoryStream();
+await XmlSerializer.SerializeAsyncEnumerable(stream, ReadSensor(), topLevelValues: true);
+output.WriteLine(Encoding.UTF8.GetString(stream.ToArray()));
+
+stream.Position = 0;
+await foreach (SensorReading? reading in XmlSerializer.DeserializeAsyncEnumerable<SensorReading>(stream, topLevelValues: true))
+{
+    output.WriteLine($"{reading!.Sensor}: {reading.Value}");
+}
+```
+
+The code produces the following output:
+
+```text
+<?xml version="1.0" encoding="utf-8"?><SensorReading><Sensor>boiler</Sensor><Value>71.5</Value></SensorReading><?xml version="1.0" encoding="utf-8"?><SensorReading><Sensor>boiler</Sensor><Value>72.25</Value></SensorReading><?xml version="1.0" encoding="utf-8"?><SensorReading><Sensor>boiler</Sensor><Value>73</Value></SensorReading>
+boiler: 71.5
+boiler: 72.25
+boiler: 73
+```
+
+<Warning>
+A stream of several documents is not one well-formed XML document, and an ordinary XML parser rejects it. Use this form only when both ends agree on it.
+</Warning>
+
+Compare the two forms:
+
+| | `topLevelValues: false` (default) | `topLevelValues: true` |
+| --- | --- | --- |
+| Shape | One document. The values are children of one document element. | One document for each value. |
+| XML declaration | Once, at the start. | Before every value, unless `OmitXmlDeclaration` is `true`. |
+| Readable by any XML parser | Yes | No |
+| Name check when reading | None. | Each document element must match the root name of `T`. |
+| Between values when reading | Anything that is well formed inside an element. | White space is allowed between documents. The writer adds none. |
+| When the stream is written | Between values, once more than 8,192 bytes of output are pending, and at the end. | After every value. |
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/19_Streaming.cs)
+
+## Use pipes
+
+`System.IO.Pipelines` is the I/O model that ASP.NET Core uses for request and response bodies. The serializer accepts both ends of a pipe:
+
+| To do this | Call |
+| --- | --- |
+| Write one document and flush the pipe | `SerializeAsync(PipeWriter, value, ...)` |
+| Write one document without flushing | `Serialize(IBufferWriter<byte>, value, ...)`. A `PipeWriter` is an `IBufferWriter<byte>`. |
+| Read one document | `DeserializeAsync<T>(PipeReader, ...)`. The pipe is read until the writer completes it. |
+| Write a sequence | `SerializeAsyncEnumerable(PipeWriter, values, topLevelValues, ...)` |
+| Read a sequence | `DeserializeAsyncEnumerable<T>(PipeReader, topLevelValues, ...)` |
+
+The pipe overloads of the sequence methods that take options require the `topLevelValues` argument. In the next example, one task writes a sequence to a pipe while the calling method reads it from the other end.
+
+```csharp Program.cs
+var pipe = new Pipe();
+
+Task writing = WriteAndComplete(pipe.Writer);
+await foreach (SensorReading? reading in XmlSerializer.DeserializeAsyncEnumerable<SensorReading>(pipe.Reader, topLevelValues: false))
+{
+    output.WriteLine($"{reading!.Sensor}: {reading.Value}");
+}
+
+await writing;
+await pipe.Reader.CompleteAsync();
+```
+
+```csharp Program.cs
+private static async Task WriteAndComplete(PipeWriter writer)
+{
+    await XmlSerializer.SerializeAsyncEnumerable(writer, ReadSensor(), topLevelValues: false);
+    await writer.CompleteAsync();
+}
+```
+
+The code produces the following output:
+
+```text
+boiler: 71.5
+boiler: 72.25
+boiler: 73
+```
+
+The serializer doesn't complete either end of the pipe. Complete the writer when you have written everything, or the reader never sees the end of the data.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/19_Streaming.cs)
+
+## Cancel an operation
+
+Every asynchronous method takes a `CancellationToken`. The token is passed to the stream's read and write calls, and the sequence methods also check it between values. A canceled operation throws `OperationCanceledException`.
+
+```csharp Program.cs
+using var stream = new MemoryStream();
+await XmlSerializer.SerializeAsyncEnumerable(stream, ReadSensor());
+stream.Position = 0;
+
+using var cancellation = new CancellationTokenSource();
+try
+{
+    await foreach (SensorReading? reading in XmlSerializer.DeserializeAsyncEnumerable<SensorReading>(stream, cancellationToken: cancellation.Token))
+    {
+        output.WriteLine($"{reading!.Sensor}: {reading.Value}");
+        cancellation.Cancel();
+    }
+}
+catch (OperationCanceledException)
+{
+    output.WriteLine("Canceled");
+}
+```
+
+The code produces the following output:
+
+```text
+boiler: 71.5
+Canceled
+```
+
+The loop receives the first reading, cancels, and never sees the second one. Values that were already produced stay valid.
+
+When a write is canceled, or fails for any other reason, the bytes that were already passed to the stream stay there. For the wrapped form, that means the stream can hold a document with no end tag. Discard the output of a failed write.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/19_Streaming.cs)
+
+## Memory behavior
+
+- **Reading a sequence.** After each read from the stream, `DeserializeAsyncEnumerable` returns every value that is now complete. A value is returned only once all of it has been read; your loop never sees a value that is still being filled. The buffer starts at `XmlSerializerOptions.DefaultBufferSize` (0, which means 16,384 bytes) and comes from the shared array pool. It goes back when the enumeration ends, so dispose the enumerator if you stop early. `await foreach` does that for you.
+- **Values that span reads.** In the wrapped form, an object whose members are built-in simple values, other such objects, or collections of either is read a piece at a time: what it has read so far is kept between reads, the bytes it has used are released, and nothing is read twice. So the buffer doesn't have to hold a whole value, and it grows only when it fills with bytes that can't be used yet. Any other value is read once all of it is in the buffer, which then doubles as often as the value needs. That applies with `topLevelValues: true`, with a `ReferenceHandler`, to a value that isn't an object, and to an object with polymorphism, text or mixed content, extension data, a member that is populated, or a member whose type is read some other way, such as a dictionary or a type with a converter of your own.
+- **Writing a sequence.** Each value is written into the writer's buffer and passed to the stream between values, never in the middle of one, unless a single value is larger than the buffer.
+- **Malformed input.** A value that can't be read throws `XmlException` when the reader reaches it. The values before it have already been returned to your loop.
+- **Reference handling.** The sequence methods apply [`XmlReferenceHandler`](/xmlessentials/guides/preserve-references). In the wrapped form the values share one set of references, so a value may hold a `ref` to an object that an earlier value defined. Read the values in order and keep them if you rely on that. With `topLevelValues`, each value has its own references.
+
+## Performance
+
+The library's benchmarks move a sequence of 1,000 values through a `MemoryStream` with these methods and with the same methods in System.Text.Json. `System.Xml` has no streaming call for a sequence, so it is measured reading and writing an array whole. See [Benchmarks](/xmlessentials/benchmarks) for the method and the results.
+
+## Use source generation
+
+The stream overloads of every method on this page, and the `PipeReader` overloads, also come in a form that takes an `XmlTypeInfo<T>` from a generated context instead of `XmlSerializerOptions`. The `PipeReader` form of `DeserializeAsyncEnumerable` that takes an `XmlTypeInfo<T>` reads the wrapped form only; to read top-level values from a pipe with generated metadata, pass `pipeReader.AsStream()` to the `Stream` overload. Use that form in trimmed and Native AOT applications. The two `PipeWriter` overloads take options only. To write to a pipe with generated metadata, pass the `PipeWriter` to `Serialize(IBufferWriter<byte>, value, xmlTypeInfo)` and flush it yourself. See [Source generation](/xmlessentials/guides/source-generation).
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Serialize" icon="arrow-right-from-bracket" href="/xmlessentials/guides/serialize">
+    Write objects to strings, byte arrays, and writers.
+  </Card>
+  <Card title="Deserialize" icon="arrow-right-to-bracket" href="/xmlessentials/guides/deserialize">
+    Read objects from strings, UTF-8 bytes, and readers.
+  </Card>
+  <Card title="Collections" icon="list" href="/xmlessentials/guides/collections">
+    Serialize lists and arrays that fit in memory.
+  </Card>
+  <Card title="Use Utf8XmlReader" icon="book-open" href="/xmlessentials/guides/use-utf8xmlreader">
+    Read a large document token by token.
+  </Card>
+</Columns>

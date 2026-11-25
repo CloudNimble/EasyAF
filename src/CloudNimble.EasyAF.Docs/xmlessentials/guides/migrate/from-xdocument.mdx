@@ -1,0 +1,453 @@
+---
+title: "Migrate from XDocument and System.Xml.XmlDocument"
+sidebarTitle: "From XDocument and XmlDocument"
+description: "Move LINQ to XML and System.Xml.XmlDocument code to the read-only XmlDocument or the mutable XmlNode tree, and see what has no counterpart."
+icon: "right-left"
+---
+
+This article is for developers who load XML into `XDocument` and `XElement` (LINQ to XML) or into `System.Xml.XmlDocument`, and want to move that code to XmlEssentials. It shows which XmlEssentials type replaces which use, maps the members you call, and lists what isn't there.
+
+XmlEssentials has two document models where `System.Xml` has one for each API, and they follow System.Text.Json: `XmlDocument` and `XmlElement` correspond to `JsonDocument` and `JsonElement`, and the `XmlNode` types in `CloudNimble.Text.Xml.Nodes` correspond to `JsonNode`.
+
+Which one you choose matters for speed. In the project's [benchmarks](/xmlessentials/benchmarks#parse-into-a-dom), the read-only `XmlDocument` parses four real documents 3.1× to 3.4× faster than `System.Xml.XmlDocument` and allocates 104 bytes for each. The mutable tree parses 1.5× faster than `System.Xml.XmlDocument` and `XDocument`, but `XDocument` is faster at [parsing, changing, and writing](/xmlessentials/benchmarks#change-a-document) a whole document.
+
+<Note>
+`CloudNimble.Text.Xml.XmlDocument`, `XmlElement`, and `Nodes.XmlNode` share their names with types in `System.Xml`. A file that imports both namespaces needs an alias or a fully qualified name. During a migration, move one file at a time and remove `using System.Xml;` from it.
+</Note>
+
+## Choose the replacement
+
+| You use `XDocument` or `System.Xml.XmlDocument` to | Use | Why |
+| --- | --- | --- |
+| Load a document and read values from it | [`XmlDocument` and `XmlElement`](/xmlessentials/guides/use-xmldocument) | Read-only. Parses once into pooled buffers, so you dispose the document. Typed getters. |
+| Load a document, change it, and save it | [`XmlNode` and `XmlElementNode`](/xmlessentials/guides/use-xmlnode) | A tree of objects that you add to, remove from, and rewrite. |
+| Build a document in code | [`XmlElementNode`](/xmlessentials/guides/use-xmlnode), or [`Utf8XmlWriter`](/xmlessentials/guides/use-utf8xmlwriter) when you don't need the tree afterwards | The writer produces the bytes directly. |
+| Fill in your own classes from a document | [`XmlSerializer`](/xmlessentials/guides/deserialize) | Maps elements and attributes to properties for you. |
+| Query with LINQ or XPath | No direct replacement | See [Queries](#queries). |
+
+You can combine the two models. `XmlElement.CloneNode()` copies one element of a read-only document into the mutable tree, and both models write themselves to a `Utf8XmlWriter`.
+
+## Table of differences
+
+| Feature | LINQ to XML and `System.Xml.XmlDocument` | XmlEssentials | More information |
+| --- | --- | --- | --- |
+| Mutability | One mutable model | A read-only model and a mutable one | [Choose the replacement](#choose-the-replacement) |
+| Lifetime | Garbage collected | `XmlDocument` is `IDisposable` and returns buffers to a pool. `XmlNode` is garbage collected | [Use XmlDocument](/xmlessentials/guides/use-xmldocument) |
+| Names | `XName` and `XNamespace` | A local name and a namespace URI, as two strings | [Member mapping](#member-mapping) |
+| Missing child or attribute | `null` | `GetChild` and `GetAttribute` throw. `TryGetChild` and `TryGetAttribute` return `false`. The `XmlElementNode` indexers return `null` | [Read a document](#read-a-document) |
+| Typed values | Explicit casts on `XElement` and `XAttribute` | `GetInt32`, `GetBoolean`, and the other `Get` methods on `XmlElement` | [Member mapping](#member-mapping) |
+| Child enumeration | `Elements()` returns elements only | `EnumerateChildren()` returns every child node | [Read a document](#read-a-document) |
+| White space between elements | Dropped unless you ask for `PreserveWhitespace` | Kept unless you ask for `Insignificant` | [Comments and white space](#comments-and-white-space) |
+| Queries | LINQ axis methods, XPath | A loop. LINQ to Objects over `Children` in the mutable tree | [Queries](#queries) |
+| Input and output | Any encoding, `TextReader`, `XmlReader`, file name | UTF-8 bytes, `string`, or `Stream`. Output through `Utf8XmlWriter` | [Save a document](#save-a-document) |
+| DTD | Loaded | An error | [What isn't supported](#what-isnt-supported) |
+
+## Read a document
+
+The following pair loads a library document, lists the shelves and books, reads an attribute as a number, and checks for an element that isn't there.
+
+<CodeGroup>
+
+```csharp LINQ to XML
+XDocument document = XDocument.Parse(libraryXml);
+XElement library = document.Root!;
+
+foreach (XElement shelf in library.Elements("Shelf"))
+{
+    Console.WriteLine($"Shelf: {(string?)shelf.Attribute("name")}");
+
+    foreach (XElement book in shelf.Elements("Book"))
+    {
+        string? title = (string?)book.Element("Title");
+        int year = (int)book.Attribute("year")!;
+        Console.WriteLine($"  {title} ({year})");
+    }
+}
+
+if (library.Element("Annex") is null)
+{
+    Console.WriteLine("No annex");
+}
+```
+
+```csharp XmlEssentials
+using XmlDocument document = XmlDocument.Parse(LibraryXml);
+XmlElement library = document.RootElement;
+
+foreach (XmlElement shelf in library.EnumerateChildren())
+{
+    if (shelf.ValueKind is not (XmlValueKind.Element or XmlValueKind.EmptyElement or XmlValueKind.Nil) || shelf.LocalName != "Shelf")
+    {
+        continue;
+    }
+
+    output.WriteLine($"Shelf: {shelf.GetAttribute("name").GetString()}");
+
+    foreach (XmlElement book in shelf.EnumerateChildren())
+    {
+        if (book.ValueKind is not (XmlValueKind.Element or XmlValueKind.EmptyElement or XmlValueKind.Nil) || book.LocalName != "Book")
+        {
+            continue;
+        }
+
+        string? title = book.GetChild("Title").GetString();
+        int year = book.GetAttribute("year").GetInt32();
+        output.WriteLine($"  {title} ({year})");
+    }
+}
+
+if (!library.TryGetChild("Annex", out _))
+{
+    output.WriteLine("No annex");
+}
+```
+
+</CodeGroup>
+
+Both read this document:
+
+```xml
+<Library>
+  <Shelf name="Fiction">
+    <Book id="1" year="1965"><Title>Dune</Title></Book>
+    <Book id="2" year="1984"><Title>Neuromancer</Title></Book>
+  </Shelf>
+  <Shelf name="Science">
+    <Book id="3" year="1988"><Title>A Brief History of Time</Title></Book>
+  </Shelf>
+</Library>
+```
+
+Both produce the following output:
+
+```text
+Shelf: Fiction
+  Dune (1965)
+  Neuromancer (1984)
+Shelf: Science
+  A Brief History of Time (1988)
+No annex
+```
+
+What changed:
+
+- The document is in a `using` statement. An `XmlElement` is a view into the document's buffers, and it throws `ObjectDisposedException` after the document is disposed.
+- `EnumerateChildren` returns every child node, and in this indented document that includes the white space between elements. The loop keeps the nodes whose `ValueKind` is `Element` and whose name matches. `Elements("Shelf")` did both for you.
+- `GetChild` and `GetAttribute` throw an `XmlException` when the name isn't found. Where LINQ to XML code tests for `null`, call `TryGetChild` or `TryGetAttribute`.
+- A cast becomes a method: `(int)attribute` is `GetInt32()`, and `(string)element` is `GetString()`.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/43_MigrateFromXDocument.cs)
+
+## Member mapping
+
+The table lists the LINQ to XML member, the `System.Xml.XmlDocument` member that does the same job, and the XmlEssentials member in each model.
+
+| LINQ to XML | `System.Xml.XmlDocument` | Read-only (`XmlDocument`, `XmlElement`) | Mutable (`XmlNode`, `XmlElementNode`) |
+| --- | --- | --- | --- |
+| `XDocument.Parse(text)` | `LoadXml(text)` | `XmlDocument.Parse(text)` | `XmlNode.Parse(text)` |
+| `XDocument.Load(stream)` | `Load(stream)` | `XmlDocument.Parse(stream)`, and overloads for UTF-8 spans and sequences | `XmlNode.Parse(utf8Xml)` for UTF-8 bytes. No `Stream` overload: call `XmlDocument.Parse(stream)`, then `RootElement.CloneNode()` |
+| `Root` | `DocumentElement` | `RootElement` | `XmlNode.Parse` returns the root element. Cast it to `XmlElementNode` |
+| `Declaration` | First child, an `XmlDeclaration` | `Declaration` | Not kept by `XmlNode.Parse` |
+| `Element(name)` | `element[name]` | `GetChild(localName)`, `TryGetChild(localName, out child)` | `element[localName]` |
+| `Elements()`, `Elements(name)` | `ChildNodes` | `EnumerateChildren()`, then filter | `Children`, then filter |
+| `Attribute(name)` | `GetAttribute(name)`, `Attributes[name]` | `GetAttribute(localName)`, `TryGetAttribute(localName, out attribute)` | `Attributes[localName]` |
+| `Attributes()` | `Attributes` | `EnumerateAttributes()`, `AttributeCount` | `Attributes` |
+| `Name.LocalName`, `Name.NamespaceName` | `LocalName`, `NamespaceURI`, `Prefix` | `LocalName`, `NamespaceUri`, `Prefix` | `LocalName`, `NamespaceUri`, `Prefix` |
+| `Value` | `InnerText` | `GetString()`, `GetInnerText()` | `InnerText` on an element. `Value` on an attribute, text, CDATA, or comment node |
+| `(int)element`, `(bool)attribute`, and the other casts | `XmlConvert` on `InnerText` | `GetInt32()`, `GetInt64()`, `GetBoolean()`, `GetDecimal()`, `GetDouble()`, `GetDateTime()`, `GetDateTimeOffset()`, `GetGuid()`, `GetBytesFromBase64()` | No typed getters. Values are strings |
+| `NodeType` | `NodeType` | `ValueKind`, `TokenType` | `ValueKind` |
+| `IsEmpty` | `IsEmpty` | `IsEmptyElement` | Check `Children.Count`. `IsEmptyElement` says whether an element with no children is written as `<e/>` or `<e></e>` |
+| `Parent` | `ParentNode` | No counterpart | `Parent` |
+| `Descendants(name)` | `GetElementsByTagName(name)`, `SelectNodes("//name")` | No counterpart. See [Queries](#queries) | No counterpart. See [Queries](#queries) |
+| `Add(content)` | `AppendChild(node)` | Read-only | `Add(node)`, `AddElement(localName)`, `Children.Insert(index, node)` |
+| `Remove()` | `RemoveChild(node)` | Read-only | `Children.Remove(node)`, `Attributes.Remove(attribute)` |
+| `SetAttributeValue(name, value)` | `SetAttribute(name, value)` | Read-only | `SetAttribute(localName, value)` |
+| `SetValue(value)`, `Value = text` | `InnerText = text` | Read-only | `InnerText = text` |
+| `new XElement(element)` | `CloneNode(true)` | `CloneNode()` returns a mutable copy | `DeepClone()` |
+| `ToString()` | `OuterXml` | `GetRawXml()` | `ToString()` |
+| `Save(stream)`, `WriteTo(writer)` | `Save(stream)`, `WriteTo(writer)` | `WriteTo(utf8XmlWriter)` | `WriteTo(utf8XmlWriter)` |
+
+Details that differ from what the member names suggest:
+
+- Where a member takes a name, a second overload takes a namespace URI: `GetChild("Title", "urn:contoso:books")`. There is no `XName` type to build with `ns + "Title"`.
+- `XElement.SetAttributeValue(name, null)` removes the attribute. `XmlElementNode.SetAttribute(name, null)` stores an empty string. To remove an attribute, call `Attributes.Remove`.
+- `XmlElement.GetString()` on an element returns its text content. It returns `null` only when the element has `xsi:nil="true"`.
+- `XmlElement` is a struct. `default(XmlElement)` refers to no node, and its `ValueKind` is `Undefined`.
+
+## Comments and white space
+
+`XmlDocument.Parse` and `XmlNode.Parse` keep comments and keep the white space between elements, so a document that you parse and write back keeps its comments and indentation. `XDocument.Parse` and `System.Xml.XmlDocument.Load` also keep comments, but they drop white space between elements unless you ask for it with `LoadOptions.PreserveWhitespace` or `PreserveWhitespace = true`. The XmlEssentials default is the same as those settings.
+
+The consequence for migrated code is in the child count:
+
+```csharp Program.cs
+const string xml = """
+    <Order>
+      <!-- rush -->
+      <Item>Keyboard</Item>
+    </Order>
+    """;
+
+using (XmlDocument document = XmlDocument.Parse(xml))
+{
+    var buffer = new ArrayBufferWriter<byte>();
+    using (var writer = new Utf8XmlWriter(buffer, new XmlWriterOptions { NewLine = "\n", OmitXmlDeclaration = true }))
+    {
+        document.WriteTo(writer);
+    }
+
+    output.WriteLine($"Default: {CountChildren(document.RootElement)} children");
+    output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+}
+
+var elementsOnly = new XmlDocumentOptions
+{
+    CommentHandling = XmlCommentHandling.Skip,
+    WhitespaceHandling = XmlWhitespaceHandling.Insignificant,
+};
+
+using (XmlDocument document = XmlDocument.Parse(xml, elementsOnly))
+{
+    output.WriteLine($"Skip and Insignificant: {CountChildren(document.RootElement)} child");
+}
+```
+
+`CountChildren` is a helper in the sample that counts what `EnumerateChildren` returns. The code produces the following output:
+
+```text
+Default: 5 children
+<Order>
+  <!-- rush -->
+  <Item>Keyboard</Item>
+</Order>
+Skip and Insignificant: 1 child
+```
+
+With the default options, `Order` has five children: white space, the comment, white space, `Item`, and white space. `XDocument.Parse` with its defaults gives two, the comment and `Item`. Choose one of these when you move code that walks child nodes:
+
+- Filter on `ValueKind`, as the samples on this page do. The document still round-trips.
+- Pass `XmlDocumentOptions` with `WhitespaceHandling = XmlWhitespaceHandling.Insignificant`, and `CommentHandling = XmlCommentHandling.Skip` if you don't want comments either. The document then holds elements and text only.
+
+The round trip keeps the document's content, not every byte of its formatting. Details that aren't part of the XML data, such as the quote character around an attribute value, are written in the writer's own style. Three of them are set by `XmlWriterOptions`: `NewLine` is the line ending of the whole output, which is why the sample sets it; `EmptyElementStyle` is the form of an empty-element tag, where `XmlEmptyElementStyle.SelfClosingWithSpace` gives the `<Item />` that `XDocument` writes; and `AttributeStyle` is the layout of attributes. See [Use XmlDocument](/xmlessentials/guides/use-xmldocument#what-a-round-trip-keeps).
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/43_MigrateFromXDocument.cs)
+
+## Queries
+
+LINQ to XML is a query API: `Descendants`, `Ancestors`, `ElementsAfterSelf`, and the other axis methods return sequences that you compose with LINQ. `System.Xml.XmlDocument` has `SelectNodes` and `SelectSingleNode` for XPath. XmlEssentials has neither. `XmlElement.EnumerateChildren` returns a struct enumerator that works in `foreach` and doesn't implement `IEnumerable<T>`, so LINQ operators don't apply to it.
+
+For a search at any depth, write the recursion. This is the replacement for `document.Descendants("Title")`:
+
+<CodeGroup>
+
+```csharp LINQ to XML
+Console.WriteLine(string.Join(", ", document.Descendants("Title").Select(t => t.Value)));
+```
+
+```csharp XmlEssentials
+public static void Descendants(TextWriter output)
+{
+    using XmlDocument document = XmlDocument.Parse(LibraryXml);
+
+    var titles = new List<string>();
+    CollectTitles(document.RootElement, titles);
+
+    output.WriteLine(string.Join(", ", titles));
+}
+
+private static void CollectTitles(XmlElement element, List<string> titles)
+{
+    foreach (XmlElement child in element.EnumerateChildren())
+    {
+        if (child.ValueKind is not (XmlValueKind.Element or XmlValueKind.EmptyElement or XmlValueKind.Nil))
+        {
+            continue;
+        }
+
+        if (child.LocalName == "Title")
+        {
+            titles.Add(child.GetString()!);
+        }
+
+        CollectTitles(child, titles);
+    }
+}
+```
+
+</CodeGroup>
+
+Both produce the following output:
+
+```text
+Dune, Neuromancer, A Brief History of Time
+```
+
+An element has one of three kinds: `Element` when it has a start tag and an end tag, `EmptyElement` when it's written as one tag (`<Item/>`), and `Nil` when it carries `xsi:nil="true"`. Test for every kind that can occur in your documents. `GetString` returns `null` for a nil element.
+
+In the mutable tree, `XmlElementNode.Children` is an `IList<XmlNode>`, so LINQ to Objects works on one level at a time. The next section uses `OfType<XmlElementNode>()` and `First` that way.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/43_MigrateFromXDocument.cs)
+
+<Tip>
+If a query reads many values from one document into objects, [`XmlSerializer.Deserialize`](/xmlessentials/guides/deserialize) usually replaces the query and the object construction together.
+</Tip>
+
+## Change a document
+
+To change XML, parse it with `XmlNode.Parse`, which returns the root element of a mutable tree. The following pair renames a shelf, adds a book, and removes one.
+
+<CodeGroup>
+
+```csharp LINQ to XML
+XElement fiction = library.Element("Shelf")!;
+fiction.SetAttributeValue("name", "Classics");
+
+fiction.Add(new XElement("Book",
+    new XAttribute("id", 4),
+    new XAttribute("year", 1951),
+    new XElement("Title", "Foundation")));
+
+fiction.Elements("Book").First(b => (string?)b.Attribute("id") == "2").Remove();
+
+Console.WriteLine(fiction.ToString(SaveOptions.DisableFormatting));
+```
+
+```csharp XmlEssentials
+var library = (XmlElementNode)XmlNode.Parse(
+    """<Library><Shelf name="Fiction"><Book id="1" year="1965"><Title>Dune</Title></Book><Book id="2" year="1984"><Title>Neuromancer</Title></Book></Shelf></Library>""")!;
+
+XmlElementNode fiction = library["Shelf"]!;
+fiction.SetAttribute("name", "Classics");
+
+XmlElementNode book = fiction.AddElement("Book");
+book.SetAttribute("id", "4");
+book.SetAttribute("year", "1951");
+book.AddElement("Title").Add(new XmlTextNode("Foundation"));
+
+XmlElementNode neuromancer = fiction.Children
+    .OfType<XmlElementNode>()
+    .First(b => b.Attributes["id"]?.Value == "2");
+fiction.Children.Remove(neuromancer);
+
+output.WriteLine(fiction.ToString());
+```
+
+</CodeGroup>
+
+Both produce the following output:
+
+```xml
+<Shelf name="Classics"><Book id="1" year="1965"><Title>Dune</Title></Book><Book id="4" year="1951"><Title>Foundation</Title></Book></Shelf>
+```
+
+What changed:
+
+- There is no functional construction. You create a node and then add to it. `AddElement` returns the new element, so calls chain.
+- Attribute values and text are strings. LINQ to XML converts `4` and `1951` for you; here you write `"4"` and `"1951"`.
+- A node is removed through its parent's `Children` list. A node has no `Remove` method of its own.
+- `ToString` writes the element without a declaration and without adding indentation. `XElement.ToString()` indents unless you pass `SaveOptions.DisableFormatting`.
+- `XDocument.Parse` builds every node before it returns. `XmlNode.Parse` keeps the parsed input and makes the nodes under an element when you first reach into it, and an element that nothing reaches into is written straight from the input. See [How a parsed tree is built](/xmlessentials/guides/use-xmlnode#how-a-parsed-tree-is-built).
+
+The input in this sample is on one line. `XmlNode.Parse` keeps white space between elements, so in an indented document the new `Book` element would follow the old indentation text without any of its own.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/43_MigrateFromXDocument.cs)
+
+## Save a document
+
+`XDocument.Save` and `System.Xml.XmlDocument.Save` take a stream, a `TextWriter`, a file name, or an `XmlWriter`. In XmlEssentials, both models write to a `Utf8XmlWriter`, and the writer's options control the declaration and the indentation.
+
+<CodeGroup>
+
+```csharp LINQ to XML
+var order = new XElement("Order",
+    new XAttribute("id", 1042),
+    new XElement("Item", "Keyboard"),
+    new XElement("Item", "Mouse"));
+
+using var stream = new MemoryStream();
+new XDocument(order).Save(stream);
+```
+
+```csharp XmlEssentials
+var order = new XmlElementNode("Order");
+order.SetAttribute("id", "1042");
+order.AddElement("Item").Add(new XmlTextNode("Keyboard"));
+order.AddElement("Item").Add(new XmlTextNode("Mouse"));
+
+using var stream = new MemoryStream();
+var options = new XmlWriterOptions { Indented = true, NewLine = "\n" };
+
+using (var writer = new Utf8XmlWriter(stream, options))
+{
+    order.WriteTo(writer);
+}
+
+output.WriteLine(Encoding.UTF8.GetString(stream.ToArray()));
+```
+
+</CodeGroup>
+
+The XmlEssentials code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Order id="1042">
+  <Item>Keyboard</Item>
+  <Item>Mouse</Item>
+</Order>
+```
+
+`XDocument.Save` writes the same text, preceded by a UTF-8 byte order mark. `Utf8XmlWriter` writes one only when `XmlWriterOptions.EmitByteOrderMark` is `true`.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/43_MigrateFromXDocument.cs)
+
+## What isn't supported
+
+| Feature | Status in XmlEssentials | What to do instead |
+| --- | --- | --- |
+| XPath (`XPathSelectElements`, `SelectNodes`, `SelectSingleNode`, `CreateNavigator`) | Not supported | Walk the tree, or deserialize into types. |
+| XSLT (`XslCompiledTransform` over a document) | Not supported | Keep `System.Xml` for the transform. |
+| LINQ axis methods (`Descendants`, `Ancestors`, `ElementsBeforeSelf`, `ElementsAfterSelf`, `DescendantNodes`) | Not supported | Write a loop or a recursive method. LINQ to Objects works on `XmlElementNode.Children`. |
+| Functional construction (`new XElement("a", new XElement("b"))`) | Not supported | Create the node, then call `Add`, `AddElement`, and `SetAttribute`. |
+| `XName` and `XNamespace` | Not supported | Pass the local name and the namespace URI as strings. |
+| Annotations (`AddAnnotation`, `Annotation<T>`) | Not supported | Keep the data in a dictionary keyed by node. |
+| Change events (`XObject.Changed`, `XmlDocument.NodeChanged`) | Not supported | No replacement. |
+| `XStreamingElement` | Not supported | Write with [`Utf8XmlWriter`](/xmlessentials/guides/use-utf8xmlwriter). |
+| Schema validation (`Validate` extension methods, `XmlDocument.Validate`) | Not supported | Validate with `System.Xml` before or after. |
+| DTDs and `XDocumentType` | A document with `<!DOCTYPE` is an `XmlException` | Remove the DTD. See [Security](/xmlessentials/guides/security). |
+| Encodings other than UTF-8 | Rejected | Transcode to UTF-8 first. |
+| Parent and sibling navigation on the read-only model | Not supported | Use the mutable tree, which has `Parent`, or keep the parent in your loop. |
+| Line information (`IXmlLineInfo`, `LoadOptions.SetLineInfo`) | Not on nodes | An `XmlException` from parsing has `LineNumber` and `LinePosition`. |
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Use XmlDocument" icon="file-code" href="/xmlessentials/guides/use-xmldocument">
+    The complete guide to the read-only model.
+  </Card>
+  <Card title="Use XmlNode" icon="diagram-project" href="/xmlessentials/guides/use-xmlnode">
+    The complete guide to the mutable tree.
+  </Card>
+  <Card title="Deserialize" icon="arrow-right-to-bracket" href="/xmlessentials/guides/deserialize">
+    Read XML into your own types.
+  </Card>
+  <Card title="Namespaces" icon="tags" href="/xmlessentials/guides/namespaces">
+    Names, prefixes, and URIs.
+  </Card>
+  <Card title="Migrate from XmlReader and XmlWriter" icon="right-left" href="/xmlessentials/guides/migrate/from-xmlreader-xmlwriter">
+    Move low-level reading and writing code.
+  </Card>
+  <Card title="XML conformance" icon="circle-check" href="/xmlessentials/guides/xml-conformance">
+    What the parser accepts and rejects.
+  </Card>
+</Columns>
+
+API reference:
+
+- [`XmlDocument`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument)
+- [`XmlElement`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement)
+- [`XmlDocumentOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions)
+- [`XmlNode`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode)
+- [`XmlElementNode`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlElementNode)
+- [`XmlNodeList`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNodeList)
+- [`XmlAttributeNodeList`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlAttributeNodeList)

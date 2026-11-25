@@ -1,0 +1,494 @@
+---
+title: "How to serialize collections and dictionaries as XML"
+sidebarTitle: "Serialize collections"
+description: "Learn how XmlSerializer writes lists, arrays, and dictionaries: repeated elements or a wrapper element, item names, empty and null collections."
+icon: "list"
+---
+
+JSON has an array syntax. XML doesn't: a list is a run of sibling elements, and formats differ on whether those siblings sit inside a wrapper element. This article shows the shape [`XmlSerializer`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) uses by default, how to add a wrapper and name the items, how dictionaries are mapped, and which collection types can be read back.
+
+## Repeated elements without a wrapper
+
+By default, a collection member is written as one element per item, each named after the member. There is no wrapper element.
+
+```csharp Playlist.cs
+public sealed class Playlist
+{
+    public string? Name { get; set; }
+
+    public List<string> Tracks { get; set; } = [];
+}
+```
+
+```csharp Program.cs
+var playlist = new Playlist { Name = "Focus", Tracks = ["Blue in Green", "Naima", "Nardis"] };
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n", OmitXmlDeclaration = true };
+
+string xml = XmlSerializer.Serialize(playlist, options);
+output.WriteLine(xml);
+
+Playlist? copy = XmlSerializer.Deserialize<Playlist>(xml, options);
+output.WriteLine($"{copy!.Tracks.Count} tracks, last is {copy.Tracks[^1]}");
+```
+
+The code produces the following output:
+
+```text
+<Playlist>
+  <Name>Focus</Name>
+  <Tracks>Blue in Green</Tracks>
+  <Tracks>Naima</Tracks>
+  <Tracks>Nardis</Tracks>
+</Playlist>
+3 tracks, last is Nardis
+```
+
+<Note>
+This default differs from `System.Xml.Serialization.XmlSerializer`, which wraps a collection in an element named after the member and names each item after its type. If you're matching XML produced by that serializer, set `DefaultCollectionMapping` to `XmlCollectionMapping.Wrapped` to wrap every collection that has no mapping attribute, or add `[XmlArray]` to one member as shown in the next section. See [Migrate from XmlSerializer](/xmlessentials/guides/migrate/from-xmlserializer).
+</Note>
+
+When reading, the repeated elements don't have to be next to each other. Every element with the member's name is added to the same collection, in document order.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/12_SerializeCollections.cs)
+
+### Name the repeated elements
+
+The plural member name often reads badly on an item. To rename the repeated elements, rename the member with [`[XmlElement]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlElementAttribute) or [`[XmlPropertyName]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyNameAttribute).
+
+```csharp NewsFeed.cs
+public sealed class NewsFeed
+{
+    public string? Title { get; set; }
+
+    [XmlElement("Entry")]
+    public List<string> Entries { get; set; } = [];
+}
+```
+
+```csharp Program.cs
+var feed = new NewsFeed { Title = "Releases", Entries = ["1.0.0 is out", "1.0.1 fixes a typo"] };
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n", OmitXmlDeclaration = true };
+
+string xml = XmlSerializer.Serialize(feed, options);
+output.WriteLine(xml);
+```
+
+The code produces the following output:
+
+```xml
+<NewsFeed>
+  <Title>Releases</Title>
+  <Entry>1.0.0 is out</Entry>
+  <Entry>1.0.1 fixes a typo</Entry>
+</NewsFeed>
+```
+
+<Warning>
+`[XmlArrayItem]` names the items of a wrapped collection only: one that has `[XmlArray]`, or one that `DefaultCollectionMapping` wraps. On a collection with no wrapper, it has no effect, and the items keep the member's name.
+</Warning>
+
+## A wrapper element with named items
+
+Add [`[XmlArray]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlArrayAttribute) to put the items inside one element, and [`[XmlArrayItem]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlArrayItemAttribute) to name the items.
+
+```csharp Album.cs
+public sealed class Album
+{
+    public string? Title { get; set; }
+
+    [XmlArray("Tracks")]
+    [XmlArrayItem("Track")]
+    public List<string>? Tracks { get; set; }
+}
+```
+
+```csharp Program.cs
+var album = new Album { Title = "Kind of Blue", Tracks = ["So What", "Freddie Freeloader"] };
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n", OmitXmlDeclaration = true };
+
+string xml = XmlSerializer.Serialize(album, options);
+output.WriteLine(xml);
+```
+
+The code produces the following output:
+
+```xml
+<Album>
+  <Title>Kind of Blue</Title>
+  <Tracks>
+    <Track>So What</Track>
+    <Track>Freddie Freeloader</Track>
+  </Tracks>
+</Album>
+```
+
+Both names are optional. `[XmlArray]` with no name uses the member name for the wrapper. Without `[XmlArrayItem]`, each item is named after its .NET type:
+
+```csharp Scoreboard.cs
+public sealed class Scoreboard
+{
+    public string? Player { get; set; }
+
+    [XmlArray]
+    public int[]? Scores { get; set; }
+}
+```
+
+```csharp Program.cs
+var board = new Scoreboard { Player = "Ada", Scores = [90, 85] };
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+
+output.WriteLine(XmlSerializer.Serialize(board, options));
+```
+
+The code produces the following output:
+
+```xml
+<Scoreboard><Player>Ada</Player><Scores><int>90</int><int>85</int></Scores></Scoreboard>
+```
+
+An item is named for its type: the XML Schema name for a built-in type, such as `int` or `string`, and the class name otherwise. These are the names `System.Xml.Serialization` writes. An element naming policy on the options applies to default wrapper and item names, and doesn't change names you set in the attributes.
+
+### Wrap every collection
+
+To wrap every collection without marking each member, set `XmlSerializerOptions.DefaultCollectionMapping` to `XmlCollectionMapping.Wrapped`. A collection member with no mapping attribute then gets a wrapper named after the member and items named for their type, as if it had `[XmlArray]`.
+
+```csharp Album.cs
+public class Album
+{
+    public string? Title { get; set; }
+    public List<string> Tracks { get; set; } = [];
+    public int[] Ratings { get; set; } = [];
+    public Dictionary<string, int> Plays { get; set; } = [];
+}
+```
+
+```csharp Program.cs
+var album = new Album { Title = "T", Tracks = { "a", "b" }, Ratings = [5, 4], Plays = { ["x"] = 1 } };
+
+var unwrapped = new XmlSerializerOptions { OmitXmlDeclaration = true };
+output.WriteLine(XmlSerializer.Serialize(album, unwrapped));
+
+var wrapped = new XmlSerializerOptions
+{
+    OmitXmlDeclaration = true,
+    DefaultCollectionMapping = XmlCollectionMapping.Wrapped,
+};
+output.WriteLine(XmlSerializer.Serialize(album, wrapped));
+```
+
+The code produces the following output:
+
+```xml
+<Album><Title>T</Title><Tracks>a</Tracks><Tracks>b</Tracks><Ratings>5</Ratings><Ratings>4</Ratings><Plays><x>1</x></Plays></Album>
+<Album><Title>T</Title><Tracks><string>a</string><string>b</string></Tracks><Ratings><int>5</int><int>4</int></Ratings><Plays><x>1</x></Plays></Album>
+```
+
+- The setting applies to members with no mapping attribute. A member with `[XmlElement]` stays unwrapped, and a member with `[XmlArray]` or `[XmlArrayItem]` keeps the names you gave it.
+- A dictionary is written the same way under either value: it always has an element of its own.
+- Read the document with the options that wrote it. The setting decides where the serializer looks for the items.
+- `XmlSerializerOptions.Bcl` sets `Wrapped`, along with the other settings that match `System.Xml.Serialization.XmlSerializer`. See [Migrate from XmlSerializer](/xmlessentials/guides/migrate/from-xmlserializer#keep-the-old-defaults).
+
+## Empty and null collections
+
+The two shapes differ in what they can express. Without a wrapper there is no element to carry "empty" or "null", so both write nothing. A wrapper can show the difference.
+
+```csharp Program.cs
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+
+output.WriteLine(XmlSerializer.Serialize(new Playlist { Name = "Empty", Tracks = [] }, options));
+output.WriteLine(XmlSerializer.Serialize(new Album { Title = "Empty", Tracks = [] }, options));
+output.WriteLine(XmlSerializer.Serialize(new Album { Title = "Null", Tracks = null }, options));
+
+Album? empty = XmlSerializer.Deserialize<Album>("<Album><Title>Empty</Title><Tracks /></Album>");
+output.WriteLine($"Wrapped and empty: {empty!.Tracks?.Count.ToString() ?? "null"}");
+
+Album? missing = XmlSerializer.Deserialize<Album>("<Album><Title>Missing</Title></Album>");
+output.WriteLine($"Wrapper missing: {missing!.Tracks?.Count.ToString() ?? "null"}");
+```
+
+The code produces the following output:
+
+```text
+<Playlist><Name>Empty</Name></Playlist>
+<Album><Title>Empty</Title><Tracks/></Album>
+<Album><Title>Null</Title><Tracks xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/></Album>
+Wrapped and empty: 0
+Wrapper missing: null
+```
+
+| Value | Without a wrapper | With `[XmlArray]` |
+| --- | --- | --- |
+| Has items | One element per item | The wrapper, with one element per item |
+| Empty | Nothing | An empty wrapper, `<Tracks/>` |
+| `null` | Nothing | A wrapper marked `xsi:nil="true"` |
+
+When the XML has no element for a collection member, the serializer doesn't touch the member. It keeps whatever the type's initializer or constructor gave it. `Playlist.Tracks` is initialized to an empty list, so an unwrapped empty list reads back as empty. If the property had no initializer, it would read back as `null`.
+
+One option changes the `null` row for a wrapped collection:
+
+- With an ignore condition of `WhenWritingNull`, `WhenWritingNullReference`, or `WhenWritingDefault`, on the member or as `DefaultIgnoreCondition`, a `null` wrapped collection is left out.
+
+A `null` item inside a collection is written as an element marked `xsi:nil="true"` and reads back as `null`.
+
+<Tip>
+If the difference between an empty collection and a missing one matters to the consumer of your XML, use a wrapper.
+</Tip>
+
+## Dictionaries
+
+A dictionary is always written inside an element named after the member. Each entry whose key is a string that is also a valid XML name becomes an element named by the key. Any other entry becomes a `Key` element followed by a `Value` element.
+
+```csharp AppSettings.cs
+public sealed class AppSettings
+{
+    public string? Application { get; set; }
+
+    public Dictionary<string, string> Values { get; set; } = [];
+}
+```
+
+```csharp Program.cs
+var settings = new AppSettings
+{
+    Application = "Storefront",
+    Values = new Dictionary<string, string>
+    {
+        ["Theme"] = "dark",
+        ["PageSize"] = "20",
+        ["Support email"] = "help@contoso.example",
+    },
+};
+
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n", OmitXmlDeclaration = true };
+
+string xml = XmlSerializer.Serialize(settings, options);
+output.WriteLine(xml);
+
+AppSettings? copy = XmlSerializer.Deserialize<AppSettings>(xml, options);
+output.WriteLine($"{copy!.Values.Count} values, support email is {copy.Values["Support email"]}");
+```
+
+The code produces the following output:
+
+```text
+<AppSettings>
+  <Application>Storefront</Application>
+  <Values>
+    <Theme>dark</Theme>
+    <PageSize>20</PageSize>
+    <Key>Support email</Key>
+    <Value>help@contoso.example</Value>
+  </Values>
+</AppSettings>
+3 values, support email is help@contoso.example
+```
+
+`Support email` has a space, so it can't be an element name and is written as a pair. All three entries read back.
+
+The rules for the two forms are:
+
+- The element form is used for a `string` key made of ASCII letters, digits, `.`, `-`, and `_` that starts with a letter or `_`.
+- The pair form is used for every other string key, for the key `Key` itself (an element named `Key` starts a pair when reading), and for every key that isn't a string, such as an `int` or a `Guid`.
+- A `null` value is written as an element marked `xsi:nil="true"`, whatever the ignore condition, and reads back as `null`. In the pair form the mark is on `<Value>`.
+- If the same key appears twice when reading, the last entry wins.
+
+### Dictionary key policy
+
+`DictionaryKeyPolicy` converts string keys when writing. When it's `null`, `PropertyNamingPolicy` is used.
+
+```csharp Program.cs
+var settings = new AppSettings
+{
+    Application = "Storefront",
+    Values = new Dictionary<string, string> { ["PageSize"] = "20" },
+};
+
+var options = new XmlSerializerOptions
+{
+    OmitXmlDeclaration = true,
+    DictionaryKeyPolicy = XmlNamingPolicy.CamelCase,
+};
+
+string xml = XmlSerializer.Serialize(settings, options);
+output.WriteLine(xml);
+
+AppSettings? copy = XmlSerializer.Deserialize<AppSettings>(xml, options);
+output.WriteLine($"Keys read back: {string.Join(", ", copy!.Values.Keys)}");
+```
+
+The code produces the following output:
+
+```text
+<AppSettings><Application>Storefront</Application><Values><pageSize>20</pageSize></Values></AppSettings>
+Keys read back: pageSize
+```
+
+A policy can't be reversed, so the keys you read are the keys in the XML. `PageSize` went out and `pageSize` came back. Use a key policy only when the reader of the XML expects the converted names. The same applies to `PropertyNamingPolicy`, which changes dictionary keys too unless you set `DictionaryKeyPolicy`.
+
+## Collection types
+
+Any type that implements `IEnumerable<T>` can be written, apart from `string` and `byte[]`: a `byte[]` is one base64 value, not a list. Reading is narrower, because the serializer has to create the collection.
+
+```csharp StockReport.cs
+public sealed class StockReport
+{
+    public int[]? Counts { get; set; }
+
+    public IEnumerable<string>? Warehouses { get; set; }
+
+    public IReadOnlyList<string>? Skus { get; set; }
+
+    public HashSet<string>? Tags { get; set; }
+
+    public Collection<string>? Notes { get; set; }
+}
+```
+
+```csharp Program.cs
+var report = new StockReport
+{
+    Counts = [12, 7],
+    Warehouses = ["SEA-2", "PDX-1"],
+    Skus = ["KB-101", "MS-220"],
+    Tags = ["weekly"],
+    Notes = ["Recount MS-220"],
+};
+
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+
+string xml = XmlSerializer.Serialize(report, options);
+output.WriteLine(xml);
+
+StockReport? copy = XmlSerializer.Deserialize<StockReport>(xml, options);
+output.WriteLine($"Counts: {copy!.Counts!.Length}");
+output.WriteLine($"Warehouses is a List<string>: {copy.Warehouses is List<string>}");
+output.WriteLine($"Skus is a List<string>: {copy.Skus is List<string>}");
+output.WriteLine($"Tags: {copy.Tags!.Count}");
+output.WriteLine($"Notes: {copy.Notes!.Count}");
+```
+
+The code produces the following output:
+
+```text
+<StockReport><Counts>12</Counts><Counts>7</Counts><Warehouses>SEA-2</Warehouses><Warehouses>PDX-1</Warehouses><Skus>KB-101</Skus><Skus>MS-220</Skus><Tags>weekly</Tags><Notes>Recount MS-220</Notes></StockReport>
+Counts: 2
+Warehouses is a List<string>: True
+Skus is a List<string>: True
+Tags: 1
+Notes: 1
+```
+
+| Declared type | Read as |
+| --- | --- |
+| `T[]` | An array |
+| `List<T>`, `IList<T>`, `ICollection<T>`, `IEnumerable<T>`, `IReadOnlyList<T>`, `IReadOnlyCollection<T>` | A `List<T>` |
+| `ISet<T>`, `IReadOnlySet<T>` | A `HashSet<T>` |
+| `Queue<T>`, `Stack<T>`, `LinkedList<T>`, `HashSet<T>`, `SortedSet<T>`, `Collection<T>`, `ObservableCollection<T>`, `ReadOnlyCollection<T>` | An instance of that class |
+| `ImmutableArray<T>`, `ImmutableList<T>`, and the other immutable and frozen collections | An instance of that type |
+| `Dictionary<TKey, TValue>`, `SortedDictionary<TKey, TValue>`, `ImmutableDictionary<TKey, TValue>`, and other dictionary classes | An instance of that class |
+| `IDictionary<TKey, TValue>`, `IReadOnlyDictionary<TKey, TValue>` | A `Dictionary<TKey, TValue>` |
+
+Every collection type that can be written can be read. A stack is written from its top down and is read back with the same top. A class of your own is read when it has a public parameterless constructor and either implements `ICollection<T>` or has a public `Add` method, or when it has a public constructor that takes `IEnumerable<T>` or `IList<T>`. A class with none of these is written, and reading it throws `NotSupportedException`.
+
+The complete list of supported types is in [Supported types](/xmlessentials/guides/supported-types#collections-and-dictionaries).
+
+### Populate a collection that already holds a value
+
+By default a member is given a new value when it is read, and a property with no setter is not read at all. That is `XmlObjectCreationHandling.Replace`, and it is what System.Text.Json does. To keep the value a member already holds and add to it, use `XmlObjectCreationHandling.Populate`:
+
+```csharp
+public sealed class Playlist
+{
+    // Populated whatever the options say.
+    [XmlObjectCreationHandling(XmlObjectCreationHandling.Populate)]
+    public List<string> Tracks { get; } = [];
+}
+
+// Or populate every member that can be populated.
+var options = new XmlSerializerOptions
+{
+    PreferredObjectCreationHandling = XmlObjectCreationHandling.Populate,
+};
+```
+
+When a member is populated:
+
+- The items of a collection and the entries of a dictionary are added to the instance the member holds. An entry whose key the dictionary already holds takes the value from the XML.
+- The members of an object are set on the object the member holds. The members the XML leaves out keep their values.
+- A member that holds `null` is given a new instance when it has a setter.
+- An element marked `xsi:nil="true"` sets a member that has a setter to `null`. For a member with no setter, the serializer throws an `InvalidOperationException`.
+
+The following can't be populated. `PreferredObjectCreationHandling` leaves them as they are under `Replace`, and `[XmlObjectCreationHandling(XmlObjectCreationHandling.Populate)]` on such a member throws an `InvalidOperationException` the first time the type is used:
+
+- An array, an immutable or frozen collection, a collection or dictionary that is a value type, and a collection declared as a read-only interface such as `IEnumerable<T>` or `IReadOnlyList<T>`.
+- A collection or dictionary class with no public parameterless constructor, such as `ReadOnlyCollection<T>`, and a collection class that doesn't implement `ICollection<T>`, other than `Stack<T>` and `Queue<T>`.
+- A member marked `[XmlIgnore(Condition = XmlIgnoreCondition.WhenReading)]`, which is never read.
+- A single value such as a `string` or a number.
+- A value that has a custom converter, and mixed content.
+- A polymorphic type.
+- A value type with no setter.
+
+Two more limits apply:
+
+- A type that is created through a constructor with parameters populates none of its members. The attribute on such a type, or on one of its members, throws a `NotSupportedException`.
+- `Populate` can't be combined with `ReferenceHandler`. A type with a member to populate throws an `InvalidOperationException`.
+
+A member declared as `IList<T>` or `ICollection<T>` is populated through the interface. If it holds an array or another read-only collection at run time, the serializer throws a `NotSupportedException`.
+
+<Note>
+A source-generated context populates in the same way: it adds to collections and dictionaries, and it sets the members of an object that already exists.
+</Note>
+
+## A collection as the document element
+
+You can pass a collection straight to `Serialize`. The document element is named from the collection type, and each item is named after its own type.
+
+```csharp Program.cs
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+
+var lines = new List<InvoiceLine>
+{
+    new() { Sku = "KB-101", Quantity = 2 },
+    new() { Sku = "MS-220", Quantity = 1 },
+};
+
+string xml = XmlSerializer.Serialize(lines, options);
+output.WriteLine(xml);
+
+List<InvoiceLine>? copy = XmlSerializer.Deserialize<List<InvoiceLine>>(xml, options);
+output.WriteLine($"{copy!.Count} lines");
+
+output.WriteLine(XmlSerializer.Serialize(new[] { 1, 2, 3 }, options));
+output.WriteLine(XmlSerializer.Serialize(new Dictionary<string, int> { ["Width"] = 4, ["Height"] = 3 }, options));
+```
+
+The code produces the following output:
+
+```text
+<ArrayOfInvoiceLine><InvoiceLine><Sku>KB-101</Sku><Quantity>2</Quantity></InvoiceLine><InvoiceLine><Sku>MS-220</Sku><Quantity>1</Quantity></InvoiceLine></ArrayOfInvoiceLine>
+2 lines
+<ArrayOfInt><int>1</int><int>2</int><int>3</int></ArrayOfInt>
+<DictionaryOfStringInt32><Width>4</Width><Height>3</Height></DictionaryOfStringInt32>
+```
+
+A collection at the root is named `ArrayOf` followed by the name of its items, whatever kind of collection it is. An array, a `List<T>` and a `HashSet<T>` of the same items write the same document, and each reads what the others wrote. A dictionary keeps its own kind of name. Names such as `ArrayOfInvoiceLine` are rarely what a document format calls for, and you can't put `[XmlRoot]` on `List<T>`. To choose the name, make the collection a member of a class of your own and name that class with [`[XmlRoot]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlRootAttribute).
+
+To write or read a large sequence one item at a time instead of holding it all in memory, see [Streaming](/xmlessentials/guides/streaming). For collections whose items are of different derived types, see [Polymorphism](/xmlessentials/guides/polymorphism).
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Customize names and shape" icon="pen" href="/xmlessentials/guides/customize-names">
+    Rename elements, write attributes, and set the order.
+  </Card>
+  <Card title="Polymorphism" icon="sitemap" href="/xmlessentials/guides/polymorphism">
+    Serialize collections whose items have different types.
+  </Card>
+  <Card title="XmlArrayAttribute" icon="code" href="/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlArrayAttribute">
+    API reference for the wrapper attribute.
+  </Card>
+  <Card title="XmlArrayItemAttribute" icon="code" href="/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlArrayItemAttribute">
+    API reference for the item attribute.
+  </Card>
+</Columns>

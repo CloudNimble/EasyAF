@@ -1,0 +1,457 @@
+---
+title: "Convert between XML and JSON"
+sidebarTitle: "Convert XML and JSON"
+description: "Convert XML to JSON and JSON to XML in .NET with XmlEssentials and System.Text.Json, through a shared type or through the XmlNode and JsonNode trees."
+icon: "arrow-right-arrow-left"
+---
+
+This article shows how to turn an XML document into JSON and a JSON document into XML, using XmlEssentials for the XML side and System.Text.Json for the JSON side. The two libraries have the same shape, so the code on each side of a conversion looks alike.
+
+There are two ways to convert, and they suit different jobs.
+
+| | Through a type | Through the trees |
+| --- | --- | --- |
+| How it works | Deserialize into a class with one serializer, and serialize it with the other | Walk an `XmlNode` tree into a `JsonNode` tree, or the reverse |
+| You need | A class that describes the data | No class |
+| Numbers and Booleans | Keep their types | Become strings on the way from XML |
+| A list with one item | Stays a list | Becomes a single value on the way from XML |
+| Native AOT and trimming | Supported, with source-generated contexts | Supported |
+| Use it when | You know the shape of the data | The shape is unknown, or changes from one document to the next |
+
+Convert through a type whenever you can. XML and JSON don't describe data the same way, and a type is where you say what each part means.
+
+## Convert through a type
+
+Both serializers can map the same class. `Delivery` is an ordinary class with two attributes for XmlEssentials and one for System.Text.Json:
+
+```csharp Delivery.cs
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using CloudNimble.Text.Xml.Serialization;
+
+public sealed class Delivery
+{
+    public string? Carrier { get; set; }
+
+    [XmlAttribute]
+    public int Id { get; set; }
+
+    [JsonPropertyName("items")]
+    [XmlElement("item")]
+    public List<string> Items { get; set; } = [];
+
+    public bool Signed { get; set; }
+
+    public decimal Weight { get; set; }
+}
+```
+
+Each serializer reads its own attributes and ignores the other's. `[XmlAttribute]` writes `Id` as an XML attribute, which JSON has no counterpart for. `[XmlElement("item")]` and `[JsonPropertyName("items")]` give the list the name each format expects: a repeated `item` element in XML, and an `items` array in JSON.
+
+Create the options for each serializer once and reuse them. The two sets mirror each other:
+
+```csharp Program.cs
+using System.Text.Json;
+using CloudNimble.Text.Xml;
+using CloudNimble.Text.Xml.Serialization;
+
+JsonSerializerOptions jsonOptions = new()
+{
+    NewLine = "\n",
+    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    WriteIndented = true,
+};
+
+XmlSerializerOptions xmlOptions = new()
+{
+    NewLine = "\n",
+    OmitXmlDeclaration = true,
+    PropertyNamingPolicy = XmlNamingPolicy.CamelCase,
+    WriteIndented = true,
+};
+```
+
+### XML to JSON
+
+Deserialize the XML with `XmlSerializer`, and serialize the object with `JsonSerializer`:
+
+```csharp Program.cs
+const string deliveryXml = """
+    <delivery id="1042">
+      <carrier>Contoso Freight</carrier>
+      <item>Keyboard</item>
+      <item>Mouse</item>
+      <signed>true</signed>
+      <weight>2.5</weight>
+    </delivery>
+    """;
+
+Delivery? delivery = XmlSerializer.Deserialize<Delivery>(deliveryXml, xmlOptions);
+
+string json = JsonSerializer.Serialize(delivery, jsonOptions);
+output.WriteLine(json);
+```
+
+This code produces the following output:
+
+```json
+{
+  "carrier": "Contoso Freight",
+  "id": 1042,
+  "items": [
+    "Keyboard",
+    "Mouse"
+  ],
+  "signed": true,
+  "weight": 2.5
+}
+```
+
+The number, the Boolean, and the array come out as JSON numbers, Booleans, and arrays, because the class says what they are.
+
+### JSON to XML
+
+The other direction is the same two calls with the serializers swapped:
+
+```csharp Program.cs
+Delivery? delivery = JsonSerializer.Deserialize<Delivery>(deliveryJson, jsonOptions);
+
+string xml = XmlSerializer.Serialize(delivery, xmlOptions);
+output.WriteLine(xml);
+```
+
+Given the JSON above, this code produces the following output:
+
+```xml
+<delivery id="1042">
+  <carrier>Contoso Freight</carrier>
+  <item>Keyboard</item>
+  <item>Mouse</item>
+  <signed>true</signed>
+  <weight>2.5</weight>
+</delivery>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/46_ConvertBetweenXmlAndJson.cs)
+
+### What to line up between the two serializers
+
+A conversion through a type is only as faithful as the two mappings. Check these four things:
+
+- **Names.** Set the same naming policy on both sides, or name members with `[XmlPropertyName]` and `[JsonPropertyName]`. See [Customize names](/xmlessentials/guides/customize-names).
+- **Null values.** `XmlSerializer` writes a `null` member as an element with `xsi:nil="true"`, and `JsonSerializer` writes `null`. To leave `null` members out of both, set `DefaultIgnoreCondition` to `WhenWritingNull` on both sets of options. See [Null and nil](/xmlessentials/guides/null-and-nil).
+- **The root element.** A JSON document has no name, and an XML document must have one. `XmlSerializer` takes it from the type name or from `[XmlRoot]`.
+- **What only XML has.** Attributes, namespaces, and mixed content have no JSON form. They map to ordinary properties of your class, and System.Text.Json writes those properties like any others. See [Coming from System.Text.Json](/xmlessentials/guides/migrate/from-system-text-json).
+
+## Convert UTF-8 without reflection
+
+Both serializers read and write UTF-8 directly, and both have a source generator. Together they convert a document without creating a string of it, in an application that's trimmed or compiled with Native AOT.
+
+Declare one context for each serializer:
+
+```csharp DeliveryContexts.cs
+using System.Text.Json.Serialization;
+using CloudNimble.Text.Xml.Serialization;
+
+[XmlSourceGenerationOptions(
+    OmitXmlDeclaration = true,
+    PropertyNamingPolicy = XmlKnownNamingPolicy.CamelCase)]
+[XmlSerializable<Delivery>]
+public partial class DeliveryXmlContext : XmlSerializerContext
+{
+}
+
+[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
+[JsonSerializable(typeof(Delivery))]
+public partial class DeliveryJsonContext : JsonSerializerContext
+{
+}
+```
+
+Then pass each call the type info from its context:
+
+```csharp Program.cs
+byte[] utf8Xml = Encoding.UTF8.GetBytes(deliveryXml);
+
+Delivery? fromXml = XmlSerializer.Deserialize(utf8Xml, DeliveryXmlContext.Default.Delivery);
+byte[] utf8Json = JsonSerializer.SerializeToUtf8Bytes(fromXml, DeliveryJsonContext.Default.Delivery);
+output.WriteLine(Encoding.UTF8.GetString(utf8Json));
+
+Delivery? fromJson = JsonSerializer.Deserialize(utf8Json, DeliveryJsonContext.Default.Delivery);
+var buffer = new ArrayBufferWriter<byte>();
+XmlSerializer.Serialize(buffer, fromJson!, DeliveryXmlContext.Default.Delivery);
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+```
+
+This code produces the following output:
+
+```text
+{"carrier":"Contoso Freight","id":1042,"items":["Keyboard","Mouse"],"signed":true,"weight":2.5}
+<delivery id="1042"><carrier>Contoso Freight</carrier><item>Keyboard</item><item>Mouse</item><signed>true</signed><weight>2.5</weight></delivery>
+```
+
+The sample turns the bytes into strings only to print them. `XmlSerializer` also reads from and writes to a `Stream`, as `JsonSerializer` does. See [Use source generation](/xmlessentials/guides/source-generation) and [Native AOT](/xmlessentials/guides/native-aot).
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/46_ConvertBetweenXmlAndJson.cs)
+
+## Convert without a type
+
+When you have no class for the data, convert between the two mutable trees: [`XmlNode`](/xmlessentials/guides/use-xmlnode) in XmlEssentials and `JsonNode` in System.Text.Json. Neither library has a method that does this for you, because there's no single right answer for what an attribute or a repeated element becomes in JSON. You choose a convention and write a short method for each direction.
+
+The methods in this article use a common convention:
+
+| XML | JSON |
+| --- | --- |
+| An element with attributes or child elements | An object |
+| An attribute named `id` | A property named `@id` |
+| An element that holds only text | A string |
+| An empty element | `null` |
+| Several child elements with the same name | An array under that name |
+| Text beside attributes or child elements | A property named `#text` |
+
+The convention uses local names and doesn't carry namespaces. For a document with namespaces, convert through a type.
+
+### XML to JSON
+
+`ToJson` converts one element, and calls itself for each child element. `Append` turns a property into an array when a second element has the same name.
+
+```csharp Program.cs
+private static JsonNode? ToJson(XmlElementNode element)
+{
+    bool hasChildElements = element.Children.OfType<XmlElementNode>().Any();
+    if (element.Attributes.Count == 0 && !hasChildElements)
+    {
+        return element.Children.Count == 0 ? null : element.InnerText;
+    }
+
+    var json = new JsonObject();
+    foreach (XmlAttributeNode attribute in element.Attributes)
+    {
+        json["@" + attribute.LocalName] = attribute.Value;
+    }
+
+    var text = new StringBuilder();
+    foreach (XmlNode child in element.Children)
+    {
+        if (child is XmlElementNode childElement)
+        {
+            Append(json, childElement.LocalName, ToJson(childElement));
+        }
+        else if (child is XmlTextNode textNode)
+        {
+            text.Append(textNode.Value);
+        }
+        else if (child is XmlCDataNode cdata)
+        {
+            text.Append(cdata.Value);
+        }
+    }
+
+    // Text between child elements is usually indentation. Text that says something is kept.
+    if (!string.IsNullOrWhiteSpace(text.ToString()))
+    {
+        json["#text"] = text.ToString();
+    }
+
+    return json;
+}
+
+private static void Append(JsonObject json, string name, JsonNode? value)
+{
+    if (!json.TryGetPropertyValue(name, out JsonNode? existing))
+    {
+        json[name] = value;
+        return;
+    }
+
+    if (existing is not JsonArray array)
+    {
+        // The second element of this name: the property becomes an array, where the first one was.
+        array = new JsonArray();
+        json[name] = array;
+        array.Add(existing);
+    }
+
+    array.Add(value);
+}
+```
+
+Parse the XML into a tree, convert the root element, and put it under its own name:
+
+```csharp Program.cs
+var root = (XmlElementNode)XmlNode.Parse(deliveryXml);
+
+var json = new JsonObject { [root.LocalName] = ToJson(root) };
+output.WriteLine(json.ToJsonString(jsonOptions));
+```
+
+This code produces the following output:
+
+```json
+{
+  "delivery": {
+    "@id": "1042",
+    "carrier": "Contoso Freight",
+    "item": [
+      "Keyboard",
+      "Mouse"
+    ],
+    "signed": "true",
+    "weight": "2.5"
+  }
+}
+```
+
+Compare it with the JSON from the typed conversion. The attribute is marked with `@`, the array has the name of its elements, and every value is a string, because XML text doesn't say whether `1042` is a number.
+
+Comments and processing instructions are left out. JSON has nowhere to put them.
+
+### JSON to XML
+
+`ToXml` creates an element for one JSON value, and `Fill` gives the element its content.
+
+```csharp Program.cs
+private static XmlElementNode ToXml(string name, JsonNode? json)
+{
+    var element = new XmlElementNode(name);
+    Fill(element, json);
+    return element;
+}
+
+private static void Fill(XmlElementNode element, JsonNode? json)
+{
+    if (json is JsonObject properties)
+    {
+        foreach (KeyValuePair<string, JsonNode?> property in properties)
+        {
+            if (property.Key.StartsWith('@'))
+            {
+                element.SetAttribute(property.Key[1..], Text(property.Value));
+            }
+            else if (property.Key == "#text")
+            {
+                element.Add(new XmlTextNode(Text(property.Value)));
+            }
+            else if (property.Value is JsonArray array)
+            {
+                // XML has no array. Each item is an element with the name of the property.
+                foreach (JsonNode? item in array)
+                {
+                    element.Add(ToXml(property.Key, item));
+                }
+            }
+            else
+            {
+                element.Add(ToXml(property.Key, property.Value));
+            }
+        }
+    }
+    else if (json is JsonArray items)
+    {
+        // An array inside an array has no name to give its items.
+        foreach (JsonNode? item in items)
+        {
+            element.Add(ToXml("item", item));
+        }
+    }
+    else if (json is not null)
+    {
+        element.Add(new XmlTextNode(Text(json)));
+    }
+}
+
+private static string Text(JsonNode? value)
+{
+    if (value is null)
+    {
+        return string.Empty;
+    }
+
+    return value.GetValueKind() is JsonValueKind.String ? value.GetValue<string>() : value.ToJsonString();
+}
+```
+
+A JSON document has no name, so you give the root element one. To write the tree with indentation, pass it to a `Utf8XmlWriter`:
+
+```csharp Program.cs
+JsonNode? json = JsonNode.Parse(deliveryJson);
+
+XmlElementNode root = ToXml("delivery", json);
+
+var buffer = new ArrayBufferWriter<byte>();
+using (var writer = new Utf8XmlWriter(buffer, new XmlWriterOptions { Indented = true, NewLine = "\n", OmitXmlDeclaration = true }))
+{
+    root.WriteTo(writer);
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+```
+
+Given the JSON from the typed conversion, this code produces the following output:
+
+```xml
+<delivery>
+  <carrier>Contoso Freight</carrier>
+  <id>1042</id>
+  <items>Keyboard</items>
+  <items>Mouse</items>
+  <signed>true</signed>
+  <weight>2.5</weight>
+</delivery>
+```
+
+Here `id` is an element, because nothing in the JSON marks it as an attribute, and each item of the array is an element named `items`.
+
+A JSON property name that isn't a valid XML name, such as `first name` or `2024`, throws an `XmlException` when the tree is written. Rename those properties before you convert them.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/46_ConvertBetweenXmlAndJson.cs)
+
+### What the trees can't carry across
+
+A conversion through the trees isn't reversible. The following code takes a JSON document to XML and back with the two methods above:
+
+```csharp Program.cs
+const string json = """{"id":1042,"signed":true,"items":["Keyboard"],"note":null}""";
+output.WriteLine(json);
+
+XmlElementNode xml = ToXml("delivery", JsonNode.Parse(json));
+output.WriteLine(xml.ToString());
+
+JsonNode? back = ToJson(xml);
+output.WriteLine(back!.ToJsonString());
+```
+
+This code produces the following output:
+
+```text
+{"id":1042,"signed":true,"items":["Keyboard"],"note":null}
+<delivery><id>1042</id><signed>true</signed><items>Keyboard</items><note/></delivery>
+{"id":"1042","signed":"true","items":"Keyboard","note":null}
+```
+
+Three things changed on the way back:
+
+- **The number is a string.** XML text has no type. `1042` and `"1042"` are the same element.
+- **The Boolean is a string,** for the same reason.
+- **The array of one item is a single value.** One `items` element looks the same as a property that was never an array. An empty array disappears altogether, because it produces no elements.
+
+Only `null` survived, as an empty element.
+
+If the consumer of your JSON needs numbers, Booleans, and arrays to stay what they are, the conversion needs to know the shape of the data. That's what a type gives it, and it's the reason to [convert through a type](#convert-through-a-type).
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Coming from System.Text.Json" icon="code" href="/xmlessentials/guides/migrate/from-system-text-json">
+    The type-for-type map between the two libraries.
+  </Card>
+  <Card title="Serialize" icon="arrow-right-from-bracket" href="/xmlessentials/guides/serialize">
+    Write your own types as XML.
+  </Card>
+  <Card title="Use XmlNode" icon="sitemap" href="/xmlessentials/guides/use-xmlnode">
+    Build and change a tree of XML nodes.
+  </Card>
+  <Card title="Use source generation" icon="microchip" href="/xmlessentials/guides/source-generation">
+    Serialize without reflection, for trimming and Native AOT.
+  </Card>
+</Columns>

@@ -1,0 +1,2490 @@
+---
+title: XmlElement
+description: "Represents a specific XML node within an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument)."
+icon: cubes
+tag: "SEALED"
+keywords: ['XmlElement', 'CloudNimble.Text.Xml.XmlElement', 'CloudNimble.Text.Xml', 'struct', 'System.ValueType', 'CloudNimble.Text.Xml.XmlDocument', 'CloudNimble.Text.Xml.XmlValueKind', 'CloudNimble.Text.Xml.XmlTokenType', 'CloudNimble.Text.Xml.XmlAttributes', 'CloudNimble.Text.Xml.XmlNamespaces']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.ValueType
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlElement
+```
+
+## Summary
+
+Represents a specific XML node within an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument).
+
+## Usage
+
+An `XmlElement` is one node of an [`XmlDocument`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument): an element, an attribute, a text node, a CDATA section, a comment, or a processing instruction. `ValueKind` says which. It's the XML counterpart of `JsonElement`: a small struct that points into the document and is usable only while the document is alive.
+
+You get the first one from `XmlDocument.RootElement`. From there, `GetChild` and `GetAttribute` find a node by name and throw an `XmlException` when it's missing, and `TryGetChild` and `TryGetAttribute` return `false` instead. The typed getters convert a value.
+
+```csharp
+const string xml = """
+    <Order id="1042">
+      <Customer>Ada Lovelace</Customer>
+      <Total currency="GBP">129.90</Total>
+    </Order>
+    """;
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement order = document.RootElement;
+
+output.WriteLine($"Customer: {order.GetChild("Customer").GetString()}");
+output.WriteLine($"Order id: {order.GetAttribute("id").GetInt32()}");
+
+if (order.TryGetChild("Total", out XmlElement total) && total.TryGetAttribute("currency", out XmlElement currency))
+{
+    output.WriteLine($"Total: {total.GetDecimal()} {currency.GetString()}");
+}
+
+if (!order.TryGetChild("Discount", out _))
+{
+    output.WriteLine("No Discount element");
+}
+
+try
+{
+    order.GetChild("Discount");
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+
+try
+{
+    order.GetAttribute("status");
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+```
+
+The code produces the following output:
+
+```text
+Customer: Ada Lovelace
+Order id: 1042
+Total: 129.90 GBP
+No Discount element
+Child element 'Discount' was not found.
+Attribute 'status' was not found.
+```
+
+The members fall into these groups:
+
+| To | Use |
+| --- | --- |
+| Identify the node | `ValueKind`, `TokenType`, `LocalName`, `Prefix`, `NamespaceUri`, `IsEmptyElement`, `IsNil` |
+| Find a node by name | `GetChild`, `TryGetChild`, `GetAttribute`, `TryGetAttribute` |
+| Visit every node | `EnumerateChildren`, `EnumerateAttributes`, `AttributeCount` |
+| Read a value | `GetString`, `GetBoolean`, `GetInt32`, `GetInt64`, `GetDecimal`, `GetDouble`, `GetDateTime`, `GetDateTimeOffset`, `GetGuid`, `GetBytesFromBase64`, the other integer and floating-point getters, and a `TryGet` method for each typed getter except `GetBoolean` |
+| Read text or markup | `GetInnerText`, `GetRawXml` |
+| Write or copy the node | `WriteTo`, `CloneNode` |
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/27_QueryWithXmlElement.cs)
+
+## Remarks
+
+This struct is the XML counterpart of `JsonElement` in System.Text.Json. A value can represent
+an element, an attribute, a text node, a CDATA section, a comment, or a processing instruction;
+[XmlElement.ValueKind](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement#valuekind) tells which. A value is usable only while its parent
+[XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) is not disposed.
+The value of an attribute, a text node, a CDATA section, a comment, or a processing instruction
+is its content. The value of an element is the text of all text nodes and CDATA sections inside
+it, in document order.
+The typed getters, such as [XmlElement.GetInt32](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement#getint32), ignore leading and trailing white space in the value.
+Name lookups, enumeration, the numeric and Boolean getters, and [XmlElement.WriteTo](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement#writeto) do not allocate.
+Members that return a [String](https://learn.microsoft.com/dotnet/api/system.string), a `byte[]`, or an [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode)
+allocate only that result, except [XmlElement.GetRawXml](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement#getrawxml), which also allocates the buffer and the writer it writes the markup with.
+
+## Examples
+
+### Enumerate children and attributes
+
+A document keeps the white space between elements and the comments, so a loop over the children skips what isn't an element.
+
+```csharp
+const string xml = """
+    <Order id="1042" status="open">
+      <Item sku="KB-1">Keyboard</Item>
+      <Item sku="MS-2">Mouse</Item>
+      <Note/>
+    </Order>
+    """;
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement order = document.RootElement;
+
+output.WriteLine($"{order.AttributeCount} attributes");
+foreach (XmlElement attribute in order.EnumerateAttributes())
+{
+    output.WriteLine($"  {attribute.LocalName} = {attribute.GetString()}");
+}
+
+foreach (XmlElement child in order.EnumerateChildren())
+{
+    if (child.ValueKind is not (XmlValueKind.Element or XmlValueKind.EmptyElement or XmlValueKind.Nil))
+    {
+        continue;
+    }
+
+    if (child.TryGetAttribute("sku", out XmlElement sku))
+    {
+        output.WriteLine($"{child.LocalName} {sku.GetString()}: {child.GetString()}");
+    }
+    else
+    {
+        output.WriteLine($"{child.LocalName} ({child.ValueKind})");
+    }
+}
+```
+
+The code produces the following output:
+
+```text
+2 attributes
+  id = 1042
+  status = open
+Item KB-1: Keyboard
+Item MS-2: Mouse
+Note (EmptyElement)
+```
+
+### Find names in a namespace
+
+The one-argument lookups match a local name in any namespace. Pass a namespace URI to match one namespace, or an empty string for a name in no namespace.
+
+```csharp
+const string xml = """
+    <feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+      <title>Release notes</title>
+      <dc:title>Notes de version</dc:title>
+      <link href="https://example.com/" dc:language="fr"/>
+    </feed>
+    """;
+
+const string atom = "http://www.w3.org/2005/Atom";
+const string dc = "http://purl.org/dc/elements/1.1/";
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement feed = document.RootElement;
+
+output.WriteLine($"Atom title: {feed.GetChild("title", atom).GetString()}");
+output.WriteLine($"Dublin Core title: {feed.GetChild("title", dc).GetString()}");
+output.WriteLine($"First title in any namespace: {feed.GetChild("title").GetString()}");
+
+XmlElement dcTitle = feed.GetChild("title", dc);
+output.WriteLine($"Prefix '{dcTitle.Prefix}', local name '{dcTitle.LocalName}', namespace '{dcTitle.NamespaceUri}'");
+
+XmlElement link = feed.GetChild("link", atom);
+output.WriteLine($"href: {link.GetAttribute("href", "").GetString()}");
+output.WriteLine($"language: {link.GetAttribute("language", dc).GetString()}");
+
+output.WriteLine($"feed has {feed.AttributeCount} attributes:");
+foreach (XmlElement attribute in feed.EnumerateAttributes())
+{
+    string name = attribute.Prefix.Length == 0 ? attribute.LocalName : $"{attribute.Prefix}:{attribute.LocalName}";
+    output.WriteLine($"  {name} = {attribute.GetString()}");
+}
+```
+
+The code produces the following output:
+
+```text
+Atom title: Release notes
+Dublin Core title: Notes de version
+First title in any namespace: Release notes
+Prefix 'dc', local name 'title', namespace 'http://purl.org/dc/elements/1.1/'
+href: https://example.com/
+language: fr
+feed has 2 attributes:
+  xmlns = http://www.w3.org/2005/Atom
+  xmlns:dc = http://purl.org/dc/elements/1.1/
+```
+
+### Read typed values
+
+```csharp
+const string xml = """
+    <Shipment id="7c9e6679-7425-40de-944b-e07fc1f90ae7" express="1">
+      <Parcels> 3 </Parcels>
+      <WeightKg>12.5</WeightKg>
+      <Cost>49.90</Cost>
+      <TrackingNumber>940011189922</TrackingNumber>
+      <ShippedOn>2026-03-14T09:30:00Z</ShippedOn>
+      <Signature>SGVsbG8=</Signature>
+      <Carrier>Contoso Freight</Carrier>
+    </Shipment>
+    """;
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement shipment = document.RootElement;
+
+Guid id = shipment.GetAttribute("id").GetGuid();
+bool express = shipment.GetAttribute("express").GetBoolean();
+int parcels = shipment.GetChild("Parcels").GetInt32();
+double weight = shipment.GetChild("WeightKg").GetDouble();
+decimal cost = shipment.GetChild("Cost").GetDecimal();
+long tracking = shipment.GetChild("TrackingNumber").GetInt64();
+DateTimeOffset shippedOn = shipment.GetChild("ShippedOn").GetDateTimeOffset();
+byte[] signature = shipment.GetChild("Signature").GetBytesFromBase64();
+
+output.WriteLine($"id: {id}");
+output.WriteLine($"express: {express}");
+output.WriteLine($"parcels: {parcels} (the string is '{shipment.GetChild("Parcels").GetString()}')");
+output.WriteLine($"weight: {weight.ToString(CultureInfo.InvariantCulture)}");
+output.WriteLine($"cost: {cost.ToString(CultureInfo.InvariantCulture)}");
+output.WriteLine($"tracking: {tracking}");
+output.WriteLine($"shipped on: {shippedOn.ToString("yyyy-MM-dd HH:mm zzz", CultureInfo.InvariantCulture)}");
+output.WriteLine($"signature: {signature.Length} bytes");
+
+try
+{
+    shipment.GetChild("Carrier").GetInt32();
+}
+catch (XmlException ex)
+{
+    output.WriteLine($"Carrier as an integer: {ex.Message}");
+}
+```
+
+The code produces the following output:
+
+```text
+id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+express: True
+parcels: 3 (the string is ' 3 ')
+weight: 12.5
+cost: 49.90
+tracking: 940011189922
+shipped on: 2026-03-14 09:30 +00:00
+signature: 5 bytes
+Carrier as an integer: The value is not a valid integer.
+```
+
+### Compare GetString, GetInnerText, and GetRawXml
+
+```csharp
+const string xml = """<Note priority="high">Ship **today**, <![CDATA[before 5 & not later]]>.<?audit checked?></Note>""";
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement note = document.RootElement;
+
+output.WriteLine($"GetString:    {note.GetString()}");
+output.WriteLine($"GetInnerText: {note.GetInnerText()}");
+output.WriteLine($"GetRawXml:    {note.GetRawXml()}");
+
+foreach (XmlElement child in note.EnumerateChildren())
+{
+    if (child.ValueKind is XmlValueKind.ProcessingInstruction)
+    {
+        output.WriteLine($"On the processing instruction, GetString is '{child.GetString()}' and GetInnerText is '{child.GetInnerText()}'");
+    }
+}
+
+output.WriteLine($"GetRawXml on an attribute is empty: {note.GetAttribute("priority").GetRawXml().Length == 0}");
+```
+
+The code produces the following output:
+
+```text
+GetString:    Ship today, before 5 & not later.
+GetInnerText: Ship today, before 5 & not later.
+GetRawXml:    <Note priority="high">Ship **today**, <![CDATA[before 5 & not later]]>.<?audit checked?></Note>
+On the processing instruction, GetString is 'checked' and GetInnerText is ''
+GetRawXml on an attribute is empty: True
+```
+
+### Read a nil element
+
+```csharp
+const string xml = """
+    <Order xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <ShippedOn xsi:nil="true"/>
+      <Total>129.90</Total>
+    </Order>
+    """;
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement shippedOn = document.RootElement.GetChild("ShippedOn");
+
+output.WriteLine($"ValueKind: {shippedOn.ValueKind}");
+output.WriteLine($"IsNil: {shippedOn.IsNil}");
+output.WriteLine($"GetString returns null: {shippedOn.GetString() is null}");
+output.WriteLine($"GetInnerText returns an empty string: {shippedOn.GetInnerText().Length == 0}");
+
+try
+{
+    shippedOn.GetDateTimeOffset();
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+
+XmlElement nil = shippedOn.GetAttribute(XmlAttributes.Nil, XmlNamespaces.Xsi);
+output.WriteLine($"{nil.Prefix}:{nil.LocalName} = {nil.GetBoolean()}");
+```
+
+The code produces the following output:
+
+```text
+ValueKind: Nil
+IsNil: True
+GetString returns null: True
+GetInnerText returns an empty string: True
+The element is nil and has no value.
+xsi:nil = True
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/27_QueryWithXmlElement.cs)
+
+## Best Practices
+
+- **Keep the document alive while you use its elements.** Don't return an `XmlElement` from a method that disposes the document or store one in a field that outlives it. Copy the value, or call `CloneNode`.
+- **Test for all three element kinds.** An element's `ValueKind` is `Element`, `EmptyElement` (for `<e/>`), or `Nil`. A check for `Element` alone skips the other two.
+- **Check `ValueKind` when you enumerate.** A document keeps comments and the white space between elements by default, so the children of an indented element include `Text` nodes for the indentation, as well as any CDATA sections, comments, and processing instructions.
+- **Read values from leaf elements.** `GetString` and `GetInnerText` on an element that has child elements include the white space between them.
+- **Use the `Try` lookups for optional names** and the `Get` lookups for names the document must have, so that a missing required name fails with a message that names it.
+- **Pass the namespace URI when a document mixes vocabularies.** The one-argument lookups return the first match in any namespace.
+- **Check `IsNil` before a typed getter** on an element that can carry `xsi:nil`. A typed getter on a nil element throws.
+- **Use `GetDateTimeOffset` for values with a time zone.** `GetDateTime` converts an offset other than `Z` to local time.
+- **Prefer a typed getter to parsing `GetString` yourself.** The getters apply the XML Schema lexical rules, don't depend on the current culture, and don't allocate a string.
+
+## Patterns
+
+### Switch on the kind of each child
+
+Content you don't control can hold any kind of node. A `switch` on `ValueKind` handles each one.
+
+```csharp
+const string xml = """
+    <Order xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><!-- packed by hand --><Item>Keyboard</Item><Gift/><Coupon xsi:nil="true"/>Leave at the door<![CDATA[**fragile**]]><?print label?></Order>
+    """;
+
+using XmlDocument document = XmlDocument.Parse(xml);
+
+foreach (XmlElement child in document.RootElement.EnumerateChildren())
+{
+    string description = child.ValueKind switch
+    {
+        XmlValueKind.Element or XmlValueKind.EmptyElement or XmlValueKind.Nil => $"<{child.LocalName}>",
+        XmlValueKind.ProcessingInstruction => $"target '{child.LocalName}', data '{child.GetString()}'",
+        _ => $"'{child.GetString()}'",
+    };
+
+    output.WriteLine($"{child.ValueKind,-21} {child.TokenType,-21} {description}");
+}
+```
+
+The code produces the following output:
+
+```text
+Comment               Comment               ' packed by hand '
+Element               StartElement          <Item>
+EmptyElement          StartElement          <Gift>
+Nil                   StartElement          <Coupon>
+Text                  Text                  'Leave at the door'
+CData                 CData                 '**fragile**'
+ProcessingInstruction ProcessingInstruction target 'print', data 'label'
+```
+
+### Copy an element into the mutable tree
+
+`CloneNode` returns a copy that owns its data and outlives the document.
+
+```csharp
+XmlElementNode product;
+
+using (XmlDocument document = XmlDocument.Parse("""<Catalog><Product sku="KB-1"><Name>Keyboard</Name></Product></Catalog>"""))
+{
+    product = (XmlElementNode)document.RootElement.GetChild("Product").CloneNode();
+}
+
+product.SetAttribute("sku", "KB-2");
+product.AddElement("Price").InnerText = "49.90";
+
+output.WriteLine(product.ToString());
+```
+
+The code produces the following output:
+
+```xml
+<Product sku="KB-2"><Name>Keyboard</Name><Price>49.90</Price></Product>
+```
+
+### Write an element inside new markup
+
+`WriteTo` writes the node and everything in it. The writer adds a declaration for any namespace that an ancestor outside the copied part declared.
+
+```csharp
+const string xml = """<c:Catalog xmlns:c="urn:example:catalog"><c:Product sku="KB-1">Keyboard</c:Product><c:Product sku="MS-2">Mouse</c:Product></c:Catalog>""";
+
+using XmlDocument document = XmlDocument.Parse(xml);
+
+var buffer = new ArrayBufferWriter<byte>();
+var options = new XmlWriterOptions { Indented = true, NewLine = "\n", OmitXmlDeclaration = true };
+using (var writer = new Utf8XmlWriter(buffer, options))
+{
+    writer.WriteStartElement("Picked");
+    foreach (XmlElement product in document.RootElement.EnumerateChildren())
+    {
+        if (product.GetAttribute("sku").GetString() == "MS-2")
+        {
+            product.WriteTo(writer);
+        }
+    }
+
+    writer.WriteEndElement();
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+```
+
+The code produces the following output:
+
+```xml
+<Picked>
+  <c:Product xmlns:c="urn:example:catalog" sku="MS-2">Mouse</c:Product>
+</Picked>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/28_WriteAndConvertXmlDocument.cs)
+
+## Considerations
+
+### Lifetime
+
+- An `XmlElement` holds a reference to its document and a position in it. It holds no data of its own.
+- After the document is disposed, every member that reads from it throws `ObjectDisposedException`.
+- `default(XmlElement)` refers to no node. `ValueKind` returns `Undefined`, and every other member that reads a node throws `InvalidOperationException`.
+- Two values are equal when they point at the same node of the same document.
+
+### Values
+
+- The value of an attribute, a text node, a CDATA section, a comment, or a processing instruction is its content. The value of an element is the text of every text node and CDATA section inside it, at any depth, in document order.
+- The text of an element that has child elements includes the white space between them when the document keeps it, which is the default. For `<r>`, a line break, two spaces, ``x``, a line break, and `</r>`, the value of `r` is `"\n  x\n"` and the value of `c` is `"x"`.
+- `GetString` returns the value unchanged, white space included, and `null` for a nil element. `GetInnerText` returns an empty string for a nil element, a comment, or a processing instruction.
+- The typed getters ignore white space around the value and follow the XML Schema lexical forms. `GetBoolean` accepts `true`, `false`, `1`, and `0`. `GetDecimal` doesn't accept an exponent. `GetDouble` accepts `INF`, `-INF`, and `NaN`.
+- A value that can't be converted throws `XmlException` from a getter and returns `false` from the `TryGet` method for the same type. A `TryGet` method still throws for a nil element and for a default `XmlElement`.
+- The getters are those of `JsonElement`: `bool`, the eight integer types, `float`, `double`, `decimal`, `DateTime`, `DateTimeOffset`, `Guid`, and Base64 bytes. For another type, convert the result of `GetString`.
+- `GetDateTime` returns `DateTimeKind.Utc` for a value that ends in `Z`, `Unspecified` for a value without a time zone, and local time for any other offset. `GetDateTimeOffset` gives a value without a time zone the local offset.
+
+### Navigation
+
+- `GetChild` and `TryGetChild` search direct children and return the first match in document order. To search deeper, chain the calls or write a recursive method over `EnumerateChildren`. To reach a parent or a sibling, keep it in your own loop, or use the mutable tree, whose nodes have a `Parent`.
+- `GetChild`, `TryGetChild`, and `GetAttribute` have an overload that takes a namespace URI. `TryGetAttribute` matches the local name in any namespace.
+- `EnumerateChildren` returns every child node. With the default options that includes a `Text` node for each run of white space between elements and a `Comment` node for each comment.
+- `AttributeCount` and `EnumerateAttributes` include namespace declarations (`xmlns` and `xmlns:prefix`).
+- The enumerators are structs that work with `foreach`. They don't implement `IEnumerable<T>`, so LINQ doesn't apply.
+- On a node that isn't an element, the lookups find nothing, the enumerators are empty, and `LocalName` is an empty string (or the target, for a processing instruction).
+
+### Allocation
+
+Name lookups, enumeration, the numeric, Boolean, date, and GUID getters, and `WriteTo` don't allocate. `LocalName`, `Prefix`, `NamespaceUri`, `GetString`, and `GetInnerText` allocate the string they return, `GetBytesFromBase64` allocates the array, and `CloneNode` allocates the copy. `GetRawXml` writes the node with a `Utf8XmlWriter` into a buffer of its own and returns the result as a string.
+
+### Markup
+
+`GetRawXml` writes the node with a `Utf8XmlWriter`; it isn't a slice of the original input. It takes no options, so its line ends are line feeds on every operating system. It returns an empty string for an attribute. `IsEmptyElement` is `true` for `<e/>` and `false` for `<e></e>`, and `WriteTo` keeps the difference.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+protected ValueType()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> AttributeCount
+
+Gets the number of attributes on this element.
+
+#### Syntax
+
+```csharp
+public int AttributeCount { get; }
+```
+
+#### Property Value
+
+Type: `int`
+The number of attributes on this element, including namespace declarations, or 0 if this node is not an element.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsEmptyElement
+
+Gets a value that indicates whether this node is an element that is written as an empty-element tag (`<e/>`).
+
+#### Syntax
+
+```csharp
+public bool IsEmptyElement { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if this node is an element that is written as an empty-element tag; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). An element with a start tag and an end tag and no content
+(`<e></e>`) gives [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsNil
+
+Gets a value that indicates whether this node is an element that is marked as nil with the `xsi:nil` attribute.
+
+#### Syntax
+
+```csharp
+public bool IsNil { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if this node is an element whose `xsi:nil` attribute is `true` or
+`1`; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> LocalName
+
+Gets the local name of this node.
+
+#### Syntax
+
+```csharp
+public string LocalName { get; }
+```
+
+#### Property Value
+
+Type: `string`
+The local name of an element or an attribute, without its prefix, or the target of a processing
+instruction. The value is an empty string for a node that has no name.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NamespaceUri
+
+Gets the namespace URI of this node.
+
+#### Syntax
+
+```csharp
+public string NamespaceUri { get; }
+```
+
+#### Property Value
+
+Type: `string`
+The namespace URI of the element or attribute, or an empty string if the node is in no namespace.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Prefix
+
+Gets the namespace prefix of this node.
+
+#### Syntax
+
+```csharp
+public string Prefix { get; }
+```
+
+#### Property Value
+
+Type: `string`
+The prefix of the element or attribute name, or an empty string if the name has no prefix.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TokenType
+
+Gets the reader token type that corresponds to this node.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlTokenType TokenType { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlTokenType`
+One of the enumeration values that indicates the token a [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) reports for
+this kind of node. An element gives [XmlTokenType.StartElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlTokenType).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ValueKind
+
+Gets the kind of the current XML node.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlValueKind ValueKind { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlValueKind`
+One of the enumeration values that indicates the kind of this node. A default
+[XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) gives [XmlValueKind.Undefined](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlValueKind).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CloneNode
+
+Creates a mutable copy of this node and all of its attributes and descendants.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.Nodes.XmlNode CloneNode()
+```
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Nodes.XmlNode`
+A new [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) that has no parent. Its type matches the kind of this node, for
+example an [XmlElementNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlElementNode) for an element.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+#### Remarks
+
+The copy does not depend on the parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) and stays valid after the document is disposed.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> EnumerateAttributes
+
+Gets an enumerator to enumerate the attributes of this element.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlElement.AttributeEnumerator EnumerateAttributes()
+```
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlElement.AttributeEnumerator`
+An enumerator to enumerate the attributes of this element, in document order. Namespace
+declarations are included. The enumerator yields nothing if this node is not an element.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> EnumerateChildren
+
+Gets an enumerator to enumerate the child nodes of this element.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlElement.Enumerator EnumerateChildren()
+```
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlElement.Enumerator`
+An enumerator to enumerate the child nodes of this element, in document order. Child nodes are
+elements, text nodes, CDATA sections, comments, and processing instructions. Attributes are not
+included. The enumerator yields nothing if this node is not an element.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals
+
+#### Syntax
+
+```csharp
+public bool Equals(CloudNimble.Text.Xml.XmlElement other)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `other` | `CloudNimble.Text.Xml.XmlElement` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="blue">Override</Badge>
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetAttribute
+
+Gets the first attribute of this element that has the specified local name, in any namespace.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlElement GetAttribute(string localName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `localName` | `string` | The local name of the attribute to find, without a prefix. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlElement`
+An [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) that represents the attribute.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *localName* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This element has no attribute with the specified local name. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetAttribute
+
+Gets the attribute of this element that has the specified local name and namespace URI.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlElement GetAttribute(string localName, string namespaceUri)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `localName` | `string` | The local name of the attribute to find, without a prefix. |
+| `namespaceUri` | `string` | The namespace URI of the attribute, or an empty string for an attribute in no namespace. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlElement`
+An [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) that represents the attribute.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *localName* or *namespaceUri* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This element has no attribute with the specified local name and namespace URI. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetAttribute
+
+Gets the first attribute of this element that has the local name specified as a read-only span of characters, in any namespace.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlElement GetAttribute(System.ReadOnlySpan<char> localName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `localName` | `System.ReadOnlySpan<char>` | The local name of the attribute to find, without a prefix. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlElement`
+An [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) that represents the attribute.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This element has no attribute with the specified local name. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetAttribute
+
+Gets the first attribute of this element that has the local name specified as a read-only span of UTF-8 bytes, in any namespace.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlElement GetAttribute(System.ReadOnlySpan<byte> utf8LocalName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8LocalName` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded local name of the attribute to find, without a prefix. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlElement`
+An [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) that represents the attribute.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This element has no attribute with the specified local name. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetBoolean
+
+Gets the value of this node as a [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean).
+
+#### Syntax
+
+```csharp
+public bool GetBoolean()
+```
+
+#### Returns
+
+Type: `bool`
+The value of this node as a [Boolean](https://learn.microsoft.com/dotnet/api/system.boolean).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | The value is not an `xs:boolean`, which is `true`, `false`, `1`, or `0`.
+-or-
+This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetByte
+
+Gets the value of this node as a [Byte](https://learn.microsoft.com/dotnet/api/system.byte).
+
+#### Syntax
+
+```csharp
+public byte GetByte()
+```
+
+#### Returns
+
+Type: `byte`
+The value of this node as a [Byte](https://learn.microsoft.com/dotnet/api/system.byte).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | The value is not an `xs:unsignedByte`, or it is outside the range of a [Byte](https://learn.microsoft.com/dotnet/api/system.byte).
+-or-
+This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetBytesFromBase64
+
+Gets the value of this node as a byte array, decoded from Base64 text.
+
+#### Syntax
+
+```csharp
+public byte[] GetBytesFromBase64()
+```
+
+#### Returns
+
+Type: `byte[]`
+The value decoded as a byte array.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | The value is not valid Base64 text (`xs:base64Binary`).
+-or-
+This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetChild
+
+Gets the first child element of this element that has the specified local name, in any namespace.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlElement GetChild(string localName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `localName` | `string` | The local name of the child element to find, without a prefix. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlElement`
+An [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) that represents the child element.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *localName* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This element has no child element with the specified local name. |
+
+#### Remarks
+
+Only direct children are searched, not deeper descendants.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetChild
+
+Gets the first child element of this element that has the specified local name and namespace URI.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlElement GetChild(string localName, string namespaceUri)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `localName` | `string` | The local name of the child element to find, without a prefix. |
+| `namespaceUri` | `string` | The namespace URI of the child element, or an empty string for an element in no namespace. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlElement`
+An [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) that represents the child element.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *localName* or *namespaceUri* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This element has no child element with the specified local name and namespace URI. |
+
+#### Remarks
+
+Only direct children are searched, not deeper descendants.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetChild
+
+Gets the first child element of this element that has the local name specified as a read-only span of characters, in any namespace.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlElement GetChild(System.ReadOnlySpan<char> localName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `localName` | `System.ReadOnlySpan<char>` | The local name of the child element to find, without a prefix. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlElement`
+An [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) that represents the child element.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This element has no child element with the specified local name. |
+
+#### Remarks
+
+Only direct children are searched, not deeper descendants.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetChild
+
+Gets the first child element of this element that has the local name specified as a read-only span of UTF-8 bytes, in any namespace.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlElement GetChild(System.ReadOnlySpan<byte> utf8LocalName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8LocalName` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded local name of the child element to find, without a prefix. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlElement`
+An [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) that represents the child element.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This element has no child element with the specified local name. |
+
+#### Remarks
+
+Only direct children are searched, not deeper descendants.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetDateTime
+
+Gets the value of this node as a [DateTime](https://learn.microsoft.com/dotnet/api/system.datetime).
+
+#### Syntax
+
+```csharp
+public System.DateTime GetDateTime()
+```
+
+#### Returns
+
+Type: `System.DateTime`
+The value of this node as a [DateTime](https://learn.microsoft.com/dotnet/api/system.datetime).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | The value is not an `xs:dateTime` that a [DateTime](https://learn.microsoft.com/dotnet/api/system.datetime) can represent.
+-or-
+This node is an element that is marked as nil. |
+
+#### Remarks
+
+A value with no time zone gives [Unspecified](https://learn.microsoft.com/dotnet/api/system.datetimekind.unspecified). A value with `Z` or
+a zero offset gives [Utc](https://learn.microsoft.com/dotnet/api/system.datetimekind.utc). A value with a non-zero offset is converted
+to local time and gives [Local](https://learn.microsoft.com/dotnet/api/system.datetimekind.local).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetDateTimeOffset
+
+Gets the value of this node as a [DateTimeOffset](https://learn.microsoft.com/dotnet/api/system.datetimeoffset).
+
+#### Syntax
+
+```csharp
+public System.DateTimeOffset GetDateTimeOffset()
+```
+
+#### Returns
+
+Type: `System.DateTimeOffset`
+The value of this node as a [DateTimeOffset](https://learn.microsoft.com/dotnet/api/system.datetimeoffset).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | The value is not an `xs:dateTime` that a [DateTimeOffset](https://learn.microsoft.com/dotnet/api/system.datetimeoffset) can represent.
+-or-
+This node is an element that is marked as nil. |
+
+#### Remarks
+
+A value with no time zone takes the local offset that is in force at that date and time.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetDecimal
+
+Gets the value of this node as a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal).
+
+#### Syntax
+
+```csharp
+public decimal GetDecimal()
+```
+
+#### Returns
+
+Type: `decimal`
+The value of this node as a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | The value is not an `xs:decimal` that a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal) can represent.
+-or-
+This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetDouble
+
+Gets the value of this node as a [Double](https://learn.microsoft.com/dotnet/api/system.double).
+
+#### Syntax
+
+```csharp
+public double GetDouble()
+```
+
+#### Returns
+
+Type: `double`
+The value of this node as a [Double](https://learn.microsoft.com/dotnet/api/system.double).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | The value is not an `xs:double`.
+-or-
+This node is an element that is marked as nil. |
+
+#### Remarks
+
+The literals `INF`, `-INF`, and `NaN` are accepted in any letter case.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetGuid
+
+Gets the value of this node as a [Guid](https://learn.microsoft.com/dotnet/api/system.guid).
+
+#### Syntax
+
+```csharp
+public System.Guid GetGuid()
+```
+
+#### Returns
+
+Type: `System.Guid`
+The value of this node as a [Guid](https://learn.microsoft.com/dotnet/api/system.guid).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | The value is not a GUID in the `D`, `N`, `B`, or `P` format.
+-or-
+This node is an element that is marked as nil. |
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="blue">Override</Badge>
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetInnerText
+
+Gets the text content of this node.
+
+#### Syntax
+
+```csharp
+public string GetInnerText()
+```
+
+#### Returns
+
+Type: `string`
+For an element, the text of all text nodes and CDATA sections inside it, in document order. For an
+attribute, a text node, or a CDATA section, its value. For a comment or a processing instruction,
+an empty string.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+#### Remarks
+
+Unlike [XmlElement.GetString](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement#getstring), this method does not return [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) for an element that is marked as nil.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetInt16
+
+Gets the value of this node as a [Int16](https://learn.microsoft.com/dotnet/api/system.int16).
+
+#### Syntax
+
+```csharp
+public short GetInt16()
+```
+
+#### Returns
+
+Type: `short`
+The value of this node as a [Int16](https://learn.microsoft.com/dotnet/api/system.int16).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | The value is not an `xs:short`, or it is outside the range of a [Int16](https://learn.microsoft.com/dotnet/api/system.int16).
+-or-
+This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetInt32
+
+Gets the value of this node as an [Int32](https://learn.microsoft.com/dotnet/api/system.int32).
+
+#### Syntax
+
+```csharp
+public int GetInt32()
+```
+
+#### Returns
+
+Type: `int`
+The value of this node as an [Int32](https://learn.microsoft.com/dotnet/api/system.int32).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | The value is not an `xs:int`, or it is outside the range of an [Int32](https://learn.microsoft.com/dotnet/api/system.int32).
+-or-
+This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetInt64
+
+Gets the value of this node as a [Int64](https://learn.microsoft.com/dotnet/api/system.int64).
+
+#### Syntax
+
+```csharp
+public long GetInt64()
+```
+
+#### Returns
+
+Type: `long`
+The value of this node as a [Int64](https://learn.microsoft.com/dotnet/api/system.int64).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | The value is not an `xs:long`, or it is outside the range of a [Int64](https://learn.microsoft.com/dotnet/api/system.int64).
+-or-
+This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetRawXml
+
+Gets a string that holds this node written as XML.
+
+#### Syntax
+
+```csharp
+public string GetRawXml()
+```
+
+#### Returns
+
+Type: `string`
+The XML markup of this node, including its attributes and descendants. The result is an empty
+string for an attribute, because an attribute has no markup outside its element.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+#### Remarks
+
+The markup is written again from the parsed node with [XmlElement.WriteTo](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement#writeto), without an XML
+declaration. It is not a copy of the original input.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetSByte
+
+Gets the value of this node as an [SByte](https://learn.microsoft.com/dotnet/api/system.sbyte).
+
+#### Syntax
+
+```csharp
+public sbyte GetSByte()
+```
+
+#### Returns
+
+Type: `sbyte`
+The value of this node as an [SByte](https://learn.microsoft.com/dotnet/api/system.sbyte).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | The value is not an `xs:byte`, or it is outside the range of an [SByte](https://learn.microsoft.com/dotnet/api/system.sbyte).
+-or-
+This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetSingle
+
+Gets the value of this node as a [Single](https://learn.microsoft.com/dotnet/api/system.single).
+
+#### Syntax
+
+```csharp
+public float GetSingle()
+```
+
+#### Returns
+
+Type: `float`
+The value of this node as a [Single](https://learn.microsoft.com/dotnet/api/system.single).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | The value is not an `xs:float`.
+-or-
+This node is an element that is marked as nil. |
+
+#### Remarks
+
+The literals `INF`, `-INF`, and `NaN` are accepted in any letter case.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetString
+
+Gets the value of this node as a [String](https://learn.microsoft.com/dotnet/api/system.string).
+
+#### Syntax
+
+```csharp
+public string GetString()
+```
+
+#### Returns
+
+Type: `string?`
+The value of this node as a [String](https://learn.microsoft.com/dotnet/api/system.string), or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if this node is an
+element that is marked as nil.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+#### Remarks
+
+Entity and character references in the value are expanded. Leading and trailing white space is kept.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetUInt16
+
+Gets the value of this node as a [UInt16](https://learn.microsoft.com/dotnet/api/system.uint16).
+
+#### Syntax
+
+```csharp
+public ushort GetUInt16()
+```
+
+#### Returns
+
+Type: `ushort`
+The value of this node as a [UInt16](https://learn.microsoft.com/dotnet/api/system.uint16).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | The value is not an `xs:unsignedShort`, or it is outside the range of a [UInt16](https://learn.microsoft.com/dotnet/api/system.uint16).
+-or-
+This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetUInt32
+
+Gets the value of this node as a [UInt32](https://learn.microsoft.com/dotnet/api/system.uint32).
+
+#### Syntax
+
+```csharp
+public uint GetUInt32()
+```
+
+#### Returns
+
+Type: `uint`
+The value of this node as a [UInt32](https://learn.microsoft.com/dotnet/api/system.uint32).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | The value is not an `xs:unsignedInt`, or it is outside the range of a [UInt32](https://learn.microsoft.com/dotnet/api/system.uint32).
+-or-
+This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetUInt64
+
+Gets the value of this node as a [UInt64](https://learn.microsoft.com/dotnet/api/system.uint64).
+
+#### Syntax
+
+```csharp
+public ulong GetUInt64()
+```
+
+#### Returns
+
+Type: `ulong`
+The value of this node as a [UInt64](https://learn.microsoft.com/dotnet/api/system.uint64).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | The value is not an `xs:unsignedLong`, or it is outside the range of a [UInt64](https://learn.microsoft.com/dotnet/api/system.uint64).
+-or-
+This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetAttribute
+
+Looks for the first attribute of this element that has the specified local name, in any namespace.
+
+#### Syntax
+
+```csharp
+public bool TryGetAttribute(string localName, out CloudNimble.Text.Xml.XmlElement value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `localName` | `string` | The local name of the attribute to find, without a prefix. |
+| `value` | `CloudNimble.Text.Xml.XmlElement` | When this method returns, contains the attribute if it was found, or a default
+[XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) if it was not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the attribute was found; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *localName* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+#### Remarks
+
+This method returns [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if this node is not an element.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetAttribute
+
+Looks for the first attribute of this element that has the local name specified as a read-only span of characters, in any namespace.
+
+#### Syntax
+
+```csharp
+public bool TryGetAttribute(System.ReadOnlySpan<char> localName, out CloudNimble.Text.Xml.XmlElement value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `localName` | `System.ReadOnlySpan<char>` | The local name of the attribute to find, without a prefix. |
+| `value` | `CloudNimble.Text.Xml.XmlElement` | When this method returns, contains the attribute if it was found, or a default
+[XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) if it was not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the attribute was found; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+#### Remarks
+
+This method returns [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if this node is not an element.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetAttribute
+
+Looks for the first attribute of this element that has the local name specified as a read-only span of UTF-8 bytes, in any namespace.
+
+#### Syntax
+
+```csharp
+public bool TryGetAttribute(System.ReadOnlySpan<byte> utf8LocalName, out CloudNimble.Text.Xml.XmlElement value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8LocalName` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded local name of the attribute to find, without a prefix. |
+| `value` | `CloudNimble.Text.Xml.XmlElement` | When this method returns, contains the attribute if it was found, or a default
+[XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) if it was not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the attribute was found; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+#### Remarks
+
+This method returns [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if this node is not an element.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetByte
+
+Attempts to get the value of this node as a [Byte](https://learn.microsoft.com/dotnet/api/system.byte).
+
+#### Syntax
+
+```csharp
+public bool TryGetByte(out byte value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `byte` | When this method returns, contains the value if it could be read, or the default value if it could not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the whole value is an `xs:unsignedByte`; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetBytesFromBase64
+
+Attempts to get the value of this node as a byte array, decoded from Base64 text.
+
+#### Syntax
+
+```csharp
+public bool TryGetBytesFromBase64(out byte[] value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `byte[]?` | When this method returns, contains the decoded bytes, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if the value is not valid Base64. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the whole value is valid Base64 text (`xs:base64Binary`); otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetChild
+
+Looks for the first child element of this element that has the specified local name, in any namespace.
+
+#### Syntax
+
+```csharp
+public bool TryGetChild(string localName, out CloudNimble.Text.Xml.XmlElement value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `localName` | `string` | The local name of the child element to find, without a prefix. |
+| `value` | `CloudNimble.Text.Xml.XmlElement` | When this method returns, contains the child element if it was found, or a default
+[XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) if it was not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the child element was found; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *localName* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+#### Remarks
+
+Only direct children are searched, not deeper descendants. This method returns
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if this node is not an element.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetChild
+
+Looks for the first child element of this element that has the specified local name and namespace URI.
+
+#### Syntax
+
+```csharp
+public bool TryGetChild(string localName, string namespaceUri, out CloudNimble.Text.Xml.XmlElement value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `localName` | `string` | The local name of the child element to find, without a prefix. |
+| `namespaceUri` | `string` | The namespace URI of the child element, or an empty string for an element in no namespace. |
+| `value` | `CloudNimble.Text.Xml.XmlElement` | When this method returns, contains the child element if it was found, or a default
+[XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) if it was not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the child element was found; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *localName* or *namespaceUri* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+#### Remarks
+
+Only direct children are searched, not deeper descendants. This method returns
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if this node is not an element.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetChild
+
+Looks for the first child element of this element that has the local name specified as a read-only span of characters, in any namespace.
+
+#### Syntax
+
+```csharp
+public bool TryGetChild(System.ReadOnlySpan<char> localName, out CloudNimble.Text.Xml.XmlElement value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `localName` | `System.ReadOnlySpan<char>` | The local name of the child element to find, without a prefix. |
+| `value` | `CloudNimble.Text.Xml.XmlElement` | When this method returns, contains the child element if it was found, or a default
+[XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) if it was not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the child element was found; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+#### Remarks
+
+Only direct children are searched, not deeper descendants. This method returns [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if this node is not an element.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetChild
+
+Looks for the first child element of this element that has the local name specified as a read-only span of UTF-8 bytes, in any namespace.
+
+#### Syntax
+
+```csharp
+public bool TryGetChild(System.ReadOnlySpan<byte> utf8LocalName, out CloudNimble.Text.Xml.XmlElement value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8LocalName` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded local name of the child element to find, without a prefix. |
+| `value` | `CloudNimble.Text.Xml.XmlElement` | When this method returns, contains the child element if it was found, or a default
+[XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) if it was not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the child element was found; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+#### Remarks
+
+Only direct children are searched, not deeper descendants. This method returns [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if this node is not an element.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetDateTime
+
+Attempts to get the value of this node as a [DateTime](https://learn.microsoft.com/dotnet/api/system.datetime).
+
+#### Syntax
+
+```csharp
+public bool TryGetDateTime(out System.DateTime value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `System.DateTime` | When this method returns, contains the value if it could be read, or the default value if it could not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the whole value is an `xs:dateTime` that a [DateTime](https://learn.microsoft.com/dotnet/api/system.datetime) can represent; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This node is an element that is marked as nil. |
+
+#### Remarks
+
+The value is read as it is by [XmlElement.GetDateTime](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement#getdatetime).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetDateTimeOffset
+
+Attempts to get the value of this node as a [DateTimeOffset](https://learn.microsoft.com/dotnet/api/system.datetimeoffset).
+
+#### Syntax
+
+```csharp
+public bool TryGetDateTimeOffset(out System.DateTimeOffset value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `System.DateTimeOffset` | When this method returns, contains the value if it could be read, or the default value if it could not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the whole value is an `xs:dateTime` that a [DateTimeOffset](https://learn.microsoft.com/dotnet/api/system.datetimeoffset) can represent; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This node is an element that is marked as nil. |
+
+#### Remarks
+
+The value is read as it is by [XmlElement.GetDateTimeOffset](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement#getdatetimeoffset).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetDecimal
+
+Attempts to get the value of this node as a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal).
+
+#### Syntax
+
+```csharp
+public bool TryGetDecimal(out decimal value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `decimal` | When this method returns, contains the value if it could be read, or the default value if it could not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the whole value is an `xs:decimal` that a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal) can represent; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetDouble
+
+Attempts to get the value of this node as a [Double](https://learn.microsoft.com/dotnet/api/system.double).
+
+#### Syntax
+
+```csharp
+public bool TryGetDouble(out double value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `double` | When this method returns, contains the value if it could be read, or the default value if it could not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the whole value is an `xs:double`; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This node is an element that is marked as nil. |
+
+#### Remarks
+
+The literals `INF`, `-INF`, and `NaN` are accepted in any letter case.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetGuid
+
+Attempts to get the value of this node as a [Guid](https://learn.microsoft.com/dotnet/api/system.guid).
+
+#### Syntax
+
+```csharp
+public bool TryGetGuid(out System.Guid value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `System.Guid` | When this method returns, contains the value if it could be read, or the default value if it could not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the whole value is a GUID in the `D`, `N`, `B`, or `P` format; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetInt16
+
+Attempts to get the value of this node as a [Int16](https://learn.microsoft.com/dotnet/api/system.int16).
+
+#### Syntax
+
+```csharp
+public bool TryGetInt16(out short value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `short` | When this method returns, contains the value if it could be read, or the default value if it could not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the whole value is an `xs:short`; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetInt32
+
+Attempts to get the value of this node as an [Int32](https://learn.microsoft.com/dotnet/api/system.int32).
+
+#### Syntax
+
+```csharp
+public bool TryGetInt32(out int value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `int` | When this method returns, contains the value if it could be read, or the default value if it could not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the whole value is an `xs:int`; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetInt64
+
+Attempts to get the value of this node as a [Int64](https://learn.microsoft.com/dotnet/api/system.int64).
+
+#### Syntax
+
+```csharp
+public bool TryGetInt64(out long value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `long` | When this method returns, contains the value if it could be read, or the default value if it could not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the whole value is an `xs:long`; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetSByte
+
+Attempts to get the value of this node as an [SByte](https://learn.microsoft.com/dotnet/api/system.sbyte).
+
+#### Syntax
+
+```csharp
+public bool TryGetSByte(out sbyte value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `sbyte` | When this method returns, contains the value if it could be read, or the default value if it could not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the whole value is an `xs:byte`; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetSingle
+
+Attempts to get the value of this node as a [Single](https://learn.microsoft.com/dotnet/api/system.single).
+
+#### Syntax
+
+```csharp
+public bool TryGetSingle(out float value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `float` | When this method returns, contains the value if it could be read, or the default value if it could not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the whole value is an `xs:float`; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This node is an element that is marked as nil. |
+
+#### Remarks
+
+The literals `INF`, `-INF`, and `NaN` are accepted in any letter case.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetUInt16
+
+Attempts to get the value of this node as a [UInt16](https://learn.microsoft.com/dotnet/api/system.uint16).
+
+#### Syntax
+
+```csharp
+public bool TryGetUInt16(out ushort value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `ushort` | When this method returns, contains the value if it could be read, or the default value if it could not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the whole value is an `xs:unsignedShort`; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetUInt32
+
+Attempts to get the value of this node as a [UInt32](https://learn.microsoft.com/dotnet/api/system.uint32).
+
+#### Syntax
+
+```csharp
+public bool TryGetUInt32(out uint value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `uint` | When this method returns, contains the value if it could be read, or the default value if it could not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the whole value is an `xs:unsignedInt`; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetUInt64
+
+Attempts to get the value of this node as a [UInt64](https://learn.microsoft.com/dotnet/api/system.uint64).
+
+#### Syntax
+
+```csharp
+public bool TryGetUInt64(out ulong value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `ulong` | When this method returns, contains the value if it could be read, or the default value if it could not. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the whole value is an `xs:unsignedLong`; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+| `XmlException` | This node is an element that is marked as nil. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> WriteTo
+
+Writes this node to the specified writer as XML.
+
+#### Syntax
+
+```csharp
+public void WriteTo(CloudNimble.Text.Xml.Utf8XmlWriter writer)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The writer to which to write the node. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *writer* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `InvalidOperationException` | This value is a default [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement), which refers to no node. |
+| `ObjectDisposedException` | The parent [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) has been disposed. |
+
+#### Remarks
+
+An element is written with its attributes and descendants. Nothing is written for an attribute,
+because an attribute has no markup outside its element.
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlDocument
+- CloudNimble.Text.Xml.XmlValueKind
+- CloudNimble.Text.Xml.XmlTokenType
+- CloudNimble.Text.Xml.XmlAttributes
+- CloudNimble.Text.Xml.XmlNamespaces
+- CloudNimble.Text.Xml.Utf8XmlWriter
+- CloudNimble.Text.Xml.XmlSerializer
+- CloudNimble.Text.Xml.XmlException
+- CloudNimble.Text.Xml.Nodes.XmlNode
+- CloudNimble.Text.Xml.Nodes.XmlElementNode
+

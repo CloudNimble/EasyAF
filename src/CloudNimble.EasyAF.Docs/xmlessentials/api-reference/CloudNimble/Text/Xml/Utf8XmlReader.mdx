@@ -1,0 +1,2346 @@
+---
+title: Utf8XmlReader
+description: "Provides a high-performance API for forward-only, read-only access to UTF-8 encoded XML text."
+icon: cubes
+tag: "SEALED"
+keywords: ['Utf8XmlReader', 'CloudNimble.Text.Xml.Utf8XmlReader', 'CloudNimble.Text.Xml', 'struct', 'System.ValueType', 'CloudNimble.Text.Xml.XmlReaderOptions', 'CloudNimble.Text.Xml.XmlReaderState', 'CloudNimble.Text.Xml.XmlTokenType', 'CloudNimble.Text.Xml.XmlCommentHandling', 'CloudNimble.Text.Xml.XmlWhitespaceHandling']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.ValueType
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Utf8XmlReader
+```
+
+## Summary
+
+Provides a high-performance API for forward-only, read-only access to UTF-8 encoded XML text.
+
+## Usage
+
+Create a reader over UTF-8 bytes (a `u8` literal, a `byte[]`, a `ReadOnlySpan<byte>`, or a `ReadOnlySequence<byte>`) and call `Read` until it returns `false`. After each call, `TokenType` says what the reader is on.
+
+```csharp
+ReadOnlySpan<byte> xml = """
+    <Order id="1042">
+      <Item>Keyboard</Item>
+      <Item>Mouse</Item>
+      <Total>129.90</Total>
+    </Order>
+    """u8;
+
+var reader = new Utf8XmlReader(xml);
+while (reader.Read())
+{
+    if (reader.TokenType is not XmlTokenType.StartElement)
+    {
+        continue;
+    }
+
+    if (reader.LocalNameEquals("Order"u8))
+    {
+        while (reader.MoveToNextAttribute())
+        {
+            if (reader.LocalNameEquals("id"u8))
+            {
+                output.WriteLine($"Order {reader.GetInt32()}");
+            }
+        }
+
+        reader.MoveToElement();
+    }
+    else if (reader.LocalNameEquals("Item"u8))
+    {
+        reader.Read();
+        output.WriteLine($"Item: {reader.GetString()}");
+    }
+    else if (reader.LocalNameEquals("Total"u8))
+    {
+        reader.Read();
+        output.WriteLine($"Total: {reader.GetDecimal()}");
+    }
+}
+```
+
+The members you use most:
+
+| To | Use |
+| --- | --- |
+| Move to the next token | `Read` |
+| Identify an element or attribute | `LocalNameEquals`, `NamespaceUriEquals`, `LocalNameSpan`, `PrefixSpan`, `NamespaceUriSpan` |
+| Visit the attributes of a start tag | `MoveToNextAttribute`, `MoveToElement`, `AttributeCount` |
+| Tell `<e/>` from `<e></e>` | `IsEmptyElement` |
+| Read a value | `ValueSpan`, `GetString`, the `Get*` and `TryGet*` methods, `ValueTextEquals`, `CopyString` |
+| Pass over an element | `Skip`, `TrySkip` |
+| Read in blocks | The `isFinalBlock` constructors, `CurrentState`, `BytesConsumed` |
+
+Pass an [`XmlReaderOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions) to the constructor to leave out comments and the white space between elements, to read a fragment, or to change a limit. By default the reader reports both, so that a document can be written back unchanged. The loop above isn't affected, because it acts only on start tags.
+
+For a walk through every feature, see [How to read XML with Utf8XmlReader](/xmlessentials/guides/use-utf8xmlreader).
+
+## Remarks
+
+The reader is a `ref` struct that reads the text one token at a time, in the manner
+of `Utf8JsonReader`.
+
+Empty elements are reported as [XmlTokenType.StartElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlTokenType) with
+[Utf8XmlReader.IsEmptyElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader#isemptyelement) set to [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). The reader does not synthesize an
+[XmlTokenType.EndElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlTokenType) token. Callers must check
+[Utf8XmlReader.IsEmptyElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader#isemptyelement) before expecting a matching end tag.
+
+The `xmlns` attributes of a start tag bind before the element name is resolved. Unprefixed
+attributes are in no namespace. Unprefixed elements use the default namespace.
+The XML declaration, when present, must be the first token in the document (after an optional BOM).
+
+## Examples
+
+Each example is a sample in the repository whose output is checked by a test.
+
+### Read typed values
+
+The `Get*` methods parse a value in place and throw an `XmlException` when it isn't valid for the type. The `TryGet*` methods return `false` instead.
+
+```csharp
+ReadOnlySpan<byte> xml = """
+    <Order id="1042" rush="true">
+      <Placed>2026-03-14T09:30:00+01:00</Placed>
+      <Total>129.90</Total>
+      <Quantity>three</Quantity>
+    </Order>
+    """u8;
+
+var reader = new Utf8XmlReader(xml);
+while (reader.Read())
+{
+    if (reader.TokenType is not XmlTokenType.StartElement)
+    {
+        continue;
+    }
+
+    if (reader.LocalNameEquals("Order"u8))
+    {
+        while (reader.MoveToNextAttribute())
+        {
+            if (reader.LocalNameEquals("id"u8))
+            {
+                output.WriteLine($"id: {reader.GetInt32()}");
+            }
+            else if (reader.LocalNameEquals("rush"u8))
+            {
+                output.WriteLine($"rush: {reader.GetBoolean()}");
+            }
+        }
+    }
+    else if (reader.LocalNameEquals("Placed"u8))
+    {
+        reader.Read();
+        output.WriteLine($"Placed: {reader.GetDateTimeOffset():O}");
+    }
+    else if (reader.LocalNameEquals("Total"u8))
+    {
+        reader.Read();
+        output.WriteLine($"Total: {reader.GetDecimal().ToString(CultureInfo.InvariantCulture)}");
+    }
+    else if (reader.LocalNameEquals("Quantity"u8))
+    {
+        reader.Read();
+        if (reader.TryGetInt32(out var quantity))
+        {
+            output.WriteLine($"Quantity: {quantity}");
+        }
+        else
+        {
+            output.WriteLine($"Quantity is not a number: {reader.GetString()}");
+        }
+    }
+}
+```
+
+```text
+id: 1042
+rush: True
+Placed: 2026-03-14T09:30:00.0000000+01:00
+Total: 129.90
+Quantity is not a number: three
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/20_ReadTokensAndValues.cs)
+
+### Read names with their namespaces
+
+```csharp
+ReadOnlySpan<byte> xml = """
+    <feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+      <title lang="en">Orders</title>
+      <dc:creator>Ada</dc:creator>
+    </feed>
+    """u8;
+
+var reader = new Utf8XmlReader(xml);
+while (reader.Read())
+{
+    if (reader.TokenType is not XmlTokenType.StartElement)
+    {
+        continue;
+    }
+
+    output.WriteLine($"Element prefix='{Encoding.UTF8.GetString(reader.PrefixSpan)}' local='{Encoding.UTF8.GetString(reader.LocalNameSpan)}' namespace='{Encoding.UTF8.GetString(reader.NamespaceUriSpan)}'");
+    if (reader.LocalNameEquals("creator"u8) && reader.NamespaceUriEquals("http://purl.org/dc/elements/1.1/"u8))
+    {
+        output.WriteLine("  This is the Dublin Core creator element.");
+    }
+
+    while (reader.MoveToNextAttribute())
+    {
+        output.WriteLine($"  Attribute prefix='{Encoding.UTF8.GetString(reader.PrefixSpan)}' local='{Encoding.UTF8.GetString(reader.LocalNameSpan)}' namespace='{Encoding.UTF8.GetString(reader.NamespaceUriSpan)}'");
+    }
+}
+```
+
+```text
+Element prefix='' local='feed' namespace='http://www.w3.org/2005/Atom'
+  Attribute prefix='' local='xmlns' namespace='http://www.w3.org/2000/xmlns/'
+  Attribute prefix='xmlns' local='dc' namespace='http://www.w3.org/2000/xmlns/'
+Element prefix='' local='title' namespace='http://www.w3.org/2005/Atom'
+  Attribute prefix='' local='lang' namespace=''
+Element prefix='dc' local='creator' namespace='http://purl.org/dc/elements/1.1/'
+  This is the Dublin Core creator element.
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/20_ReadTokensAndValues.cs)
+
+### Skip an element
+
+```csharp
+ReadOnlySpan<byte> xml = """
+    <Order>
+      <Customer>
+        <Name>Ada</Name>
+        <Address><City>London</City></Address>
+      </Customer>
+      <Total>129.90</Total>
+    </Order>
+    """u8;
+
+var reader = new Utf8XmlReader(xml);
+while (reader.Read())
+{
+    if (reader.TokenType is not XmlTokenType.StartElement)
+    {
+        continue;
+    }
+
+    if (reader.LocalNameEquals("Customer"u8))
+    {
+        reader.Skip();
+        output.WriteLine($"Skipped Customer. Now on {reader.TokenType} {Encoding.UTF8.GetString(reader.LocalNameSpan)} at depth {reader.CurrentDepth}.");
+    }
+    else
+    {
+        output.WriteLine($"Read {Encoding.UTF8.GetString(reader.LocalNameSpan)}");
+    }
+}
+```
+
+```text
+Read Order
+Skipped Customer. Now on EndElement Customer at depth 1.
+Read Total
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/21_ReadMarkupAndHandleErrors.cs)
+
+For a loop that reads a stream in blocks, see the example for [`XmlReaderState`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState).
+
+## Best Practices
+
+- **Compare names and values as UTF-8.** `reader.LocalNameEquals("Item"u8)` and `reader.ValueTextEquals("yes"u8)` compare bytes with bytes. `GetString()` followed by `==` creates a string for every comparison.
+- **Match on the namespace URI and the local name, not on the prefix.** The producer of a document is free to choose any prefix.
+- **Check `IsEmptyElement` on every start tag.** An empty element has no `EndElement` token, so code that counts depth or waits for an end tag has to know.
+- **Read a value only on a token that has one.** Use the value members on `Text`, `CData`, `Attribute`, `Comment`, and `ProcessingInstruction` tokens.
+- **Use `TryGet*` when a bad value is something you expect.** A `Get*` method throws an `XmlException` when a value isn't valid, which fits values that must be right.
+- **Copy what you keep.** A span from the reader is valid until the reader moves.
+- **Set `CommentHandling` to `Skip` and `WhitespaceHandling` to `Insignificant` in a loop that only wants data.** By default the reader reports comments and the white space between elements, so that a document can be written back unchanged.
+- **Pass the reader with `ref`** to a helper method that advances it.
+- **Give the reader a scratch buffer on a hot path.** With one that's large enough for the document, reading allocates nothing.
+- **Take `CurrentState` once per block.** It copies the open element names and namespace bindings, so it allocates.
+
+## Patterns
+
+These are the shapes that code using the reader takes most often.
+
+### Token loop
+
+`while (reader.Read())` with a `switch` on `TokenType` is the basic shape, as with `Utf8JsonReader`. Handle `StartElement` and check `IsEmptyElement` before you expect content or an end tag.
+
+### Attribute walk
+
+On a start tag, call `MoveToNextAttribute` until it returns `false`. While the reader is on an attribute, `TokenType` is `Attribute` and the name and value members describe the attribute. Namespace declarations are part of the walk. `MoveToElement` returns to the start tag, and `Read` continues after the start tag whether or not you call it.
+
+### Element with a value
+
+After a start tag that you know holds text, call `Read` once and use a `Get*` or `TryGet*` method. For an element that can be empty, check that the token is `Text` or `CData` first.
+
+### Look ahead
+
+Copy the reader (`var lookahead = reader;`), read ahead with the copy inside the current element, and then drop the copy or carry on with it. A copy shares working memory with the original, so don't advance both in turn.
+
+### Read in blocks
+
+Construct a reader for each block with `isFinalBlock` and the state from the previous reader. When `Read` returns `false`, save `CurrentState`, keep the bytes after `BytesConsumed`, and add more data. The complete loop is in the example for [`XmlReaderState`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState).
+
+### Custom converter
+
+`XmlConverter<T>.Read` receives the reader by reference, positioned on the value to convert. See [Custom converters](/xmlessentials/guides/custom-converters).
+
+## Considerations
+
+Know the following before you build on the reader.
+
+### It's a ref struct
+
+A reader can't be stored in a field of a class, captured by a lambda, or used across an `await` or a `yield return`. Passing it by value copies it. It isn't thread safe.
+
+### Lifetime of spans
+
+`ValueSpan`, `LocalNameSpan`, `PrefixSpan`, and `NamespaceUriSpan` point into your input, or into a buffer that the reader reuses for the next decoded value. They're valid until the reader moves. On a start tag or an end tag, `ValueSpan` is empty.
+
+### Allocation
+
+Reading tokens, comparing names, and parsing typed values don't allocate. `GetString`, `GetComment`, and `GetBytesFromBase64` return new objects. The reader allocates working memory, which it keeps for the tokens that follow, when a value has to be decoded, when a start tag has more than eight attributes, when more than eight namespace declarations are in scope, or when elements nest more than eight deep. The constructors that take a `scratch` buffer use that buffer first. A sequence of more than one segment is copied into one array before it's read, and `CurrentState` allocates.
+
+### What it checks
+
+The reader checks that the document is well formed as it reads, including names, characters, matching end tags, duplicate attributes, and namespace declarations. It doesn't validate against a DTD or a schema. An error is thrown when the reader reaches it, which can be after your code has handled the tokens before it.
+
+### What it rejects
+
+A document type declaration, an encoding other than UTF-8, and any entity other than the five predefined ones throw an `XmlException`. See [XML conformance](/xmlessentials/guides/xml-conformance).
+
+### Differences from Utf8JsonReader
+
+- An empty element is one token with `IsEmptyElement` set. There's no end token for it.
+- Attributes aren't tokens in the `Read` sequence. You visit them with `MoveToNextAttribute`.
+- The value is always in `ValueSpan`. A multi-segment sequence is copied into one buffer before it is read.
+- A copy of a reader shares working memory with the original.
+- `XmlReaderState` holds the open elements and namespace bindings, so taking it allocates.
+
+### Differences from System.Xml.XmlReader
+
+- The input is UTF-8 bytes in memory, not a stream or a `TextReader`, and there's no asynchronous `Read`.
+- DTDs are always rejected, and there's no validation, no entity resolution, and no `XmlResolver`.
+- Names and values are spans of bytes. Strings are created only when you ask for one.
+- The defaults are alike: both readers report comments and white space between elements unless you turn them off.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) struct that processes a read-only
+span of UTF-8 encoded text that holds a complete document, using the default options.
+
+#### Syntax
+
+```csharp
+public Utf8XmlReader(System.ReadOnlySpan<byte> utf8Xml)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded XML text to process. An optional BOM is consumed. |
+
+#### Remarks
+
+The default options report comments ([XmlCommentHandling.Allow](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling)) and whitespace-only text
+between elements ([XmlWhitespaceHandling.Significant](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWhitespaceHandling)) as tokens.
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) struct that processes a read-only
+span of UTF-8 encoded text that holds a complete document, using the specified options.
+
+#### Syntax
+
+```csharp
+public Utf8XmlReader(System.ReadOnlySpan<byte> utf8Xml, CloudNimble.Text.Xml.XmlReaderOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded XML text to process. An optional BOM is consumed. |
+| `options` | `CloudNimble.Text.Xml.XmlReaderOptions` | The options that define the behavior of the reader. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | *utf8Xml* is longer than [XmlReaderOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions#maxdocumentbytecount). |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) struct that processes a read-only
+span of UTF-8 encoded text and indicates whether the input contains all the text to process.
+
+#### Syntax
+
+```csharp
+public Utf8XmlReader(System.ReadOnlySpan<byte> utf8Xml, bool isFinalBlock, CloudNimble.Text.Xml.XmlReaderState state)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded XML text to process. An optional BOM at the start of the document is consumed. |
+| `isFinalBlock` | `bool` | [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to indicate that the input span contains the entire data to process;
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to indicate that the input span contains partial data with more data to follow.
+When [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool), the reader throws an [XmlException](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException) if the input ends inside a token. |
+| `state` | `CloudNimble.Text.Xml.XmlReaderState` | The reader state. If this is the first call to the constructor, pass a new
+[XmlReaderState](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState) that holds the options to use. Otherwise, pass the value of the
+[Utf8XmlReader.CurrentState](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader#currentstate) property from the previous instance of the [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader). |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The bytes read so far and the length of *utf8Xml* together exceed
+[XmlReaderOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions#maxdocumentbytecount). |
+
+#### Remarks
+
+A `default`[XmlReaderState](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState) holds the default options, which report
+comments and whitespace-only text between elements as tokens.
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) struct that processes a read-only
+span of UTF-8 encoded text that holds a complete document, using the specified options and a
+caller-supplied buffer as working memory.
+
+#### Syntax
+
+```csharp
+public Utf8XmlReader(System.ReadOnlySpan<byte> utf8Xml, System.Span<byte> scratch, CloudNimble.Text.Xml.XmlReaderOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded XML text to process. An optional BOM is consumed. |
+| `scratch` | `System.Span<byte>` | The memory the reader uses before it allocates any. The reader may overwrite it for as long as the
+reader is in use. Its contents on entry do not matter.
+It may come from `stackalloc`, a pooled array, or a field reused from one reader to the next. |
+| `options` | `CloudNimble.Text.Xml.XmlReaderOptions` | The options that define the behavior of the reader. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | *utf8Xml* is longer than [XmlReaderOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions#maxdocumentbytecount). |
+
+#### Examples
+
+```csharp
+Span<byte> scratch = stackalloc byte[1024];
+var reader = new Utf8XmlReader(utf8Xml, scratch, new XmlReaderOptions());
+while (reader.Read())
+{
+}
+```
+
+#### Remarks
+
+A reader needs memory of its own in four cases: a value that holds a character or entity reference,
+or a line end other than LF, is decoded into a buffer; a start tag with more than eight attributes
+needs a larger attribute table; so do more than eight namespace declarations in scope; and so do
+elements nested more than eight deep. Without *scratch* each of those is an array
+allocated for this reader. With it, the reader takes the memory from *scratch*
+and allocates only once that is used up, so a buffer of any size is safe and a larger one saves more.
+
+Copies of the reader share the buffer, as they share the arrays a reader without one allocates.
+A copy may look ahead within the element the original is on and then be dropped, or the copy
+may be the one that carries on. Do not advance two copies in turn, and do not go back to the
+original once a copy has read past the end of the element the original is on.
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) struct that processes a read-only
+span of UTF-8 encoded text, indicates whether the input contains all the text to process, and
+uses a caller-supplied buffer as working memory.
+
+#### Syntax
+
+```csharp
+public Utf8XmlReader(System.ReadOnlySpan<byte> utf8Xml, System.Span<byte> scratch, bool isFinalBlock, CloudNimble.Text.Xml.XmlReaderState state)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded XML text to process. An optional BOM at the start of the document is consumed. |
+| `scratch` | `System.Span<byte>` | The memory the reader uses before it allocates any. The reader may overwrite it for as long as the
+reader is in use. Its contents on entry do not matter, so
+the same buffer can be passed to the reader for each block of a document. |
+| `isFinalBlock` | `bool` | [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to indicate that the input span contains the entire data to process;
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to indicate that the input span contains partial data with more data to follow.
+When [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool), the reader throws an [XmlException](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException) if the input ends inside a token. |
+| `state` | `CloudNimble.Text.Xml.XmlReaderState` | The reader state. If this is the first call to the constructor, pass a new
+[XmlReaderState](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState) that holds the options to use. Otherwise, pass the value of the
+[Utf8XmlReader.CurrentState](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader#currentstate) property from the previous instance of the [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader). |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The bytes read so far and the length of *utf8Xml* together exceed
+[XmlReaderOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions#maxdocumentbytecount). |
+
+#### Remarks
+
+See [Utf8XmlReader..ctor](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader#.ctor) for what the buffer is used for.
+A `default`[XmlReaderState](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState) holds the default options, which report
+comments and whitespace-only text between elements as tokens.
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) struct that processes a read-only
+sequence of UTF-8 encoded text that holds a complete document, using the default options.
+
+#### Syntax
+
+```csharp
+public Utf8XmlReader(System.Buffers.ReadOnlySequence<byte> utf8Xml)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.Buffers.ReadOnlySequence<byte>` | The UTF-8 encoded XML text to process. An optional BOM is consumed. A multi-segment sequence is copied into a contiguous buffer. |
+
+#### Remarks
+
+The default options report comments and whitespace-only text between elements as tokens.
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) struct that processes a read-only
+sequence of UTF-8 encoded text that holds a complete document, using the specified options.
+
+#### Syntax
+
+```csharp
+public Utf8XmlReader(System.Buffers.ReadOnlySequence<byte> utf8Xml, CloudNimble.Text.Xml.XmlReaderOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.Buffers.ReadOnlySequence<byte>` | The UTF-8 encoded XML text to process. An optional BOM is consumed. A multi-segment sequence is copied into a contiguous buffer. |
+| `options` | `CloudNimble.Text.Xml.XmlReaderOptions` | The options that define the behavior of the reader. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | *utf8Xml* is longer than [XmlReaderOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions#maxdocumentbytecount). |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) struct that processes a read-only
+sequence of UTF-8 encoded text and indicates whether the input contains all the text to process.
+
+#### Syntax
+
+```csharp
+public Utf8XmlReader(System.Buffers.ReadOnlySequence<byte> utf8Xml, bool isFinalBlock, CloudNimble.Text.Xml.XmlReaderState state)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Xml` | `System.Buffers.ReadOnlySequence<byte>` | The UTF-8 encoded XML text to process. An optional BOM at the start of the document is consumed. A multi-segment sequence is copied into a contiguous buffer. |
+| `isFinalBlock` | `bool` | [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to indicate that the input sequence contains the entire data to process;
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) to indicate that the input sequence contains partial data with more data to follow.
+When [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool), the reader throws an [XmlException](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException) if the input ends inside a token. |
+| `state` | `CloudNimble.Text.Xml.XmlReaderState` | The reader state. If this is the first call to the constructor, pass a new
+[XmlReaderState](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState) that holds the options to use. Otherwise, pass the value of the
+[Utf8XmlReader.CurrentState](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader#currentstate) property from the previous instance of the [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader). |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The bytes read so far and the length of *utf8Xml* together exceed
+[XmlReaderOptions.MaxDocumentByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions#maxdocumentbytecount). |
+
+#### Remarks
+
+A `default`[XmlReaderState](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState) holds the default options, which report
+comments and whitespace-only text between elements as tokens.
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+protected ValueType()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> AttributeCount
+
+Gets the number of attributes on the current start tag.
+
+#### Syntax
+
+```csharp
+public int AttributeCount { get; }
+```
+
+#### Property Value
+
+Type: `int`
+The number of attributes on the current start tag, including namespace declarations.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> BytesConsumed
+
+Gets the total number of bytes consumed so far by this instance of the [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader).
+
+#### Syntax
+
+```csharp
+public long BytesConsumed { get; }
+```
+
+#### Property Value
+
+Type: `long`
+The number of bytes consumed from the current buffer.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CurrentDepth
+
+Gets the depth of the current token.
+
+#### Syntax
+
+```csharp
+public int CurrentDepth { get; }
+```
+
+#### Property Value
+
+Type: `int`
+The number of elements that the current token is inside.
+
+#### Examples
+
+```csharp
+// <a><b/><c>text</c></a>
+// <a> 0, <b/> 1, <c> 1, text 2, </c> 1, </a> 0
+```
+
+#### Remarks
+
+The root element is at depth 0, and so is anything before or after it. A start tag, its end tag, and an
+empty element in the same place are at the same depth, and the content of an element is one deeper.
+An attribute is at the depth of its element. This is the depth that `XmlReader.Depth` and
+`Utf8JsonReader.CurrentDepth` report.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CurrentState
+
+Gets the current [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) state to pass to a [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader)
+constructor with more data.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlReaderState CurrentState { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlReaderState`
+The state to resume reading from.
+
+#### Remarks
+
+The state is opaque. The public surface of [XmlReaderState](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState) is
+[XmlReaderState.Options](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState#options) only. The reader's progress is copied into the state, so two
+readers never share mutable stacks.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> HasAttributes
+
+Gets a value that indicates whether the current start tag has attributes.
+
+#### Syntax
+
+```csharp
+public bool HasAttributes { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the current start tag has at least one attribute; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsEmptyElement
+
+Gets a value that indicates whether the current start tag is an empty element (`<e/>`).
+
+#### Syntax
+
+```csharp
+public bool IsEmptyElement { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the current start tag is an empty element; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsFinalBlock
+
+Gets a value that indicates whether all the XML data was provided or there is more data to come.
+
+#### Syntax
+
+```csharp
+public bool IsFinalBlock { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the reader was constructed with the input span or sequence containing
+the entire XML data to process; [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the reader was constructed with an
+input span or sequence that may contain partial XML data with more data to follow.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> LocalNameSpan
+
+Gets the local name of the current element or attribute.
+
+#### Syntax
+
+```csharp
+public System.ReadOnlySpan<byte> LocalNameSpan { get; }
+```
+
+#### Property Value
+
+Type: `System.ReadOnlySpan<byte>`
+The local name, without a prefix, as UTF-8 bytes.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NamespaceUriSpan
+
+Gets the namespace URI of the current element or attribute.
+
+#### Syntax
+
+```csharp
+public System.ReadOnlySpan<byte> NamespaceUriSpan { get; }
+```
+
+#### Property Value
+
+Type: `System.ReadOnlySpan<byte>`
+The namespace URI as UTF-8 bytes, or an empty span if the name is in no namespace or the current
+token is not a start tag, an end tag, or an attribute.
+
+#### Remarks
+
+Unprefixed attributes are in no namespace. Unprefixed elements use the default namespace.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Position
+
+Gets the current [SequencePosition](https://learn.microsoft.com/dotnet/api/system.sequenceposition) within the provided UTF-8 encoded input
+[ReadOnlySequence`1](https://learn.microsoft.com/dotnet/api/system.buffers.readonlysequence-1), or a default [SequencePosition](https://learn.microsoft.com/dotnet/api/system.sequenceposition) if the
+[Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) struct was constructed with a [ReadOnlySpan`1](https://learn.microsoft.com/dotnet/api/system.readonlyspan-1).
+
+#### Syntax
+
+```csharp
+public System.SequencePosition Position { get; }
+```
+
+#### Property Value
+
+Type: `System.SequencePosition`
+The position in the input sequence that the reader has consumed up to, or a default
+[SequencePosition](https://learn.microsoft.com/dotnet/api/system.sequenceposition) if the input is a span.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PrefixSpan
+
+Gets the namespace prefix of the current element or attribute.
+
+#### Syntax
+
+```csharp
+public System.ReadOnlySpan<byte> PrefixSpan { get; }
+```
+
+#### Property Value
+
+Type: `System.ReadOnlySpan<byte>`
+The prefix as UTF-8 bytes, or an empty span if the name has no prefix.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TokenStartIndex
+
+Gets the index that the last processed XML token starts at in the document.
+
+#### Syntax
+
+```csharp
+public long TokenStartIndex { get; }
+```
+
+#### Property Value
+
+Type: `long`
+The zero-based byte offset of the token from the start of the document. When the document is read
+in several blocks, the offset counts the bytes of the earlier blocks.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TokenType
+
+Gets the type of the last processed XML token in the UTF-8 encoded XML text.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlTokenType TokenType { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlTokenType`
+One of the enumeration values that indicates the type of the current token. After
+[Utf8XmlReader.MoveToNextAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader#movetonextattribute) returns [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool), this is
+[XmlTokenType.Attribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlTokenType).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ValueIsEscaped
+
+Gets a value that indicates whether the current value differs from its bytes in the input.
+
+#### Syntax
+
+```csharp
+public bool ValueIsEscaped { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the value held character or entity references, or line ends that were
+normalized; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ValueSpan
+
+Gets the value of the last processed token as a read-only span of UTF-8 bytes.
+
+#### Syntax
+
+```csharp
+public System.ReadOnlySpan<byte> ValueSpan { get; }
+```
+
+#### Property Value
+
+Type: `System.ReadOnlySpan<byte>`
+The UTF-8 bytes of the current token value. If the value held character or entity references, or
+line ends that had to be normalized, the span holds the decoded value. Otherwise, it is a slice of
+the input.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Version
+
+Gets the XML version that is in force for the document.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlVersion Version { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlVersion`
+One of the enumeration values that indicates the version named in the XML declaration. The default
+is [XmlVersion.Version10](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlVersion), which applies until a declaration is read and when the
+document has none.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CopyString
+
+Copies the current token value from the source, with references decoded, as UTF-8 text to a
+destination buffer.
+
+#### Syntax
+
+```csharp
+public readonly int CopyString(System.Span<byte> utf8Destination)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Destination` | `System.Span<byte>` | A buffer to write the UTF-8 encoded value into. |
+
+#### Returns
+
+Type: `int`
+The number of bytes written to *utf8Destination*.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | *utf8Destination* is too small to hold the value. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CopyString
+
+Copies the current token value from the source, with references decoded, as UTF-16 text to a
+destination buffer.
+
+#### Syntax
+
+```csharp
+public readonly int CopyString(System.Span<char> destination)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `destination` | `System.Span<char>` | A buffer to write the transcoded UTF-16 characters into. |
+
+#### Returns
+
+Type: `int`
+The number of characters written to *destination*.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentException` | *destination* is too small to hold the value. |
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetBoolean
+
+Parses the current text, CDATA, or attribute value from the source as an XSD `boolean`.
+
+#### Syntax
+
+```csharp
+public readonly bool GetBoolean()
+```
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the value is `true` or `1`; [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the
+value is `false` or `0`.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not `true`, `false`, `1`, or `0`. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetByte
+
+Parses the current token value from the source as a [Byte](https://learn.microsoft.com/dotnet/api/system.byte) (`xs:unsignedByte`).
+
+#### Syntax
+
+```csharp
+public readonly byte GetByte()
+```
+
+#### Returns
+
+Type: `byte`
+The value of the current token, parsed as an 8-bit unsigned integer.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not in the lexical form of an XSD integer.
+-or-
+The value is outside the range of [Byte](https://learn.microsoft.com/dotnet/api/system.byte). |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetBytesFromBase64
+
+Parses the current token value from the source as XSD `base64Binary` and decodes it into a
+byte array.
+
+#### Syntax
+
+```csharp
+public readonly byte[] GetBytesFromBase64()
+```
+
+#### Returns
+
+Type: `byte[]`
+The byte array that the Base64 encoded value represents.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not valid Base64. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetComment
+
+Reads the content of the current [XmlTokenType.Comment](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlTokenType) token from the source,
+transcoded as a [String](https://learn.microsoft.com/dotnet/api/system.string).
+
+#### Syntax
+
+```csharp
+public readonly string GetComment()
+```
+
+#### Returns
+
+Type: `string`
+The comment text, without the surrounding `<!-- -->` delimiters.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The current token is not a comment. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetDateOnly
+
+Parses the current token value from the source as a [DateOnly](https://learn.microsoft.com/dotnet/api/system.dateonly) (`xs:date`).
+
+#### Syntax
+
+```csharp
+public readonly System.DateOnly GetDateOnly()
+```
+
+#### Returns
+
+Type: `System.DateOnly`
+The date that the value of the current token represents.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not a valid `xs:date`. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetDateTime
+
+Parses the current token value from the source as a [DateTime](https://learn.microsoft.com/dotnet/api/system.datetime) (`xs:dateTime`).
+
+#### Syntax
+
+```csharp
+public readonly System.DateTime GetDateTime()
+```
+
+#### Returns
+
+Type: `System.DateTime`
+The date and time that the value of the current token represents.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not a valid `xs:dateTime`. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetDateTimeOffset
+
+Parses the current token value from the source as a [DateTimeOffset](https://learn.microsoft.com/dotnet/api/system.datetimeoffset)
+(`xs:dateTime` with an offset).
+
+#### Syntax
+
+```csharp
+public readonly System.DateTimeOffset GetDateTimeOffset()
+```
+
+#### Returns
+
+Type: `System.DateTimeOffset`
+The date, time, and offset that the value of the current token represents.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not a valid `xs:dateTime`. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetDecimal
+
+Parses the current token value from the source as a [Decimal](https://learn.microsoft.com/dotnet/api/system.decimal) (`xs:decimal`).
+
+#### Syntax
+
+```csharp
+public readonly decimal GetDecimal()
+```
+
+#### Returns
+
+Type: `decimal`
+The value of the current token, parsed as a decimal number.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not a valid `xs:decimal`. Exponent notation is rejected. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetDouble
+
+Parses the current token value from the source as a [Double](https://learn.microsoft.com/dotnet/api/system.double) (`xs:double`),
+including `INF`, `-INF`, and `NaN`.
+
+#### Syntax
+
+```csharp
+public readonly double GetDouble()
+```
+
+#### Returns
+
+Type: `double`
+The value of the current token, parsed as a double-precision floating-point number.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not a valid `xs:double`. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetGuid
+
+Parses the current token value from the source as a [Guid](https://learn.microsoft.com/dotnet/api/system.guid).
+
+#### Syntax
+
+```csharp
+public readonly System.Guid GetGuid()
+```
+
+#### Returns
+
+Type: `System.Guid`
+The GUID that the value of the current token represents.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not a GUID in a supported format. |
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetInt16
+
+Parses the current token value from the source as a [Int16](https://learn.microsoft.com/dotnet/api/system.int16) (`xs:short`).
+
+#### Syntax
+
+```csharp
+public readonly short GetInt16()
+```
+
+#### Returns
+
+Type: `short`
+The value of the current token, parsed as a 16-bit signed integer.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not in the lexical form of an XSD integer.
+-or-
+The value is outside the range of [Int16](https://learn.microsoft.com/dotnet/api/system.int16). |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetInt32
+
+Parses the current token value from the source as an [Int32](https://learn.microsoft.com/dotnet/api/system.int32) (`xs:int`).
+
+#### Syntax
+
+```csharp
+public readonly int GetInt32()
+```
+
+#### Returns
+
+Type: `int`
+The value of the current token, parsed as a 32-bit signed integer.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not in the lexical form of an XSD integer.
+-or-
+The value is outside the range of [Int32](https://learn.microsoft.com/dotnet/api/system.int32). |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetInt64
+
+Parses the current token value from the source as a [Int64](https://learn.microsoft.com/dotnet/api/system.int64) (`xs:long`).
+
+#### Syntax
+
+```csharp
+public readonly long GetInt64()
+```
+
+#### Returns
+
+Type: `long`
+The value of the current token, parsed as a 64-bit signed integer.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not in the lexical form of an XSD integer.
+-or-
+The value is outside the range of [Int64](https://learn.microsoft.com/dotnet/api/system.int64). |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetNil
+
+Determines whether the current start element is marked nil with `xsi:nil="true"` or
+`xsi:nil="1"`.
+
+#### Syntax
+
+```csharp
+public readonly bool GetNil()
+```
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the element has an `xsi:nil` attribute whose value is `true` or
+`1`; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The reader is not on a start element or on one of its attributes. |
+
+#### Remarks
+
+The local name `nil` must be in the XML Schema instance namespace.
+An unprefixed `nil` attribute is in no namespace and does not count.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetSByte
+
+Parses the current token value from the source as an [SByte](https://learn.microsoft.com/dotnet/api/system.sbyte) (`xs:byte`).
+
+#### Syntax
+
+```csharp
+public readonly sbyte GetSByte()
+```
+
+#### Returns
+
+Type: `sbyte`
+The value of the current token, parsed as an 8-bit signed integer.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not in the lexical form of an XSD integer.
+-or-
+The value is outside the range of [SByte](https://learn.microsoft.com/dotnet/api/system.sbyte). |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetSingle
+
+Parses the current token value from the source as a [Single](https://learn.microsoft.com/dotnet/api/system.single) (`xs:float`),
+including `INF`, `-INF`, and `NaN`.
+
+#### Syntax
+
+```csharp
+public readonly float GetSingle()
+```
+
+#### Returns
+
+Type: `float`
+The value of the current token, parsed as a single-precision floating-point number.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not a valid `xs:float`. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetString
+
+Reads the current token value from the source, with references decoded, and transcodes it as a
+[String](https://learn.microsoft.com/dotnet/api/system.string).
+
+#### Syntax
+
+```csharp
+public readonly string GetString()
+```
+
+#### Returns
+
+Type: `string?`
+The token value transcoded to a string. The result is never [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). It is an empty
+string when the value is empty.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetTimeOnly
+
+Parses the current token value from the source as a [TimeOnly](https://learn.microsoft.com/dotnet/api/system.timeonly) (`xs:time`).
+
+#### Syntax
+
+```csharp
+public readonly System.TimeOnly GetTimeOnly()
+```
+
+#### Returns
+
+Type: `System.TimeOnly`
+The time of day that the value of the current token represents.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not a valid `xs:time`. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetTimeSpan
+
+Parses the current token value from the source as a [TimeSpan](https://learn.microsoft.com/dotnet/api/system.timespan) (`xs:duration`).
+
+#### Syntax
+
+```csharp
+public readonly System.TimeSpan GetTimeSpan()
+```
+
+#### Returns
+
+Type: `System.TimeSpan`
+The duration that the value of the current token represents.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not a duration that can be represented as a [TimeSpan](https://learn.microsoft.com/dotnet/api/system.timespan). A duration with
+year or month components is rejected. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetUInt16
+
+Parses the current token value from the source as a [UInt16](https://learn.microsoft.com/dotnet/api/system.uint16) (`xs:unsignedShort`).
+
+#### Syntax
+
+```csharp
+public readonly ushort GetUInt16()
+```
+
+#### Returns
+
+Type: `ushort`
+The value of the current token, parsed as a 16-bit unsigned integer.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not in the lexical form of an XSD integer.
+-or-
+The value is outside the range of [UInt16](https://learn.microsoft.com/dotnet/api/system.uint16). |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetUInt32
+
+Parses the current token value from the source as a [UInt32](https://learn.microsoft.com/dotnet/api/system.uint32) (`xs:unsignedInt`).
+
+#### Syntax
+
+```csharp
+public readonly uint GetUInt32()
+```
+
+#### Returns
+
+Type: `uint`
+The value of the current token, parsed as a 32-bit unsigned integer.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not in the lexical form of an XSD integer.
+-or-
+The value is outside the range of [UInt32](https://learn.microsoft.com/dotnet/api/system.uint32). |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetUInt64
+
+Parses the current token value from the source as a [UInt64](https://learn.microsoft.com/dotnet/api/system.uint64) (`xs:unsignedLong`).
+
+#### Syntax
+
+```csharp
+public readonly ulong GetUInt64()
+```
+
+#### Returns
+
+Type: `ulong`
+The value of the current token, parsed as a 64-bit unsigned integer.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The value is not in the lexical form of an XSD integer.
+-or-
+The value is outside the range of [UInt64](https://learn.microsoft.com/dotnet/api/system.uint64). |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> LocalNameEquals
+
+Compares the UTF-8 encoded text in a read-only byte span to the local name of the current
+element or attribute and returns a value that indicates whether they match.
+
+#### Syntax
+
+```csharp
+public readonly bool LocalNameEquals(System.ReadOnlySpan<byte> utf8LocalName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8LocalName` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded text to compare against. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the local name matches *utf8LocalName* byte for byte;
+otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> LocalNameEquals
+
+Compares the text in a read-only character span to the local name of the current element or
+attribute and returns a value that indicates whether they match.
+
+#### Syntax
+
+```csharp
+public readonly bool LocalNameEquals(System.ReadOnlySpan<char> localName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `localName` | `System.ReadOnlySpan<char>` | The text to compare against. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the local name matches *localName*; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> LocalNameEquals
+
+Compares the text in a string to the local name of the current element or attribute and returns
+a value that indicates whether they match.
+
+#### Syntax
+
+```csharp
+public readonly bool LocalNameEquals(string localName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `localName` | `string?` | The text to compare against. A [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) value matches no name. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the local name matches *localName*; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MoveToElement
+
+Moves the reader from the current attribute back to the start element that holds it.
+
+#### Syntax
+
+```csharp
+public void MoveToElement()
+```
+
+#### Remarks
+
+After this call, [Utf8XmlReader.MoveToNextAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader#movetonextattribute) starts again at the first attribute.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MoveToNextAttribute
+
+Moves the reader to the next attribute on the current start tag.
+
+#### Syntax
+
+```csharp
+public bool MoveToNextAttribute()
+```
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the reader moved to an attribute; [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the current
+token is not a start tag or the start tag has no more attributes.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NamespaceUriEquals
+
+Compares the UTF-8 encoded text in a read-only byte span to the namespace URI of the current
+element or attribute and returns a value that indicates whether they match.
+
+#### Syntax
+
+```csharp
+public readonly bool NamespaceUriEquals(System.ReadOnlySpan<byte> utf8NamespaceUri)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8NamespaceUri` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded namespace URI to compare against. An empty span stands for no namespace. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the namespace URI matches *utf8NamespaceUri* byte for
+byte; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NamespaceUriEquals
+
+Compares the text in a read-only character span to the namespace URI of the current element or
+attribute and returns a value that indicates whether they match.
+
+#### Syntax
+
+```csharp
+public readonly bool NamespaceUriEquals(System.ReadOnlySpan<char> namespaceUri)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `namespaceUri` | `System.ReadOnlySpan<char>` | The namespace URI to compare against. An empty span stands for no namespace. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the namespace URI matches *namespaceUri*; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NamespaceUriEquals
+
+Compares the text in a string to the namespace URI of the current element or attribute and
+returns a value that indicates whether they match.
+
+#### Syntax
+
+```csharp
+public readonly bool NamespaceUriEquals(string namespaceUri)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `namespaceUri` | `string?` | The namespace URI to compare against. A [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) or empty string stands for no namespace. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the namespace URI matches *namespaceUri*; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Read
+
+Reads the next XML token from the input source.
+
+#### Syntax
+
+```csharp
+public bool Read()
+```
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the token was read successfully; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+The result is [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) at the end of a complete document, and when more data is
+required and [Utf8XmlReader.IsFinalBlock](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader#isfinalblock) is [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The document is not well formed.
+-or-
+A limit set in [XmlReaderOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions) is exceeded.
+-or-
+The input ends inside a token and [Utf8XmlReader.IsFinalBlock](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader#isfinalblock) is [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Skip
+
+Skips the children of the current XML element.
+
+#### Syntax
+
+```csharp
+public void Skip()
+```
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The element is not all in the current input and [Utf8XmlReader.IsFinalBlock](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader#isfinalblock) is [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+-or-
+The skipped XML is not well formed, exceeds a limit set in [XmlReaderOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions), or ends
+inside a token when [Utf8XmlReader.IsFinalBlock](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader#isfinalblock) is [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). |
+
+#### Remarks
+
+When the current token is a start element, the reader moves to its end tag. On an empty element, and
+on any token that is not a start element, this method does nothing, as `Utf8JsonReader.Skip`
+does on a value. The next [Utf8XmlReader.Read](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader#read) moves to the following token.
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.ValueType`</Note>
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetByte
+
+Attempts to read the current value as an unsigned 8-bit integer (`xs:unsignedByte`).
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetByte(out byte value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `byte` | When this method returns, contains the parsed value, if parsing succeeded. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value can be parsed as the requested type; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetBytesFromBase64
+
+Attempts to read the current value as XSD `base64Binary`.
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetBytesFromBase64(out byte[] value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `byte[]?` | When this method returns, contains the decoded bytes, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if the value is not valid Base64. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value is valid Base64 and was decoded; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetDateOnly
+
+Attempts to read the current value as XSD `date`.
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetDateOnly(out System.DateOnly value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `System.DateOnly` | When this method returns, contains the parsed value, if parsing succeeded. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value can be parsed as the requested type; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetDateTime
+
+Attempts to read the current value as XSD `dateTime`.
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetDateTime(out System.DateTime value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `System.DateTime` | When this method returns, contains the parsed value, if parsing succeeded. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value can be parsed as the requested type; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetDateTimeOffset
+
+Attempts to read the current value as XSD `dateTime` with an offset.
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetDateTimeOffset(out System.DateTimeOffset value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `System.DateTimeOffset` | When this method returns, contains the parsed value, if parsing succeeded. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value can be parsed as the requested type; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetDecimal
+
+Attempts to read the current value as XSD `decimal`. Exponent notation is rejected.
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetDecimal(out decimal value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `decimal` | When this method returns, contains the parsed value, if parsing succeeded. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value can be parsed as the requested type; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetDouble
+
+Attempts to read the current value as XSD `double`, including `INF`, `-INF`, and `NaN`.
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetDouble(out double value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `double` | When this method returns, contains the parsed value, if parsing succeeded. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value can be parsed as the requested type; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetGuid
+
+Attempts to read the current value as a GUID.
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetGuid(out System.Guid value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `System.Guid` | When this method returns, contains the parsed value, if parsing succeeded. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value can be parsed as the requested type; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetInt16
+
+Attempts to read the current value as a 16-bit integer (`xs:short`).
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetInt16(out short value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `short` | When this method returns, contains the parsed value, if parsing succeeded. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value can be parsed as the requested type; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetInt32
+
+Attempts to read the current value as a 32-bit integer (`xs:int`).
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetInt32(out int value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `int` | When this method returns, contains the parsed value, if parsing succeeded. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value can be parsed as the requested type; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetInt64
+
+Attempts to read the current value as a 64-bit integer (`xs:long`).
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetInt64(out long value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `long` | When this method returns, contains the parsed value, if parsing succeeded. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value can be parsed as the requested type; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetSByte
+
+Attempts to read the current value as a signed 8-bit integer (`xs:byte`).
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetSByte(out sbyte value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `sbyte` | When this method returns, contains the parsed value, if parsing succeeded. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value can be parsed as the requested type; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetSingle
+
+Attempts to read the current value as XSD `float`.
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetSingle(out float value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `float` | When this method returns, contains the parsed value, if parsing succeeded. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value can be parsed as the requested type; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetTimeOnly
+
+Attempts to read the current value as XSD `time`.
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetTimeOnly(out System.TimeOnly value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `System.TimeOnly` | When this method returns, contains the parsed value, if parsing succeeded. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value can be parsed as the requested type; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetTimeSpan
+
+Attempts to read the current value as XSD `duration`. Year and month components are rejected.
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetTimeSpan(out System.TimeSpan value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `System.TimeSpan` | When this method returns, contains the parsed value, if parsing succeeded. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value can be parsed as the requested type; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetUInt16
+
+Attempts to read the current value as an unsigned 16-bit integer (`xs:unsignedShort`).
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetUInt16(out ushort value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `ushort` | When this method returns, contains the parsed value, if parsing succeeded. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value can be parsed as the requested type; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetUInt32
+
+Attempts to read the current value as an unsigned 32-bit integer (`xs:unsignedInt`).
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetUInt32(out uint value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `uint` | When this method returns, contains the parsed value, if parsing succeeded. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value can be parsed as the requested type; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryGetUInt64
+
+Attempts to read the current value as an unsigned 64-bit integer (`xs:unsignedLong`).
+
+#### Syntax
+
+```csharp
+public readonly bool TryGetUInt64(out ulong value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `ulong` | When this method returns, contains the parsed value, if parsing succeeded. This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the entire token value can be parsed as the requested type; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TrySkip
+
+Tries to skip the children of the current XML element.
+
+#### Syntax
+
+```csharp
+public bool TrySkip()
+```
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if there was enough data for the children to be skipped successfully;
+otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The skipped XML is not well formed.
+-or-
+A limit set in [XmlReaderOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions) is exceeded.
+-or-
+The input ends inside a token and [Utf8XmlReader.IsFinalBlock](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader#isfinalblock) is [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). |
+
+#### Remarks
+
+When the current token is a start element, the reader moves to its end tag. On an empty element
+this method does nothing and returns [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+When the element is not all in the current block, the reader is put back on its start tag, as
+`Utf8JsonReader.TrySkip` does, so the caller can supply more data and skip or read it again.
+
+When the current token is not a start element, this method does nothing and returns
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool): the token has no children to skip.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ValueTextEquals
+
+Compares the UTF-8 encoded text in a read-only byte span to the decoded XML token value in the
+source and returns a value that indicates whether they match.
+
+#### Syntax
+
+```csharp
+public readonly bool ValueTextEquals(System.ReadOnlySpan<byte> utf8Text)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `utf8Text` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded text to compare against. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the XML token value in the source matches the UTF-8 encoded lookup text;
+otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ValueTextEquals
+
+Compares the text in a read-only character span to the decoded XML token value in the source and
+returns a value that indicates whether they match.
+
+#### Syntax
+
+```csharp
+public readonly bool ValueTextEquals(System.ReadOnlySpan<char> text)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `text` | `System.ReadOnlySpan<char>` | The text to compare against. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the XML token value in the source matches the lookup text; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ValueTextEquals
+
+Compares the text in a string to the decoded XML token value in the source and returns a value
+that indicates whether they match.
+
+#### Syntax
+
+```csharp
+public readonly bool ValueTextEquals(string text)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `text` | `string?` | The text to compare against. A [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) value matches no token value. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the XML token value in the source matches the lookup text; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlReaderOptions
+- CloudNimble.Text.Xml.XmlReaderState
+- CloudNimble.Text.Xml.XmlTokenType
+- CloudNimble.Text.Xml.XmlCommentHandling
+- CloudNimble.Text.Xml.XmlWhitespaceHandling
+- CloudNimble.Text.Xml.XmlVersion
+- CloudNimble.Text.Xml.XmlException
+- CloudNimble.Text.Xml.Utf8XmlWriter
+- CloudNimble.Text.Xml.XmlDocument
+- CloudNimble.Text.Xml.Serialization.XmlConverter
+

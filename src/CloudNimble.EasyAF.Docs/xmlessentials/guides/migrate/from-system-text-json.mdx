@@ -1,0 +1,424 @@
+---
+title: "Coming from System.Text.Json"
+sidebarTitle: "From System.Text.Json"
+description: "Learn XmlEssentials from what you know about System.Text.Json: the type-for-type map, and the things XML has that JSON doesn't."
+icon: "code"
+---
+
+This article is for developers who know System.Text.Json and are picking up XML. XmlEssentials is shaped like System.Text.Json on purpose, so most of what you know carries over under a different prefix. The first half of this article is the map from one API to the other. The second half covers what the map can't: the parts of XML that JSON has no word for.
+
+This isn't a migration in the usual sense. You don't replace `JsonSerializer` with `XmlSerializer`; you use the one that matches the format on the wire. Many applications use both, with the same model types. To turn a document of one format into the other, see [Convert between XML and JSON](/xmlessentials/guides/convert-xml-and-json).
+
+## Start with what you know
+
+The following code serializes and deserializes an object with options, the way you'd write it with `JsonSerializer` and `JsonSerializerOptions`.
+
+<CodeGroup>
+
+```csharp System.Text.Json
+var options = new JsonSerializerOptions
+{
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+    NewLine = "\n",
+    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    WriteIndented = true,
+};
+
+string json = JsonSerializer.Serialize(item, options);
+
+CatalogItem? copy = JsonSerializer.Deserialize<CatalogItem>(json, options);
+```
+
+```csharp XmlEssentials
+var options = new XmlSerializerOptions
+{
+    DefaultIgnoreCondition = XmlIgnoreCondition.WhenWritingNull,
+    NewLine = "\n",
+    PropertyNamingPolicy = XmlNamingPolicy.CamelCase,
+    WriteIndented = true,
+};
+
+string xml = XmlSerializer.Serialize(item, options);
+output.WriteLine(xml);
+
+CatalogItem? copy = XmlSerializer.Deserialize<CatalogItem>(xml, options);
+output.WriteLine($"{copy!.DisplayName}: {copy.Tags.Count} tags");
+```
+
+</CodeGroup>
+
+`CatalogItem` has no attributes. It's the kind of type you already have:
+
+```csharp CatalogItem.cs
+public sealed class CatalogItem
+{
+    public string? Description { get; set; }
+    public string? DisplayName { get; set; }
+    public int Id { get; set; }
+    public bool InStock { get; set; }
+    public List<string> Tags { get; set; } = [];
+    public decimal UnitPrice { get; set; }
+}
+```
+
+The sample fills it in like this:
+
+```csharp Program.cs
+var item = new CatalogItem
+{
+    Id = 7,
+    DisplayName = "Desk lamp",
+    UnitPrice = 34.95m,
+    InStock = true,
+    Description = null,
+    Tags = ["office", "lighting"],
+};
+```
+
+The XmlEssentials code produces the following output:
+
+```text
+<?xml version="1.0" encoding="utf-8"?>
+<catalogItem>
+  <displayName>Desk lamp</displayName>
+  <id>7</id>
+  <inStock>true</inStock>
+  <tags>office</tags>
+  <tags>lighting</tags>
+  <unitPrice>34.95</unitPrice>
+</catalogItem>
+Desk lamp: 2 tags
+```
+
+Compare it with the JSON you'd expect, and four XML facts show up at once: the document starts with a declaration, the object has a name (`catalogItem`), the list is a repeated element with no brackets around it, and the `null` member is absent because of `WhenWritingNull`. The rest of this article explains each one.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/44_ComingFromSystemTextJson.cs)
+
+## Type-for-type map
+
+Every XmlEssentials type in these tables exists. The types are in `CloudNimble.Text.Xml`, `CloudNimble.Text.Xml.Nodes`, and `CloudNimble.Text.Xml.Serialization`, which correspond to `System.Text.Json`, `System.Text.Json.Nodes`, and `System.Text.Json.Serialization`.
+
+### Serializer
+
+| System.Text.Json | XmlEssentials | Notes |
+| --- | --- | --- |
+| `JsonSerializer` | [`XmlSerializer`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) | `Serialize`, `SerializeToUtf8Bytes`, `SerializeAsync`, `SerializeToDocument`, `SerializeToElement`, `SerializeToNode`, `SerializeAsyncEnumerable`, `Deserialize`, `DeserializeAsync`, `DeserializeAsyncEnumerable`. See [Serialize](/xmlessentials/guides/serialize) and [Deserialize](/xmlessentials/guides/deserialize). |
+| `JsonSerializerOptions` | [`XmlSerializerOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions) | Same lifecycle: mutable until first use, then read-only. See [Configure options](/xmlessentials/guides/configure-options). |
+| `JsonSerializerOptions.Default`, `Web`, `Strict` | `XmlSerializerOptions.Default`, `Web`, `Strict`, `Bcl` | `Web` uses camel-case names and omits the XML declaration. `Bcl` writes what `System.Xml.Serialization.XmlSerializer` writes. See [Migrate from XmlSerializer](/xmlessentials/guides/migrate/from-xmlserializer#keep-the-old-defaults). |
+| `JsonSerializerDefaults` | `XmlSerializerDefaults` | `General`, `Web`, `Strict`, and `Bcl`. |
+| `JsonNamingPolicy` | [`XmlNamingPolicy`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamingPolicy) | `CamelCase`, `SnakeCaseLower`, `SnakeCaseUpper`, `KebabCaseLower`, `KebabCaseUpper`, and also `PascalCase`. See [Customize names](/xmlessentials/guides/customize-names). |
+| `JsonSerializerOptions.PropertyNamingPolicy` | `PropertyNamingPolicy`, `ElementNamingPolicy`, `AttributeNamingPolicy` | XML has two kinds of names, so you can set a policy for each. |
+| `JsonIgnoreCondition` | `XmlIgnoreCondition` | `Never`, `Always`, `WhenWritingDefault`, `WhenWritingNull`, `WhenWriting`, `WhenReading`, with the same values and meaning. `WhenWritingNullReference` is an addition: it leaves out a `null` reference and still writes `xsi:nil` for a nullable value type. |
+| `JsonNumberHandling` | `XmlNumberHandling` | `Strict` and `AllowNamedFloatingPointLiterals`. There is no "number in a string" in XML, so the other values don't exist. |
+| `JsonUnmappedMemberHandling` | `XmlUnmappedMemberHandling` | `Skip`, `Disallow`. |
+| `ReferenceHandler`, `ReferenceResolver` | `XmlReferenceHandler`, `XmlReferenceResolver` | `Preserve` and `IgnoreCycles`. See [Preserve references](/xmlessentials/guides/preserve-references). |
+| `JsonException` | [`XmlException`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException) | `BytePosition`, `LineNumber`, `LinePosition`, `Path`. |
+| `JsonSerializer.IsReflectionEnabledByDefault` | `XmlSerializer.IsReflectionEnabledByDefault` | |
+
+### Attributes
+
+| System.Text.Json | XmlEssentials | Notes |
+| --- | --- | --- |
+| `[JsonPropertyName]` | `[XmlPropertyName]` | Also `[XmlElement("name")]` and `[XmlAttribute("name")]`, which name the member and choose its XML shape. |
+| `[JsonIgnore]` | `[XmlIgnore]` | Has `Condition`. See [Ignore properties](/xmlessentials/guides/ignore-properties). |
+| `[JsonInclude]` | `[XmlInclude]` | Includes a non-public member. Not the `XmlInclude` of `System.Xml.Serialization`. |
+| `[JsonRequired]` | `[XmlRequired]` | The `required` keyword works too. See [Required properties](/xmlessentials/guides/required-properties). |
+| `[JsonConstructor]` | `[XmlConstructor]` | See [Immutable types](/xmlessentials/guides/immutable-types). |
+| `[JsonPropertyOrder]` | `[XmlPropertyOrder]` | Order matters more in XML. See [Element order](#element-order). |
+| `[JsonExtensionData]` | `[XmlExtensionData]` | On a member of type `XmlExtensionData`, which holds unmapped elements and attributes. |
+| `[JsonConverter]` | `[XmlConverter]` | |
+| `[JsonPolymorphic]` | `[XmlPolymorphic]` | Adds `DiscriminatorPlacement`: element name, attribute, or `xsi:type`. See [Polymorphism](/xmlessentials/guides/polymorphism). |
+| `[JsonDerivedType(typeof(T), "name")]` | `[XmlDerivedType<T>("name")]` | Generic attribute. |
+| `JsonUnknownDerivedTypeHandling` | `XmlUnknownDerivedTypeHandling` | |
+| `[JsonNumberHandling]`, `[JsonUnmappedMemberHandling]` | No counterpart | Set the matching option on `XmlSerializerOptions`. |
+| `[JsonStringEnumMemberName]` | `[XmlPropertyName]` on the enum member | Names are matched as `JsonStringEnumConverter` matches them. See [Enumeration values](/xmlessentials/guides/customize-names#enumeration-values). |
+| `[JsonObjectCreationHandling]`, `JsonObjectCreationHandling`, `PreferredObjectCreationHandling` | `[XmlObjectCreationHandling]`, `XmlObjectCreationHandling`, `PreferredObjectCreationHandling` | The same values and the same rules. `Replace` is the default. |
+| `JsonUnknownTypeHandling`, `UnknownTypeHandling` | `XmlUnknownTypeHandling`, `UnknownTypeHandling` | A value declared as `object` is read as an `XmlElement` by default, as System.Text.Json reads a `JsonElement`. `XmlUnknownTypeHandling.XmlNode` reads an `XmlNode`, the counterpart of `JsonNode`. |
+| No counterpart | `[XmlRoot]`, `[XmlElement]`, `[XmlAttribute]`, `[XmlText]`, `[XmlCData]`, `[XmlArray]`, `[XmlArrayItem]`, `[XmlMixed]` | The XML shapes. See [What XML has that JSON doesn't](#what-xml-has-that-json-doesnt). |
+
+### Converters and metadata
+
+| System.Text.Json | XmlEssentials | Notes |
+| --- | --- | --- |
+| `JsonConverter` | `XmlConverter` | |
+| `JsonConverter<T>` | [`XmlConverter<T>`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverter) | `Read(ref Utf8XmlReader, Type, XmlSerializerOptions)` and `Write(Utf8XmlWriter, T, XmlSerializerOptions)`, plus `ReadAsAttribute` and `WriteAsAttribute` for a value in an attribute. See [Custom converters](/xmlessentials/guides/custom-converters). |
+| `JsonConverterFactory` | `XmlConverterFactory` | |
+| `JsonStringEnumConverter` | Not needed | Enums are written as names by default. `EnumHandling = XmlEnumHandling.Integer` writes numbers. There is no naming policy for enum values; rename a member with `[XmlPropertyName]`. |
+| `JsonSerializerContext` | [`XmlSerializerContext`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializerContext) | See [Use source generation](/xmlessentials/guides/source-generation). |
+| `[JsonSerializable(typeof(T))]` | `[XmlSerializable<T>]` | The type is a type argument. `TypeInfoPropertyName`, `GenerationMode`. |
+| `[JsonSourceGenerationOptions]` | `[XmlSourceGenerationOptions]` | |
+| `JsonSourceGenerationMode` | `XmlSourceGenerationMode` | `Default`, `Metadata`, `Serialization`. See [Source-generation modes](/xmlessentials/guides/source-generation-modes). |
+| `JsonKnownNamingPolicy` | `XmlKnownNamingPolicy` | |
+| `JsonTypeInfo`, `JsonTypeInfo<T>` | `XmlTypeInfo`, `XmlTypeInfo<T>` | Read-only. See the note after this table. |
+| `JsonPropertyInfo` | `XmlPropertyInfo` | Read-only. |
+| `IJsonTypeInfoResolver` | `IXmlTypeInfoResolver` | |
+| `DefaultJsonTypeInfoResolver` | `DefaultXmlTypeInfoResolver` | Has `Instance`. Has no `Modifiers`. |
+| `JsonTypeInfoResolver.Combine` | `XmlSerializerOptions.TypeInfoResolverChain` | Add each resolver or context to the list. |
+| `JsonMetadataServices` | `XmlMetadataServices` | For generated code. |
+
+<Note>
+Contract customization isn't supported. `XmlTypeInfo` and `XmlPropertyInfo` describe a contract, but you can't change one, and `DefaultXmlTypeInfoResolver` has no modifiers. To change how a type is written, use attributes, options, or a [custom converter](/xmlessentials/guides/custom-converters).
+</Note>
+
+### Reader and writer
+
+| System.Text.Json | XmlEssentials | Notes |
+| --- | --- | --- |
+| `Utf8JsonReader` | [`Utf8XmlReader`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) | A `ref struct` over UTF-8, with `Read`, `Skip`, `TrySkip`, `TokenType`, `ValueSpan`, `GetString`, `GetInt32`, `TryGetInt32`, `ValueTextEquals`, `CopyString`, `BytesConsumed`, `CurrentDepth`, `CurrentState`. See [Use Utf8XmlReader](/xmlessentials/guides/use-utf8xmlreader). |
+| `JsonTokenType` | `XmlTokenType` | `StartElement`, `EndElement`, `Attribute`, `Text`, `CData`, `Comment`, `ProcessingInstruction`, `XmlDeclaration`. |
+| `JsonReaderOptions`, `JsonReaderState` | `XmlReaderOptions`, `XmlReaderState` | |
+| `JsonCommentHandling` | `XmlCommentHandling` | `Allow`, `Skip`, `Disallow`. The default for the reader and the document models is `Allow`, where JSON's is `Disallow`: comments are a normal part of XML. The serializer skips them. |
+| `Utf8JsonWriter` | [`Utf8XmlWriter`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter) | Over an `IBufferWriter<byte>` or a `Stream`, with `Flush`, `FlushAsync`, `Reset`, `BytesPending`, `BytesCommitted`. See [Use Utf8XmlWriter](/xmlessentials/guides/use-utf8xmlwriter). |
+| `WriteStartObject`, `WriteEndObject` | `WriteStartElement`, `WriteEndElement` | An element always has a name. |
+| `WriteStartArray`, `WriteEndArray` | No counterpart | XML has no array. Write one element for each item. |
+| `WriteString(name, value)`, `WriteNumber(name, value)`, `WriteBoolean(name, value)`, `WriteNull(name)` | `WriteElementString`, `WriteElementNumber`, `WriteElementBoolean`, `WriteNilElement` | To write an attribute: `WriteAttributeString`. |
+| `WriteStringValue`, `WriteNumberValue`, `WriteBooleanValue`, `WriteNullValue` | `WriteStringValue`, `WriteNumberValue`, `WriteBooleanValue`, `WriteNilValue` | |
+| `WriteRawValue` | `WriteRawValue` | |
+| `JsonWriterOptions` | `XmlWriterOptions` | `Indented`, `IndentCharacter`, `IndentSize`, `NewLine`, `MaxDepth`, `SkipValidation`. |
+| `JsonEncodedText` | `XmlEncodedText` | A name that is encoded once and reused. |
+
+### Document models
+
+| System.Text.Json | XmlEssentials | Notes |
+| --- | --- | --- |
+| `JsonDocument` | [`XmlDocument`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) | Read-only, pooled, `IDisposable`. `Parse`, `ParseAsync`, `ParseValue`, `TryParseValue`, `RootElement`, `WriteTo`. See [Use XmlDocument](/xmlessentials/guides/use-xmldocument). |
+| `JsonElement` | [`XmlElement`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) | A struct. One type for elements, attributes, text, and comments. |
+| `JsonElement.GetProperty`, `TryGetProperty` | `GetChild`, `TryGetChild`, `GetAttribute`, `TryGetAttribute` | An element has two sets of named members. |
+| `EnumerateObject`, `EnumerateArray` | `EnumerateChildren`, `EnumerateAttributes` | |
+| `JsonValueKind` | `XmlValueKind` | `Element`, `EmptyElement`, `Attribute`, `Text`, `CData`, `Comment`, `ProcessingInstruction`, `Nil`, and others. There is no `Number`, `True`, or `False`. |
+| `JsonDocumentOptions` | `XmlDocumentOptions` | |
+| `JsonNode` | [`XmlNode`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) | Mutable. `Parse`, `DeepClone`, `WriteTo`, `Parent`. See [Use XmlNode](/xmlessentials/guides/use-xmlnode). |
+| `JsonObject`, `JsonArray` | `XmlElementNode` | Has `Attributes` and `Children`. |
+| `JsonValue` | `XmlTextNode`, `XmlAttributeNode`, `XmlCDataNode` | `Value` is a string. There are no typed `GetValue<T>` calls or implicit conversions. |
+
+## What XML has that JSON doesn't
+
+A JSON document is a value: an object, an array, a string, a number, a Boolean, or `null`. An XML document is a tree of named elements that carry attributes and text. The following sections cover each place where that difference reaches the API.
+
+### A root element name
+
+A JSON object has no name. An XML document is one element, and that element has one. By default it's the type name, after the naming policy: `CatalogItem` became `catalogItem` in the first sample. `[XmlRoot("name")]` sets it.
+
+The name is checked when you deserialize. A document whose root element has another name is an `XmlException`, where System.Text.Json would read any object.
+
+### Attributes, elements, and text
+
+A JSON property has one shape. A member of an XML type has three to choose from:
+
+- A **child element**, the default: `<headline>Reading XML as UTF-8</headline>`.
+- An **attribute** on the parent's start tag, with `[XmlAttribute]`: `id="12"`. Only for simple values.
+- The **text** of the parent element itself, with `[XmlText]`. This is how an element has both attributes and a value.
+
+The following type uses all three, a namespace, and a wrapped list:
+
+```csharp Article.cs
+[XmlRoot("article", Namespace = "urn:contoso:blog")]
+public sealed class Article
+{
+    [XmlPropertyName("author")]
+    public ArticleAuthor? Author { get; set; }
+
+    [XmlAttribute("id")]
+    public int Id { get; set; }
+
+    [XmlArray("tags")]
+    [XmlArrayItem("tag")]
+    public List<string> Tags { get; set; } = [];
+
+    [XmlPropertyName("headline")]
+    public string? Title { get; set; }
+}
+
+public sealed class ArticleAuthor
+{
+    [XmlAttribute("email")]
+    public string? Email { get; set; }
+
+    [XmlText]
+    public string? Name { get; set; }
+}
+```
+
+```csharp Program.cs
+var article = new Article
+{
+    Id = 12,
+    Title = "Reading XML as UTF-8",
+    Author = new ArticleAuthor { Email = "ada@contoso.com", Name = "Ada" },
+    Tags = ["xml", "dotnet"],
+};
+
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n" };
+output.WriteLine(XmlSerializer.Serialize(article, options));
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="urn:contoso:blog" id="12">
+  <author email="ada@contoso.com">Ada</author>
+  <tags>
+    <tag>xml</tag>
+    <tag>dotnet</tag>
+  </tags>
+  <headline>Reading XML as UTF-8</headline>
+</article>
+```
+
+To write simple members as attributes without annotating each one, set `XmlSerializerOptions.DefaultPropertyMapping` to `XmlPropertyMapping.Attribute`. See [Customize names](/xmlessentials/guides/customize-names).
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/44_ComingFromSystemTextJson.cs)
+
+### No arrays
+
+JSON has `[ ]`. XML has only elements, so a list is one of two conventions, and you choose:
+
+- **Unwrapped**, the default: one element for each item, named for the member. `Tags` in the first sample became two `<tags>` elements.
+- **Wrapped**, with `[XmlArray]`: one element for the list, and an element inside it for each item. `Tags` in `Article` became `<tags>` with two `<tag>` children.
+
+One consequence has no JSON equivalent: an unwrapped list with no items writes nothing, so an empty list and a `null` list can't be told apart when you read the document back. A wrapped list writes its wrapper element even when it's empty. See [Collections](/xmlessentials/guides/collections).
+
+A `Dictionary<string, TValue>` is written like a JSON object: one child element for each entry, named for the key.
+
+### Namespaces
+
+An XML name has two parts: a local name and a namespace URI. Two elements named `title` in different namespaces are different elements, and a prefix such as `atom:` is only a local abbreviation for the URI. JSON has nothing like it.
+
+In the API, a namespace appears as:
+
+- `Namespace` on `[XmlRoot]`, `[XmlElement]`, `[XmlAttribute]`, and `[XmlArray]`, and `DefaultNamespace` on `XmlSerializerOptions`. The `xmlns="urn:contoso:blog"` in the last output came from `[XmlRoot]`.
+- A second argument on the members that take a name: `GetChild(localName, namespaceUri)`, `WriteStartElement(localName, namespaceUri)`.
+- `NamespaceUriEquals` and `NamespaceUriSpan` on the reader, beside `LocalNameEquals` and `LocalNameSpan`.
+
+Names are always matched by local name and URI, never by prefix. See [Namespaces](/xmlessentials/guides/namespaces).
+
+### Element order
+
+The order of the properties in a JSON object carries no meaning. The order of child elements in XML often does, because an XML Schema can require a sequence. XmlEssentials writes attributes first, then child elements in declaration order with base class members first, and `[XmlPropertyOrder]` sets an explicit order. On read, elements are matched by name in whatever order they arrive.
+
+### Null, nil, and empty
+
+JSON has one way to say "no value": `null`. XML has three shapes, and they mean different things:
+
+- The element is **absent**. The property keeps its default.
+- The element is present and **nil**: `<Description xsi:nil="true"/>`. The property is `null`.
+- The element is present and **empty**: `<DisplayName></DisplayName>` or `<DisplayName/>`. The property is an empty string.
+
+The following code writes a `null` string and an empty string with the default options and reads them back:
+
+```csharp Program.cs
+var item = new CatalogItem { Id = 7, Description = null, DisplayName = "" };
+
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n" };
+string xml = XmlSerializer.Serialize(item, options);
+output.WriteLine(xml);
+
+CatalogItem? copy = XmlSerializer.Deserialize<CatalogItem>(xml, options);
+output.WriteLine($"Description is null: {copy!.Description is null}");
+output.WriteLine($"DisplayName is empty: {copy.DisplayName == ""}");
+```
+
+The code produces the following output:
+
+```text
+<?xml version="1.0" encoding="utf-8"?>
+<CatalogItem>
+  <Description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+  <DisplayName></DisplayName>
+  <Id>7</Id>
+  <InStock>false</InStock>
+  <UnitPrice>0</UnitPrice>
+</CatalogItem>
+Description is null: True
+DisplayName is empty: True
+```
+
+`xsi:nil` is the XML Schema way to write `null`, and it's the default, which matches `JsonIgnoreCondition.Never`. `XmlSerializerOptions.DefaultIgnoreCondition` leaves a `null` member out, as `JsonSerializerOptions.DefaultIgnoreCondition` does. The empty `Tags` list is absent from this output for the reason given under [No arrays](#no-arrays). See [Null and nil](/xmlessentials/guides/null-and-nil).
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/44_ComingFromSystemTextJson.cs)
+
+### No numbers or Booleans
+
+JSON tells you the kind of a value: `3` is a number, `true` is a Boolean, `"3"` is a string. In XML, all three are text. `<Count>3</Count>` holds the characters `3`, and nothing in the document says whether that's a number.
+
+So there is no `JsonValueKind.Number` to test. The kind of an XML node tells you its structure (element, attribute, text), and you choose the type when you read:
+
+```csharp Program.cs
+using XmlDocument document = XmlDocument.Parse("""<Reading sensor="A7"><Count>3</Count><Active>true</Active></Reading>""");
+XmlElement reading = document.RootElement;
+
+XmlElement count = reading.GetChild("Count");
+output.WriteLine($"Count is {count.ValueKind}: text '{count.GetString()}', number {count.GetInt32() + 1}");
+
+XmlElement active = reading.GetChild("Active");
+output.WriteLine($"Active is {active.ValueKind}: text '{active.GetString()}', Boolean {active.GetBoolean()}");
+
+XmlElement sensor = reading.GetAttribute("sensor");
+output.WriteLine($"sensor is {sensor.ValueKind}: text '{sensor.GetString()}'");
+```
+
+The code produces the following output:
+
+```text
+Count is Element: text '3', number 4
+Active is Element: text 'true', Boolean True
+sensor is Attribute: text 'A7'
+```
+
+`GetString` and `GetInt32` both succeed on the same element. The typed methods parse the lexical forms that XML Schema defines, which are culture-invariant: `true`, `false`, `1`, and `0` for a Boolean, `2026-03-14T09:30:00Z` for a date and time, `P1DT12H` for a `TimeSpan`. A value that isn't in the form is an `XmlException`. The serializer uses the same forms, so the type of your property decides how the text is read. See [Supported types](/xmlessentials/guides/supported-types).
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/44_ComingFromSystemTextJson.cs)
+
+### Mixed content
+
+An XML element can hold text and child elements interleaved: `<p>Read the <b>whole</b> page.</p>`. JSON has no equivalent, and a plain class can't hold it, because the order of the pieces matters. Map it with `[XmlMixed]`, or read it with the document models, where an element's children are text nodes and element nodes in order. See [Mixed content](/xmlessentials/guides/mixed-content).
+
+### The XML declaration
+
+An XML document can begin with `<?xml version="1.0" encoding="utf-8"?>`. It's written by default, by the serializer and by `Utf8XmlWriter`. Set `OmitXmlDeclaration` when you write a fragment that goes inside another document. XmlEssentials reads and writes UTF-8 only, so the encoding in the declaration is always `utf-8`.
+
+### Comments, CDATA, and processing instructions
+
+XML has node kinds that JSON doesn't: comments, CDATA sections (text that isn't escaped), and processing instructions. The reader and the document models report them, and the writer writes them. By default, the serializer skips comments, reads a CDATA section as text, and writes a member as CDATA when it has `[XmlCData]`.
+
+### What isn't in XML
+
+A few things you may reach for don't apply:
+
+- **`JsonSerializerOptions.Encoder` and relaxed escaping.** XML escaping is fixed by the specification.
+- **`AllowTrailingCommas`, `AllowReadingFromString`, `WriteAsString`, `AllowOutOfOrderMetadataProperties`.** They have no XML meaning. A discriminator, a reference id, and a reference are XML attributes, and the order of attributes isn't significant, so they are accepted in any position.
+- **DTDs and custom entities.** XmlEssentials rejects a document that has a `<!DOCTYPE`. See [Security](/xmlessentials/guides/security).
+
+<Note>
+On the [benchmarks page](/xmlessentials/benchmarks), XmlEssentials reads and writes objects at about the speed System.Text.Json does: of 47 comparisons it's ahead in 10, level in 19, and behind in 18. It's behind on single values and on the mutable tree, where XML takes more work to parse and write than JSON does. Choose the format for what's on the wire, not for speed.
+</Note>
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/xmlessentials/quickstart">
+    Install the package and run the basics.
+  </Card>
+  <Card title="Serialize" icon="arrow-right-from-bracket" href="/xmlessentials/guides/serialize">
+    Every way to write an object as XML.
+  </Card>
+  <Card title="Customize names" icon="pen-to-square" href="/xmlessentials/guides/customize-names">
+    Element and attribute names, and which members become attributes.
+  </Card>
+  <Card title="Collections" icon="list" href="/xmlessentials/guides/collections">
+    Wrapped and unwrapped lists, and dictionaries.
+  </Card>
+  <Card title="Null and nil" icon="circle-question" href="/xmlessentials/guides/null-and-nil">
+    Absent, nil, and empty.
+  </Card>
+  <Card title="Namespaces" icon="tags" href="/xmlessentials/guides/namespaces">
+    Local names, URIs, and prefixes.
+  </Card>
+  <Card title="Use source generation" icon="microchip" href="/xmlessentials/guides/source-generation">
+    `XmlSerializerContext` for trimming and Native AOT.
+  </Card>
+  <Card title="Mapping to the System.Text.Xml proposal" icon="table" href="/xmlessentials/guides/migrate/system-text-xml-proposal">
+    Name by name against dotnet/runtime issue 125299.
+  </Card>
+</Columns>

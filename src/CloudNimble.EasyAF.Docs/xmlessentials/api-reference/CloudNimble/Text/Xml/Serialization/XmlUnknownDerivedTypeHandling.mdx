@@ -1,0 +1,86 @@
+---
+title: XmlUnknownDerivedTypeHandling
+description: "Specifies how a derived type that has not been explicitly declared for polymorphic serialization is handled when a polymorphic type is read or written."
+icon: list-ol
+tag: "ENUM"
+keywords: ['XmlUnknownDerivedTypeHandling', 'CloudNimble.Text.Xml.Serialization.XmlUnknownDerivedTypeHandling', 'CloudNimble.Text.Xml.Serialization', 'enum', 'System.Enum', 'CloudNimble.Text.Xml.Serialization.XmlPolymorphicAttribute', 'CloudNimble.Text.Xml.Serialization.XmlDerivedTypeAttribute', 'CloudNimble.Text.Xml.Serialization.XmlUnmappedMemberHandling', 'CloudNimble.Text.Xml.XmlDiscriminatorPlacement']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlUnknownDerivedTypeHandling
+```
+
+## Summary
+
+Specifies how a derived type that has not been explicitly declared for polymorphic serialization is handled when a
+polymorphic type is read or written.
+
+## Usage
+
+`XmlUnknownDerivedTypeHandling` is the type of `XmlPolymorphicAttribute.UnknownDerivedTypeHandling`. It decides what the serializer does with a runtime type that the base type doesn't declare with `[XmlDerivedType<T>]`, and with a discriminator in a document that names no declared type.
+
+| Value | Writing a type that isn't declared | Reading a discriminator that isn't declared |
+| --- | --- | --- |
+| `FailSerialization` (default) | Throws `NotSupportedException`. | Throws `XmlException`. |
+| `FallBackToBaseType` | Writes the object as the declared base type. | Reads the element as the declared base type. |
+| `FallBackToNearestAncestor` | Writes the object as the closest base class that is declared, or as the declared base type if none is. | Reads the element as the declared base type. |
+
+With the default, serializing a `Catalog` that holds an undeclared `Ebook` fails:
+
+```csharp
+var catalog = new Catalog
+{
+    Products = [new Ebook { Title = "Refactoring", Author = "Martin Fowler", Format = "EPUB" }],
+};
+
+try
+{
+    XmlSerializer.Serialize(catalog);
+}
+catch (NotSupportedException ex)
+{
+    output.WriteLine(ex.Message);
+}
+```
+
+The code produces the following output:
+
+```text
+The type 'CloudNimble.XmlEssentials.Samples.Models.Shapes.Ebook' is not a declared derived type of 'CloudNimble.XmlEssentials.Samples.Models.Shapes.Product'.
+```
+
+For an example of `FallBackToNearestAncestor`, see [Handle a type that isn't declared](/xmlessentials/guides/polymorphism#handle-a-type-that-isnt-declared) and the [polymorphism sample](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/16_Polymorphism.cs).
+
+## Considerations
+
+- A fallback loses data. The members that only the undeclared type has are not written, and the document reads back as the type it was written as.
+- When reading, the discriminator applies to `XmlDiscriminatorPlacement.Attribute` and `XmlDiscriminatorPlacement.XsiType`. With `ElementName`, an element whose name isn't declared never reaches this setting: inside an object it is content that no member maps, and at the document root it fails the root name check.
+- An element with no discriminator at all is read as the declared base type in every mode.
+- The values have the same names as `JsonUnknownDerivedTypeHandling` in System.Text.Json.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `FailSerialization` | 0 | Failure of the operation. An object of an undeclared runtime type, or an unknown type discriminator, causes an exception. |
+| `FallBackToBaseType` | 1 | Fallback to the serialization contract of the declared base type, on both reading and writing. |
+| `FallBackToNearestAncestor` | 2 | Fallback to the serialization contract of the nearest declared ancestor type on writing, or of the declared base type
+when no ancestor is declared. On reading, an unknown type discriminator falls back to the declared base type. |
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Serialization.XmlPolymorphicAttribute
+- CloudNimble.Text.Xml.Serialization.XmlDerivedTypeAttribute
+- CloudNimble.Text.Xml.Serialization.XmlUnmappedMemberHandling
+- CloudNimble.Text.Xml.XmlDiscriminatorPlacement
+

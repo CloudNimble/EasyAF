@@ -50,6 +50,223 @@
         ]
       },
       {
+        "tab": "XML",
+        "href": "xmlessentials",
+        "pages": [
+          {
+            "group": "Getting Started",
+            "icon": "stars",
+            "pages": [
+              "xmlessentials/index",
+              "xmlessentials/why-xmlessentials",
+              "xmlessentials/quickstart",
+              "xmlessentials/benchmarks"
+            ]
+          },
+          {
+            "group": "Serialize and Deserialize",
+            "icon": "arrows-rotate",
+            "pages": [
+              "xmlessentials/guides/serialize",
+              "xmlessentials/guides/deserialize",
+              "xmlessentials/guides/customize-names",
+              "xmlessentials/guides/ignore-properties",
+              "xmlessentials/guides/required-properties",
+              "xmlessentials/guides/immutable-types",
+              "xmlessentials/guides/collections",
+              "xmlessentials/guides/namespaces",
+              "xmlessentials/guides/null-and-nil",
+              "xmlessentials/guides/polymorphism",
+              "xmlessentials/guides/preserve-references",
+              "xmlessentials/guides/mixed-content",
+              "xmlessentials/guides/streaming",
+              "xmlessentials/guides/convert-xml-and-json",
+              "xmlessentials/guides/configure-options"
+            ]
+          },
+          {
+            "group": "Read and Write XML Directly",
+            "icon": "file-code",
+            "pages": [
+              "xmlessentials/guides/use-utf8xmlreader",
+              "xmlessentials/guides/use-utf8xmlwriter",
+              "xmlessentials/guides/use-xmldocument",
+              "xmlessentials/guides/use-xmlnode"
+            ]
+          },
+          {
+            "group": "Source Generation and AOT",
+            "icon": "wand-magic-sparkles",
+            "pages": [
+              "xmlessentials/guides/reflection-vs-source-generation",
+              "xmlessentials/guides/source-generation",
+              "xmlessentials/guides/source-generation-modes",
+              "xmlessentials/guides/native-aot",
+              "xmlessentials/guides/custom-converters",
+              "xmlessentials/guides/xsd-source-generation"
+            ]
+          },
+          {
+            "group": "Migrate",
+            "icon": "right-left",
+            "pages": [
+              "xmlessentials/guides/migrate/from-xmlserializer",
+              "xmlessentials/guides/migrate/from-xmlreader-xmlwriter",
+              "xmlessentials/guides/migrate/from-xdocument",
+              "xmlessentials/guides/migrate/from-system-text-json",
+              "xmlessentials/guides/migrate/system-text-xml-proposal"
+            ]
+          },
+          {
+            "group": "Reference",
+            "icon": "book",
+            "pages": [
+              "xmlessentials/guides/supported-types",
+              "xmlessentials/guides/xml-conformance",
+              "xmlessentials/guides/security",
+              "xmlessentials/guides/thread-safety"
+            ]
+          },
+          {
+            "group": "API Reference",
+            "icon": "code",
+            "pages": [
+              {
+                "group": "CloudNimble",
+                "icon": "folder-tree",
+                "pages": [
+                  {
+                    "group": "Text",
+                    "icon": "folder-tree",
+                    "pages": [
+                      {
+                        "group": "Xml",
+                        "icon": "folder-tree",
+                        "pages": [
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/index",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/KnownNamespaces",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlAttributes",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlAttributeStyle",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCharHandling",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCollectionMapping",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDeclarationInfo",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDiscriminatorPlacement",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlEmptyElementStyle",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlEncodedText",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlEnumHandling",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlMemberOrder",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlName",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamespaces",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamingPolicy",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlPropertyMapping",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerDefaults",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlTokenType",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlUtcOffsetHandling",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlValueKind",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlVersion",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWhitespaceHandling",
+                          "xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWriterOptions",
+                          {
+                            "group": "Nodes",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/index",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlAttributeNode",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlAttributeNodeList",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlCDataNode",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlCommentNode",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlDeclarationNode",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlElementNode",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNodeList",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlProcessingInstructionNode",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlTextNode"
+                            ]
+                          },
+                          {
+                            "group": "Serialization",
+                            "icon": "folder-tree",
+                            "pages": [
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/index",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/DefaultXmlTypeInfoResolver",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/IXmlTypeInfoResolver",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlArrayAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlArrayItemAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlArrayItemAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlAttributeAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlCDataAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConstructorAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverter",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverter",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterFactory",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlDerivedTypeAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlDerivedTypeAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlElementAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlElementAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlExtensionData",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlExtensionDataAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlIgnoreAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlIgnoreCondition",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlIncludeAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlKnownNamingPolicy",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMetadataServices",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedContentItem",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedElement",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedText",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlNamedValue",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlNamespaceDeclarationAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlNumberHandling",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlObjectCreationHandling",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlObjectCreationHandlingAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlObjectInfoValues",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlParameterInfoValues",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPolymorphicAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyInfo",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyInfoValues",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyInfoValues",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyNameAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyOrderAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlReferenceHandler",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlReferenceResolver",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlRequiredAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlRootAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializableAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializerContext",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSourceGenerationMode",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSourceGenerationOptionsAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTextAttribute",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlUnknownDerivedTypeHandling",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlUnknownTypeHandling",
+                              "xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlUnmappedMemberHandling"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
         "tab": "REST APIs",
         "href": "restier",
         "pages": [

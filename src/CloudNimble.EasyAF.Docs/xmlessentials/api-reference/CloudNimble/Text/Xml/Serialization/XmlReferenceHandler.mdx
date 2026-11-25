@@ -1,0 +1,345 @@
+---
+title: XmlReferenceHandler
+description: "Defines how [XmlSerializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) deals with references on serialization and deserialization, and provides a bas..."
+icon: shapes
+tag: "ABSTRACT"
+keywords: ['XmlReferenceHandler', 'CloudNimble.Text.Xml.Serialization.XmlReferenceHandler', 'CloudNimble.Text.Xml.Serialization', 'class', 'CloudNimble.Text.Xml.Serialization.XmlReferenceResolver', 'CloudNimble.Text.Xml.XmlSerializerOptions', 'CloudNimble.Text.Xml.XmlNamespaces', 'CloudNimble.Text.Xml.Serialization.XmlIgnoreAttribute']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlReferenceHandler
+```
+
+## Summary
+
+Defines how [XmlSerializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) deals with references on serialization and deserialization, and provides a base
+for handlers that create an [XmlReferenceResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlReferenceResolver) for each operation.
+
+## Usage
+
+Set `XmlSerializerOptions.ReferenceHandler` to tell the serializer what to do when an object graph holds the same object more than once. The property is `null` by default, which means every object is written each time it is met. The class corresponds to `ReferenceHandler` in System.Text.Json.
+
+| Handler | A repeated object is written as | Round trip restores the graph |
+| --- | --- | --- |
+| `null` (default) | A full copy. A cycle fails with `XmlException` when the writer reaches `MaxDepth`. | No |
+| `XmlReferenceHandler.Preserve` | An empty element with a `ref` attribute that points to the `id` of the first appearance. | Yes |
+| `XmlReferenceHandler.IgnoreCycles` | A full copy, unless it closes a cycle: an object reached again from inside itself is an empty element marked `xsi:nil="true"`. | No |
+
+```csharp
+var options = new XmlSerializerOptions
+{
+    ReferenceHandler = XmlReferenceHandler.Preserve,
+    WriteIndented = true,
+    NewLine = "\n",
+};
+```
+
+The `id` and `ref` attributes are in the namespace `urn:CloudNimble.Text.Xml:refs`, which is available as `XmlNamespaces.Refs`. See [Preserve references](/xmlessentials/guides/preserve-references) for the full article.
+
+## Examples
+
+### Preserve a cycle
+
+An employee refers to a manager, and the manager lists the employee as a direct report. With `Preserve`, the cycle is written once and restored when the document is read.
+
+```csharp
+var tyler = new Employee { Name = "Tyler Stein" };
+var adrian = new Employee { Name = "Adrian King", Manager = tyler };
+tyler.DirectReports.Add(adrian);
+
+var options = new XmlSerializerOptions
+{
+    ReferenceHandler = XmlReferenceHandler.Preserve,
+    WriteIndented = true,
+    NewLine = "\n",
+};
+
+string xml = XmlSerializer.Serialize(tyler, options);
+output.WriteLine(xml);
+
+Employee? copy = XmlSerializer.Deserialize<Employee>(xml, options);
+output.WriteLine(ReferenceEquals(copy, copy!.DirectReports[0].Manager));
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Employee xmlns:ns1="urn:CloudNimble.Text.Xml:refs" ns1:id="1">
+  <Name>Tyler Stein</Name>
+  <Manager xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+  <DirectReports>
+    <Employee ns1:id="2">
+      <Name>Adrian King</Name>
+      <Manager ns1:ref="1"/>
+      <DirectReports/>
+    </Employee>
+  </DirectReports>
+</Employee>
+True
+```
+
+### Ignore a cycle
+
+With `IgnoreCycles`, the same graph is written without identifiers, and the member that would close the cycle is nil.
+
+```csharp
+var options = new XmlSerializerOptions
+{
+    ReferenceHandler = XmlReferenceHandler.IgnoreCycles,
+    WriteIndented = true,
+    NewLine = "\n",
+};
+
+string xml = XmlSerializer.Serialize(tyler, options);
+output.WriteLine(xml);
+
+Employee? copy = XmlSerializer.Deserialize<Employee>(xml, options);
+output.WriteLine(copy!.DirectReports[0].Manager is null);
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Employee>
+  <Name>Tyler Stein</Name>
+  <Manager xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+  <DirectReports>
+    <Employee>
+      <Name>Adrian King</Name>
+      <Manager xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+      <DirectReports/>
+    </Employee>
+  </DirectReports>
+</Employee>
+True
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/17_PreserveReferences.cs)
+
+## Best Practices
+
+- Leave `ReferenceHandler` unset unless the graph has shared objects or cycles. With no handler, the serializer does no reference tracking.
+- Use `Preserve` when both ends use XmlEssentials and the graph must come back as it was.
+- Use `IgnoreCycles` when the document goes to a consumer that knows nothing about `id` and `ref`, and losing the back-reference that closes each cycle is acceptable. A shared object that forms no cycle is written in full each time, and reads back as separate objects.
+- Read a document with the handler that wrote it. Without a handler, a `ref` attribute is an `XmlException`.
+- If the cycle is caused by a back-reference that you don't need in the document, such as a child's `Parent` property, consider `[XmlIgnore]` on that member instead of a handler.
+
+## Considerations
+
+- **Cost.** `Preserve` makes writing slower than no handler: each object costs a dictionary lookup, an identifier string, and a namespaced attribute.
+- **What gets an identifier.** Objects with members do. Strings, numbers, other simple values, and collections do not.
+- **Where `Preserve` replaces an object.** A repeated object is replaced by a reference wherever it appears: as the document element, as the value of a member, and as an item of a collection.
+- **`IgnoreCycles` replaces only a cycle.** It writes nil in place of an object that is reached again from inside itself. An object held in two places without a cycle, such as two members or two items of a list, is written in full each time, as `ReferenceHandler.IgnoreCycles` does in System.Text.Json.
+- **Custom handlers.** A class derived from `XmlReferenceHandler` supplies the resolver for each call, for writing as well as reading. When writing, the identifiers your resolver returns from `GetReference` are written as the `id` and `ref` attributes.
+- **Sequences.** `SerializeAsyncEnumerable` and `DeserializeAsyncEnumerable` apply the handler. In the wrapped form, the values of one document share one set of references, so an object that two values hold is written once. With `topLevelValues: true`, each value is a document of its own, with references of its own.
+- **Source generation.** A source-generated context in the default mode or in `Metadata` mode applies the handler as the reflection resolver does.
+- **Thread safety.** `Preserve` and `IgnoreCycles` are stateless singletons. Each call to `Serialize` or `Deserialize` gets its own resolver, so options that use them can be shared between threads.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IgnoreCycles
+
+Gets a handler that ignores an object when it is reached again from inside itself during serialization.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Serialization.XmlReferenceHandler IgnoreCycles { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlReferenceHandler`
+A handler that writes an empty element marked `xsi:nil="true"` in place of an object that is still being
+written, which is the object that closes a cycle.
+
+#### Remarks
+
+Only a cycle is replaced. An object that is held in two places without a cycle, such as two members or two items
+of a list, is written in full each time, as it is by `ReferenceHandler.IgnoreCycles` in `System.Text.Json`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Preserve
+
+Gets a handler that preserves references by writing identifier attributes on serialization and honoring them on deserialization.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Serialization.XmlReferenceHandler Preserve { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlReferenceHandler`
+A handler that writes an `id` attribute on each object and a `ref` attribute in place of an object that
+was already written. Both attributes are in the `urn:CloudNimble.Text.Xml:refs` namespace.
+
+#### Remarks
+
+A repeated object is replaced wherever it appears: as the document element, as the value of a member, and as an
+item of a collection. Value types and collections have no identifier.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateResolver <Badge color="orange">Abstract</Badge>
+
+When overridden in a derived class, returns the [XmlReferenceResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlReferenceResolver) used for one serialization or deserialization call.
+
+#### Syntax
+
+```csharp
+public abstract CloudNimble.Text.Xml.Serialization.XmlReferenceResolver CreateResolver()
+```
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlReferenceResolver`
+The resolver to use for the operation.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Serialization.XmlReferenceResolver
+- CloudNimble.Text.Xml.XmlSerializerOptions
+- CloudNimble.Text.Xml.XmlNamespaces
+- CloudNimble.Text.Xml.Serialization.XmlIgnoreAttribute
+

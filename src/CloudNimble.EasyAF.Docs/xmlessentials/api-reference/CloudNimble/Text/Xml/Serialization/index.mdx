@@ -1,0 +1,158 @@
+---
+title: Overview
+description: "Summary of the CloudNimble.Text.Xml.Serialization Namespace"
+icon: folder-tree
+mode: wide
+keywords: ['CloudNimble.Text.Xml.Serialization', 'namespace', 'DefaultXmlTypeInfoResolver', 'IXmlTypeInfoResolver', 'XmlArrayAttribute', 'XmlArrayItemAttribute', 'XmlAttributeAttribute', 'XmlCDataAttribute', 'XmlConstructorAttribute', 'XmlConverter']
+---
+
+## Summary
+
+`CloudNimble.Text.Xml.Serialization` holds the types that shape how [`XmlSerializer`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) maps .NET objects to XML: the attributes you put on your types, the enumerations that the options use, the base classes for custom converters, and the support types for source generation.
+
+| To do this | Use |
+| --- | --- |
+| Name the document element | [`XmlRootAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlRootAttribute) |
+| Rename a member | [`XmlPropertyNameAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyNameAttribute) |
+| Write a member as an element, an XML attribute, or element text | [`XmlElementAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlElementAttribute), [`XmlAttributeAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlAttributeAttribute), [`XmlTextAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTextAttribute) |
+| Set the order of members | [`XmlPropertyOrderAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyOrderAttribute) |
+| Leave a member out | [`XmlIgnoreAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlIgnoreAttribute) |
+| Require a member when reading | [`XmlRequiredAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlRequiredAttribute) |
+| Choose the constructor used when reading | [`XmlConstructorAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConstructorAttribute) |
+| Wrap a collection and name its items | [`XmlArrayAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlArrayAttribute), [`XmlArrayItemAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlArrayItemAttribute) |
+| Serialize derived types | [`XmlPolymorphicAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPolymorphicAttribute), [`XmlDerivedTypeAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlDerivedTypeAttribute) |
+| Write your own conversion for a type | [`XmlConverter`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverter) |
+| Generate serialization code at compile time | [`XmlSerializerContext`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializerContext), [`XmlSerializableAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializableAttribute) |
+
+## Usage
+
+Import the namespace next to `CloudNimble.Text.Xml`, then annotate your types:
+
+```csharp
+using CloudNimble.Text.Xml;
+using CloudNimble.Text.Xml.Serialization;
+```
+
+```csharp
+[XmlRoot("product")]
+public sealed class CatalogItem
+{
+    [XmlAttribute("sku")]
+    public string? Sku { get; set; }
+
+    [XmlPropertyName("title")]
+    public string? Name { get; set; }
+
+    [XmlElement("unit-price")]
+    public decimal UnitPrice { get; set; }
+}
+```
+
+```csharp
+var item = new CatalogItem { Sku = "KB-101", Name = "Keyboard", UnitPrice = 49.95m };
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+
+string xml = XmlSerializer.Serialize(item, options);
+output.WriteLine(xml);
+
+CatalogItem? copy = XmlSerializer.Deserialize<CatalogItem>(xml, options);
+output.WriteLine($"{copy!.Sku}: {copy.Name}");
+```
+
+The code produces the following output:
+
+```text
+<product sku="KB-101"><title>Keyboard</title><unit-price>49.95</unit-price></product>
+KB-101: Keyboard
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/08_CustomizeNames.cs)
+
+The how-to guides cover each group of attributes: [Customize names and shape](/xmlessentials/guides/customize-names), [Ignore properties](/xmlessentials/guides/ignore-properties), [Require properties](/xmlessentials/guides/required-properties), [Immutable types](/xmlessentials/guides/immutable-types), and [Serialize collections](/xmlessentials/guides/collections).
+
+## Considerations
+
+- **These aren't the `System.Xml.Serialization` attributes.** Several types here have the same names as attributes in `System.Xml.Serialization`, such as `XmlRootAttribute`, `XmlElementAttribute`, `XmlAttributeAttribute`, and `XmlIgnoreAttribute`. The serializer reads only the ones in this namespace. An attribute from `System.Xml.Serialization` on your type is ignored.
+- **Don't import both namespaces in one file.** `[XmlElement]` would be ambiguous and the file wouldn't compile. When you move a type over, replace `using System.Xml.Serialization;` with `using CloudNimble.Text.Xml.Serialization;`. See [Migrate from XmlSerializer](/xmlessentials/guides/migrate/from-xmlserializer).
+- **The same names don't always mean the same defaults.** For example, a collection has no wrapper element here unless you add `[XmlArray]` or set `DefaultCollectionMapping` to `Wrapped`. `XmlSerializerOptions.Bcl` sets the defaults that write what `System.Xml.Serialization.XmlSerializer` writes.
+- **Mapping mistakes are reported on first use.** A combination that can't be mapped, such as `[XmlAttribute]` on an object member or `[XmlText]` on a type that also has child elements, throws a `NotSupportedException` the first time the type is serialized or deserialized.
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlSerializer
+- CloudNimble.Text.Xml.XmlSerializerOptions
+- CloudNimble.Text.Xml.XmlNamingPolicy
+- CloudNimble.Text.Xml.XmlPropertyMapping
+
+## Types
+
+### <Icon icon="file-brackets-curly" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} /> Classes
+
+| Name | Summary |
+| ---- | ------- |
+| [DefaultXmlTypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/DefaultXmlTypeInfoResolver) | Defines the default, reflection-based XML contract resolver used by [XmlSerializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer). This class cannot be inherited. |
+| [XmlArrayAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlArrayAttribute) | Specifies that a collection member is serialized as a wrapper element that contains the items. This class cannot be inherited. |
+| [XmlArrayItemAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlArrayItemAttribute) | Specifies the element name, and optionally the type, of the items in a collection member. |
+| [XmlArrayItemAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlArrayItemAttribute) | Specifies the element name of the items of type *T* in a collection member. This class cannot be inherited. |
+| [XmlAttributeAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlAttributeAttribute) | Specifies that a member is serialized as an XML attribute. This class cannot be inherited. |
+| [XmlCDataAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlCDataAttribute) | Specifies that a member is serialized as the text content of the element for its containing type, written as a CDATA section. This class cannot be inherited. |
+| [XmlConstructorAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConstructorAttribute) | Indicates that the constructor is used to create instances of the type on deserialization. This class cannot be inherited. |
+| [XmlConverter](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverter) | Converts an object or value to or from XML. |
+| [XmlConverter](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverter) | Converts an object or value to or from XML. |
+| [XmlConverterAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterAttribute) | Specifies the converter to use when placed on a property, field, or type. |
+| [XmlConverterAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterAttribute) | Specifies the converter type to use when placed on a property, field, or type. This class cannot be inherited. |
+| [XmlConverterFactory](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterFactory) | Supports converting several types by using a factory pattern. |
+| [XmlDerivedTypeAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlDerivedTypeAttribute) | Indicates, when placed on a type declaration, that the specified derived type is opted into polymorphic serialization. |
+| [XmlDerivedTypeAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlDerivedTypeAttribute) | Indicates, when placed on a type declaration, that *T* is opted into polymorphic serialization  and can appear where the annotated type is expected. This class cannot be inherited. |
+| [XmlElementAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlElementAttribute) | Specifies that a member is serialized as a child element, and optionally sets the name, namespace, order, or nillability of that element. |
+| [XmlElementAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlElementAttribute) | Specifies that a member is serialized as a child element of type *T*. This class cannot be inherited. |
+| [XmlExtensionData](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlExtensionData) | Represents the XML attributes and child elements that have no matching member and are captured by a member marked with  [XmlExtensionDataAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlExtensionDataAttribute). This class cannot be inherited. |
+| [XmlExtensionDataAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlExtensionDataAttribute) | Indicates, when placed on a member of type [XmlExtensionData](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlExtensionData), that XML attributes and child elements that have  no matching member are added to that member during deserialization. This class cannot be inherited. |
+| [XmlIgnoreAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlIgnoreAttribute) | Prevents a property or field from being serialized or deserialized, or from being written when a condition is met. This class cannot be inherited. |
+| [XmlIncludeAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlIncludeAttribute) | Indicates that a non-public property or field is included for serialization and deserialization, and that a  set accessor that is not public is used when reading. This class cannot be inherited. |
+| [XmlMetadataServices](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMetadataServices) | Provides helpers to create and use metadata for XML-serializable types. This class cannot be inherited. |
+| [XmlMixedAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedAttribute) | Specifies that a member holds the mixed content of the element for its containing type: text interleaved with child elements. This class cannot be inherited. |
+| [XmlMixedContentItem](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedContentItem) | Defines the core behavior of an item of mixed content and provides a base for [XmlMixedText](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedText) and [XmlMixedElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedElement). |
+| [XmlMixedElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedElement) | Represents a child element in mixed content. This class cannot be inherited. |
+| [XmlMixedText](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMixedText) | Represents a run of text in mixed content. This class cannot be inherited. |
+| [XmlNamedValue](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlNamedValue) | Represents a value together with the name of the element it is written under. This class cannot be inherited. |
+| [XmlNamespaceDeclarationAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlNamespaceDeclarationAttribute) | Declares a namespace prefix on the document element when the type is serialized as a document, so that  elements and attributes in that namespace are written with the prefix. |
+| [XmlObjectCreationHandlingAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlObjectCreationHandlingAttribute) | Determines how a member that already holds a value is handled when it is deserialized. This class cannot be inherited. |
+| [XmlObjectInfoValues](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlObjectInfoValues) | Provides serialization metadata about an object type with constructors, properties, and fields. This class  cannot be inherited. |
+| [XmlParameterInfoValues](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlParameterInfoValues) | Provides information about a constructor parameter that is required for serialization and deserialization.  This class cannot be inherited. |
+| [XmlPolymorphicAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPolymorphicAttribute) | Indicates, when placed on a type, that the type is serialized polymorphically, and specifies how its type discriminator  is written. This class cannot be inherited. |
+| [XmlPropertyInfo](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyInfo) | Provides XML serialization-related metadata about a property or field. This class cannot be inherited. |
+| [XmlPropertyInfoValues](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyInfoValues) | Provides serialization metadata about a property or field, whatever the type of its value. |
+| [XmlPropertyInfoValues](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyInfoValues) | Provides serialization metadata about a property or field. This class cannot be inherited. |
+| [XmlPropertyNameAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyNameAttribute) | Specifies the local name of the XML element or attribute that a property or field is serialized as. This class cannot be inherited. |
+| [XmlPropertyOrderAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyOrderAttribute) | Specifies the order in which a property or field is written among the members of a type, including inherited members.  This class cannot be inherited. |
+| [XmlReferenceHandler](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlReferenceHandler) | Defines how [XmlSerializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) deals with references on serialization and deserialization, and provides a base  for handlers that create an [XmlReferenceResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlReferenceResolver) for each operation. |
+| [XmlReferenceResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlReferenceResolver) | Defines the core behavior of preserving references on serialization and deserialization and provides a base for  resolvers that map objects to reference identifiers during one operation. |
+| [XmlRequiredAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlRequiredAttribute) | Indicates that the annotated member must be present in the XML on deserialization. This class cannot be inherited. |
+| [XmlRootAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlRootAttribute) | Specifies the name and namespace of the document element that a type is serialized as. This class cannot be inherited. |
+| [XmlSerializableAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializableAttribute) | Instructs the XmlEssentials source generator to generate source code for serializing and deserializing instances of  the specified type and the types in its object graph. This class cannot be inherited. |
+| [XmlSerializerContext](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializerContext) | Provides metadata about a set of types that is relevant to XML serialization, and provides a base for source-generated contexts. |
+| [XmlSourceGenerationOptionsAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSourceGenerationOptionsAttribute) | Specifies compile-time source generator configuration when applied to [XmlSerializerContext](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializerContext) class declarations.  This class cannot be inherited. |
+| [XmlTextAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTextAttribute) | Specifies that a member is serialized as the text content of the element for its containing type. This class cannot be inherited. |
+| [XmlTypeInfo](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo) | Provides XML serialization-related metadata about a type. |
+| [XmlTypeInfo](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo) | Provides XML serialization-related metadata about a type. |
+
+### <Icon icon="plug" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} /> Interfaces
+
+| Name | Summary |
+| ---- | ------- |
+| [IXmlTypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/IXmlTypeInfoResolver) | Defines a resolver of the XML serialization contract for requested types. |
+
+### <Icon icon="list-ol" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} /> Enums
+
+| Name | Summary |
+| ---- | ------- |
+| [XmlIgnoreCondition](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlIgnoreCondition) | Specifies when a property or field is ignored on serialization and deserialization. |
+| [XmlKnownNamingPolicy](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlKnownNamingPolicy) | Specifies the built-in [XmlNamingPolicy](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamingPolicy) that a source-generated context uses at run time. |
+| [XmlNumberHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlNumberHandling) | Specifies how [XmlSerializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) handles the named floating-point literals `INF`, `-INF`, and `NaN`  when serializing and deserializing. |
+| [XmlObjectCreationHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlObjectCreationHandling) | Determines how [XmlSerializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) handles a member that already holds a value when it is deserialized. |
+| [XmlSourceGenerationMode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSourceGenerationMode) | Specifies the generation mode for the XmlEssentials source generator. |
+| [XmlUnknownDerivedTypeHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlUnknownDerivedTypeHandling) | Specifies how a derived type that has not been explicitly declared for polymorphic serialization is handled when a  polymorphic type is read or written. |
+| [XmlUnknownTypeHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlUnknownTypeHandling) | Defines how [XmlSerializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) reads an element into a value declared as [Object](https://learn.microsoft.com/dotnet/api/system.object). |
+| [XmlUnmappedMemberHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlUnmappedMemberHandling) | Specifies how [XmlSerializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) handles XML elements and attributes that cannot be mapped to a specific  .NET member when deserializing object types. |
+

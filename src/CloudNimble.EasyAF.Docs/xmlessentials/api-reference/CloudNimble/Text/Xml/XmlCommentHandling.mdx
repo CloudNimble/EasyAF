@@ -1,0 +1,110 @@
+---
+title: XmlCommentHandling
+description: "Specifies how a [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) handles comments."
+icon: list-ol
+tag: "ENUM"
+keywords: ['XmlCommentHandling', 'CloudNimble.Text.Xml.XmlCommentHandling', 'CloudNimble.Text.Xml', 'enum', 'System.Enum', 'CloudNimble.Text.Xml.XmlReaderOptions', 'CloudNimble.Text.Xml.XmlDocumentOptions', 'CloudNimble.Text.Xml.XmlTokenType', 'CloudNimble.Text.Xml.Utf8XmlReader', 'CloudNimble.Text.Xml.XmlWhitespaceHandling']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlCommentHandling
+```
+
+## Summary
+
+Specifies how a [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) handles comments.
+
+## Usage
+
+Set `XmlReaderOptions.CommentHandling` to choose what a `Utf8XmlReader` does when it reads a comment.
+
+| Value | The reader |
+| --- | --- |
+| `Allow` | Reports the comment as an `XmlTokenType.Comment` token. Read its text with `Utf8XmlReader.GetComment`. This is the default. |
+| `Skip` | Reads past the comment and reports nothing. |
+| `Disallow` | Throws an `XmlException` with the message `Comments are not allowed.` |
+
+The sample reads one document twice, first with the default options and then with comments skipped (and white space between elements left out):
+
+```csharp
+var xml = "<?xml-stylesheet href=\"order.xsl\"?>\n<Order>\n  <!-- rush -->\n  <Note><![CDATA[a < b]]></Note>\n</Order>"u8;
+
+output.WriteLine("Default options:");
+PrintTokens(xml, new XmlReaderOptions(), output);
+
+var dataOnly = new XmlReaderOptions
+{
+    CommentHandling = XmlCommentHandling.Skip,
+    WhitespaceHandling = XmlWhitespaceHandling.Insignificant,
+};
+
+output.WriteLine("Comments skipped and white space insignificant:");
+PrintTokens(xml, dataOnly, output);
+```
+
+```text
+Default options:
+  ProcessingInstruction target=xml-stylesheet data="href="order.xsl""
+  StartElement Order
+  Text "\n  "
+  Comment " rush "
+  Text "\n  "
+  StartElement Note
+  CData "a < b"
+  EndElement Note
+  Text "\n"
+  EndElement Order
+Comments skipped and white space insignificant:
+  ProcessingInstruction target=xml-stylesheet data="href="order.xsl""
+  StartElement Order
+  StartElement Note
+  CData "a < b"
+  EndElement Note
+  EndElement Order
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/21_ReadMarkupAndHandleErrors.cs)
+
+## Remarks
+
+[XmlCommentHandling.Allow](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling) is the zero value of the enumeration, so it is the default wherever a comment
+handling value is not set: in [XmlReaderOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions) and [XmlDocumentOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions),
+whether they are created with `new` or as `default`. Comments are kept
+by default so that XML that is read and written back does not lose them.
+[XmlSerializerOptions.ReadCommentHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#readcommenthandling) defaults to [XmlCommentHandling.Skip](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling), because a
+comment has no place in an object.
+
+## Considerations
+
+- **`Allow` is the zero value, and the default.** `new XmlReaderOptions()`, `default(XmlReaderOptions)`, a reader created without options, and `new XmlReaderState()` all report comments. Comments are kept by default so that XML that's read and written back doesn't lose them.
+- **The serializer's default is different.** `XmlSerializerOptions.ReadCommentHandling` defaults to `Skip`, because a comment has no place in an object.
+- **A skipped comment is still checked.** A comment that contains `--`, or that's longer than `XmlReaderOptions.MaxCommentByteCount`, throws an `XmlException` under every setting.
+- **The setting covers the whole document,** including comments before and after the root element.
+- **`XmlDocument` uses the same enumeration.** `XmlDocumentOptions.CommentHandling` also defaults to `Allow`.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Allow` | 0 | Comments are reported as [XmlTokenType.Comment](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlTokenType) tokens. This is the default. |
+| `Skip` | 1 | Comments are consumed and not reported. |
+| `Disallow` | 2 | Comments are not allowed. The reader throws an [XmlException](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException) when it reads one. |
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlReaderOptions
+- CloudNimble.Text.Xml.XmlDocumentOptions
+- CloudNimble.Text.Xml.XmlTokenType
+- CloudNimble.Text.Xml.Utf8XmlReader
+- CloudNimble.Text.Xml.XmlWhitespaceHandling
+

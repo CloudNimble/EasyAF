@@ -1,0 +1,336 @@
+---
+title: Overview
+description: "Summary of the CloudNimble.Text.Xml Namespace"
+icon: folder-tree
+mode: wide
+keywords: ['CloudNimble.Text.Xml', 'namespace', 'KnownNamespaces', 'Utf8XmlReader', 'Utf8XmlWriter', 'XmlAttributes', 'XmlAttributeStyle', 'XmlCharHandling', 'XmlCollectionMapping', 'XmlCommentHandling', 'XmlDeclarationInfo', 'XmlDiscriminatorPlacement']
+---
+
+## Summary
+
+`CloudNimble.Text.Xml` is the main namespace of XmlEssentials. It holds the four ways to work with XML, all of them over UTF-8 and all of them shaped like their counterparts in `System.Text.Json`:
+
+| To do this | Use | Like |
+| --- | --- | --- |
+| Convert between your types and XML | [`XmlSerializer`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) | `JsonSerializer` |
+| Parse a document and query it | [`XmlDocument`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) and [`XmlElement`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) | `JsonDocument` and `JsonElement` |
+| Read XML one token at a time | [`Utf8XmlReader`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) | `Utf8JsonReader` |
+| Write XML one call at a time | [`Utf8XmlWriter`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter) | `Utf8JsonWriter` |
+
+The tree that you can change, `XmlNode`, is in `CloudNimble.Text.Xml.Nodes`. Attributes, converters, and source generation support are in `CloudNimble.Text.Xml.Serialization`. Nothing in the library depends on `System.Xml`.
+
+## Usage
+
+Install the `XmlEssentials` package and import the namespace:
+
+```bash
+dotnet add package XmlEssentials
+```
+
+```csharp
+using CloudNimble.Text.Xml;
+```
+
+Then choose the entry point that fits the job. Start at the top of this list and move down only when you need to.
+
+### XmlSerializer: your types to XML and back
+
+`XmlSerializer.Serialize` and `XmlSerializer.Deserialize` convert between .NET objects and XML. This is the entry point for most applications.
+
+```csharp
+var person = new Person { Name = "Ada", Age = 36 };
+
+string xml = XmlSerializer.Serialize(person);
+output.WriteLine(xml);
+
+Person? copy = XmlSerializer.Deserialize<Person>(xml);
+output.WriteLine($"{copy!.Name} is {copy.Age}");
+```
+
+See [How to serialize](/xmlessentials/guides/serialize) and [How to deserialize](/xmlessentials/guides/deserialize).
+
+### XmlDocument: a read-only tree
+
+`XmlDocument.Parse` reads a whole document into pooled memory. `RootElement` and the `XmlElement` values you get from it let you move through the document in any order.
+
+```csharp
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement order = document.RootElement;
+
+output.WriteLine($"Order {order.GetAttribute("id").GetInt32()}");
+```
+
+See [How to use XmlDocument](/xmlessentials/guides/use-xmldocument). To change a document, use the tree in `CloudNimble.Text.Xml.Nodes`, described in [How to use XmlNode](/xmlessentials/guides/use-xmlnode).
+
+### Utf8XmlReader: one token at a time
+
+`Utf8XmlReader` reads UTF-8 bytes forward, one token per call to `Read`, and gives you names and values as slices of your input.
+
+```csharp
+var options = new XmlReaderOptions { AllowMultipleRoots = true };
+var reader = new Utf8XmlReader("<Item>Keyboard</Item><Item>Mouse</Item>"u8, options);
+while (reader.Read())
+{
+    if (reader.TokenType is XmlTokenType.Text)
+    {
+        output.WriteLine(reader.GetString());
+    }
+}
+```
+
+The example reads a fragment with two top-level elements, which is why it sets `AllowMultipleRoots`.
+
+See [How to read XML with Utf8XmlReader](/xmlessentials/guides/use-utf8xmlreader).
+
+### Utf8XmlWriter: one call at a time
+
+`Utf8XmlWriter` writes UTF-8 to an `IBufferWriter<byte>` or a `Stream`. It escapes values, declares namespaces, and checks that the output is well formed.
+
+```csharp
+using (var writer = new Utf8XmlWriter(buffer, options))
+{
+    writer.WriteStartElement("Order");
+    writer.WriteAttributeString("id", "1042");
+    writer.WriteElementString("Item", "Keyboard");
+    writer.WriteElementString("Item", "Mouse & pad");
+    writer.WriteElementNumber("Total", 129.90m);
+    writer.WriteEndElement();
+}
+```
+
+See [How to write XML with Utf8XmlWriter](/xmlessentials/guides/use-utf8xmlwriter).
+
+## Examples
+
+Each example is a sample in the repository whose output is checked by a test.
+
+### Serialize and deserialize an object
+
+```csharp
+var person = new Person { Name = "Ada", Age = 36 };
+
+string xml = XmlSerializer.Serialize(person);
+output.WriteLine(xml);
+
+Person? copy = XmlSerializer.Deserialize<Person>(xml);
+output.WriteLine($"{copy!.Name} is {copy.Age}");
+```
+
+```text
+<?xml version="1.0" encoding="utf-8"?><Person><Name>Ada</Name><Age>36</Age></Person>
+Ada is 36
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/01_SerializeAndDeserialize.cs)
+
+### Read a document with Utf8XmlReader
+
+```csharp
+ReadOnlySpan<byte> xml = """
+    <Order id="1042">
+      <Item>Keyboard</Item>
+      <Item>Mouse</Item>
+      <Total>129.90</Total>
+    </Order>
+    """u8;
+
+var reader = new Utf8XmlReader(xml);
+while (reader.Read())
+{
+    if (reader.TokenType is not XmlTokenType.StartElement)
+    {
+        continue;
+    }
+
+    if (reader.LocalNameEquals("Order"u8))
+    {
+        while (reader.MoveToNextAttribute())
+        {
+            if (reader.LocalNameEquals("id"u8))
+            {
+                output.WriteLine($"Order {reader.GetInt32()}");
+            }
+        }
+
+        reader.MoveToElement();
+    }
+    else if (reader.LocalNameEquals("Item"u8))
+    {
+        reader.Read();
+        output.WriteLine($"Item: {reader.GetString()}");
+    }
+    else if (reader.LocalNameEquals("Total"u8))
+    {
+        reader.Read();
+        output.WriteLine($"Total: {reader.GetDecimal()}");
+    }
+}
+```
+
+```text
+Order 1042
+Item: Keyboard
+Item: Mouse
+Total: 129.90
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/02_ReadWithUtf8XmlReader.cs)
+
+### Write a document with Utf8XmlWriter
+
+```csharp
+var buffer = new ArrayBufferWriter<byte>();
+var options = new XmlWriterOptions { Indented = true, NewLine = "\n" };
+
+using (var writer = new Utf8XmlWriter(buffer, options))
+{
+    writer.WriteStartElement("Order");
+    writer.WriteAttributeString("id", "1042");
+    writer.WriteElementString("Item", "Keyboard");
+    writer.WriteElementString("Item", "Mouse & pad");
+    writer.WriteElementNumber("Total", 129.90m);
+    writer.WriteEndElement();
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+```
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Order id="1042">
+  <Item>Keyboard</Item>
+  <Item>Mouse &amp; pad</Item>
+  <Total>129.90</Total>
+</Order>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/03_WriteWithUtf8XmlWriter.cs)
+
+### Query a document with XmlDocument
+
+```csharp
+const string xml = """
+    <Order id="1042">
+      <Item>Keyboard</Item>
+      <Item>Mouse</Item>
+      <Total>129.90</Total>
+    </Order>
+    """;
+
+using XmlDocument document = XmlDocument.Parse(xml);
+XmlElement order = document.RootElement;
+
+output.WriteLine($"Order {order.GetAttribute("id").GetInt32()}");
+
+foreach (XmlElement child in order.EnumerateChildren())
+{
+    if (child.ValueKind is XmlValueKind.Element && child.LocalName == "Item")
+    {
+        output.WriteLine($"Item: {child.GetString()}");
+    }
+}
+
+output.WriteLine($"Total: {order.GetChild("Total").GetDecimal()}");
+```
+
+```text
+Order 1042
+Item: Keyboard
+Item: Mouse
+Total: 129.90
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/04_QueryWithXmlDocument.cs)
+
+## Best Practices
+
+- **Start with the highest-level API that does the job.** Use `XmlSerializer` for your own types, `XmlDocument` to look inside a document whose shape you don't control, and the reader and writer when you need to stream or to control every byte.
+- **Keep XML as UTF-8.** Every type in this namespace works on UTF-8 bytes. Read and write `byte[]`, spans, streams, and `u8` literals, and convert to `string` only at the edges of your application.
+- **Know which defaults keep everything.** `Utf8XmlReader` and `XmlDocument` report comments and the white space between elements by default, so that XML that's read and written back is unchanged. `XmlSerializer` skips both. In a hand-written read loop that only wants data, set `CommentHandling` to `Skip` and `WhitespaceHandling` to `Insignificant`.
+- **Dispose what's disposable.** `XmlDocument` returns pooled memory when you dispose it, and `Utf8XmlWriter` flushes when you dispose it.
+- **Leave the limits on for input you don't trust.** A limit of 0 selects a safe default, not "no limit". See [Security](/xmlessentials/guides/security).
+- **Catch `CloudNimble.Text.Xml.XmlException`.** It isn't related to `System.Xml.XmlException`.
+
+## Patterns
+
+The four entry points are built on each other, and you can move between them:
+
+- **The serializer uses the reader and the writer.** A [custom converter](/xmlessentials/guides/custom-converters) receives a `Utf8XmlReader` to read its value and a `Utf8XmlWriter` to write it.
+- **A document writes itself to a writer.** `XmlDocument.WriteTo` and `XmlElement.WriteTo` copy a parsed document, or one element of it, into a `Utf8XmlWriter`. See [How to use XmlDocument](/xmlessentials/guides/use-xmldocument).
+- **The serializer reads from and writes to the tree.** You can deserialize from an `XmlDocument`, an `XmlElement`, or an `XmlNode`, and serialize to them. See [How to deserialize](/xmlessentials/guides/deserialize).
+- **Reader in, writer out.** To transform a large document without holding it in memory, read tokens with `Utf8XmlReader` and write what you keep with `Utf8XmlWriter`. See [How to read XML with Utf8XmlReader](/xmlessentials/guides/use-utf8xmlreader#read-a-stream-in-blocks).
+
+## Considerations
+
+- **UTF-8 only.** A document that declares another encoding is rejected with an `XmlException`. Transcode it first.
+- **No DTDs.** A document type declaration is rejected, so a document can't define entities. Only the five predefined entities and character references are decoded. See [Security](/xmlessentials/guides/security).
+- **XML 1.0 and XML 1.1.** The reader takes the version from the XML declaration and applies that version's rules. The writer writes the version you set in `XmlWriterOptions.Version`.
+- **Namespaces are always processed.** Names are reported as a local name and a namespace URI. An element without a prefix is in the default namespace. An attribute without a prefix is in no namespace.
+- **Empty elements have no end token.** `Utf8XmlReader` reports `<e/>` as one `StartElement` token with `IsEmptyElement` set.
+- **Typed values use XML Schema forms.** Numbers, dates, durations, and Booleans are read and written in their XML Schema lexical forms with the invariant culture.
+- **The names match `System.Xml` in places, the types don't.** `XmlDocument`, `XmlElement`, `XmlSerializer`, and `XmlException` in this namespace are different types from those in `System.Xml`. Avoid importing both namespaces in one file, or use an alias.
+- **Thread safety differs by type.** See [Thread safety](/xmlessentials/guides/thread-safety).
+
+For what the library accepts and rejects, see [XML conformance](/xmlessentials/guides/xml-conformance).
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlSerializer
+- CloudNimble.Text.Xml.XmlSerializerOptions
+- CloudNimble.Text.Xml.XmlDocument
+- CloudNimble.Text.Xml.XmlElement
+- CloudNimble.Text.Xml.Utf8XmlReader
+- CloudNimble.Text.Xml.Utf8XmlWriter
+- CloudNimble.Text.Xml.XmlException
+- CloudNimble.Text.Xml.Nodes.XmlNode
+
+## Types
+
+### <Icon icon="file-brackets-curly" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} /> Classes
+
+| Name | Summary |
+| ---- | ------- |
+| [KnownNamespaces](/xmlessentials/api-reference/CloudNimble/Text/Xml/KnownNamespaces) | Provides the namespace declarations of well-known XML formats, each as the prefixes the format is  customarily written with and the namespace URIs they are bound to. |
+| [Utf8XmlWriter](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter) | Provides a forward-only, non-cached writer for UTF-8 encoded XML text. This class cannot be inherited. |
+| [XmlAttributes](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlAttributes) | Provides the local names of the XML Schema instance attributes that XmlEssentials reads and writes.  This class cannot be inherited. |
+| [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) | Provides a mechanism for examining the structural content of an XML document without automatically  instantiating data values. This class cannot be inherited. |
+| [XmlException](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException) | The exception that is thrown when XML is not well formed, a reader limit is exceeded, or a value  cannot be read as the requested type. This class cannot be inherited. |
+| [XmlNamespaces](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamespaces) | Provides the well-known XML namespace URIs that XmlEssentials uses. This class cannot be inherited. |
+| [XmlNamingPolicy](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamingPolicy) | Defines the core behavior of policies that convert CLR type and member names to XML local names and provides a base for derived classes. |
+| [XmlSerializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) | Provides functionality to serialize objects or value types to XML and to deserialize XML into objects or value types.  This class cannot be inherited. |
+| [XmlSerializerOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions) | Provides options to be used with [XmlSerializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer). This class cannot be inherited. |
+
+### <Icon icon="cubes" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} /> Structs
+
+| Name | Summary |
+| ---- | ------- |
+| [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) | Provides a high-performance API for forward-only, read-only access to UTF-8 encoded XML text. |
+| [XmlDeclarationInfo](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDeclarationInfo) | Represents the XML declaration captured when an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) is parsed. |
+| [XmlDocumentOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions) | Provides the ability for the user to define custom behavior when parsing XML to create an  [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument). |
+| [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) | Represents a specific XML node within an [XmlDocument](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument). |
+| [XmlEncodedText](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlEncodedText) | Represents an XML name that is already encoded as UTF-8, so that a [Utf8XmlWriter](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter) can write it  many times without encoding it again. |
+| [XmlName](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlName) | Represents a namespace-qualified XML name: a local name, a namespace URI, and an optional prefix. |
+| [XmlReaderOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions) | Provides options that control how a [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) reads XML. |
+| [XmlReaderState](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderState) | Represents the state a [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) needs to continue reading a document with more data. |
+| [XmlWriterOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWriterOptions) | Provides the options that control how a [Utf8XmlWriter](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter) formats and checks the XML it writes. |
+
+### <Icon icon="list-ol" iconType="duotone" color="#419AC5" size={24} style={{ paddingRight: '8px' }} /> Enums
+
+| Name | Summary |
+| ---- | ------- |
+| [XmlAttributeStyle](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlAttributeStyle) | Specifies how a [Utf8XmlWriter](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter) lays out the attributes of a start tag. |
+| [XmlCharHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCharHandling) | Specifies how a [Char](https://learn.microsoft.com/dotnet/api/system.char) is written and read. |
+| [XmlCollectionMapping](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCollectionMapping) | Specifies how a collection member without a mapping attribute is mapped: as repeated elements, or as one  element that wraps an element for each item. |
+| [XmlCommentHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlCommentHandling) | Specifies how a [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) handles comments. |
+| [XmlDiscriminatorPlacement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDiscriminatorPlacement) | Specifies where a polymorphic type discriminator is written. |
+| [XmlEmptyElementStyle](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlEmptyElementStyle) | Specifies how a [Utf8XmlWriter](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter) writes an element that has no content. |
+| [XmlEnumHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlEnumHandling) | Specifies how enumeration values are written. |
+| [XmlMemberOrder](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlMemberOrder) | Specifies where the fields of a type come among its members, when  [XmlSerializerOptions.IncludeFields](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#includefields) includes them. |
+| [XmlPropertyMapping](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlPropertyMapping) | Specifies how a property or field without a mapping attribute is mapped: as a child element or as an XML attribute. |
+| [XmlSerializerDefaults](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerDefaults) | Specifies the predefined sets of options that an [XmlSerializerOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions) instance can be created with. |
+| [XmlTokenType](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlTokenType) | Specifies the type of token that a [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) is positioned on in a UTF-8 XML document. |
+| [XmlUtcOffsetHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlUtcOffsetHandling) | Specifies how a [DateTimeOffset](https://learn.microsoft.com/dotnet/api/system.datetimeoffset) whose offset from UTC is zero is written. |
+| [XmlValueKind](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlValueKind) | Specifies the kind of XML node that an [XmlElement](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) or a  [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) represents. |
+| [XmlVersion](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlVersion) | Specifies the version of the XML recommendation that is in force for a document. |
+| [XmlWhitespaceHandling](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWhitespaceHandling) | Specifies how a [Utf8XmlReader](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader) handles whitespace-only text between elements. |
+

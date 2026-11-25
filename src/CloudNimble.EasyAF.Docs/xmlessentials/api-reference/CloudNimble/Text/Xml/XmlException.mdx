@@ -1,0 +1,633 @@
+---
+title: XmlException
+description: "The exception that is thrown when XML is not well formed, a reader limit is exceeded, or a value cannot be read as the requested type. This class cannot be i..."
+icon: lock
+tag: "SEALED"
+keywords: ['XmlException', 'CloudNimble.Text.Xml.XmlException', 'CloudNimble.Text.Xml', 'class', 'System.Exception', 'CloudNimble.Text.Xml.Utf8XmlReader', 'CloudNimble.Text.Xml.Utf8XmlWriter', 'CloudNimble.Text.Xml.XmlReaderOptions', 'CloudNimble.Text.Xml.XmlWriterOptions', 'CloudNimble.Text.Xml.XmlDocument']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.Exception
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlException
+```
+
+## Summary
+
+The exception that is thrown when XML is not well formed, a reader limit is exceeded, or a value
+cannot be read as the requested type. This class cannot be inherited.
+
+## Usage
+
+The library throws `XmlException` for every problem with XML itself: input that isn't well formed, a limit that's exceeded, a value that can't be read as the type you asked for, and output that the writer refuses to produce. Catch it around the code that reads or writes.
+
+When the exception comes from `Utf8XmlReader`, it says where the reader was:
+
+```csharp
+var xml = "<Order>\n  <Item>Keyboard</Itm>\n</Order>"u8;
+
+try
+{
+    var reader = new Utf8XmlReader(xml);
+    while (reader.Read())
+    {
+    }
+}
+catch (XmlException ex)
+{
+    output.WriteLine($"Message: {ex.Message}");
+    output.WriteLine($"Line {ex.LineNumber}, position {ex.LinePosition} (byte {ex.BytePosition} of the document)");
+    output.WriteLine($"Path: {ex.Path ?? "(not set)"}");
+}
+```
+
+```text
+Message: End tag does not match start tag.
+Line 2, position 23 (byte 30 of the document)
+Path: (not set)
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/21_ReadMarkupAndHandleErrors.cs)
+
+| Property | Value |
+| --- | --- |
+| `Message` | What's wrong. From `Utf8XmlReader`, it doesn't include the position. When the library sets `Path`, the path, the line, and the position in the line follow the message. |
+| `LineNumber` | The line, counting from 1, or `null`. |
+| `LinePosition` | The position in the line, counting from 1, in UTF-8 bytes, or `null`. |
+| `BytePosition` | The offset from the start of the document, counting from 0, or `null`. |
+| `Path` | A path in the document, such as `/Order/Lines/Line[1]/@sku`, or `null`. `XmlSerializer` sets it; `Utf8XmlReader` used on its own doesn't. |
+
+## Remarks
+
+This type is not `System.Xml.XmlException` and does not wrap it. The location properties
+are optional. They are set when the reader knows the byte offset and line.
+
+## Best Practices
+
+- **Catch this type by its full name when `System.Xml` is also imported.** `CloudNimble.Text.Xml.XmlException` and `System.Xml.XmlException` are unrelated, and a `catch` for one doesn't catch the other.
+- **Log the line and the position with the message.** The message alone doesn't say where the problem is.
+- **Treat an exception from a reader as the end of that document.** Don't call `Read` again on a reader that threw.
+- **Discard the output when a writer throws.** Bytes that were committed before the error are already in your buffer or stream.
+- **Don't parse the message.** To react to one condition, such as a document that's too deep, set the limit you care about and treat any `XmlException` as "this document isn't acceptable".
+- **Don't show the message of an exception to an untrusted caller without thought.** It describes the structure of the input, and for a declared encoding it repeats a name from the input.
+
+## Considerations
+
+- **The location properties are optional.** They're nullable, and they're set only when the code that throws knows a location. An exception from `Utf8XmlReader` has `LineNumber`, `LinePosition`, and `BytePosition`. An exception from `Utf8XmlWriter` has none, because a writer has no input to point into.
+- **`LinePosition` counts bytes, not characters.** On a line with characters outside ASCII, it's larger than the column an editor shows.
+- **The location is where the reader stopped,** which is at the problem or right after it. For a mismatched end tag, that's the end of the tag.
+- **`BytePosition` counts from the start of the document,** including the blocks before the current one when you read in blocks.
+- **Lines are counted after line ends are normalized,** so a carriage return followed by a line feed is one line end.
+- **`XmlSerializer` sets `Path`; the reader on its own does not.** An exception that is thrown while the serializer reads or writes names each element from the document element down to the error: `/Order/Lines/Line[1]/@sku`. An item of a collection has its position after its name, counted from 0 as `System.Text.Json` counts, when a document is read. When an object is written the path is the elements the writer has open, with no positions. `Path` is `null` on an exception from `Utf8XmlReader`, `XmlDocument` or `XmlNode` used on its own.
+- **The serializer fills in the position too.** An exception for a value that can't be converted has `BytePosition`, `LineNumber` and `LinePosition` when it comes from `XmlSerializer.Deserialize`: they say how far the reader had got.
+- **The message ends with the path.** For an exception the library creates, `Message` ends with ` Path: /Order/Lines/Line[1]/@sku | LineNumber: 1 | BytePositionInLine: 55.`, the form `System.Text.Json` uses, or with the path alone when no line is known. An exception you create keeps the message you gave it.
+- **A path you supply is kept.** The constructor accepts a path, and the serializer does not change it.
+- **Not every failure is an `XmlException`.** A `null` argument throws `ArgumentNullException`, a destination that's too small for `CopyString` throws `ArgumentException`, and a disposed writer throws `ObjectDisposedException`.
+- **The class is sealed** and derives from `Exception`, not from `System.Xml.XmlException`.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [XmlException](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException) class with a specified error message
+and no location.
+
+#### Syntax
+
+```csharp
+public XmlException(string message)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `message` | `string` | The message that describes the error. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [XmlException](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException) class with a specified error message
+and a reference to the inner exception that is the cause of this exception.
+
+#### Syntax
+
+```csharp
+public XmlException(string message, System.Exception innerException)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `message` | `string` | The message that describes the error. |
+| `innerException` | `System.Exception?` | The exception that is the cause of the current exception, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if there is none. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [XmlException](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException) class with a specified error message
+and the location of the error in the document.
+
+#### Syntax
+
+```csharp
+public XmlException(string message, long? bytePosition, long? lineNumber, long? linePosition, string path)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `message` | `string` | The message that describes the error. |
+| `bytePosition` | `long?` | The zero-based byte offset in the UTF-8 document, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if it is not known. |
+| `lineNumber` | `long?` | The one-based line number, counted after end-of-line normalization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if it is not known. |
+| `linePosition` | `long?` | The one-based UTF-8 byte offset in the line, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if it is not known. |
+| `path` | `string?` | The document path, such as `/Person/@id`, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if it is not known. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Exception`</Note>
+
+#### Syntax
+
+```csharp
+public Exception()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Exception`</Note>
+
+#### Syntax
+
+```csharp
+public Exception(string message)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `message` | `string?` | - |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Exception`</Note>
+
+#### Syntax
+
+```csharp
+public Exception(string message, System.Exception innerException)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `message` | `string?` | - |
+| `innerException` | `System.Exception?` | - |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Exception`</Note>
+
+#### Syntax
+
+```csharp
+protected Exception(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `info` | `System.Runtime.Serialization.SerializationInfo` | - |
+| `context` | `System.Runtime.Serialization.StreamingContext` | - |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> BytePosition
+
+Gets the zero-based byte offset in the UTF-8 document at which the error occurred.
+
+#### Syntax
+
+```csharp
+public long? BytePosition { get; private set; }
+```
+
+#### Property Value
+
+Type: `long?`
+The zero-based byte offset in the UTF-8 document, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if it is not known.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Data <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `System.Exception`</Note>
+
+#### Syntax
+
+```csharp
+public virtual System.Collections.IDictionary Data { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.IDictionary`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> HelpLink <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `System.Exception`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string HelpLink { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> HResult <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Exception`</Note>
+
+#### Syntax
+
+```csharp
+public int HResult { get; set; }
+```
+
+#### Property Value
+
+Type: `int`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> InnerException <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Exception`</Note>
+
+#### Syntax
+
+```csharp
+public System.Exception InnerException { get; }
+```
+
+#### Property Value
+
+Type: `System.Exception?`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> LineNumber
+
+Gets the one-based number of the line on which the error occurred.
+
+#### Syntax
+
+```csharp
+public long? LineNumber { get; private set; }
+```
+
+#### Property Value
+
+Type: `long?`
+The one-based line number, counted after end-of-line normalization, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if
+it is not known.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> LinePosition
+
+Gets the one-based byte position within the line at which the error occurred.
+
+#### Syntax
+
+```csharp
+public long? LinePosition { get; private set; }
+```
+
+#### Property Value
+
+Type: `long?`
+The one-based UTF-8 byte offset in the line, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if it is not known.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Message <Badge color="blue">Override</Badge>
+
+Gets the message that describes the error.
+
+#### Syntax
+
+```csharp
+public override string Message { get; }
+```
+
+#### Property Value
+
+Type: `string`
+The message. When the library made the exception and [XmlException.Path](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException#path) is set, the path follows the
+message, and the line and the position in the line follow the path when they are known:
+`The value is not a valid integer. Path: /Order/Lines[1]/Qty | LineNumber: 4 | BytePositionInLine: 50.`
+
+#### Remarks
+
+This is what `System.Text.Json` does with `JsonException.Message`. The message of an
+exception that your code makes, in a converter for example, is left as you wrote it.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Message <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `System.Exception`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string Message { get; }
+```
+
+#### Property Value
+
+Type: `string`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Path
+
+Gets the path in the document at which the error occurred.
+
+#### Syntax
+
+```csharp
+public string Path { get; private set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The document path, such as `/Order/Lines/Line[1]/@sku`, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if it is not known.
+
+#### Remarks
+
+[XmlSerializer](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) sets the path of an exception that is thrown while it reads or writes, as
+          `System.Text.Json` sets `JsonException.Path`. The path starts at the document element and
+          names each element on the way to the error. An attribute is `@name` and the text of an element
+          is `text()`.
+
+When a document is read, an item of a collection has its position in the collection after its name,
+counted from 0 as `System.Text.Json` counts: `Line[1]` is the second item. When an object is written, the path is made of the
+elements the writer has open, and has no positions.
+
+A path that was given to the constructor is left as it is.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Source <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `System.Exception`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string Source { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> StackTrace <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `System.Exception`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string StackTrace { get; }
+```
+
+#### Property Value
+
+Type: `string?`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TargetSite <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Exception`</Note>
+
+#### Syntax
+
+```csharp
+public System.Reflection.MethodBase TargetSite { get; }
+```
+
+#### Property Value
+
+Type: `System.Reflection.MethodBase?`
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetBaseException <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `System.Exception`</Note>
+
+#### Syntax
+
+```csharp
+public virtual System.Exception GetBaseException()
+```
+
+#### Returns
+
+Type: `System.Exception`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetObjectData <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `System.Exception`</Note>
+
+#### Syntax
+
+```csharp
+public virtual void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `info` | `System.Runtime.Serialization.SerializationInfo` | - |
+| `context` | `System.Runtime.Serialization.StreamingContext` | - |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Exception`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `System.Exception`</Note>
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Events
+
+### <Icon icon="bell" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SerializeObjectState <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `System.Exception`</Note>
+
+#### Syntax
+
+```csharp
+protected event System.EventHandler<System.Runtime.Serialization.SafeSerializationEventArgs> SerializeObjectState
+```
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Utf8XmlReader
+- CloudNimble.Text.Xml.Utf8XmlWriter
+- CloudNimble.Text.Xml.XmlReaderOptions
+- CloudNimble.Text.Xml.XmlWriterOptions
+- CloudNimble.Text.Xml.XmlDocument
+- CloudNimble.Text.Xml.XmlSerializer
+

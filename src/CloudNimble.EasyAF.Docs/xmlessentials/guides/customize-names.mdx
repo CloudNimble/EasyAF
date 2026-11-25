@@ -1,0 +1,421 @@
+---
+title: "How to customize XML names, shape, and order"
+sidebarTitle: "Customize names and shape"
+description: "Learn how to rename elements, write properties as XML attributes or element text, set element order, and use naming policies with XmlSerializer."
+icon: "pen"
+---
+
+By default, [`XmlSerializer`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) writes each public property as a child element named after the property. XML gives you more choices than JSON does: a value can be an element, an attribute, or the text of its parent element, and many formats care about element order. This article shows how to control each of those with attributes on your types and with [`XmlSerializerOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions).
+
+The attributes are in the `CloudNimble.Text.Xml.Serialization` namespace. Several have the same names as the attributes in `System.Xml.Serialization`, but the serializer only reads its own. If you're moving existing types over, see [Migrate from XmlSerializer](/xmlessentials/guides/migrate/from-xmlserializer).
+
+## Rename the root element, elements, and attributes
+
+The following type uses four attributes:
+
+- [`[XmlRoot]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlRootAttribute) names the document element.
+- [`[XmlAttribute]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlAttributeAttribute) writes a property as an XML attribute, and optionally names it.
+- [`[XmlPropertyName]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyNameAttribute) names a member, the way `[JsonPropertyName]` does in System.Text.Json.
+- [`[XmlElement]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlElementAttribute) keeps a property as an element, and optionally names it.
+
+```csharp CatalogItem.cs
+[XmlRoot("product")]
+public sealed class CatalogItem
+{
+    [XmlAttribute("sku")]
+    public string? Sku { get; set; }
+
+    [XmlPropertyName("title")]
+    public string? Name { get; set; }
+
+    [XmlElement("unit-price")]
+    public decimal UnitPrice { get; set; }
+}
+```
+
+```csharp Program.cs
+var item = new CatalogItem { Sku = "KB-101", Name = "Keyboard", UnitPrice = 49.95m };
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+
+string xml = XmlSerializer.Serialize(item, options);
+output.WriteLine(xml);
+
+CatalogItem? copy = XmlSerializer.Deserialize<CatalogItem>(xml, options);
+output.WriteLine($"{copy!.Sku}: {copy.Name}");
+```
+
+The code produces the following output:
+
+```text
+<product sku="KB-101"><title>Keyboard</title><unit-price>49.95</unit-price></product>
+KB-101: Keyboard
+```
+
+The same names are used to read the XML back. A name you set with an attribute is used exactly as written: a naming policy doesn't change it. When a member has both `[XmlPropertyName]` and a name on `[XmlAttribute]`, `[XmlElement]`, or `[XmlArray]`, `[XmlPropertyName]` wins.
+
+Only a simple value can be an XML attribute: a string, a number, a Boolean, a date or time, a GUID, a URI, an enumeration, and the nullable forms of those (the full list is in [Supported types](/xmlessentials/guides/supported-types)). `[XmlAttribute]` on an object or a collection makes the serializer throw a `NotSupportedException` the first time it uses the type. An attribute whose value is `null` is left out.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/08_CustomizeNames.cs)
+
+## Write a property as element text
+
+Some XML puts a value directly inside an element that also has attributes, such as `<Price Currency="USD">49.95</Price>`. Mark the property that holds the value with [`[XmlText]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlTextAttribute).
+
+```csharp Price.cs
+public sealed class Price
+{
+    [XmlAttribute]
+    public string? Currency { get; set; }
+
+    [XmlText]
+    public decimal Amount { get; set; }
+}
+
+public sealed class Listing
+{
+    public string? Name { get; set; }
+
+    public Price? Price { get; set; }
+}
+```
+
+```csharp Program.cs
+var listing = new Listing
+{
+    Name = "Keyboard",
+    Price = new Price { Currency = "USD", Amount = 49.95m },
+};
+
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+
+string xml = XmlSerializer.Serialize(listing, options);
+output.WriteLine(xml);
+```
+
+The code produces the following output:
+
+```xml
+<Listing><Name>Keyboard</Name><Price Currency="USD">49.95</Price></Listing>
+```
+
+A type can have one `[XmlText]` member, and that member must be a simple value. A type with an `[XmlText]` member can have attributes but not child elements: the serializer throws a `NotSupportedException` for a type that maps both. To write text as a CDATA section, use [`[XmlCData]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlCDataAttribute) instead. For text interleaved with elements, see [Mixed content](/xmlessentials/guides/mixed-content).
+
+## Set the order of elements
+
+Elements are written in the order the properties are declared, with the members of a base class before the members of a derived class. To choose a different order, add [`[XmlPropertyOrder]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyOrderAttribute).
+
+```csharp Address.cs
+public sealed class Address
+{
+    public string? PostalCode { get; set; }
+
+    [XmlPropertyOrder(1)]
+    public string? City { get; set; }
+
+    [XmlPropertyOrder(0)]
+    public string? Street { get; set; }
+}
+```
+
+```csharp Program.cs
+var address = new Address { PostalCode = "98052", City = "Redmond", Street = "1 Main St" };
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+
+string xml = XmlSerializer.Serialize(address, options);
+output.WriteLine(xml);
+```
+
+The code produces the following output:
+
+```xml
+<Address><Street>1 Main St</Street><City>Redmond</City><PostalCode>98052</PostalCode></Address>
+```
+
+The rules are:
+
+- Members with an order of zero or more come first, lowest number first.
+- Members with no order follow, in declaration order.
+- The order covers the whole type, so a member of a derived class can be placed between two members of its base class.
+- XML attributes are always written before element text, and element text before child elements. Within the attributes, the same ordering rules apply.
+
+<Note>
+A negative order means "not set". This differs from `[JsonPropertyOrder]` in System.Text.Json, where a negative number places a property before the unordered ones.
+</Note>
+
+`[XmlElement(Order = n)]` and `[XmlArray(Order = n)]` set the same order. `[XmlPropertyOrder]` takes precedence when a member has both.
+
+The order affects writing only. When reading, elements are accepted in any order.
+
+## Use a naming policy for all names
+
+To change every name at once, set a naming policy on the options instead of annotating each member. `PropertyNamingPolicy` applies to elements, attributes, and the document element.
+
+```csharp Warehouse.cs
+public sealed class Warehouse
+{
+    [XmlAttribute]
+    public string? WarehouseCode { get; set; }
+
+    public string? StreetAddress { get; set; }
+
+    public int LoadingDocks { get; set; }
+}
+```
+
+```csharp Program.cs
+var warehouse = new Warehouse { WarehouseCode = "SEA-2", StreetAddress = "400 Dock Rd", LoadingDocks = 12 };
+
+var options = new XmlSerializerOptions
+{
+    OmitXmlDeclaration = true,
+    PropertyNamingPolicy = XmlNamingPolicy.CamelCase,
+};
+
+string xml = XmlSerializer.Serialize(warehouse, options);
+output.WriteLine(xml);
+
+Warehouse? copy = XmlSerializer.Deserialize<Warehouse>(xml, options);
+output.WriteLine($"{copy!.WarehouseCode}: {copy.LoadingDocks} docks");
+```
+
+The code produces the following output:
+
+```text
+<warehouse warehouseCode="SEA-2"><streetAddress>400 Dock Rd</streetAddress><loadingDocks>12</loadingDocks></warehouse>
+SEA-2: 12 docks
+```
+
+Use the same options to deserialize, because the converted names are the ones the serializer looks for.
+
+### Use different policies for elements and attributes
+
+XML formats often use one convention for elements and another for attributes. `ElementNamingPolicy` and `AttributeNamingPolicy` each override `PropertyNamingPolicy` for their kind of name. The element policy also names the document element.
+
+```csharp Program.cs
+var warehouse = new Warehouse { WarehouseCode = "SEA-2", StreetAddress = "400 Dock Rd", LoadingDocks = 12 };
+
+var options = new XmlSerializerOptions
+{
+    OmitXmlDeclaration = true,
+    ElementNamingPolicy = XmlNamingPolicy.KebabCaseLower,
+    AttributeNamingPolicy = XmlNamingPolicy.SnakeCaseLower,
+};
+
+string xml = XmlSerializer.Serialize(warehouse, options);
+output.WriteLine(xml);
+```
+
+The code produces the following output:
+
+```xml
+<warehouse warehouse_code="SEA-2"><street-address>400 Dock Rd</street-address><loading-docks>12</loading-docks></warehouse>
+```
+
+### Built-in naming policies
+
+[`XmlNamingPolicy`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamingPolicy) has six built-in policies. A policy of `null`, the default, leaves names unchanged.
+
+```csharp Program.cs
+const string name = "StreetAddress";
+
+output.WriteLine($"CamelCase:      {XmlNamingPolicy.CamelCase.ConvertName(name)}");
+output.WriteLine($"PascalCase:     {XmlNamingPolicy.PascalCase.ConvertName("streetAddress")}");
+output.WriteLine($"SnakeCaseLower: {XmlNamingPolicy.SnakeCaseLower.ConvertName(name)}");
+output.WriteLine($"SnakeCaseUpper: {XmlNamingPolicy.SnakeCaseUpper.ConvertName(name)}");
+output.WriteLine($"KebabCaseLower: {XmlNamingPolicy.KebabCaseLower.ConvertName(name)}");
+output.WriteLine($"KebabCaseUpper: {XmlNamingPolicy.KebabCaseUpper.ConvertName(name)}");
+```
+
+The code produces the following output:
+
+```text
+CamelCase:      streetAddress
+PascalCase:     StreetAddress
+SnakeCaseLower: street_address
+SnakeCaseUpper: STREET_ADDRESS
+KebabCaseLower: street-address
+KebabCaseUpper: STREET-ADDRESS
+```
+
+`CamelCase` and `PascalCase` change only the first character. The other four also insert a separator at each word boundary.
+
+### Write your own naming policy
+
+Derive from `XmlNamingPolicy` and override `ConvertName`. Return a name that is valid in XML: no spaces, and no leading digit.
+
+```csharp LowerCaseNamingPolicy.cs
+public sealed class LowerCaseNamingPolicy : XmlNamingPolicy
+{
+    public override string ConvertName(string name)
+    {
+        return name.ToLowerInvariant();
+    }
+}
+```
+
+```csharp Program.cs
+var warehouse = new Warehouse { WarehouseCode = "SEA-2", StreetAddress = "400 Dock Rd", LoadingDocks = 12 };
+
+var options = new XmlSerializerOptions
+{
+    OmitXmlDeclaration = true,
+    PropertyNamingPolicy = new LowerCaseNamingPolicy(),
+};
+
+string xml = XmlSerializer.Serialize(warehouse, options);
+output.WriteLine(xml);
+```
+
+The code produces the following output:
+
+```xml
+<warehouse warehousecode="SEA-2"><streetaddress>400 Dock Rd</streetaddress><loadingdocks>12</loadingdocks></warehouse>
+```
+
+The serializer calls `ConvertName` for the member names of a type when it first uses the type, and caches the result with the options. A policy doesn't need to be fast, but it must return the same name every time.
+
+## Write simple values as attributes by default
+
+When most of a format is attributes, annotating every property is noise. Set `DefaultPropertyMapping` to [`XmlPropertyMapping.Attribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlPropertyMapping) to write every unannotated simple member as an XML attribute.
+
+```csharp Program.cs
+var order = new PurchaseOrder
+{
+    Id = 1042,
+    Customer = "Contoso",
+    Placed = new DateOnly(2026, 3, 14),
+    Total = 129.90m,
+};
+
+var options = new XmlSerializerOptions
+{
+    OmitXmlDeclaration = true,
+    DefaultPropertyMapping = XmlPropertyMapping.Attribute,
+};
+
+string xml = XmlSerializer.Serialize(order, options);
+output.WriteLine(xml);
+```
+
+The code produces the following output:
+
+```xml
+<PurchaseOrder Id="1042" Customer="Contoso" Placed="2026-03-14" Total="129.90"/>
+```
+
+`PurchaseOrder` has no attributes on it. The option applies to every type that is serialized with these options, so the simple members of nested objects become XML attributes too. Nested objects and collections themselves stay elements. To keep one member as an element, mark it with `[XmlElement]`.
+
+## Enumeration values
+
+An enumeration value is written as the name of the C# member. Set `EnumHandling` to [`XmlEnumHandling.Integer`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlEnumHandling) to write the number instead. When reading, both forms are accepted whatever the setting.
+
+```csharp Program.cs
+var parcel = new Parcel { TrackingNumber = "1Z999", Status = ParcelStatus.InTransit };
+
+var byName = new XmlSerializerOptions { OmitXmlDeclaration = true, PropertyNamingPolicy = XmlNamingPolicy.CamelCase };
+output.WriteLine(XmlSerializer.Serialize(parcel, byName));
+
+var byNumber = new XmlSerializerOptions { OmitXmlDeclaration = true, EnumHandling = XmlEnumHandling.Integer };
+output.WriteLine(XmlSerializer.Serialize(parcel, byNumber));
+
+Parcel? fromName = XmlSerializer.Deserialize<Parcel>("<Parcel><Status>Delivered</Status></Parcel>");
+Parcel? fromNumber = XmlSerializer.Deserialize<Parcel>("<Parcel><Status>2</Status></Parcel>");
+output.WriteLine($"{fromName!.Status}, {fromNumber!.Status}");
+```
+
+```csharp Parcel.cs
+public enum ParcelStatus
+{
+    Pending,
+    InTransit,
+    Delivered,
+}
+
+public sealed class Parcel
+{
+    public string? TrackingNumber { get; set; }
+
+    public ParcelStatus Status { get; set; }
+}
+```
+
+The code produces the following output:
+
+```text
+<parcel><trackingNumber>1Z999</trackingNumber><status>InTransit</status></parcel>
+<Parcel><TrackingNumber>1Z999</TrackingNumber><Status>1</Status></Parcel>
+Delivered, Delivered
+```
+
+The first line shows that a naming policy renames elements but not enumeration values: the value is still `InTransit`.
+
+### Rename a value
+
+To write a member under another name, put `[XmlPropertyName]` on it. This is how you write a name that isn't a C# identifier.
+
+```csharp ShippingMethod.cs
+public enum ShippingMethod
+{
+    Standard,
+
+    [XmlPropertyName("next-day")]
+    NextDay,
+}
+```
+
+```csharp Program.cs
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+output.WriteLine(XmlSerializer.Serialize(ShippingMethod.NextDay, options));
+
+ShippingMethod renamed = XmlSerializer.Deserialize<ShippingMethod>("<ShippingMethod>next-day</ShippingMethod>");
+ShippingMethod anyCase = XmlSerializer.Deserialize<ShippingMethod>("<ShippingMethod>STANDARD</ShippingMethod>");
+output.WriteLine($"{renamed}, {anyCase}");
+```
+
+The code produces the following output:
+
+```text
+<ShippingMethod>next-day</ShippingMethod>
+NextDay, Standard
+```
+
+Names are matched the way `JsonStringEnumConverter` in System.Text.Json matches them:
+
+- The exact name is tried first. If nothing matches, a C# member name is matched without regard to case, so `STANDARD` is read as `Standard`. `PropertyNameCaseInsensitive` doesn't change this: it's about element and attribute names.
+- A name given with `[XmlPropertyName]` replaces the C# name and is matched exactly. `NextDay` and `Next-Day` are both rejected.
+- When two members have the same name, the first one is read.
+
+A name can't start or end with white space, and a name of a `[Flags]` member can't contain any, because white space separates the names of a flags value. Such a name is an `InvalidOperationException` when the type is first used.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/08_CustomizeNames.cs)
+
+## How a name is chosen
+
+For each member, the serializer takes the first of these that is set:
+
+1. The name in `[XmlPropertyName]`.
+2. The name in `[XmlAttribute]`, `[XmlElement]`, or `[XmlArray]`.
+3. The C# member name, converted by `AttributeNamingPolicy` or `ElementNamingPolicy`, or by `PropertyNamingPolicy` when the more specific policy is `null`.
+
+For the document element, it's the name in `[XmlRoot]`, or else the type name converted by the element policy. The type name of a built-in type is its XML Schema name (`int`, `string`, `dateTime`). A collection is `ArrayOf` followed by the name of its items, so a `List<InvoiceLine>` at the root is `ArrayOfInvoiceLine` and an `int[]` is `ArrayOfInt`. Any other generic type has its name spelled out with the .NET names of its arguments, such as `DictionaryOfStringInt32`.
+
+Two members of one type can't have the same attribute name in the same namespace, or the same element name in the same namespace. The serializer throws an `InvalidOperationException` when it first uses such a type, with a message such as `The type maps more than one member to the element name 'Name'.`
+
+To put names in an XML namespace, see [Namespaces](/xmlessentials/guides/namespaces).
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Serialize collections" icon="list" href="/xmlessentials/guides/collections">
+    Wrap lists, name their items, and map dictionaries.
+  </Card>
+  <Card title="Namespaces" icon="tags" href="/xmlessentials/guides/namespaces">
+    Put elements and attributes in XML namespaces.
+  </Card>
+  <Card title="Ignore properties" icon="eye-slash" href="/xmlessentials/guides/ignore-properties">
+    Leave members out of the XML.
+  </Card>
+  <Card title="XmlNamingPolicy" icon="code" href="/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlNamingPolicy">
+    API reference for the naming policy base class.
+  </Card>
+</Columns>

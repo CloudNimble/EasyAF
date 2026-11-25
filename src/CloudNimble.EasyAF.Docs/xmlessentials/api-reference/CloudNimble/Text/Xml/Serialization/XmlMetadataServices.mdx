@@ -1,0 +1,844 @@
+---
+title: XmlMetadataServices
+description: "Provides helpers to create and use metadata for XML-serializable types. This class cannot be inherited."
+icon: bolt
+tag: "STATIC"
+keywords: ['XmlMetadataServices', 'CloudNimble.Text.Xml.Serialization.XmlMetadataServices', 'CloudNimble.Text.Xml.Serialization', 'class', 'CloudNimble.Text.Xml.Serialization.XmlSerializerContext', 'CloudNimble.Text.Xml.Serialization.XmlTypeInfo', 'CloudNimble.Text.Xml.Serialization.XmlConverter', 'CloudNimble.Text.Xml.Serialization.XmlSerializableAttribute']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlMetadataServices
+```
+
+## Summary
+
+Provides helpers to create and use metadata for XML-serializable types. This class cannot be inherited.
+
+## Usage
+
+`XmlMetadataServices` is infrastructure for source-generated code. The code that the XmlEssentials generator writes into your `XmlSerializerContext` classes calls these methods to create type info from generated metadata, to write members through type info in the write fast path, and to write the start and end tags of simple elements from bytes prepared at compile time.
+
+`CreateObjectInfo` turns an `XmlObjectInfoValues<T>` into type info. The serializer then reads and writes the type from that metadata with the engine the reflection resolver uses, and with no reflection over the members of the type. `CanUseSerializeHandler` tells a context whether its write fast path agrees with a given options instance.
+
+The class isn't meant to be called from application code. Its methods are public because generated code lives in your assembly and has to reach them, and most of them are hidden from IntelliSense. `WriteLeafStart` and `WriteLeafEnd` write a tag as raw bytes and rely on the generator to pass a well-formed one. A resolver you write by hand can call `CreateObjectInfo` and the other `Create` methods, as a generated context does.
+
+To do the same things in application code, use the public entry points instead:
+
+| Instead of | Use |
+| --- | --- |
+| `CreateObjectInfo`, `CreateValueInfo` | A context's `XmlTypeInfo<T>` property, or `XmlSerializerOptions.GetTypeInfo<T>()`. |
+| `Read`, `ReadAttribute` | `XmlSerializer.Deserialize` with type info, or `Utf8XmlReader` directly. |
+| `Write`, `WriteAttribute` | `XmlSerializer.Serialize` with type info, or `Utf8XmlWriter` directly. |
+| `WriteLeafStart`, `WriteLeafEnd` | `Utf8XmlWriter.WriteStartElement` and `WriteEndElement`. |
+
+The class is the counterpart of `JsonMetadataServices` in System.Text.Json. To see how generated code is produced and used, see [How to use source generation](/xmlessentials/guides/source-generation).
+
+## Remarks
+
+Source-generated contexts call these methods. This class is analogous to `JsonMetadataServices` in `System.Text.Json`.
+
+## Methods
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CanUseSerializeHandler
+
+Returns whether the write fast path a context generated can be used with the given options.
+
+#### Syntax
+
+```csharp
+public static bool CanUseSerializeHandler(CloudNimble.Text.Xml.XmlSerializerOptions options, CloudNimble.Text.Xml.XmlNamingPolicy elementNamingPolicy, CloudNimble.Text.Xml.XmlNamingPolicy attributeNamingPolicy, CloudNimble.Text.Xml.XmlPropertyMapping defaultPropertyMapping, CloudNimble.Text.Xml.XmlCollectionMapping defaultCollectionMapping, bool includeFields, params System.ReadOnlySpan<System.Type> directTypes)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The options the type info is for. |
+| `elementNamingPolicy` | `CloudNimble.Text.Xml.XmlNamingPolicy?` | The policy the element names were generated with, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) for none. |
+| `attributeNamingPolicy` | `CloudNimble.Text.Xml.XmlNamingPolicy?` | The policy the attribute names were generated with, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) for none. |
+| `defaultPropertyMapping` | `CloudNimble.Text.Xml.XmlPropertyMapping` | The property mapping the members were generated with. |
+| `defaultCollectionMapping` | `CloudNimble.Text.Xml.XmlCollectionMapping` | The collection mapping the members were generated with. |
+| `includeFields` | `bool` | Whether the fast path was generated with fields included. |
+| `directTypes` | `System.ReadOnlySpan<System.Type>` | The types the fast path writes without a converter, the type itself first. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) when the fast path writes what the serializer would write from the metadata with
+these options; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *options* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+#### Remarks
+
+The fast path has its element and attribute names and its choice of members compiled in, from
+[XmlSourceGenerationOptionsAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSourceGenerationOptionsAttribute). It is not used when the options ask for another naming
+policy, property mapping, collection mapping or choice of members, when they handle references, when they
+write a [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null), a [Char](https://learn.microsoft.com/dotnet/api/system.char) or a zero offset another way, when they put fields first, or when they supply a converter
+for a type it writes directly. The serializer then writes from the metadata, which follows every option.
+This method is for source-generated contexts only.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateArrayInfo
+
+Creates metadata for an array type whose item type is named at compile time.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TElement[]> CreateArrayInfo<TElement>(CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serialization options to bind the metadata to. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TElement[]>`
+The serialization metadata for an array of *TElement*.
+
+#### Type Parameters
+
+- `TElement` - The type of the items.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *options* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+#### Remarks
+
+Generated contexts call this method instead of closing a generic converter through reflection, which Native AOT
+cannot do for an item type that is a value type. A converter the caller supplied for the array type is used in
+place of the built-in one.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateArrayPropertyInfo
+
+Marks the metadata of an array member with the type of its items.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<TElement[]> CreateArrayPropertyInfo<TElement>(CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<TElement[]> propertyInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `propertyInfo` | `CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<TElement[]>` | The metadata of the member. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<TElement[]>`
+*propertyInfo*, which now reads and writes the member as an array of
+*TElement*.
+
+#### Type Parameters
+
+- `TElement` - The type of the items.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *propertyInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+#### Remarks
+
+An array has its own method because [XmlMetadataServices.CreateCollectionPropertyInfo](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMetadataServices#createcollectionpropertyinfo) keeps
+the constructors and methods of the collection type for the trimmer, and those of [Array](https://learn.microsoft.com/dotnet/api/system.array) cannot
+be kept under Native AOT. An array needs none of them: it is made from the items that were read. This
+method is for source-generated contexts only.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateBuiltInInfo
+
+Creates type info for a type the serializer has a ready-made converter for, or that the caller supplied a
+converter for. Source-generated code calls this method.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Serialization.XmlTypeInfo<T> CreateBuiltInInfo<T>(CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The options the type info is bound to. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<T>`
+The type info.
+
+#### Type Parameters
+
+- `T` - The type: a built-in value such as [Int32](https://learn.microsoft.com/dotnet/api/system.int32) or [String](https://learn.microsoft.com/dotnet/api/system.string), or one a converter of the caller's reads and writes.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *options* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | *T* has neither a ready-made converter nor one the caller supplied. |
+
+#### Remarks
+
+Nothing is looked up by reflection and no generic type is closed at run time, so the call is safe under
+trimming and Native AOT.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateCollectionInfo
+
+Creates metadata for a collection type whose item type is named at compile time.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TCollection> CreateCollectionInfo<TCollection, TElement>(CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serialization options to bind the metadata to. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TCollection>`
+The serialization metadata for type *TCollection*.
+
+#### Type Parameters
+
+- `TCollection` - The collection type.
+- `TElement` - The type of the items.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *options* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+#### Remarks
+
+Generated contexts call this method instead of closing a generic converter through reflection, which Native AOT
+cannot do for an item type that is a value type. A converter the caller supplied for the collection type is used
+in place of the built-in one.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateCollectionPropertyInfo
+
+Marks the metadata of a collection member with the type of its items.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<TCollection> CreateCollectionPropertyInfo<TCollection, TElement>(CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<TCollection> propertyInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `propertyInfo` | `CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<TCollection>` | The metadata of the member. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<TCollection>`
+*propertyInfo*, which now reads and writes the member as a collection of
+*TElement*.
+
+#### Type Parameters
+
+- `TCollection` - The declared type of the member.
+- `TElement` - The type of the items.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *propertyInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+#### Remarks
+
+The serializer maps a collection through a type that is generic over the item type. This method closes
+it where both types are type arguments, so nothing is closed at run time, which Native AOT cannot do for
+a value-type item. This method is for source-generated contexts only.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateDictionaryInfo
+
+Creates metadata for a dictionary type whose key and value types are named at compile time.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TDictionary> CreateDictionaryInfo<TDictionary, TKey, TValue>(CloudNimble.Text.Xml.XmlSerializerOptions options) where TDictionary : System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<TKey, TValue>> where TKey : notnull
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serialization options to bind the metadata to. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<TDictionary>`
+The serialization metadata for type *TDictionary*.
+
+#### Type Parameters
+
+- `TDictionary` - The dictionary type.
+- `TKey` - The type of the keys.
+- `TValue` - The type of the values.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *options* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+#### Remarks
+
+Generated contexts call this method instead of closing a generic converter through reflection, which Native AOT
+cannot do for a key or value type that is a value type. A converter the caller supplied for the dictionary type
+is used in place of the built-in one.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateEnumInfo
+
+Creates metadata for an enumeration type.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Serialization.XmlTypeInfo<T> CreateEnumInfo<T>(CloudNimble.Text.Xml.XmlSerializerOptions options) where T : struct, System.Enum
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serialization options to bind the metadata to. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<T>`
+The serialization metadata for type *T*.
+
+#### Type Parameters
+
+- `T` - The enumeration type.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *options* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+#### Remarks
+
+Generated contexts call this method for an enumeration they list or reach. A converter the caller supplied for the
+enumeration, in the options or with [XmlConverterAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterAttribute), is used in place of the built-in one.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateException
+
+Creates the exception that generated code throws for an error it finds while it writes a value.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlException CreateException(string message)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `message` | `string` | The message that describes the error. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlException`
+An [XmlException](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException) that the serializer treats as one of its own: when the serializer gives
+it a [XmlException.Path](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException#path), the path follows the message.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *message* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+#### Remarks
+
+An exception that is created with a constructor of [XmlException](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException) keeps the message it
+was given. Generated code uses this method so that an error reads the same whether a write fast path
+or the serializer found it.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateNullableInfo
+
+Creates metadata for [Nullable`1](https://learn.microsoft.com/dotnet/api/system.nullable-1) of a value type that is not one of the built-in scalars.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Serialization.XmlTypeInfo<T?> CreateNullableInfo<T>(CloudNimble.Text.Xml.XmlSerializerOptions options) where T : struct
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serialization options to bind the metadata to. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<T?>`
+The serialization metadata for the nullable form of type *T*.
+
+#### Type Parameters
+
+- `T` - The value type.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *options* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `NotSupportedException` | The options have no metadata for type *T*. |
+
+#### Remarks
+
+Generated contexts call this method for the nullable form of an enumeration or a struct. The value is read and
+written by the converter the options have for *T*, and null is handled around it.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateNullablePropertyInfo
+
+Marks the metadata of a member whose type is a nullable value type and that names its own converter.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<T?> CreateNullablePropertyInfo<T>(CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<T?> propertyInfo) where T : struct
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `propertyInfo` | `CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<T?>` | The metadata of the member. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<T?>`
+*propertyInfo*, which now wraps the member's converter so that it serves the nullable type.
+
+#### Type Parameters
+
+- `T` - The underlying value type, which the converter converts.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *propertyInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+#### Remarks
+
+A converter for `T` named by [XmlConverterAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterAttribute) on a member of type `T?` converts
+the value, and [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) is handled around it. This method closes that wrapper where
+*T* is a type argument. This method is for source-generated contexts only.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateObjectInfo
+
+Creates metadata for an object type from the metadata of its constructor and members.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Serialization.XmlTypeInfo<T> CreateObjectInfo<T>(CloudNimble.Text.Xml.XmlSerializerOptions options, CloudNimble.Text.Xml.Serialization.XmlObjectInfoValues<T> objectInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The options the metadata is for. |
+| `objectInfo` | `CloudNimble.Text.Xml.Serialization.XmlObjectInfoValues<T>` | The metadata of the constructor and the members of the type. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<T>`
+Type info that reads and writes *T* with the rules the serializer applies to a type
+it maps through reflection.
+
+#### Type Parameters
+
+- `T` - The object type.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *options* or *objectInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `ArgumentException` | *objectInfo* has a creator that takes constructor arguments and no metadata for the parameters. |
+
+#### Remarks
+
+The names, the member order, the ignore conditions, the constructor mapping, polymorphism, reference
+handling and every other option are applied here, by the code that applies them for the reflection
+resolver. A converter the caller supplied for *T* is used in place of the metadata.
+The members of *T* are never reflected over, so the result is usable in a
+trimmed application and under Native AOT.
+
+This method is for source-generated contexts only. It is analogous to
+`JsonMetadataServices.CreateObjectInfo<T>` in `System.Text.Json`.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateValueInfo
+
+Creates metadata for a type that is read and written with the specified converter.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Serialization.XmlTypeInfo<T> CreateValueInfo<T>(CloudNimble.Text.Xml.XmlSerializerOptions options, CloudNimble.Text.Xml.Serialization.XmlConverter<T> converter)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serialization options to bind the metadata to. |
+| `converter` | `CloudNimble.Text.Xml.Serialization.XmlConverter<T>` | The converter that reads and writes values of type *T*. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<T>`
+The serialization metadata for type *T*.
+
+#### Type Parameters
+
+- `T` - The type that the metadata describes.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *options* or *converter* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateValuePropertyInfo
+
+Marks the metadata of a member whose type is a value type.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<TValue> CreateValuePropertyInfo<TValue>(CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<TValue> propertyInfo) where TValue : struct
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `propertyInfo` | `CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<TValue>` | The metadata of the member. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlPropertyInfoValues<TValue>`
+*propertyInfo*, which can now hold a value for a constructor without boxing it again
+for each object.
+
+#### Type Parameters
+
+- `TValue` - The type of the member.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *propertyInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+#### Remarks
+
+When a type is created through a constructor, the serializer holds each value until the element ends. A
+value type is held in one box that is written again for the next object. That box is generic over the
+member's type, and this method closes it where the type is a type argument. This method is for
+source-generated contexts only.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetBuiltInTypeInfo
+
+Gets type info for a type whose converter exists already: a built-in scalar or its nullable form, an XML
+value, [Object](https://learn.microsoft.com/dotnet/api/system.object), or a type the caller supplied a converter for.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Serialization.XmlTypeInfo GetBuiltInTypeInfo(System.Type type, CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `type` | `System.Type` | The type to get type info for. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The options that own the type info. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlTypeInfo?`
+The type info, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) when a converter would have to be made for *type*.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *type* or *options* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+#### Remarks
+
+A generated context calls this method for a type it neither lists nor reaches. It answers
+[`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) for an enumeration, a collection, a dictionary, the nullable form of a value type that is
+not a built-in scalar, and a type mapped member by member. Making a converter for one of those takes reflection
+or closes a generic type at run time, which Native AOT cannot do. The next resolver in
+[XmlSerializerOptions.TypeInfoResolverChain](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolverchain) is then asked, and a type nobody lists is reported as
+not supported.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> RegisterClosedDerivedType
+
+Tells the serializer that a generic derived type of a closed type takes the type arguments of that closed
+type. Source-generated code calls this method.
+
+#### Syntax
+
+```csharp
+public static void RegisterClosedDerivedType<TClosed, TDerived>() where TDerived : TClosed
+```
+
+#### Type Parameters
+
+- `TClosed` - The closed type, with its type arguments.
+- `TDerived` - The derived type, with the same type arguments.
+
+#### Remarks
+
+The compiler lists a generic derived type of a closed type without its type arguments. A generic type
+cannot be given its arguments at run time under Native AOT, so the context names the constructed type.
+A closed type needs .NET 11, so the method exists only there.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> RegisterCollection
+
+Tells the serializer that *TCollection* is a collection of *TElement*.
+Source-generated code calls this method.
+
+#### Syntax
+
+```csharp
+public static void RegisterCollection<TCollection, TElement>()
+```
+
+#### Type Parameters
+
+- `TCollection` - The collection type.
+- `TElement` - The type of its items.
+
+#### Remarks
+
+The reflection resolver finds the item type through the interfaces of the collection type, which may
+be trimmed away. A context names both types when it is created, so they are known before any type that
+has such a member is bound.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> RegisterDictionary
+
+Tells the serializer that *TDictionary* is a dictionary of *TKey*
+and *TValue*. Source-generated code calls this method.
+
+#### Syntax
+
+```csharp
+public static void RegisterDictionary<TDictionary, TKey, TValue>()
+```
+
+#### Type Parameters
+
+- `TDictionary` - The dictionary type.
+- `TKey` - The type of its keys.
+- `TValue` - The type of its values.
+
+#### Remarks
+
+The reflection resolver finds the key and value types through the interfaces of the dictionary type,
+which may be trimmed away. A context names the types when it is created.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Write
+
+Writes the specified value as the content of the current element, by using the specified metadata.
+
+#### Syntax
+
+```csharp
+public static void Write<T>(CloudNimble.Text.Xml.Utf8XmlWriter writer, T value, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<T> typeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The writer to write to, positioned inside the start tag of the element. |
+| `value` | `T` | The value to write. |
+| `typeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<T>` | The metadata for type *T*. |
+
+#### Type Parameters
+
+- `T` - The type of the value to write.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *writer* or *typeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+#### Remarks
+
+The method calls [XmlConverter`1.Write](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverter#write) on the converter of *typeInfo*. It does not write the start tag or the end tag.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> WriteAttribute
+
+Writes the specified value as an attribute with the specified name, by using the specified metadata.
+
+#### Syntax
+
+```csharp
+public static void WriteAttribute<T>(CloudNimble.Text.Xml.Utf8XmlWriter writer, CloudNimble.Text.Xml.XmlName name, T value, CloudNimble.Text.Xml.Serialization.XmlTypeInfo<T> typeInfo)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The writer to write to, positioned on an open start tag. |
+| `name` | `CloudNimble.Text.Xml.XmlName` | The name of the attribute. |
+| `value` | `T` | The value to write. |
+| `typeInfo` | `CloudNimble.Text.Xml.Serialization.XmlTypeInfo<T>` | The metadata for type *T*. |
+
+#### Type Parameters
+
+- `T` - The type of the value to write.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *writer* or *typeInfo* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> WriteCData
+
+Writes text as CDATA, in as many sections as it takes.
+
+#### Syntax
+
+```csharp
+public static void WriteCData(CloudNimble.Text.Xml.Utf8XmlWriter writer, System.ReadOnlySpan<char> text)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The writer to write to, inside an element. |
+| `text` | `System.ReadOnlySpan<char>` | The text. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *writer* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *text* holds a character that XML does not allow. |
+
+#### Remarks
+
+A CDATA section ends at the first `]]>`, so text that holds one is cut between the brackets and the angle
+bracket and written as adjacent sections, which read back as one value. This method is for the write fast path of a
+source-generated context only.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> WriteLeafEnd
+
+Ends a leaf element that was started with [XmlMetadataServices.WriteLeafStart](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMetadataServices#writeleafstart), by writing an end tag that was built ahead of time.
+
+#### Syntax
+
+```csharp
+public static void WriteLeafEnd(CloudNimble.Text.Xml.Utf8XmlWriter writer, System.ReadOnlySpan<byte> closeTag)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The writer to write to. |
+| `closeTag` | `System.ReadOnlySpan<byte>` | The whole end tag as UTF-8 bytes, in the form `</name>`. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *writer* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | No element is open. |
+
+#### Remarks
+
+This method is for the write fast path of a source-generated context only.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> WriteLeafStart
+
+Starts a leaf element by writing a start tag that was built ahead of time.
+
+#### Syntax
+
+```csharp
+public static void WriteLeafStart(CloudNimble.Text.Xml.Utf8XmlWriter writer, System.ReadOnlySpan<byte> openTag)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The writer to write to, positioned inside an element. |
+| `openTag` | `System.ReadOnlySpan<byte>` | The whole start tag as UTF-8 bytes, in the form `<name>`. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *writer* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | The name is longer than [XmlWriterOptions.MaxNameByteCount](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWriterOptions#maxnamebytecount).
+-or-
+The element is deeper than [XmlWriterOptions.MaxDepth](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWriterOptions#maxdepth).
+-or-
+No element is open. |
+
+#### Remarks
+
+This method is for the write fast path of a source-generated context only.
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Serialization.XmlSerializerContext
+- CloudNimble.Text.Xml.Serialization.XmlTypeInfo
+- CloudNimble.Text.Xml.Serialization.XmlConverter
+- CloudNimble.Text.Xml.Serialization.XmlSerializableAttribute
+

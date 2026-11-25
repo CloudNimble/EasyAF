@@ -1,0 +1,564 @@
+---
+title: XmlProcessingInstructionNode
+description: "Represents a mutable XML processing instruction. This class cannot be inherited."
+icon: lock
+tag: "SEALED"
+keywords: ['XmlProcessingInstructionNode', 'CloudNimble.Text.Xml.Nodes.XmlProcessingInstructionNode', 'CloudNimble.Text.Xml.Nodes', 'class', 'CloudNimble.Text.Xml.Nodes.XmlNode', 'CloudNimble.Text.Xml.Nodes.XmlElementNode', 'CloudNimble.Text.Xml.Nodes.XmlDeclarationNode', 'CloudNimble.Text.Xml.Utf8XmlWriter']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Nodes
+
+**Inheritance:** CloudNimble.Text.Xml.Nodes.XmlNode
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Nodes.XmlProcessingInstructionNode
+```
+
+## Summary
+
+Represents a mutable XML processing instruction. This class cannot be inherited.
+
+## Usage
+
+`XmlProcessingInstructionNode` is a processing instruction such as `<?print copies="2"?>`. `Target` is the name after `<?`, and `Data` is the rest, which can be `null`. The data is free text; when it looks like attributes, that's a convention of the application that reads it, and the tree doesn't parse it.
+
+```csharp
+var note = new XmlElementNode("Note");
+note.Add(new XmlCommentNode(" reviewed "));
+note.Add(new XmlTextNode("Use ** & ** for bold. "));
+note.Add(new XmlCDataNode("**Raw** & unescaped"));
+note.Add(new XmlProcessingInstructionNode("print", "copies=\"2\""));
+note.AddElement("Signature");
+
+output.WriteLine(note.ToString());
+
+foreach (XmlNode child in note.Children)
+{
+    output.WriteLine($"{child.GetType().Name}: {child.ValueKind}");
+}
+
+output.WriteLine($"InnerText: {note.InnerText}");
+```
+
+The code produces the following output:
+
+```text
+<Note><!-- reviewed -->Use &lt;b> &amp; &lt;/b> for bold. <![CDATA[**Raw** & unescaped]]><?print copies="2"?><Signature/></Note>
+XmlCommentNode: Comment
+XmlTextNode: Text
+XmlCDataNode: CData
+XmlProcessingInstructionNode: ProcessingInstruction
+XmlElementNode: Element
+InnerText: Use ** & ** for bold. **Raw** & unescaped
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/29_BuildWithXmlNode.cs)
+
+## Considerations
+
+- The target can't be `xml` in any letter case; that name is reserved for the XML declaration. Writing such a node throws an `XmlException` ("Processing instruction target cannot be 'xml'."). For the declaration, use `XmlDeclarationNode` or let the writer add it.
+- The constructor rejects a `null`, empty, or white-space target.
+- `XmlNode.Parse` keeps processing instructions inside the root element. Those before and after the root element, such as `<?xml-stylesheet ...?>`, aren't part of the tree; `XmlDocument` keeps them and writes them back.
+- A processing instruction doesn't contribute to `XmlElementNode.InnerText`.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor
+
+Initializes a new instance of the [XmlProcessingInstructionNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlProcessingInstructionNode) class with the specified target and data.
+
+#### Syntax
+
+```csharp
+public XmlProcessingInstructionNode(string target, string data = null)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `target` | `string` | The target of the processing instruction. |
+| `data` | `string?` | The data of the processing instruction, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) for none. The default is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *target* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `ArgumentException` | *target* is empty or consists only of white-space characters. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Nodes.XmlNode`</Note>
+
+#### Syntax
+
+```csharp
+protected XmlNode()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Data
+
+Gets or sets the data of this processing instruction.
+
+#### Syntax
+
+```csharp
+public string Data { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The text that follows the target, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if the processing instruction has no data.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> NamespaceUri <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Nodes.XmlNode`</Note>
+
+Gets or sets the namespace URI of this node.
+
+#### Syntax
+
+```csharp
+public virtual string NamespaceUri { get; set; }
+```
+
+#### Property Value
+
+Type: `string?`
+The namespace URI of the node. An element or an attribute in no namespace gives an empty string.
+For a node that is not an element or an attribute, the value is always [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null),
+and setting it has no effect.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Parent <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Nodes.XmlNode`</Note>
+
+Gets the parent of this node.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.Nodes.XmlNode Parent { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.Nodes.XmlNode?`
+The element that holds this node as a child or as an attribute, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if this
+node has no parent.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Target
+
+Gets or sets the target of this processing instruction.
+
+#### Syntax
+
+```csharp
+public string Target { get; set; }
+```
+
+#### Property Value
+
+Type: `string`
+The name that identifies the application to which the instruction is directed.
+
+#### Remarks
+
+A target that is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null), empty, or white space is rejected, by the constructor and when the property is set.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ValueKind <Badge color="blue">Override</Badge>
+
+#### Syntax
+
+```csharp
+public override CloudNimble.Text.Xml.XmlValueKind ValueKind { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlValueKind`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ValueKind <Badge color="gray">Inherited</Badge> <Badge color="orange">Abstract</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Nodes.XmlNode`</Note>
+
+When overridden in a derived class, gets the kind of this node.
+
+#### Syntax
+
+```csharp
+public abstract CloudNimble.Text.Xml.XmlValueKind ValueKind { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlValueKind`
+One of the enumeration values that indicates the kind of this node.
+
+## Methods
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeepClone <Badge color="blue">Override</Badge>
+
+#### Syntax
+
+```csharp
+public override CloudNimble.Text.Xml.Nodes.XmlNode DeepClone()
+```
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Nodes.XmlNode`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> DeepClone <Badge color="gray">Inherited</Badge> <Badge color="orange">Abstract</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Nodes.XmlNode`</Note>
+
+When overridden in a derived class, creates a new instance of the node. All children and
+attributes are recursively cloned.
+
+#### Syntax
+
+```csharp
+public abstract CloudNimble.Text.Xml.Nodes.XmlNode DeepClone()
+```
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Nodes.XmlNode`
+A new cloned instance of the current node. The clone has no parent.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Parse <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Nodes.XmlNode`</Note>
+
+Parses a string that holds a single XML document into a mutable tree.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Nodes.XmlNode Parse(string xml)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `string` | The XML text to parse. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Nodes.XmlNode`
+An [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) representation of the document element.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *xml* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+| `XmlException` | *xml* is not a well-formed XML document.
+-or-
+*xml* exceeds a default limit of [XmlDocumentOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions). |
+
+#### Remarks
+
+Comments inside the document element are kept. The XML declaration and any comments or processing
+instructions outside the document element are not part of the returned tree.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Parse <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Nodes.XmlNode`</Note>
+
+Parses a span of UTF-8 bytes that holds a single XML document into a mutable tree.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Nodes.XmlNode Parse(System.ReadOnlySpan<byte> xml)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `xml` | `System.ReadOnlySpan<byte>` | The UTF-8 encoded XML text to parse. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Nodes.XmlNode`
+An [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) representation of the document element.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | *xml* is not a well-formed XML document.
+-or-
+*xml* exceeds a default limit of [XmlDocumentOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions). |
+
+#### Remarks
+
+Comments inside the document element are kept. The XML declaration and any comments or processing
+instructions outside the document element are not part of the returned tree.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ParseValue <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Nodes.XmlNode`</Note>
+
+Parses one XML element (including its attributes and descendants) from the provided reader into a mutable tree.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.Nodes.XmlNode ParseValue(ref CloudNimble.Text.Xml.Utf8XmlReader reader)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `reader` | `CloudNimble.Text.Xml.Utf8XmlReader` | The reader to read. It is positioned on or before the start tag of the element. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Nodes.XmlNode`
+An [XmlNode](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) representation of the element (and nested nodes) read from the reader.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | *reader* reaches an end tag before it reaches a start tag.
+-or-
+*reader* reaches the end of its input without reading an element.
+-or-
+The XML that *reader* reads is not well formed. |
+
+#### Remarks
+
+When this method returns, the reader is positioned on the end tag of the element, or on the
+element itself if it is an empty-element tag. Comments are kept only if the reader reports them.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SetParent <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Nodes.XmlNode`</Note>
+
+Sets the parent pointer.
+
+#### Syntax
+
+```csharp
+internal void SetParent(CloudNimble.Text.Xml.Nodes.XmlNode parent)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `parent` | `CloudNimble.Text.Xml.Nodes.XmlNode?` | The parent, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="blue">Override</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Nodes.XmlNode`</Note>
+
+Converts the current instance to a string that holds its XML markup.
+
+#### Syntax
+
+```csharp
+public override string ToString()
+```
+
+#### Returns
+
+Type: `string`
+The XML markup of this node, including its attributes and descendants. No XML declaration is added.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The tree cannot be written as XML, for example because a name has a prefix but no namespace. |
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="code-merge" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> WriteTo <Badge color="blue">Override</Badge>
+
+#### Syntax
+
+```csharp
+public override void WriteTo(CloudNimble.Text.Xml.Utf8XmlWriter writer)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | - |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> WriteTo <Badge color="gray">Inherited</Badge> <Badge color="orange">Abstract</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Nodes.XmlNode`</Note>
+
+When overridden in a derived class, writes this node to the provided writer as XML.
+
+#### Syntax
+
+```csharp
+public abstract void WriteTo(CloudNimble.Text.Xml.Utf8XmlWriter writer)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The writer to which to write the node. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `ArgumentNullException` | *writer* is [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null). |
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Nodes.XmlElementNode
+- CloudNimble.Text.Xml.Nodes.XmlDeclarationNode
+- CloudNimble.Text.Xml.Nodes.XmlNode
+- CloudNimble.Text.Xml.Utf8XmlWriter
+

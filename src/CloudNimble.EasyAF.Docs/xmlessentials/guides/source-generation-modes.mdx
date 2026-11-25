@@ -1,0 +1,206 @@
+---
+title: "Source-generation modes in XmlEssentials"
+sidebarTitle: "Source-generation modes"
+description: "Learn what the XmlEssentials generator writes in each XmlSourceGenerationMode, how the modes behave at run time, and which one to pick."
+icon: "sliders"
+---
+
+A source-generated [`XmlSerializerContext`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializerContext) can hold two things for each type. *Metadata* describes the type's members. A *write fast path* is generated code that writes the type directly. [`XmlSourceGenerationMode`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSourceGenerationMode) chooses which of the two the generator writes. This article explains what each mode produces and when to use it.
+
+The enumeration has the same members as `JsonSourceGenerationMode` in System.Text.Json, and they mean the same things.
+
+## How a generated context works
+
+The metadata is a set of values: an [`XmlObjectInfoValues<T>`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlObjectInfoValues) for the type, an [`XmlPropertyInfoValues<TValue>`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyInfoValues) for each member, and an [`XmlParameterInfoValues`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlParameterInfoValues) for each constructor parameter. [`XmlMetadataServices.CreateObjectInfo`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMetadataServices) turns them into type info. These types mirror `JsonObjectInfoValues<T>`, `JsonPropertyInfoValues<T>`, and `JsonMetadataServices` in System.Text.Json.
+
+The serializer reads and writes from that type info with the same engine the reflection resolver uses, so a generated context gives the same result as the reflection resolver. No generated code reads XML.
+
+The members of a type are never reflected over. The getters and setters in the metadata are generated delegates. `init`-only and `required` members, non-public members marked `[XmlInclude]`, and a non-public constructor marked `[XmlConstructor]` are reached through `[UnsafeAccessor]`.
+
+## Choose a mode
+
+Set `GenerationMode` on [`[XmlSourceGenerationOptions]`](/api-reference/CloudNimble/Text/Xml/Serialization/XmlSourceGenerationOptionsAttribute). Without the attribute, a context uses `Default`.
+
+```csharp MetadataOrderXmlContext.cs
+[XmlSourceGenerationOptions(GenerationMode = XmlSourceGenerationMode.Metadata)]
+[XmlSerializable<Order>]
+public partial class MetadataOrderXmlContext : XmlSerializerContext
+{
+}
+```
+
+```csharp SerializationOrderXmlContext.cs
+[XmlSourceGenerationOptions(GenerationMode = XmlSourceGenerationMode.Serialization)]
+[XmlSerializable<Order>]
+public partial class SerializationOrderXmlContext : XmlSerializerContext
+{
+}
+```
+
+`XmlSourceGenerationMode` has these members:
+
+| Member | Value | What the generator writes for each object type | How the type is read and written |
+| --- | --- | --- | --- |
+| `Default` | 0 | Metadata and a write fast path. | The fast path writes when the options allow it. The serializer does everything else from the metadata. |
+| `Metadata` | 1 | Metadata only. | The serializer reads and writes from the metadata. |
+| `Serialization` | 2 | The write fast path only. | The fast path writes with the options the context was compiled for. Every read, and a write with other options, throws `InvalidOperationException`. |
+
+`Metadata | Serialization` is the same as `Default`.
+
+Whatever the mode, the context has the same public shape: `Default`, the two constructors, one `XmlTypeInfo<T>` property for each type, and `GetTypeInfo`. You can change the mode without changing the code that calls the serializer.
+
+<Note>
+`[XmlSerializable]` also has a `GenerationMode` property. It overrides the mode of the context for the type the attribute lists. `Default` on the attribute leaves the mode of the context in place. The types that the listed type reaches use the mode of the context.
+</Note>
+
+## See the difference
+
+The following example takes the type info for the same `Order` type from a context in each mode. It writes an order with all three, and then reads it back with each.
+
+```csharp Program.cs
+XmlTypeInfo<Order> both = OrderXmlContext.Default.Order;
+XmlTypeInfo<Order> metadata = MetadataOrderXmlContext.Default.Order;
+XmlTypeInfo<Order> serialization = SerializationOrderXmlContext.Default.Order;
+
+var order = new Order { Id = 7, Customer = "Grace" };
+string xml = XmlSerializer.Serialize(order, both);
+output.WriteLine($"Default:       {xml}");
+output.WriteLine($"Metadata:      {XmlSerializer.Serialize(order, metadata)}");
+output.WriteLine($"Serialization: {XmlSerializer.Serialize(order, serialization)}");
+
+output.WriteLine($"Default:       {both.Properties.Count} properties, reads {XmlSerializer.Deserialize(xml, both)!.Customer}");
+output.WriteLine($"Metadata:      {metadata.Properties.Count} properties, reads {XmlSerializer.Deserialize(xml, metadata)!.Customer}");
+try
+{
+    XmlSerializer.Deserialize(xml, serialization);
+}
+catch (InvalidOperationException ex)
+{
+    output.WriteLine($"Serialization: {serialization.Properties.Count} properties, {ex.Message}");
+}
+```
+
+The code produces the following output:
+
+```text
+Default:       <?xml version="1.0" encoding="utf-8"?><Order Id="7"><Customer>Grace</Customer></Order>
+Metadata:      <?xml version="1.0" encoding="utf-8"?><Order Id="7"><Customer>Grace</Customer></Order>
+Serialization: <?xml version="1.0" encoding="utf-8"?><Order Id="7"><Customer>Grace</Customer></Order>
+Default:       3 properties, reads Grace
+Metadata:      3 properties, reads Grace
+Serialization: 0 properties, The type info for 'CloudNimble.XmlEssentials.Samples.Models.Advanced.Order' was generated in XmlSourceGenerationMode.Serialization, which provides no property metadata. It can only write a type that has a write fast path, with the options it was compiled for. Use XmlSourceGenerationMode.Default or XmlSourceGenerationMode.Metadata.
+```
+
+What to notice:
+
+- All three modes write the same document.
+- The type info of the `Default` and `Metadata` contexts lists the three members of `Order` in [`Properties`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo), and both contexts read the document.
+- The type info of the `Serialization` context lists no members. `Deserialize` throws `InvalidOperationException`, and the message names the modes that can read.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/33_SourceGenerationModes.cs)
+
+## When the fast path writes
+
+The fast path has its element and attribute names and its choice of members compiled in. In the `Default` and `Serialization` modes, the serializer uses it when the options agree with what it was compiled for:
+
+- The element and attribute naming policies, `DefaultPropertyMapping`, `DefaultCollectionMapping`, and `IncludeFields` equal the values that `[XmlSourceGenerationOptions]` on the context declares. The policies are `ElementNamingPolicy` and `AttributeNamingPolicy`, each falling back to `PropertyNamingPolicy`.
+- `IgnoreReadOnlyProperties` and `IgnoreReadOnlyFields` are `false`.
+- `DefaultIgnoreCondition` isn't `WhenWritingNullReference`.
+- `CharHandling`, `MemberOrder`, and `UtcOffsetHandling` have their default values: `Character`, `PropertiesFirst`, and `WriteOffset`.
+- The options have no `ReferenceHandler`.
+- The options hold no custom converter for the type, or for a simple type that the fast path writes directly.
+
+Options created with `XmlSerializerDefaults.Bcl` change several of these, so a `Default` context created from them always writes from the metadata.
+
+With any other options, a `Default` context writes from the metadata, and the document is the one the reflection resolver writes. A `Serialization` context has no metadata, so the write throws `InvalidOperationException`. That includes the context's own `Default` instance when `[XmlSourceGenerationOptions]` sets one of the values above, such as `IgnoreReadOnlyProperties = true`.
+
+The generator writes no fast path for a type with any of the following, and it reports no diagnostic:
+
+- Derived types declared on the type.
+- A member that declares derived types, or whose type or item type does.
+- A member with `[XmlConverter]`.
+- A member with more than one `[XmlElement<T>]` or more than one `[XmlArrayItem<T>]`: a choice of elements.
+- A member whose `[XmlElement]` or `[XmlArray]` sets `Namespace = ""`, and a wrapped collection whose `[XmlArrayItem]` names a namespace.
+- Mixed content (`[XmlMixed]`).
+- Extension data (`[XmlExtensionData]`).
+- A member that isn't accessible from the context.
+- Two members with the same C# name in the type's hierarchy.
+
+In the `Default` mode, the serializer writes such a type from the metadata. In the `Serialization` mode, such a type has neither a fast path nor metadata, so it can't be written.
+
+## Inspect the contract
+
+In the `Default` and `Metadata` modes, you can read the contract from the type info: the name of the document element and one [`XmlPropertyInfo`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyInfo) for each member, in the order the members are written. The following example uses the `Metadata` context. A `Default` context gives the same list.
+
+```csharp Program.cs
+XmlTypeInfo<Order> metadata = MetadataOrderXmlContext.Default.Order;
+
+output.WriteLine($"Root element: {metadata.RootName.LocalName}");
+foreach (XmlPropertyInfo property in metadata.Properties)
+{
+    string kind = property.IsAttribute ? "attribute" : "element";
+    output.WriteLine($"{property.Name.LocalName}: {kind}, {property.PropertyType.Type.Name}");
+}
+```
+
+The code produces the following output:
+
+```text
+Root element: Order
+Id: attribute, Int32
+Customer: element, String
+Line: element, List`1
+```
+
+The type info is read-only, so a contract can't be changed after it's built.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/33_SourceGenerationModes.cs)
+
+## Compare the modes
+
+| | `Default` | `Metadata` | `Serialization` |
+| --- | --- | --- | --- |
+| Reading | From the metadata. | From the metadata. | Throws `InvalidOperationException`. |
+| Writing | By the fast path when the options allow it, and from the metadata otherwise. | From the metadata. | By the fast path, with the options the context was compiled for. Other options throw `InvalidOperationException`. |
+| Native AOT and trimming | Safe. | Safe. | Safe. |
+| `XmlSerializerOptions` settings | All. | All. | Those the context was compiled for. |
+| Derived types, `[XmlConverter]` on a member, element choices, mixed content, extension data, and the other members listed under [When the fast path writes](#when-the-fast-path-writes) | Supported. | Supported. | A type with one of these has no fast path, so it can't be written. |
+| `ReferenceHandler`, a converter in the options for the type or for a simple type the fast path writes directly, and the other options listed under [When the fast path writes](#when-the-fast-path-writes) | Supported. | Supported. | The write throws `InvalidOperationException`. |
+| `XmlObjectCreationHandling.Populate` | Supported. | Supported. | Not available. It applies to reading. |
+| `XmlTypeInfo<T>.Properties` | One entry for each member. | One entry for each member. | Empty. |
+| Compile-time diagnostics | Reported. | Reported. | Reported. |
+
+The mode applies to object types: the classes, structs, and records that are mapped member by member. For an enumeration, a collection, a dictionary, or a nullable value that the context lists or reaches, the generated code creates the built-in converter with every type argument named, in every mode.
+
+## When to use each mode
+
+Use **`Default`** unless you have a reason not to. The context reads and writes, applies every option, and writes through the fast path whenever the options allow it.
+
+Use **`Metadata`** when you don't want the fast path. The generator writes metadata only, and the serializer reads and writes from it. The documents are the same as in the `Default` mode.
+
+Use **`Serialization`** for a context that only writes, always with the options that its `[XmlSourceGenerationOptions]` attribute declares, and whose types all have a fast path. The generator writes no metadata. A read, a write with other options, and a write of a type with no fast path throw `InvalidOperationException`.
+
+Under Native AOT, call the `XmlSerializer` overloads that take an `XmlTypeInfo<T>` or a context, in every mode. See [Publish with Native AOT](/xmlessentials/guides/native-aot).
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Use source generation" icon="wand-magic-sparkles" href="/xmlessentials/guides/source-generation">
+    Declare a context and call the serializer with it.
+  </Card>
+  <Card title="Reflection vs. source generation" icon="scale-balanced" href="/xmlessentials/guides/reflection-vs-source-generation">
+    What each approach does and costs.
+  </Card>
+  <Card title="Custom converters" icon="arrows-rotate" href="/xmlessentials/guides/custom-converters">
+    Write a converter, and use it with a generated context.
+  </Card>
+  <Card title="Publish with Native AOT" icon="rocket" href="/xmlessentials/guides/native-aot">
+    The project settings that go with a generated context.
+  </Card>
+</Columns>
+
+- [`XmlSourceGenerationMode`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSourceGenerationMode)
+- [`XmlSourceGenerationOptionsAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSourceGenerationOptionsAttribute)
+- [`XmlMetadataServices`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlMetadataServices)
+- [`XmlTypeInfo`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo)
+- [`XmlPropertyInfo`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyInfo)

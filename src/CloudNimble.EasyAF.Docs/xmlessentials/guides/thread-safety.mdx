@@ -1,0 +1,189 @@
+---
+title: "Thread safety"
+sidebarTitle: "Thread safety"
+description: "Which XmlEssentials types you can share between threads, which belong to one thread at a time, and what it means that options become read-only."
+icon: "code-branch"
+---
+
+The serializer is built to be called from many threads with shared options, as `JsonSerializer` is in System.Text.Json. The reader, the writer, and the document types are single-threaded objects that you create for each operation. This page says which is which.
+
+## Summary
+
+| Type | Safe to use from several threads at once | Notes |
+| --- | --- | --- |
+| `XmlSerializer` (static methods) | Yes | Each call has its own reader, writer, and buffers. |
+| `XmlSerializerOptions` | Yes, after it is read-only | Configure it on one thread. It becomes read-only on first use. |
+| `XmlSerializerOptions.Default`, `.Web`, `.Strict`, `.Bcl` | Yes | Read-only from the start. |
+| `XmlSerializerContext` (source-generated) | Yes | Share `MyContext.Default`, or one instance you create. |
+| `XmlTypeInfo`, `XmlTypeInfo<T>`, `XmlPropertyInfo` | Yes | Their public properties can't be changed. |
+| `XmlName`, `XmlEncodedText`, `XmlReaderState` | Yes | Immutable values. |
+| `XmlConverter` instances | Only if you write them that way | One instance serves every thread. Keep converters stateless. |
+| `Utf8XmlWriter` | No | One thread at a time. Create one for each document, or call `Reset`. |
+| `Utf8XmlReader` | No | A `ref struct`. The compiler keeps it on one stack. |
+| `XmlDocument`, `XmlElement` | Reads only, and never during `Dispose` | See [XmlDocument](#xmldocument-and-xmlelement). |
+| `XmlNode` and the node types | Reads only | A mutable tree with no locking. See [XmlNode](#xmlnode). |
+
+## XmlSerializer and XmlSerializerOptions
+
+Call the static `XmlSerializer` methods from any thread. Create one `XmlSerializerOptions` instance, keep it in a static field or register it as a singleton, and pass it to every call. The converters and type metadata that the options resolve are cached on the instance, so a new instance for each call repeats that work. This is the same guidance as for `JsonSerializerOptions`.
+
+```csharp
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+var results = new string[4];
+
+Parallel.For(0, results.Length, i =>
+{
+    var person = new Person { Name = $"Worker {i}", Age = 30 + i };
+    results[i] = XmlSerializer.Serialize(person, options);
+});
+
+foreach (string xml in results)
+{
+    output.WriteLine(xml);
+}
+```
+
+The code produces the following output:
+
+```xml
+<Person><Name>Worker 0</Name><Age>30</Age></Person>
+<Person><Name>Worker 1</Name><Age>31</Age></Person>
+<Person><Name>Worker 2</Name><Age>32</Age></Person>
+<Person><Name>Worker 3</Name><Age>33</Age></Person>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/39_SecurityAndThreadSafety.cs)
+
+What makes this safe:
+
+- The options keep resolved converters and type metadata in concurrent dictionaries, and the metadata for a type is built under a lock, so two threads that ask for the same type for the first time get the same instance.
+- For a synchronous call, the serializer reuses one `Utf8XmlWriter` and one buffer for each thread, held in thread-static fields that no other thread sees. A call that crosses an `await`, such as `SerializeAsyncEnumerable`, takes a spare writer with an atomic exchange, so no two calls hold the same writer.
+- The state that reading an object needs is taken with an atomic exchange. A second thread that reads the same type at the same moment gets its own.
+
+### Options become read-only on first use
+
+An `XmlSerializerOptions` instance can be changed until it is used. The first call that serializes or deserializes with it, or that asks it for type metadata with `GetTypeInfo` or `TryGetTypeInfo`, makes it read-only. You can also call `MakeReadOnly` yourself. From then on, every property setter and both lists (`Converters` and `TypeInfoResolverChain`) throw `InvalidOperationException`. `IsReadOnly` tells you which state the instance is in.
+
+This "freezing" is what makes sharing safe: the cached metadata was built from the settings, so the settings can't change underneath it.
+
+To get options that differ from a read-only instance, copy it. The copy can be changed, and it shares no cached state with the original.
+
+```csharp
+var person = new Person { Name = "Ada", Age = 36 };
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+output.WriteLine($"Before first use: IsReadOnly = {options.IsReadOnly}");
+
+XmlSerializer.Serialize(person, options);
+output.WriteLine($"After first use:  IsReadOnly = {options.IsReadOnly}");
+
+try
+{
+    options.WriteIndented = true;
+}
+catch (InvalidOperationException ex)
+{
+    output.WriteLine(ex.Message);
+}
+
+var indented = new XmlSerializerOptions(options) { WriteIndented = true, NewLine = "\n" };
+output.WriteLine($"The copy:         IsReadOnly = {indented.IsReadOnly}");
+output.WriteLine(XmlSerializer.Serialize(person, indented));
+```
+
+The code produces the following output:
+
+```text
+Before first use: IsReadOnly = False
+After first use:  IsReadOnly = True
+This XmlSerializerOptions instance is read-only.
+The copy:         IsReadOnly = False
+<Person>
+  <Name>Ada</Name>
+  <Age>36</Age>
+</Person>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/39_SecurityAndThreadSafety.cs)
+
+<Warning>
+Setting properties isn't synchronized. Finish configuring an options instance on one thread before another thread can see it. Assign it to a static field or register it only after the last property is set.
+</Warning>
+
+### Source-generated contexts
+
+A context that derives from `XmlSerializerContext` is bound to one options instance and can be shared in the same way. The generated `Default` property is a static instance made for that purpose.
+
+A generated context creates the metadata for each type the first time its property is read, and stores it in a field without a lock. If two threads read the property for the first time at the same moment, each can build the metadata, and one of the two is kept. Both describe the same type with the same options, so either one gives the same result.
+
+Passing options to a context's constructor makes the context the `TypeInfoResolver` of those options. Do that before the options are used, because the constructor throws `InvalidOperationException` for read-only options.
+
+### Converters and naming policies
+
+The serializer creates or takes one converter instance for each type and options instance, and calls it from every thread that serializes that type. A naming policy is called the same way.
+
+- Don't keep state for one call in a field of a converter or a naming policy. Use local variables.
+- A converter that caches something must synchronize the cache itself.
+- A converter that calls `XmlSerializer` again for a nested value is safe. The nested call gets its own writer.
+
+See [Write custom converters](/xmlessentials/guides/custom-converters).
+
+## Utf8XmlWriter
+
+A `Utf8XmlWriter` isn't thread-safe. It holds the open elements, the namespace scopes, and unflushed bytes, and nothing in it is synchronized. Use one writer from one thread at a time, and don't share the `IBufferWriter<byte>` or `Stream` it writes to with another writer.
+
+You can reuse a writer for another document on another thread once the first use is finished: call `Reset` with the new destination. What you can't do is call it from two threads at once. After `Dispose`, the write methods throw `ObjectDisposedException`.
+
+See [Use Utf8XmlWriter](/xmlessentials/guides/use-utf8xmlwriter).
+
+## Utf8XmlReader
+
+`Utf8XmlReader` is a `ref struct`, like `Utf8JsonReader`. The compiler doesn't let you store it in a field of a class, capture it in a lambda, or keep it across an `await`, so it can't be shared between threads.
+
+To continue reading on another thread or after an `await`, save `reader.CurrentState`, which is an `XmlReaderState` value, and create a new reader over the next block of input with that state. The input buffer must not change while a reader is over it. See [Use Utf8XmlReader](/xmlessentials/guides/use-utf8xmlreader).
+
+## XmlDocument and XmlElement
+
+An `XmlDocument` is read-only after `Parse` returns, and an `XmlElement` is a small value that points into its document. Reading a document doesn't write to it, so several threads can read the same document.
+
+`Dispose` is the exception. It returns the document's buffers to the shared array pool, and it isn't synchronized with readers.
+
+- Don't call `Dispose` while another thread might still be reading the document or any `XmlElement` from it. A thread that reads during `Dispose` can see a buffer that the pool has already given to someone else.
+- After `Dispose` has finished, the document and every `XmlElement` from it throw `ObjectDisposedException`.
+- Give the document one owner that disposes it when all readers are done. To keep a part of a document for longer, copy it out first with `XmlElement.CloneNode` or by reading the values you need.
+
+See [Use XmlDocument](/xmlessentials/guides/use-xmldocument).
+
+## XmlNode
+
+The node types in `CloudNimble.Text.Xml.Nodes` (`XmlNode`, `XmlElementNode`, `XmlAttributeNode`, and the others) form a mutable tree with no locking. Treat a tree like a `JsonNode` tree:
+
+- A tree that no thread is changing can be read from several threads at once. A tree from `XmlNode.Parse` builds each element's attributes and children the first time they are read. That is safe from several threads: each element's lists are put in place whole, and threads that read the same element at the same moment all get the same nodes. Reading includes `ToString`, `WriteTo`, and `DeepClone`.
+- While any thread adds, removes, or changes a node, no other thread can use that tree, not even to read it. Use your own lock.
+- A `foreach` over `Children` or `Attributes` throws an `InvalidOperationException` when the list changes under it. That catches a loop that changes its own list. It isn't a substitute for a lock.
+
+See [Use XmlNode](/xmlessentials/guides/use-xmlnode).
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Configure serializer options" icon="sliders" href="/xmlessentials/guides/configure-options">
+    Create, copy, and reuse XmlSerializerOptions.
+  </Card>
+  <Card title="Use source generation" icon="wand-magic-sparkles" href="/xmlessentials/guides/source-generation">
+    Create and share an XmlSerializerContext.
+  </Card>
+  <Card title="Security" icon="shield-halved" href="/xmlessentials/guides/security">
+    Limits and guidance for untrusted input.
+  </Card>
+  <Card title="Native AOT" icon="bolt" href="/xmlessentials/guides/native-aot">
+    Serialize without reflection.
+  </Card>
+</Columns>
+
+- [`XmlSerializer`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer)
+- [`XmlSerializerOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions)
+- [`XmlSerializerContext`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializerContext)
+- [`XmlTypeInfo`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo)
+- [`Utf8XmlWriter`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter)
+- [`Utf8XmlReader`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlReader)
+- [`XmlDocument`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument)

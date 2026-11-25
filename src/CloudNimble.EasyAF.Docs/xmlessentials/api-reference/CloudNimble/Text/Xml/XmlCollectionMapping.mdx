@@ -1,0 +1,44 @@
+---
+title: XmlCollectionMapping
+description: "Specifies how a collection member without a mapping attribute is mapped: as repeated elements, or as one element that wraps an element for each item."
+icon: list-ol
+tag: "ENUM"
+keywords: ['XmlCollectionMapping', 'CloudNimble.Text.Xml.XmlCollectionMapping', 'CloudNimble.Text.Xml', 'enum', 'System.Enum', 'System.IComparable', 'System.ISpanFormattable', 'System.IFormattable', 'System.IConvertible']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlCollectionMapping
+```
+
+## Summary
+
+Specifies how a collection member without a mapping attribute is mapped: as repeated elements, or as one
+element that wraps an element for each item.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Unwrapped` | 0 | One element for each item, named for the member, with no element around them. This is the default. |
+| `Wrapped` | 1 | One element named for the member, which holds an element for each item, named for the item's type.
+This is the shape `System.Xml.Serialization.XmlSerializer` writes, and the one `[XmlArray]`
+gives a single member. A per-member `[XmlElement]` takes precedence and writes the items with
+no wrapper. |
+
+## Related APIs
+
+- System.IComparable
+- System.ISpanFormattable
+- System.IFormattable
+- System.IConvertible
+

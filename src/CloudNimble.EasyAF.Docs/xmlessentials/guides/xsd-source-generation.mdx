@@ -1,0 +1,383 @@
+---
+title: "How to generate types from an XML schema"
+sidebarTitle: "Generate types from an XSD"
+description: "Add an .xsd file to your project and let the XmlEssentials generator write the classes, enumerations, and serializer context at build time. This feature is in preview."
+icon: "file-code"
+tag: "Preview"
+---
+
+<Warning>
+Generating types from a schema is a preview feature. It maps the constructs this article lists, and it doesn't yet cover all of XML Schema: see [Limitations](#limitations). The generated classes and the diagnostics can change between releases. Check the generated code against real documents before you rely on it.
+</Warning>
+
+When a partner gives you an XML Schema (XSD) file, you don't have to write the classes by hand. Add the schema to your project as an `AdditionalFiles` item, and the XmlEssentials source generator writes a class for each element and complex type, an enumeration for each enumerated simple type, and an `XmlSerializerContext` that reads and writes them. This article shows the setup and lists what the generator maps and what it doesn't.
+
+The schema is a build-time input. It isn't loaded, embedded, or checked at run time, so the generated code works in a Native AOT application. XmlEssentials doesn't validate documents against a schema.
+
+## Generate the types
+
+<Steps>
+  <Step title="Add the schema file to the project">
+    Put the `.xsd` file in your project, for example in a *Schemas* folder. This article uses the following schema:
+
+    ```xml Schemas/catalog.xsd
+    <?xml version="1.0" encoding="utf-8"?>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               xmlns="urn:example:catalog"
+               targetNamespace="urn:example:catalog"
+               elementFormDefault="qualified">
+
+      <xs:simpleType name="Availability">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="InStock"/>
+          <xs:enumeration value="BackOrder"/>
+          <xs:enumeration value="Discontinued"/>
+        </xs:restriction>
+      </xs:simpleType>
+
+      <xs:complexType name="Supplier">
+        <xs:annotation>
+          <xs:documentation>The company a product is bought from.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element name="Name" type="xs:string"/>
+          <xs:element name="Country" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:element name="Catalog">
+        <xs:annotation>
+          <xs:documentation>The products a shop sells.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Product" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Name" type="xs:string"/>
+                  <xs:element name="Price" type="xs:decimal"/>
+                  <xs:element name="Availability" type="Availability"/>
+                  <xs:element name="Weight" type="xs:double" nillable="true"/>
+                  <xs:element name="Supplier" type="Supplier"/>
+                </xs:sequence>
+                <xs:attribute name="sku" type="xs:string"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+          <xs:attribute name="published" type="xs:date"/>
+        </xs:complexType>
+      </xs:element>
+
+    </xs:schema>
+    ```
+  </Step>
+  <Step title="Declare it as an AdditionalFiles item">
+    In the project file, add the schema as an `AdditionalFiles` item. Optionally, set the namespace of the generated code and the name of the generated context:
+
+    ```xml MyApp.csproj
+    <ItemGroup>
+      <AdditionalFiles Include="Schemas\catalog.xsd">
+        <XmlEssentialsNamespace>CloudNimble.XmlEssentials.Samples.Schemas</XmlEssentialsNamespace>
+        <XmlEssentialsContext>CatalogXmlContext</XmlEssentialsContext>
+      </AdditionalFiles>
+    </ItemGroup>
+    ```
+  </Step>
+  <Step title="Build the project">
+    Build. The generator adds the classes and the context to the compilation. There are no files to check in.
+
+    ```bash
+    dotnet build -c Release
+    ```
+  </Step>
+  <Step title="Use the generated classes and context">
+    In your code, create the generated classes as you would your own, and pass the context's type info to `XmlSerializer`:
+
+    ```csharp Program.cs
+    var catalog = new Catalog
+    {
+        published = new DateOnly(2026, 11, 23),
+        Product =
+        [
+            new Catalog_Product
+            {
+                sku = "KB-01",
+                Name = "Keyboard",
+                Price = 89.90m,
+                Availability = Availability.InStock,
+                Weight = 0.8,
+                Supplier = new Supplier { Name = "Contoso", Country = "NL" },
+            },
+            new Catalog_Product
+            {
+                sku = "MS-02",
+                Name = "Mouse",
+                Price = 20m,
+                Availability = Availability.BackOrder,
+                Supplier = new Supplier { Name = "Fabrikam", Country = "DE" },
+            },
+        ],
+    };
+
+    var options = new XmlSerializerOptions
+    {
+        DefaultNamespace = "urn:example:catalog",
+        NewLine = "\n",
+        WriteIndented = true,
+    };
+    var context = new CatalogXmlContext(options);
+
+    string xml = XmlSerializer.Serialize(catalog, context.Catalog);
+    output.WriteLine(xml);
+
+    Catalog? copy = XmlSerializer.Deserialize(xml, context.Catalog);
+    foreach (Catalog_Product product in copy!.Product!)
+    {
+        output.WriteLine($"{product.sku}: {product.Name}, {product.Availability}, from {product.Supplier!.Name}");
+    }
+    ```
+
+    The code produces the following output:
+
+    ```text
+    <?xml version="1.0" encoding="utf-8"?>
+    <Catalog xmlns="urn:example:catalog" published="2026-11-23">
+      <Product sku="KB-01">
+        <Name>Keyboard</Name>
+        <Price>89.90</Price>
+        <Availability>InStock</Availability>
+        <Weight>0.8</Weight>
+        <Supplier>
+          <Name>Contoso</Name>
+          <Country>NL</Country>
+        </Supplier>
+      </Product>
+      <Product sku="MS-02">
+        <Name>Mouse</Name>
+        <Price>20</Price>
+        <Availability>BackOrder</Availability>
+        <Weight xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+        <Supplier>
+          <Name>Fabrikam</Name>
+          <Country>DE</Country>
+        </Supplier>
+      </Product>
+    </Catalog>
+    KB-01: Keyboard, InStock, from Contoso
+    MS-02: Mouse, BackOrder, from Fabrikam
+    ```
+  </Step>
+</Steps>
+
+The second product has no weight. Because the schema marks `Weight` as `nillable`, the generated property is `double?`, and a `null` value is written with `xsi:nil="true"`.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/36_GenerateTypesFromXsd.cs)
+
+## What the generator writes
+
+For the schema above, the generator writes two classes for the `Catalog` element, one class for the `Supplier` type, one enumeration, and one context. Three of them are shown here, without their file headers and namespace:
+
+```csharp Generated code
+/// <summary>
+/// The products a shop sells.
+/// </summary>
+[XmlRoot("Catalog", Namespace = "urn:example:catalog")]
+public partial class Catalog
+{
+    [XmlAttribute("published")]
+    public global::System.DateOnly? published { get; set; }
+
+    public global::System.Collections.Generic.List<global::CloudNimble.XmlEssentials.Samples.Schemas.Catalog_Product>? Product { get; set; }
+
+}
+
+[XmlRoot("Product", Namespace = "urn:example:catalog")]
+public partial class Catalog_Product
+{
+    [XmlAttribute("sku")]
+    public string? sku { get; set; }
+
+    [XmlIgnore(Condition = XmlIgnoreCondition.WhenWritingNull)]
+    public string? Name { get; set; }
+
+    public decimal Price { get; set; }
+
+    public global::CloudNimble.XmlEssentials.Samples.Schemas.Availability Availability { get; set; }
+
+    public double? Weight { get; set; }
+
+    [XmlIgnore(Condition = XmlIgnoreCondition.WhenWritingNull)]
+    public global::CloudNimble.XmlEssentials.Samples.Schemas.Supplier? Supplier { get; set; }
+
+}
+
+public enum Availability
+{
+    InStock,
+    BackOrder,
+    Discontinued,
+}
+```
+
+What to notice:
+
+- **Names come from the schema unchanged.** The attributes `published` and `sku` become properties with those exact names, lowercase included. A character that isn't valid in a C# identifier becomes an underscore.
+- **An anonymous complex type is named after its parent.** The `Product` element inside `Catalog` becomes `Catalog_Product`.
+- **An attribute is optional unless the schema says `use="required"`.** `published` is a `DateOnly?`, so that it can be absent.
+- **Only `nillable="true"` allows `xsi:nil`.** `Weight` is nillable, so a `null` is written as `xsi:nil="true"`. `Name` and `Supplier` aren't, so a `null` is left out: that is what `[XmlIgnore(Condition = XmlIgnoreCondition.WhenWritingNull)]` says.
+- **Every class is `public partial`.** Add members in a file of your own instead of editing generated code.
+- **`xs:documentation` becomes a `<summary>` comment** on the class. Documentation on child elements and attributes isn't copied.
+
+The context is a `public partial class` in the same namespace, with one `XmlTypeInfo<T>` property for each generated class and enumeration: `Catalog`, `Catalog_Product`, `Supplier`, and `Availability`. It has the members every generated context has. See [What the generator adds to your class](/xmlessentials/guides/source-generation#what-the-generator-adds-to-your-class).
+
+## Item metadata
+
+| Metadata | Meaning | Default |
+| --- | --- | --- |
+| `XmlEssentialsNamespace` | The C# namespace of the generated classes and context. | The project's `RootNamespace` followed by `.Generated`. |
+| `XmlEssentialsContext` | The name of the generated context class. | The file name in Pascal case followed by `XmlContext`: `CatalogXmlContext` for *catalog.xsd*. |
+
+The generator sees this metadata because the package's build file makes it visible to the compiler. Every file whose name ends in `.xsd` is processed. Other `AdditionalFiles` items, including `.wsdl` files, are ignored.
+
+## The target namespace
+
+The `Default` instance of a generated context has `DefaultNamespace` set to the schema's `targetNamespace`, so documents are written in that namespace with no further setup:
+
+```csharp Program.cs
+var supplier = new Supplier { Name = "Contoso", Country = "NL" };
+
+output.WriteLine(CatalogXmlContext.Default.Options.DefaultNamespace);
+output.WriteLine(XmlSerializer.Serialize(supplier, CatalogXmlContext.Default.Supplier));
+```
+
+The code produces the following output:
+
+```text
+urn:example:catalog
+<?xml version="1.0" encoding="utf-8"?><Supplier xmlns="urn:example:catalog"><Name>Contoso</Name><Country>NL</Country></Supplier>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/36_GenerateTypesFromXsd.cs)
+
+<Warning>
+When you create the context from your own options, as the first example does, set `DefaultNamespace` yourself. Constructor options replace the generated defaults, and without the namespace the document element is written unqualified, which the schema doesn't allow.
+</Warning>
+
+The members of the generated classes have no namespace of their own, so when reading, the serializer matches child elements and attributes by local name. See [Know what the serializer checks](/xmlessentials/guides/namespaces#know-what-the-serializer-checks).
+
+## How schema constructs are mapped
+
+### Types
+
+| XSD type | C# type |
+| --- | --- |
+| `xs:string`, and any type not listed here | `string` |
+| `xs:boolean` | `bool` |
+| `xs:byte`, `xs:unsignedByte` | `sbyte`, `byte` |
+| `xs:short`, `xs:unsignedShort` | `short`, `ushort` |
+| `xs:int`, `xs:integer`, `xs:unsignedInt` | `int`, `int`, `uint` |
+| `xs:long`, `xs:unsignedLong` | `long`, `ulong` |
+| `xs:float`, `xs:double`, `xs:decimal` | `float`, `double`, `decimal` |
+| `xs:dateTime` | `DateTime` |
+| `xs:date`, `xs:time` | `DateOnly`, `TimeOnly` |
+| `xs:duration` | `TimeSpan` |
+| `xs:base64Binary` | `byte[]` |
+| `xs:anyURI` | `Uri` |
+| A type named `guid` that the schema refers to and doesn't define, in any namespace | `Guid` |
+| A named `xs:simpleType` with `xs:enumeration` values | An `enum` with one member for each value |
+| A named or inline `xs:simpleType` that restricts another type without enumerations | The C# type of the type it restricts: an `xs:int` with a range is an `int` |
+| A named `xs:complexType` | A class |
+
+<Note>
+Types such as `xs:positiveInteger`, `xs:hexBinary`, and `xs:token` map to `string`, and so does a simple type that is a list or a union. Facets such as `pattern` and `minInclusive` aren't checked.
+</Note>
+### Structure
+
+| XSD construct | Generated code |
+| --- | --- |
+| Named `xs:complexType` | A class named after the type. |
+| Global `xs:element` whose type is a named complex type | No class of its own. The element's name is the `[XmlRoot]` name of the type's class. When several elements share a type, the first one names the root and the generator reports `XMLESS018`. |
+| Global `xs:element` with an inline `xs:complexType` | A class named after the element, with `[XmlRoot]`. |
+| Global `xs:element` with a simple type | Nothing. |
+| `xs:sequence`, `xs:all`, and a sequence nested in another | One property for each child element, in the order of the schema. |
+| `xs:choice` of elements | One property, `Item`, with an `[XmlElement<T>]` for each alternative. Its type is the class every alternative derives from, or `object`. When two alternatives have one C# type, such as two `xs:string` elements, its type is `XmlNamedValue`, where each value names its element. |
+| A choice or a sequence with `maxOccurs` greater than 1 | One `List<T>?` property, `Items`, with an `[XmlElement<T>]` for each element, including the elements of the groups inside it. The list keeps the order of the document. It is a `List<XmlNamedValue>?` when two of the elements have one C# type. |
+| `xs:element ref` to the head of a substitution group | One property with an `[XmlElement<T>]` for the head and for each element that may stand for it. An element that is `abstract` isn't one of them. The property holds `XmlNamedValue` when two of the elements have one C# type. |
+| `mixed="true"` | The attributes, and one `List<XmlMixedContentItem>? Content` property with `[XmlMixed]` that holds the text and the elements in the order of the document. The elements aren't properties of their own. |
+| `default` or `fixed` on an attribute, or on an element that must be present | The property starts with that value. A value type with a default isn't nullable. |
+| Elements and attributes of a schema with a `targetNamespace` | The namespace the schema gives each one. When every element is in the target namespace (`elementFormDefault="qualified"`), properties name none and take it from the class. Otherwise each property names its own: `Namespace = ""` for an element in no namespace, and the target namespace for a global element, a global attribute, and anything with `form="qualified"`. |
+| `xs:element` with `maxOccurs` greater than 1 or `unbounded` | A `List<T>?` property, written as repeated elements with no wrapper. |
+| `xs:element` whose inline type is a sequence of one repeating element and nothing else | A `List<T>?` property with `[XmlArray]` and `[XmlArrayItem]`: the outer element is the wrapper. |
+| `xs:element` with `minOccurs="0"` | A property that can be `null`, such as `int?`. A `null` is left out of the document. |
+| `xs:element` with `nillable="true"` | A property that can be `null`. A `null` is written with `xsi:nil="true"`. |
+| `xs:element` that is neither optional nor nillable, with a reference type | A property that can be `null`, because C# allows it. A `null` is left out, since the schema doesn't allow `xsi:nil` there. |
+| `xs:element` with an inline `xs:complexType` | A class named *Parent*_*Element*. |
+| `xs:element ref` | A property of the type of the global element it names. |
+| `xs:attribute` | A property with `[XmlAttribute]`. A value type is nullable unless the attribute has `use="required"`. `use="prohibited"` gives no property. |
+| `xs:attribute ref` | A property of the type of the global attribute it names. `xml:lang`, `xml:space` and `xml:base` keep the XML namespace. |
+| `xs:group ref`, `xs:attributeGroup ref` | The properties of the group it names, as if they were declared in place. |
+| `xs:simpleContent` with an extension of a simple type | A `Value` property with `[XmlText]`, and a property for each attribute. |
+| `xs:complexContent` or `xs:simpleContent` that extends a named complex type | A class derived from the base type's class, with only its own members. The base class lists it with `[XmlPolymorphic]` and `[XmlDerivedType]`, so a value declared as the base type is written with `xsi:type` when it is of the derived type. |
+| `abstract="true"` on a complex type | An `abstract` class. |
+| `xs:any`, `xs:anyAttribute` | One `XmlExtensionData? Extra` property with `[XmlExtensionData]`. |
+| An enumeration value that isn't a C# identifier, such as `back-order` | A member with underscores for the invalid characters (`back_order`) and `[XmlPropertyName("back-order")]`, so the document still holds the schema's value. |
+| `xs:annotation` with `xs:documentation` on a global element or a complex type | A `<summary>` comment on the class. |
+| `xs:include`, `xs:import` | The generator looks for the other schema by file name among the `.xsd` items of the project, and reports `XMLESS010` when it isn't there. Schemas that span several files aren't covered by a sample in this documentation, so check the generated code when you use them. |
+
+A document names a derived type the way the schema says: with `xsi:type`. The value is a qualified name, so `xsi:type="s:Circle"` and `xsi:type="Circle"` are both read as the `Circle` class, whatever prefix the document chose.
+
+### Limitations
+
+The generator maps a schema to classes. It isn't a validator, and it doesn't cover every construct. The table lists what it doesn't act on. It reports `XMLESS011` as information when the documents stay the same, and `XMLESS018` as a warning when a document the schema allows can't be read or written as the schema describes it.
+
+<Warning>
+One limitation loses information: a repeating group that holds `xs:any`, or one element name with two types, becomes one list for each element, so the order between elements of different lists isn't kept when the document is written back. Treat `XMLESS018` as something to check before you rely on the generated classes for that part of the schema.
+</Warning>
+
+| XSD construct | What happens |
+| --- | --- |
+| A choice that holds a sequence, a group or an element that repeats | One value can't hold those, so each element becomes an optional property. That exactly one alternative is present isn't enforced (`XMLESS011`). |
+| A repeating group that holds `xs:any`, or one element name with two types | Each element becomes a list of its own, which loses the order between them (`XMLESS018`). |
+| A `ref`, a group, an attribute group or a base type that isn't in the schema or its includes | A `ref` becomes a `string` property; the members of a missing group or base type aren't generated (`XMLESS018`). |
+| `xs:restriction` of a named complex type | A derived class with no members of its own. What it restricts isn't enforced (`XMLESS011`). |
+| `default` or `fixed` on an element that may be absent, or of a type with no C# constant (a date, a time, a GUID, a URI, binary data) | Not applied to the property (`XMLESS011`). |
+| Facets: `pattern`, `minInclusive`, `maxLength`, and the others except `enumeration` | Ignored. Values aren't validated. |
+| `xs:key`, `xs:keyref`, `xs:unique` | Ignored (`XMLESS011`). |
+| `xs:redefine`, `xs:notation` | Ignored (`XMLESS011`). |
+
+## Diagnostics
+
+| ID | Severity | When |
+| --- | --- | --- |
+| `XMLESS010` | Error | The schema contains a DTD or isn't well formed, or an `xs:include` or `xs:import` has no `schemaLocation`, has one with a URI scheme, or names a file that isn't an `.xsd` item of the project. Schemas are never downloaded. |
+| `XMLESS011` | Information | The schema says something the generated code doesn't act on, and the documents stay the same. |
+| `XMLESS012` | Error | Two components produce the same C# name: two types in one C# namespace, two members of one class (an element and an attribute of the same name, or a member named like its class), or two values of one enumeration. Schema files that generate into different namespaces may each have a class of the same name. |
+| `XMLESS013` | Error | An element or attribute name in the schema isn't a valid XML name. |
+| `XMLESS018` | Warning | The schema allows a document that the generated classes can't read or write as the schema describes it. The message names the construct and what happens instead. |
+
+## Options and the generated context
+
+A context generated from a schema is a default-mode context: it has metadata for each class, and a write fast path for each class that can have one. A class that may hold a derived class, an element choice, mixed content, extension data, or an element in no namespace is written from its metadata. The context applies every `XmlSerializerOptions` setting and custom converter, as a context you declare yourself does. See [How a context applies your options](/xmlessentials/guides/source-generation#how-a-context-applies-your-options).
+
+The generated context is used when you pass its type info, or the context, to `XmlSerializer`. A call that passes only a value, or a value and options, maps the generated classes through reflection, as it does any other class. [Interceptors](/xmlessentials/guides/reflection-vs-source-generation#interceptors) redirect calls only for contexts declared in your source code.
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Use source generation" icon="wand-magic-sparkles" href="/xmlessentials/guides/source-generation">
+    Contexts for classes you write yourself.
+  </Card>
+  <Card title="Publish with Native AOT" icon="rocket" href="/xmlessentials/guides/native-aot">
+    Schema-generated types in an AOT application.
+  </Card>
+  <Card title="Use XML namespaces" icon="tags" href="/xmlessentials/guides/namespaces">
+    How the serializer writes and matches namespaces.
+  </Card>
+  <Card title="Null and nil" icon="circle-notch" href="/xmlessentials/guides/null-and-nil">
+    How `xsi:nil` is written and read.
+  </Card>
+</Columns>
+
+- [`XmlSerializerContext`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializerContext)
+- [`XmlRootAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlRootAttribute)
+- [`XmlExtensionData`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlExtensionData)

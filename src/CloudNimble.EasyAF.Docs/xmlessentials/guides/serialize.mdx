@@ -1,0 +1,371 @@
+---
+title: "How to write .NET objects as XML"
+sidebarTitle: "Serialize"
+description: "Learn how to use XmlSerializer to write .NET objects as XML to a string, UTF-8 bytes, a buffer writer, a stream, or an open Utf8XmlWriter."
+icon: "arrow-right-from-bracket"
+---
+
+This article shows how to use [`XmlSerializer`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) in the `CloudNimble.Text.Xml` namespace to turn .NET objects into XML. `XmlSerializer` is a static class shaped like `JsonSerializer` in System.Text.Json: you call `Serialize` with a value and, optionally, an [`XmlSerializerOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions) instance.
+
+The examples use reflection, which needs no setup. To serialize without reflection, for trimming and Native AOT, see [Use source generation](/xmlessentials/guides/source-generation).
+
+## Serialize to a string
+
+Call `XmlSerializer.Serialize` and pass the object. The method returns the XML document as a `string`.
+
+```csharp Program.cs
+var order = new PurchaseOrder
+{
+    Id = 1042,
+    Customer = "Contoso",
+    Placed = new DateOnly(2026, 3, 14),
+    Total = 129.90m,
+};
+
+string xml = XmlSerializer.Serialize(order);
+output.WriteLine(xml);
+```
+
+```csharp PurchaseOrder.cs
+public sealed class PurchaseOrder
+{
+    public int Id { get; set; }
+
+    public string? Customer { get; set; }
+
+    public DateOnly Placed { get; set; }
+
+    public decimal Total { get; set; }
+}
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?><PurchaseOrder><Id>1042</Id><Customer>Contoso</Customer><Placed>2026-03-14</Placed><Total>129.90</Total></PurchaseOrder>
+```
+
+Notice the following:
+
+- The document element is named after the type, and each public property becomes a child element named after the property.
+- Elements appear in the order the properties are declared.
+- Values use the XML Schema text forms, which don't depend on the current culture: `2026-03-14` for a `DateOnly`, and `129.90` for the `decimal` with its trailing zero kept.
+- The output has no white space between elements. To indent it, see [Indent the output](#indent-the-output).
+
+Characters that have a meaning in XML are escaped when written and restored when read:
+
+```csharp Program.cs
+var customer = new InvoiceCustomer { Name = "Fabrikam & Sons <West>", Email = "billing@fabrikam.example" };
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+
+string xml = XmlSerializer.Serialize(customer, options);
+output.WriteLine(xml);
+
+InvoiceCustomer? copy = XmlSerializer.Deserialize<InvoiceCustomer>(xml, options);
+output.WriteLine(copy!.Name);
+```
+
+The code produces the following output:
+
+```text
+<InvoiceCustomer><Name>Fabrikam &amp; Sons &lt;West></Name><Email>billing@fabrikam.example</Email></InvoiceCustomer>
+Fabrikam & Sons <West>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/06_SerializeToXml.cs)
+
+## Indent the output
+
+Set `WriteIndented` to `true`. The following example also serializes an object that holds another object and a list, so you can see how they nest.
+
+```csharp Program.cs
+var invoice = new Invoice
+{
+    Number = 7,
+    BillTo = new InvoiceCustomer { Name = "Contoso", Email = "ap@contoso.example" },
+    Lines =
+    [
+        new InvoiceLine { Sku = "KB-101", Quantity = 2 },
+        new InvoiceLine { Sku = "MS-220", Quantity = 1 },
+    ],
+};
+
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n" };
+
+string xml = XmlSerializer.Serialize(invoice, options);
+output.WriteLine(xml);
+```
+
+```csharp Invoice.cs
+public sealed class Invoice
+{
+    public int Number { get; set; }
+
+    public InvoiceCustomer? BillTo { get; set; }
+
+    public List<InvoiceLine> Lines { get; set; } = [];
+}
+
+public sealed class InvoiceCustomer
+{
+    public string? Name { get; set; }
+
+    public string? Email { get; set; }
+}
+
+public sealed class InvoiceLine
+{
+    public string? Sku { get; set; }
+
+    public int Quantity { get; set; }
+}
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Invoice>
+  <Number>7</Number>
+  <BillTo>
+    <Name>Contoso</Name>
+    <Email>ap@contoso.example</Email>
+  </BillTo>
+  <Lines>
+    <Sku>KB-101</Sku>
+    <Quantity>2</Quantity>
+  </Lines>
+  <Lines>
+    <Sku>MS-220</Sku>
+    <Quantity>1</Quantity>
+  </Lines>
+</Invoice>
+```
+
+Notice the following:
+
+- A nested object is an element that holds the object's own members.
+- A list has no wrapper element by default. Each item is an element named after the property, so `Lines` appears twice. To add a wrapper or name the items, see [Serialize collections](/xmlessentials/guides/collections).
+- The indent is two spaces. Change it with `IndentSize` and `IndentCharacter`.
+- `NewLine` defaults to `Environment.NewLine`. The example sets it to `"\n"` so the output is the same on every operating system.
+
+## Control the XML declaration
+
+By default the document starts with `<?xml version="1.0" encoding="utf-8"?>`. Set `OmitXmlDeclaration` to leave it out, or set `XmlVersion` to write an XML 1.1 document.
+
+```csharp Program.cs
+var customer = new InvoiceCustomer { Name = "Contoso", Email = "ap@contoso.example" };
+
+var noDeclaration = new XmlSerializerOptions { OmitXmlDeclaration = true };
+output.WriteLine(XmlSerializer.Serialize(customer, noDeclaration));
+
+var version11 = new XmlSerializerOptions { XmlVersion = XmlVersion.Version11 };
+output.WriteLine(XmlSerializer.Serialize(customer, version11));
+```
+
+The code produces the following output:
+
+```xml
+<InvoiceCustomer><Name>Contoso</Name><Email>ap@contoso.example</Email></InvoiceCustomer>
+<?xml version="1.1" encoding="utf-8"?><InvoiceCustomer><Name>Contoso</Name><Email>ap@contoso.example</Email></InvoiceCustomer>
+```
+
+The encoding is always UTF-8. The serializer writes UTF-8 bytes to every destination, and the `string` overload decodes those bytes at the end.
+
+<Note>
+Creating an `XmlSerializerOptions` instance for every call is expensive, because the type metadata is cached on the instance. The examples create one per method to stay self-contained. In an application, create the options once and reuse them. See [Configure XmlSerializerOptions](/xmlessentials/guides/configure-options).
+</Note>
+
+## Serialize to UTF-8
+
+XML that goes to a file, a socket, or an HTTP response is UTF-8 bytes. Write the bytes directly instead of creating a `string` and encoding it afterward. `XmlSerializer` has three UTF-8 destinations.
+
+### A byte array
+
+`SerializeToUtf8Bytes` returns a new array that holds the whole document.
+
+```csharp Program.cs
+var customer = new InvoiceCustomer { Name = "Contoso", Email = "ap@contoso.example" };
+
+byte[] utf8 = XmlSerializer.SerializeToUtf8Bytes(customer);
+
+output.WriteLine($"{utf8.Length} bytes");
+output.WriteLine(Encoding.UTF8.GetString(utf8));
+```
+
+The code produces the following output:
+
+```text
+126 bytes
+<?xml version="1.0" encoding="utf-8"?><InvoiceCustomer><Name>Contoso</Name><Email>ap@contoso.example</Email></InvoiceCustomer>
+```
+
+### A buffer writer
+
+Pass an `IBufferWriter<byte>`, such as an `ArrayBufferWriter<byte>` or a `PipeWriter`, to write into memory that the destination owns.
+
+```csharp Program.cs
+var customer = new InvoiceCustomer { Name = "Contoso", Email = "ap@contoso.example" };
+var buffer = new ArrayBufferWriter<byte>();
+
+XmlSerializer.Serialize(buffer, customer);
+
+output.WriteLine($"{buffer.WrittenCount} bytes");
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+```
+
+The code produces the following output:
+
+```text
+126 bytes
+<?xml version="1.0" encoding="utf-8"?><InvoiceCustomer><Name>Contoso</Name><Email>ap@contoso.example</Email></InvoiceCustomer>
+```
+
+### A stream
+
+Pass a `Stream` as the first argument. The serializer doesn't close the stream.
+
+```csharp Program.cs
+var customer = new InvoiceCustomer { Name = "Contoso", Email = "ap@contoso.example" };
+using var stream = new MemoryStream();
+
+XmlSerializer.Serialize(stream, customer);
+
+output.WriteLine($"{stream.Length} bytes");
+output.WriteLine(Encoding.UTF8.GetString(stream.ToArray()));
+```
+
+The code produces the following output:
+
+```text
+126 bytes
+<?xml version="1.0" encoding="utf-8"?><InvoiceCustomer><Name>Contoso</Name><Email>ap@contoso.example</Email></InvoiceCustomer>
+```
+
+To write to a stream or a `PipeWriter` without blocking, use `SerializeAsync`, and to write a sequence of values as they arrive, use `SerializeAsyncEnumerable`. Both are covered in [Streaming](/xmlessentials/guides/streaming).
+
+## Serialize into a document you're writing
+
+Sometimes the object is only part of the document. Pass a [`Utf8XmlWriter`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Utf8XmlWriter) and the serializer writes the object as one element at the writer's current position.
+
+```csharp Program.cs
+var buffer = new ArrayBufferWriter<byte>();
+var writerOptions = new XmlWriterOptions { Indented = true, NewLine = "\n" };
+
+using (var writer = new Utf8XmlWriter(buffer, writerOptions))
+{
+    writer.WriteStartElement("Customers");
+    XmlSerializer.Serialize(writer, new InvoiceCustomer { Name = "Contoso", Email = "ap@contoso.example" });
+    XmlSerializer.Serialize(writer, new InvoiceCustomer { Name = "Fabrikam", Email = "billing@fabrikam.example" });
+    writer.WriteEndElement();
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Customers>
+  <InvoiceCustomer>
+    <Name>Contoso</Name>
+    <Email>ap@contoso.example</Email>
+  </InvoiceCustomer>
+  <InvoiceCustomer>
+    <Name>Fabrikam</Name>
+    <Email>billing@fabrikam.example</Email>
+  </InvoiceCustomer>
+</Customers>
+```
+
+With this overload the writer's own [`XmlWriterOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWriterOptions) decide the indentation and the declaration. The serializer options still decide names, null handling, and everything else about how the object maps to XML. The serializer doesn't flush the writer: here, disposing the writer does.
+
+## Serialize a type known at run time
+
+The generic overloads serialize the value as the type argument. When you hold the value as `object`, use the overload that takes a `Type`.
+
+```csharp Program.cs
+object value = new InvoiceLine { Sku = "KB-101", Quantity = 2 };
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+
+string xml = XmlSerializer.Serialize(value, value.GetType(), options);
+output.WriteLine(xml);
+```
+
+The code produces the following output:
+
+```xml
+<InvoiceLine><Sku>KB-101</Sku><Quantity>2</Quantity></InvoiceLine>
+```
+
+<Warning>
+`XmlSerializer.Serialize<object>(value)` writes the value as the type it has, as System.Text.Json does: the document element is named after that type. A document doesn't record which type wrote it, so `Deserialize<object>` returns an `XmlElement`, which you can read as the type you expect with `XmlSerializer.Deserialize<T>(element)`. To write members whose declared type is a base class, and read them back as the derived type, see [Polymorphism](/xmlessentials/guides/polymorphism).
+</Warning>
+
+## Serialize to the document object model
+
+`SerializeToDocument` returns a read-only [`XmlDocument`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) that you can query. Dispose the document when you're done, because it holds pooled memory.
+
+```csharp Program.cs
+var customer = new InvoiceCustomer { Name = "Contoso", Email = "ap@contoso.example" };
+
+using XmlDocument document = XmlSerializer.SerializeToDocument(customer);
+
+XmlElement root = document.RootElement;
+output.WriteLine(root.LocalName);
+output.WriteLine(root.GetChild("Email").GetString());
+```
+
+The code produces the following output:
+
+```text
+InvoiceCustomer
+ap@contoso.example
+```
+
+Two related methods exist. `SerializeToElement` returns the root [`XmlElement`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlElement) of a new document, and `SerializeToNode` returns a mutable [`XmlNode`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode) that you can edit. See [Use XmlDocument](/xmlessentials/guides/use-xmldocument) and [Use XmlNode](/xmlessentials/guides/use-xmlnode).
+
+## Choose an overload
+
+Every destination has the same four ways to say how the type is mapped.
+
+| Last argument | Use it when |
+| --- | --- |
+| `XmlSerializerOptions? options = null` | You use reflection. `null` means [`XmlSerializerOptions.Default`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions). |
+| `Type inputType` and options | The type is known only at run time. |
+| `XmlTypeInfo<TValue> xmlTypeInfo` | You use source generation and have the generated metadata for the type. |
+| `XmlSerializerContext context` | You use source generation and let the context look up the type. |
+
+The overloads that take options are annotated with `RequiresUnreferencedCode` and `RequiresDynamicCode`, so the compiler warns when you call them from a trimmed or Native AOT application. The other two aren't. See [Reflection versus source generation](/xmlessentials/guides/reflection-vs-source-generation).
+
+## Serialization behavior
+
+Unless you change it with options or attributes, `XmlSerializer` behaves as follows:
+
+- Public properties that have a public getter are serialized. Fields aren't. See [Ignore properties](/xmlessentials/guides/ignore-properties) to include fields or exclude members.
+- Each member is a child element. To write attributes or element text, see [Customize names and shape](/xmlessentials/guides/customize-names).
+- Element names are the C# names, unchanged. Base class members come before derived class members.
+- A member that is `null` is written as an empty element marked `xsi:nil="true"`. See [Handle null values](/xmlessentials/guides/null-and-nil).
+- Enumeration values are written as their C# names.
+- A collection is written as repeated elements with no wrapper. See [Serialize collections](/xmlessentials/guides/collections).
+- The output is UTF-8, has an XML 1.0 declaration, and isn't indented.
+
+For the types the serializer can write without a converter, see [Supported types](/xmlessentials/guides/supported-types).
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Deserialize" icon="arrow-right-to-bracket" href="/xmlessentials/guides/deserialize">
+    Read XML into .NET objects from each kind of source.
+  </Card>
+  <Card title="Customize names and shape" icon="pen" href="/xmlessentials/guides/customize-names">
+    Rename elements, write attributes and text, and set the order.
+  </Card>
+  <Card title="Configure options" icon="sliders" href="/xmlessentials/guides/configure-options">
+    Create, reuse, and freeze `XmlSerializerOptions`.
+  </Card>
+  <Card title="XmlSerializer" icon="code" href="/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer">
+    API reference for every overload.
+  </Card>
+</Columns>

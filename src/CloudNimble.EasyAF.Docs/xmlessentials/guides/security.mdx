@@ -1,0 +1,342 @@
+---
+title: "Security considerations"
+sidebarTitle: "Security"
+description: "The limits XmlEssentials enforces by default, why DTDs and entities are rejected, and how to read XML from a source you don't trust."
+icon: "shield-halved"
+---
+
+XML has a history of parser attacks: entity expansion ("billion laughs"), external entities (XXE), and documents built to exhaust memory or the stack. XmlEssentials removes the first two by not supporting the features they need, and it bounds the third with limits that are on by default. This page lists the limits, explains what is rejected and why, and says what remains your responsibility.
+
+The reader, the document model, and the serializer share one tokenizer, `Utf8XmlReader`. Everything on this page applies to `Utf8XmlReader`, `XmlDocument`, `XmlNode.Parse`, and `XmlSerializer`.
+
+## DTDs and entities are rejected
+
+XmlEssentials doesn't process document type definitions (DTDs). A document that contains `<!DOCTYPE`, or any other `<!` markup that isn't a comment or a CDATA section, throws an `XmlException` with the message `DTD is not allowed.` The reader stops at the DTD. It doesn't parse it and doesn't skip it.
+
+That one rule closes two families of attack by construction:
+
+| Attack | Why it can't happen |
+| --- | --- |
+| Entity expansion ("billion laughs", quadratic blowup) | Entities are declared in a DTD, and a DTD is an error. The only entity references the reader expands are the five predefined ones (`&lt;` `&gt;` `&amp;` `&quot;` `&apos;`) and numeric character references. Each expands to one character. Any other reference throws `Undefined entity.` |
+| External entities (XXE), external DTD subsets, parameter entities | These are also declared in a DTD. The library has no entity resolver and contains no code that opens a file or a network connection for a document. |
+| Server-side request forgery through `xsi:schemaLocation` or a namespace URI | Schema locations and namespace names are data. Nothing is ever fetched. |
+
+There is no setting that turns DTD processing on. With `System.Xml`, you get this behavior by setting `DtdProcessing.Prohibit` and a null `XmlResolver`. Here it is the only behavior.
+
+The following sample gives the serializer an entity expansion document and gives the document parser an external entity.
+
+```csharp
+const string entityExpansion = """
+    <?xml version="1.0"?>
+    <!DOCTYPE Person [
+      <!ENTITY a "aaaaaaaaaa">
+      <!ENTITY b "&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;">
+      <!ENTITY c "&b;&b;&b;&b;&b;&b;&b;&b;&b;&b;">
+    ]>
+    <Person><Name>&c;</Name><Age>36</Age></Person>
+    """;
+
+try
+{
+    XmlSerializer.Deserialize<Person>(entityExpansion);
+}
+catch (XmlException ex)
+{
+    output.WriteLine($"Line {ex.LineNumber}: {ex.Message}");
+}
+
+const string externalEntity = """
+    <!DOCTYPE Person [<!ENTITY secret SYSTEM "file:///etc/passwd">]>
+    <Person><Name>&secret;</Name></Person>
+    """;
+
+try
+{
+    using XmlDocument document = XmlDocument.Parse(externalEntity, new XmlDocumentOptions());
+}
+catch (XmlException ex)
+{
+    output.WriteLine($"Line {ex.LineNumber}: {ex.Message}");
+}
+```
+
+The code produces the following output:
+
+```text
+Line 2: DTD is not allowed.
+Line 1: DTD is not allowed.
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/39_SecurityAndThreadSafety.cs)
+
+The cost is that a legitimate document with a `<!DOCTYPE` line, such as XHTML or an older configuration file, is rejected too. See [XML conformance](/xmlessentials/guides/xml-conformance#what-isnt-supported).
+
+## Limits
+
+Every reading API enforces the following limits. A limit property that is `0` uses the default in the table. `0` doesn't mean "no limit", except for `MaxDocumentByteCount`.
+
+| Property | Default | What it bounds |
+| --- | --- | --- |
+| `MaxDepth` | 64 | How deeply elements are nested. This protects the stack of code that walks the document recursively, including the serializer. |
+| `MaxAttributeCount` | 1,000 | Attributes on one element, including `xmlns` and `xmlns:prefix` declarations. |
+| `MaxNameByteCount` | 1,024 | The length of an element or attribute name, in UTF-8 bytes. |
+| `MaxTextByteCount` | 16,777,216 (16 MiB) | The length of one text node, CDATA section, attribute value, or processing instruction's data, in UTF-8 bytes as they appear in the document, before references are expanded. Each is counted on its own. |
+| `MaxCommentByteCount` | 1,048,576 (1 MiB) | The length of one comment, in UTF-8 bytes. It applies when comments are skipped too. |
+| `MaxDocumentByteCount` | 0, which means **no limit** | The length of the whole document, in UTF-8 bytes. |
+
+When the input arrives in blocks, a text node, a CDATA section, an attribute value, a processing instruction or a comment doesn't have to end before its limit applies. `Utf8XmlReader` with `isFinalBlock` set to `false`, and `XmlSerializer.DeserializeAsyncEnumerable`, throw as soon as the part that has arrived is longer than the limit, so a sender can't keep a node open to make you buffer it. The methods that take a whole `Stream`, such as `XmlSerializer.Deserialize(Stream)` and `XmlDocument.Parse(Stream)`, read the stream to its end before they parse it. While they read, only `MaxDocumentByteCount` bounds them.
+
+The properties exist on each options type:
+
+| Property | `XmlReaderOptions` | `XmlDocumentOptions` | `XmlSerializerOptions` | `XmlWriterOptions` |
+| --- | --- | --- | --- | --- |
+| `MaxDepth` | Yes | Yes | Yes, for reading and writing | Yes |
+| `MaxAttributeCount` | Yes | Yes | Yes, for reading and writing | Yes |
+| `MaxNameByteCount` | Yes | Yes | Yes, for reading and writing | Yes |
+| `MaxTextByteCount` | Yes | Yes | Yes | No |
+| `MaxCommentByteCount` | Yes | Yes | Yes | No |
+| `MaxDocumentByteCount` | Yes | Yes | Yes | No |
+
+The writer has no size limits for values, because the values come from your code. Its depth limit also stops the serializer when it writes an object graph that is nested too deeply.
+
+A document that exceeds a limit throws an [`XmlException`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException). The message names the limit and its value:
+
+| Limit | Message |
+| --- | --- |
+| `MaxDepth` | `MaxDepth exceeded (64).` |
+| `MaxAttributeCount` | `MaxAttributeCount exceeded (1000).` |
+| `MaxNameByteCount` | `MaxNameByteCount exceeded (1024).` |
+| `MaxTextByteCount` | `MaxTextByteCount exceeded (16777216).` |
+| `MaxCommentByteCount` | `MaxCommentByteCount exceeded (1048576).` |
+| `MaxDocumentByteCount` | `MaxDocumentByteCount exceeded (1024).`, with the value you set |
+
+The following sample reads a document that is 65 elements deep with the default limits, and then two documents with limits that the caller lowered.
+
+```csharp
+string deep = string.Concat(Enumerable.Repeat("<a>", 65)) + string.Concat(Enumerable.Repeat("</a>", 65));
+
+try
+{
+    using XmlDocument document = XmlDocument.Parse(deep, new XmlDocumentOptions());
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+
+var options = new XmlSerializerOptions
+{
+    MaxDepth = 8,
+    MaxAttributeCount = 16,
+    MaxNameByteCount = 64,
+    MaxTextByteCount = 256,
+};
+string longName = new('x', 300);
+
+try
+{
+    XmlSerializer.Deserialize<Person>($"<Person><Name>{longName}</Name></Person>", options);
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+
+try
+{
+    XmlSerializer.Deserialize<Person>($"<Person><{longName}>Ada</{longName}></Person>", options);
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+```
+
+The code produces the following output:
+
+```text
+MaxDepth exceeded (64).
+MaxTextByteCount exceeded (256).
+MaxNameByteCount exceeded (64).
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/39_SecurityAndThreadSafety.cs)
+
+The limits apply to content the serializer skips as well. An element that maps to no property is still read by the tokenizer, so its depth, names, and text are still checked.
+
+System.Text.Json has one such limit, `MaxDepth`, with the same default of 64.
+
+### Limit the size of the document
+
+`MaxDocumentByteCount` is the only limit that is off by default, because the right value depends on your application. Without it, the size of a document is bounded only by what the caller hands the library. Set it whenever you read a stream that someone else controls.
+
+```csharp
+var options = new XmlSerializerOptions { MaxDocumentByteCount = 1024 };
+string xml = $"<Person><Name>{new string('x', 4000)}</Name></Person>";
+using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
+
+try
+{
+    XmlSerializer.Deserialize<Person>(stream, options);
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+```
+
+The code produces the following output:
+
+```text
+MaxDocumentByteCount exceeded (1024).
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/39_SecurityAndThreadSafety.cs)
+
+When the limit is set, reading from a stream stops as soon as the limit is passed. The rest of the stream isn't buffered first.
+
+## Type names in the document are never loaded
+
+The serializer creates only the types that your code names: the type you pass to `Deserialize`, the types of its properties, and the derived types you declare with `[XmlDerivedType]`. A type discriminator in a document, whether it is an element name, an attribute, or `xsi:type`, is compared with the discriminators you declared. It is never passed to `Type.GetType` or used to load an assembly. The library contains no call that turns text from a document into a type.
+
+A discriminator that doesn't match a declared one throws an `XmlException` by default.
+
+```csharp
+const string declared = """
+    <Delivery>
+      <Carrier xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="courier">
+        <Name>Swift</Name>
+        <Vehicle>Bicycle</Vehicle>
+      </Carrier>
+      <OrderId>1042</OrderId>
+    </Delivery>
+    """;
+
+Delivery? delivery = XmlSerializer.Deserialize<Delivery>(declared);
+output.WriteLine(delivery!.Carrier!.GetType().Name);
+
+const string undeclared = """
+    <Delivery>
+      <Carrier xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="System.Diagnostics.Process, System">
+        <Name>Swift</Name>
+      </Carrier>
+      <OrderId>1042</OrderId>
+    </Delivery>
+    """;
+
+try
+{
+    XmlSerializer.Deserialize<Delivery>(undeclared);
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+```
+
+```csharp Models
+[XmlPolymorphic(DiscriminatorPlacement = XmlDiscriminatorPlacement.XsiType)]
+[XmlDerivedType<CourierCarrier>("courier")]
+public class Carrier
+{
+    public string? Name { get; set; }
+}
+
+public sealed class CourierCarrier : Carrier
+{
+    public string? Vehicle { get; set; }
+}
+
+public sealed class Delivery
+{
+    public Carrier? Carrier { get; set; }
+
+    public int OrderId { get; set; }
+}
+```
+
+The code produces the following output:
+
+```text
+CourierCarrier
+Unknown type discriminator 'System.Diagnostics.Process, System'.
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/39_SecurityAndThreadSafety.cs)
+
+Two more facts keep the set of types closed:
+
+- A property of type `object` is read as XML: an `XmlElement`, or an `XmlNode` when `XmlSerializerOptions.UnknownTypeHandling` is `XmlUnknownTypeHandling.XmlNode`. The serializer doesn't choose a type from the document.
+- If you set `[XmlPolymorphic(UnknownDerivedTypeHandling = ...)]` to a fallback value, an unknown discriminator produces the declared base type. It still doesn't produce a type that the document chose.
+
+This design matches System.Text.Json, which also requires derived types to be declared. For the attributes and options, see [Polymorphism](/xmlessentials/guides/polymorphism).
+
+## Read XML from an untrusted source
+
+Use this list when the document comes from a user, a partner, or the network.
+
+1. **Set `MaxDocumentByteCount`.** Choose a value from the largest document you expect. This is the one limit that is off by default.
+2. **Lower the other limits to fit your data.** If your documents are never more than 10 levels deep and no value is longer than a few kilobytes, say so in the options. The defaults are ceilings for general use, not a statement about your format.
+3. **Start from `XmlSerializerOptions.Strict` when the format is fixed.** The strict preset rejects elements and attributes that map to no property (`UnmappedMemberHandling.Disallow`), rejects a property that appears twice (`AllowDuplicateProperties = false`), and rejects comments (`ReadCommentHandling = Disallow`). The general defaults skip the first, accept the second, and skip the third. See [Configure serializer options](/xmlessentials/guides/configure-options).
+4. **Deserialize into types you wrote for the purpose.** Constructors and property setters run with values from the document. Don't deserialize directly into a type whose setters have side effects.
+5. **Validate the values.** A well-formed document isn't a valid one. The library checks XML and the lexical form of each typed value. It doesn't check XML Schema, ranges, lengths, or business rules. Use [required properties](/xmlessentials/guides/required-properties) for what must be present, and check the rest in your code.
+6. **Catch `XmlException`.** Every rejection described on this page is an `XmlException`. Catch it at the boundary and return an error to the caller.
+7. **Pass a `CancellationToken` to the asynchronous methods.** The library has no time limit of its own.
+
+<Warning>
+Some exception messages quote text from the document, for example an unknown type discriminator, a declared encoding, or an element name. Treat the message as untrusted input when you log it or show it to a user.
+</Warning>
+
+## Custom converters
+
+A [custom converter](/xmlessentials/guides/custom-converters) runs your code on text from the document, so the guidance above applies to it too.
+
+- The converter for a type comes from `XmlSerializerOptions.Converters` or from an `[XmlConverter]` attribute in your code. A document can't select or name a converter.
+- A converter that takes a `Utf8XmlReader` reads through the same tokenizer, so DTD rejection and the limits still apply to what it reads.
+- Don't use text from the document to choose a type, open a file, build a query, or start a process inside a converter.
+- A converter that calls `XmlSerializer` again for a nested value should pass the options it was given, so that the caller's limits stay in force.
+
+## Write XML safely
+
+`Utf8XmlWriter` escapes every value it writes, in text and in attributes, and checks every name. A value that comes from a user can't close an element or add an attribute. See [What the writer escapes](/xmlessentials/guides/xml-conformance#what-the-writer-escapes).
+
+Two APIs turn that protection off:
+
+| API | What it skips |
+| --- | --- |
+| `Utf8XmlWriter.WriteRawValue` | Escaping, always. With `skipInputValidation: true`, also the check that the input is well formed where it is written. That check is on by default. |
+| `XmlWriterOptions.SkipValidation = true` | The checks on names, namespace declarations, duplicate attributes, the characters of comments, CDATA sections, and processing instructions, and the check for unclosed elements. Values are still escaped. |
+
+Never pass text from an untrusted source to `WriteRawValue`, and never use it as an element or attribute name when `SkipValidation` is `true`.
+
+## What the library doesn't protect against
+
+- **Total size, unless you set `MaxDocumentByteCount`.** The per-node limits don't bound the number of nodes. A document made of millions of small elements passes every other limit and produces a large `XmlDocument` or a large collection.
+- **Time.** There is no timeout. Reading is linear in the size of the document, so bounding the size bounds the time.
+- **Validity.** There is no DTD or XML Schema validation.
+- **Your converters, constructors, and setters.** They run with the document's values.
+- **Confidentiality of the data.** The library doesn't log, doesn't write files, and doesn't send telemetry. What your code does with a value or an exception message is up to you.
+- **Signatures and encryption.** XML Signature and XML Encryption aren't implemented, and no canonical XML form is produced.
+
+## See also
+
+<Columns cols={2}>
+  <Card title="XML conformance" icon="badge-check" href="/xmlessentials/guides/xml-conformance">
+    What is read, what is rejected, and every error message.
+  </Card>
+  <Card title="Configure serializer options" icon="sliders" href="/xmlessentials/guides/configure-options">
+    Set limits and the strict preset on XmlSerializerOptions.
+  </Card>
+  <Card title="Polymorphism" icon="sitemap" href="/xmlessentials/guides/polymorphism">
+    Declare the derived types a document can name.
+  </Card>
+  <Card title="Thread safety" icon="code-branch" href="/xmlessentials/guides/thread-safety">
+    Which objects you can share between requests.
+  </Card>
+</Columns>
+
+- [`XmlReaderOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlReaderOptions)
+- [`XmlDocumentOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocumentOptions)
+- [`XmlSerializerOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions)
+- [`XmlWriterOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlWriterOptions)
+- [`XmlException`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlException)

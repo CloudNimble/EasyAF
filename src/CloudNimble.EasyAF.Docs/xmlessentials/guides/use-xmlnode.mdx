@@ -1,0 +1,761 @@
+---
+title: "How to build and change XML with XmlNode"
+sidebarTitle: "Use XmlNode"
+description: "Build XML from scratch, parse it into a mutable tree, add, remove, and replace nodes, and write the result with XmlNode and XmlElementNode."
+icon: "pen-to-square"
+---
+
+The types in the `CloudNimble.Text.Xml.Nodes` namespace are a tree of XML nodes that you can change: add an element, set an attribute, remove a comment, and write the result. Use them when you edit a document or assemble one piece by piece and a class to serialize would be more than you need.
+
+`XmlNode` is the XML counterpart of `JsonNode` in System.Text.Json: a mutable tree that sits beside a read-only document type. The shape is different, because XML isn't a property bag. An element has an ordered list of children that can mix elements, text, comments, and more, and a separate list of attributes, where a `JsonObject` has one value per name.
+
+## Choose between the mutable tree and the document
+
+| | `XmlDocument` and `XmlElement` | `XmlNode` and `XmlElementNode` |
+| --- | --- | --- |
+| Can be changed | No | Yes |
+| Can be built without parsing | No | Yes |
+| Storage | Pooled buffers; an `XmlElement` is a struct that points into them | One object per node; names and values are strings. A parsed tree keeps the parsed input and makes the nodes under an element when you first reach into it |
+| Lifetime | Dispose the document; elements die with it | Ordinary objects; nothing to dispose |
+| Keeps comments and indentation inside the root | Yes | Yes |
+| Keeps `<e></e>` distinct from `<e/>` | Yes | Yes |
+| Keeps the declaration and comments outside the root | Yes | No |
+| Typed getters such as `GetInt32` | Yes | No; values are strings |
+
+If you only read, use [`XmlDocument`](/xmlessentials/guides/use-xmldocument). If you read forward once through a large input, use [`Utf8XmlReader`](/xmlessentials/guides/use-utf8xmlreader). If the XML maps to your own classes, use [`XmlSerializer`](/xmlessentials/guides/serialize). The cost of the tree is covered in [When the tree costs more](#when-the-tree-costs-more) at the end of this page.
+
+## The node types
+
+Every type derives from `XmlNode`, which has three members that all nodes share: `ValueKind`, `Parent`, and `NamespaceUri` (which is `null` for nodes that have no name).
+
+| Type | Represents | Main members |
+| --- | --- | --- |
+| `XmlElementNode` | An element | `LocalName`, `Prefix`, `NamespaceUri`, `Attributes`, `Children`, `InnerText` |
+| `XmlAttributeNode` | An attribute | `LocalName`, `Prefix`, `NamespaceUri`, `Value` |
+| `XmlTextNode` | Character data | `Value` |
+| `XmlCDataNode` | A CDATA section | `Value` |
+| `XmlCommentNode` | A comment | `Value` |
+| `XmlProcessingInstructionNode` | A processing instruction | `Target`, `Data` |
+| `XmlDeclarationNode` | The XML declaration | `Version`, `Encoding`, `Standalone` |
+
+`XmlElementNode.Children` is an `XmlNodeList` and `XmlElementNode.Attributes` is an `XmlAttributeNodeList`. Both implement `IList<T>`.
+
+## Build a tree
+
+Create an `XmlElementNode` and add to it. `SetAttribute` adds an attribute, `AddElement` creates a child element and returns it, `Add` appends any node, and setting `InnerText` gives an element its text.
+
+```csharp
+var order = new XmlElementNode("Order");
+order.SetAttribute("id", "1042");
+
+XmlElementNode customer = order.AddElement("Customer");
+customer.Add(new XmlTextNode("Ada Lovelace"));
+
+order.AddElement("Item").InnerText = "Keyboard";
+order.AddElement("Item").InnerText = "Mouse & pad";
+order.AddElement("Notes");
+
+output.WriteLine(order.ToString());
+```
+
+The code produces the following output:
+
+```xml
+<Order id="1042"><Customer>Ada Lovelace</Customer><Item>Keyboard</Item><Item>Mouse &amp; pad</Item><Notes/></Order>
+```
+
+What to notice:
+
+- `ToString` returns the markup of the node, without an XML declaration and without indentation.
+- You set values as plain text. Escaping happens when the tree is written, so `&` became `&amp;`.
+- An element that you create and give no children is written as an empty-element tag (`<Notes/>`). Set `IsEmptyElement` to `false` to write it as `<Notes></Notes>`. A parsed element keeps the form it had in its source.
+- Setting `InnerText` replaces all the children of the element with one text node. Setting it to an empty string removes them.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/29_BuildWithXmlNode.cs)
+
+## Parse XML into a tree
+
+`XmlNode.Parse` reads a document from a `string` or from UTF-8 bytes and returns its root element.
+
+```csharp
+const string xml = """
+    <?xml version="1.0" encoding="utf-8"?>
+    <!-- exported nightly -->
+    <Order>
+      <!-- rush -->
+      <Item> Keyboard </Item>
+      <Notes></Notes>
+    </Order>
+    """;
+
+XmlNode order = XmlNode.Parse(xml);
+output.WriteLine(order.ToString());
+
+try
+{
+    XmlNode.Parse("<Order><Item>Keyboard</Order>");
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+```
+
+The code produces the following output:
+
+```text
+<Order>
+  <!-- rush -->
+  <Item> Keyboard </Item>
+  <Notes></Notes>
+</Order>
+End tag does not match start tag.
+```
+
+The tree holds the root element and what's inside it. Compare the output with the input:
+
+- **Kept:** elements, attributes, text, CDATA sections, processing instructions inside the root, and comments inside the root.
+- **Kept:** the white space between elements inside the root, as text nodes, so the indentation survives. The goal is the same as for `XmlDocument`: no surprises when a document is edited and saved.
+- **Dropped:** the XML declaration, and the comments, processing instructions, and white space before and after the root element.
+- **Kept:** the form of an element with no content. `<Notes></Notes>` comes back as `<Notes></Notes>`, and `<Notes/>` would come back as one tag. `XmlElementNode.IsEmptyElement` holds the form, and you can set it.
+
+`Parse` returns the root as an `XmlNode`; cast the result to `XmlElementNode` to reach the element members. Input that isn't a well-formed document throws an `XmlException`. `Parse` takes a `string` or UTF-8 bytes and uses the default `XmlDocumentOptions`. When you need other limits, a tree without the white space, or input from a `Stream`, parse with [`XmlDocument`](/xmlessentials/guides/use-xmldocument) and call `CloneNode` on the element you want. The copy is complete when `CloneNode` returns, so it stays valid after the document is disposed:
+
+```csharp
+XmlElementNode product;
+
+using (XmlDocument document = XmlDocument.Parse("""<Catalog><Product sku="KB-1"><Name>Keyboard</Name></Product></Catalog>"""))
+{
+    product = (XmlElementNode)document.RootElement.GetChild("Product").CloneNode();
+}
+
+product.SetAttribute("sku", "KB-2");
+product.AddElement("Price").InnerText = "49.90";
+
+output.WriteLine(product.ToString());
+```
+
+The code produces the following output:
+
+```xml
+<Product sku="KB-2"><Name>Keyboard</Name><Price>49.90</Price></Product>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/30_ChangeWithXmlNode.cs)
+
+### How a parsed tree is built
+
+`XmlNode.Parse` and `XmlNode.ParseValue` keep the parsed input with the tree, as `JsonNode.Parse` does. An element makes its attributes and child nodes the first time you reach into it, for example through `Children`, `Attributes`, or `InnerText`, or by changing it. Until then, it's written and copied straight from the parsed input.
+
+You can't tell the difference from what the tree reads or writes. A tree is written the same however much of it you have reached into, and an element you move to another tree declares the namespaces it needs either way. `DeepClone` of an element you haven't reached into gives a tree of its own: changing the copy leaves the original alone, and the other way round.
+
+The parsed input stays in memory as long as an element that you haven't reached into is reachable, including one that you moved into another tree or copied with `DeepClone`. It doesn't depend on your string, array, or reader after `Parse` or `ParseValue` returns. `XmlElement.CloneNode` works differently: it copies everything under the element at once, because you dispose the document it came from.
+
+### Parse one element from a reader
+
+`XmlNode.ParseValue` builds a tree from the element a `Utf8XmlReader` is positioned on, and leaves the reader on that element's end tag. Use it to edit one record of a large input at a time.
+
+```csharp
+ReadOnlySpan<byte> feed = """<Feed><Entry id="1"><Title>First post</Title></Entry><Entry id="2"><Title>Second post</Title></Entry></Feed>"""u8;
+
+var reader = new Utf8XmlReader(feed);
+while (reader.Read())
+{
+    if (reader.TokenType is XmlTokenType.StartElement && reader.LocalNameEquals("Entry"u8))
+    {
+        var entry = (XmlElementNode)XmlNode.ParseValue(ref reader);
+        entry.SetAttribute("read", "true");
+        output.WriteLine(entry.ToString());
+    }
+}
+```
+
+The code produces the following output:
+
+```xml
+<Entry id="1" read="true"><Title>First post</Title></Entry>
+<Entry id="2" read="true"><Title>Second post</Title></Entry>
+```
+
+## Navigate the tree
+
+The indexer on an element returns the first child element with a local name, or `null`. `Children` and `Attributes` are lists that you index, count, and enumerate. `Parent` goes back up.
+
+```csharp
+const string xml = """
+    <Order id="1042" status="open">
+      <Customer>Ada Lovelace</Customer>
+      <Item sku="KB-1">Keyboard</Item>
+      <Item sku="MS-2">Mouse</Item>
+    </Order>
+    """;
+
+var order = (XmlElementNode)XmlNode.Parse(xml);
+
+output.WriteLine($"Customer: {order["Customer"]!.InnerText}");
+output.WriteLine($"Status: {order.Attributes["status"]!.Value}");
+output.WriteLine($"Discount element found: {order["Discount"] is not null}");
+output.WriteLine($"{order.Children.Count} child nodes, {order.OfType<XmlElementNode>().Count()} of them elements, {order.Attributes.Count} attributes");
+
+foreach (XmlNode child in order.Children)
+{
+    if (child is XmlElementNode { LocalName: "Item" } item)
+    {
+        output.WriteLine($"{item.Attributes["sku"]!.Value}: {item.InnerText}");
+    }
+}
+
+XmlNode first = order.Children[0];
+output.WriteLine($"The first child is a {first.ValueKind} node, and its parent is <{((XmlElementNode)first.Parent!).LocalName}>");
+```
+
+The code produces the following output:
+
+```text
+Customer: Ada Lovelace
+Status: open
+Discount element found: False
+7 child nodes, 3 of them elements, 2 attributes
+KB-1: Keyboard
+MS-2: Mouse
+The first child is a Text node, and its parent is <Order>
+```
+
+What to notice:
+
+- A missing name gives `null`, not an exception. That's different from `XmlElement.GetChild`, which throws.
+- `order["Item"]` returns only the first `Item`. To visit every match, enumerate `Children` and filter, as the loop does.
+- `Children` holds every kind of node, and in a tree parsed from an indented document that includes a text node for each run of indentation: four of the seven children here. Don't rely on positions such as `Children[0]` to find an element. Use the name indexer, a type pattern (`child is XmlElementNode`), or `ValueKind`.
+- An `XmlElementNode` is itself an `IEnumerable<XmlNode>` over its children, so `foreach (XmlNode child in order)` and LINQ operators such as `OfType<XmlElementNode>()` work on it.
+- `InnerText` on an element that has child elements includes the white space between them. Read it from the elements that hold the values, such as `Customer`.
+- `order["Item", "urn:example"]` and `order.Attributes["sku", "urn:example"]` match a namespace URI as well. The one-argument forms match the local name in any namespace.
+- `InnerText` is the text of every text node and CDATA section inside the element, at any depth. Values are strings; the tree has no typed getters, so convert them yourself.
+
+## Add and insert nodes
+
+`AddElement` and `Add` append. To put a node at a position, call `Insert` on the `Children` list.
+
+```csharp
+var order = (XmlElementNode)XmlNode.Parse("""<Order><Item>Keyboard</Item></Order>""");
+
+order.AddElement("Item").InnerText = "Mouse";
+
+var customer = new XmlElementNode("Customer");
+customer.InnerText = "Ada Lovelace";
+order.Children.Insert(0, customer);
+
+order.Children.Insert(1, new XmlCommentNode(" items "));
+
+output.WriteLine(order.ToString());
+```
+
+The code produces the following output:
+
+```xml
+<Order><Customer>Ada Lovelace</Customer><!-- items --><Item>Keyboard</Item><Item>Mouse</Item></Order>
+```
+
+### Indentation when you add nodes
+
+The tree doesn't indent for you. In a tree parsed from an indented document, the indentation is ordinary text nodes, and a node you add goes exactly where you put it, with no white space around it. You have three choices: accept the result, add the white-space text nodes yourself, or work without the white space and let the writer indent the output.
+
+```csharp
+const string xml = """
+    <Order>
+      <Item>Keyboard</Item>
+    </Order>
+    """;
+
+var indented = (XmlElementNode)XmlNode.Parse(xml);
+indented.AddElement("Item").InnerText = "Mouse";
+output.WriteLine(indented.ToString());
+
+var options = new XmlDocumentOptions { WhitespaceHandling = XmlWhitespaceHandling.Insignificant };
+using XmlDocument document = XmlDocument.Parse(xml, options);
+var compact = (XmlElementNode)document.RootElement.CloneNode();
+compact.AddElement("Item").InnerText = "Mouse";
+output.WriteLine(compact.ToString());
+
+var buffer = new ArrayBufferWriter<byte>();
+var writerOptions = new XmlWriterOptions { Indented = true, NewLine = "\n", OmitXmlDeclaration = true };
+using (var writer = new Utf8XmlWriter(buffer, writerOptions))
+{
+    compact.WriteTo(writer);
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+```
+
+The code produces the following output:
+
+```xml
+<Order>
+  <Item>Keyboard</Item>
+<Item>Mouse</Item></Order>
+<Order><Item>Keyboard</Item><Item>Mouse</Item></Order>
+<Order>
+  <Item>Keyboard</Item>
+  <Item>Mouse</Item>
+</Order>
+```
+
+The first result keeps the original indentation and puts the new `Item` after the last line break, right before the end tag. The second and third come from a tree without white space, parsed through `XmlDocument` with `WhitespaceHandling.Insignificant`, written compact and then with an indenting writer. Use the third approach when you're free to reformat the document, and the first, with your own white-space text nodes, when the rest of the file must stay as it was.
+
+## Remove, replace, and move nodes
+
+`Remove` and `RemoveAt` take a node out of a list, and assigning to an index replaces the node at that position. A node that is removed or replaced has no parent afterward, so you can add it somewhere else.
+
+```csharp
+var order = (XmlElementNode)XmlNode.Parse("""<Order><Item>Keyboard</Item><Item>Mouse</Item><Item>Monitor</Item><Note>Gift</Note></Order>""");
+
+order.Children.RemoveAt(0);
+
+XmlElementNode note = order["Note"]!;
+order.Children.Remove(note);
+output.WriteLine($"The removed node has a parent: {note.Parent is not null}");
+
+var replacement = new XmlElementNode("Item");
+replacement.InnerText = "Trackball";
+order.Children[0] = replacement;
+
+var archive = new XmlElementNode("Archive");
+archive.Add(note);
+
+order["Item"]!.InnerText = "Trackball (wireless)";
+
+output.WriteLine(order.ToString());
+output.WriteLine(archive.ToString());
+```
+
+The code produces the following output:
+
+```text
+The removed node has a parent: False
+<Order><Item>Trackball (wireless)</Item><Item>Monitor</Item></Order>
+<Archive><Note>Gift</Note></Archive>
+```
+
+`Clear` removes every node from a list.
+
+Don't change a list while a `foreach` loop is enumerating it. After a node is added, removed, or replaced, the loop's next step throws an `InvalidOperationException` ("Collection was modified; enumeration operation may not execute."), which is what a `List<T>` and a `JsonArray` do. Loop over a copy, or loop by index from the end:
+
+```csharp
+foreach (XmlNode child in order.Children.ToArray())
+{
+    if (child is XmlCommentNode)
+    {
+        order.Children.Remove(child);
+    }
+}
+```
+
+### Copy a node with DeepClone
+
+A node has at most one parent. Adding a node that already has one throws an `XmlException`; it isn't moved for you. To put the same content in two places, add a copy. `DeepClone` copies a node with its attributes and descendants, and the copy has no parent.
+
+```csharp
+var order = (XmlElementNode)XmlNode.Parse("""<Order><Item sku="KB-1">Keyboard</Item></Order>""");
+XmlElementNode item = order["Item"]!;
+var backorder = new XmlElementNode("Backorder");
+
+try
+{
+    backorder.Add(item);
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+
+var copy = (XmlElementNode)item.DeepClone();
+copy.SetAttribute("sku", "KB-1B");
+backorder.Add(copy);
+
+output.WriteLine(order.ToString());
+output.WriteLine(backorder.ToString());
+```
+
+The code produces the following output:
+
+```text
+The node already has a parent.
+<Order><Item sku="KB-1">Keyboard</Item></Order>
+<Backorder><Item sku="KB-1B">Keyboard</Item></Backorder>
+```
+
+The copy is independent: changing its `sku` left the original alone.
+
+## Work with attributes
+
+`SetAttribute` changes the value of an attribute that exists and appends one that doesn't. The `Attributes` list gives you the attribute nodes themselves, to read, change, reorder, or remove.
+
+```csharp
+var order = (XmlElementNode)XmlNode.Parse("""<Order id="1042" status="open" draft="true"/>""");
+
+order.SetAttribute("status", "shipped");
+order.SetAttribute("carrier", "Contoso Freight");
+order.Attributes["id"]!.Value = "1043";
+
+XmlAttributeNode draft = order.Attributes["draft"]!;
+order.Attributes.Remove(draft);
+
+output.WriteLine(order.ToString());
+```
+
+The code produces the following output:
+
+```xml
+<Order id="1043" status="shipped" carrier="Contoso Freight"/>
+```
+
+What to notice:
+
+- Attributes are written in list order. A changed attribute keeps its position, and a new one goes last.
+- `SetAttribute(name, value)` sets the attribute with that local name in no namespace, and leaves an attribute with the same local name in another namespace as it is. Pass the namespace URI as the third argument for an attribute in a namespace.
+- A `null` value is stored as an empty string. To delete an attribute, remove it from the list.
+- `Attributes.Add` doesn't check for a duplicate name. Two attributes with the same name fail when the tree is written, with "Duplicate attribute.". `SetAttribute` avoids the problem.
+
+## Use namespaces
+
+An element or an attribute has a `NamespaceUri` and a `Prefix`. Set the namespace to say what the name means, and set the prefix when you care how it's spelled. The writer adds the `xmlns` declarations that the names need.
+
+```csharp
+const string atom = "http://www.w3.org/2005/Atom";
+const string dc = "http://purl.org/dc/elements/1.1/";
+
+var feed = new XmlElementNode("feed", atom);
+feed.AddElement("title", atom).InnerText = "Release notes";
+
+var creator = new XmlElementNode("creator", dc, "dc");
+creator.InnerText = "Ada Lovelace";
+feed.Add(creator);
+
+XmlElementNode link = feed.AddElement("link", atom);
+link.SetAttribute("href", "https://example.com/");
+link.Attributes.Add(new XmlAttributeNode("language", "en", dc, "dc"));
+
+output.WriteLine(feed.ToString());
+
+feed.Attributes.Add(new XmlAttributeNode("dc", dc, XmlNamespaces.Xmlns, "xmlns"));
+output.WriteLine(feed.ToString());
+
+output.WriteLine($"{creator.Prefix}:{creator.LocalName} is in {creator.NamespaceUri}");
+```
+
+The code produces the following output:
+
+```text
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Release notes</title><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ada Lovelace</dc:creator><link href="https://example.com/" xmlns:dc="http://purl.org/dc/elements/1.1/" dc:language="en"/></feed>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/"><title>Release notes</title><dc:creator>Ada Lovelace</dc:creator><link href="https://example.com/" dc:language="en"/></feed>
+dc:creator is in http://purl.org/dc/elements/1.1/
+```
+
+What to notice:
+
+- An element with a namespace and no prefix is written with a default namespace declaration (`xmlns="..."`).
+- A child doesn't inherit its parent's namespace. Pass the namespace to `AddElement` for every element that belongs to it. A child that you create without one is in no namespace, and under a default namespace it's written with `xmlns=""`.
+- In the first output, `dc` is declared on each element that uses it, because nothing above them declares it. To declare a prefix once, add a namespace declaration to an ancestor as an attribute: local name `dc`, prefix `xmlns`, and namespace `XmlNamespaces.Xmlns`. The second output shows the result.
+- A tree that you parse already has its declarations as attributes like that one, so it's written back with the declarations where they were.
+- The namespace of an element or attribute comes from its `NamespaceUri` property. Changing a declaration attribute doesn't move elements to another namespace.
+
+When a name has a namespace and no prefix to carry it, the writer makes one up. When a name has a prefix and no namespace, the tree can't be written:
+
+```csharp
+var item = new XmlElementNode("Item");
+item.SetAttribute("unit", "kg", "urn:example:units");
+output.WriteLine(item.ToString());
+
+var broken = new XmlElementNode("Item", namespaceUri: null, prefix: "u");
+try
+{
+    broken.ToString();
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+```
+
+The code produces the following output:
+
+```text
+<Item xmlns:ns1="urn:example:units" ns1:unit="kg"/>
+Prefixed names require a namespace URI.
+```
+
+An attribute needs a prefix to be in a namespace, because an attribute without one is in no namespace. Construct an `XmlAttributeNode` with the prefix you want when `ns1` isn't acceptable. For the rules across the library, see [Use XML namespaces](/xmlessentials/guides/namespaces).
+
+<Note>
+The tree doesn't validate as you build it. The constructors and the name setters reject only a `null`, empty, or white-space name or processing instruction target. Everything else about names, prefixes, and values is checked when the tree is written: an invalid name, a duplicate attribute, a comment that contains `--`, or a CDATA section that contains `]]>` throws an `XmlException` from `ToString` or `WriteTo`, not from the call that created the node.
+</Note>
+
+## Add text, CDATA, comments, and processing instructions
+
+An element's children can be any mix of node types, in any order.
+
+```csharp
+var note = new XmlElementNode("Note");
+note.Add(new XmlCommentNode(" reviewed "));
+note.Add(new XmlTextNode("Use <b> & </b> for bold. "));
+note.Add(new XmlCDataNode("<b>Raw</b> & unescaped"));
+note.Add(new XmlProcessingInstructionNode("print", "copies=\"2\""));
+note.AddElement("Signature");
+
+output.WriteLine(note.ToString());
+
+foreach (XmlNode child in note.Children)
+{
+    output.WriteLine($"{child.GetType().Name}: {child.ValueKind}");
+}
+
+output.WriteLine($"InnerText: {note.InnerText}");
+```
+
+The code produces the following output:
+
+```text
+<Note><!-- reviewed -->Use &lt;b> &amp; &lt;/b> for bold. <![CDATA[<b>Raw</b> & unescaped]]><?print copies="2"?><Signature/></Note>
+XmlCommentNode: Comment
+XmlTextNode: Text
+XmlCDataNode: CData
+XmlProcessingInstructionNode: ProcessingInstruction
+XmlElementNode: Element
+InnerText: Use <b> & </b> for bold. <b>Raw</b> & unescaped
+```
+
+What to notice:
+
+- A text node is escaped when it's written. A CDATA section is written as is, which is its purpose: text with markup characters that you don't want escaped.
+- `InnerText` joins the text nodes and the CDATA sections and skips comments and processing instructions.
+- The `ValueKind` of an element in the tree is always `Element`. The `EmptyElement` and `Nil` kinds are reported only by `XmlElement`.
+
+## Write the tree
+
+`ToString` is the short way to get markup. For control over the output, or to write to a stream or a buffer without a string in between, pass a [`Utf8XmlWriter`](/xmlessentials/guides/use-utf8xmlwriter) to `WriteTo`. The writer's options decide the declaration and the indentation.
+
+```csharp
+var order = new XmlElementNode("Order");
+order.SetAttribute("id", "1042");
+order.AddElement("Item").InnerText = "Keyboard";
+
+var buffer = new ArrayBufferWriter<byte>();
+var options = new XmlWriterOptions { Indented = true, NewLine = "\n" };
+using (var writer = new Utf8XmlWriter(buffer, options))
+{
+    order.WriteTo(writer);
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+
+buffer.ResetWrittenCount();
+options = new XmlWriterOptions { OmitXmlDeclaration = true };
+using (var writer = new Utf8XmlWriter(buffer, options))
+{
+    new XmlDeclarationNode { Version = "1.0", Standalone = true }.WriteTo(writer);
+    order.WriteTo(writer);
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+```
+
+The code produces the following output:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Order id="1042">
+  <Item>Keyboard</Item>
+</Order>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><Order id="1042"><Item>Keyboard</Item></Order>
+```
+
+The first writer adds the XML declaration itself, which is what you want in most cases. The second part shows `XmlDeclarationNode`, for when you need to state the declaration yourself.
+
+<Warning>
+`XmlDeclarationNode.WriteTo` writes the declaration and tells the writer that one is there, so the writer doesn't add its own, whatever `OmitXmlDeclaration` is set to. Write the node first. A declaration node can't be added to an element's `Children`: that throws an `XmlException`.
+</Warning>
+
+`XmlNode.Parse` never produces an `XmlDeclarationNode`, and a tree has no document node to hold one. The declaration of a parsed document is available on [`XmlDocument.Declaration`](/xmlessentials/guides/use-xmldocument#read-the-xml-declaration).
+
+### Change one thing in a file and write it back
+
+To edit a file and leave the rest of it as it was, parse it, make the change, and write the tree with options that name the file's style. The tree keeps the white space and the comments inside the root element, and whether each element with no content had one tag or two. The writer's options set the rest.
+
+```csharp
+const string project =
+    "<Project Sdk=\"Microsoft.NET.Sdk\">\n" +
+    "  <PropertyGroup>\n" +
+    "    <Description></Description>\n" +
+    "  </PropertyGroup>\n" +
+    "  <!-- What the project depends on. -->\n" +
+    "  <ItemGroup>\n" +
+    "    <PackageReference Include=\"FluentAssertions\" Version=\"8.0.0\" />\n" +
+    "  </ItemGroup>\n" +
+    "</Project>";
+
+var root = (XmlElementNode)XmlNode.Parse(project);
+root["ItemGroup"]!["PackageReference"]!.SetAttribute("Version", "8.1.0");
+
+var options = new XmlWriterOptions
+{
+    EmptyElementStyle = XmlEmptyElementStyle.SelfClosingWithSpace,
+    NewLine = "\n",
+    OmitXmlDeclaration = true,
+};
+
+var buffer = new ArrayBufferWriter<byte>();
+using (var writer = new Utf8XmlWriter(buffer, options))
+{
+    root.WriteTo(writer);
+}
+
+output.WriteLine(Encoding.UTF8.GetString(buffer.WrittenSpan));
+```
+
+The code produces the following output:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description></Description>
+  </PropertyGroup>
+  <!-- What the project depends on. -->
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="8.1.0" />
+  </ItemGroup>
+</Project>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/30_ChangeWithXmlNode.cs)
+
+The version number is the only difference from the input. These `XmlWriterOptions` properties name the style:
+
+| Option | What it sets |
+| --- | --- |
+| `EmptyElementStyle` | The form of an element that is written as one tag: `<e/>` by default, `<e />` with `SelfClosingWithSpace`. `StartAndEndTag` writes every element with no content as `<e></e>`. |
+| `AttributeStyle` | Whether the attributes are on the line of the start tag (`Inline`, the default) or `AttributesPerLine` to a line (`PerLine`). |
+| `NewLine` | Every line break in the output: `"\n"` or `"\r\n"`. The tree holds line feeds, whatever the file had, and the default is `Environment.NewLine`. |
+| `OmitXmlDeclaration` | Whether the writer adds an XML declaration. |
+
+See [Control the layout](/xmlessentials/guides/use-utf8xmlwriter#control-the-layout). There are limits:
+
+- White space and comments outside the root element aren't kept. `XmlNode.Parse` returns the root element, so a comment before it and a line break after its end tag aren't in the tree.
+- The writer adds an XML declaration unless `OmitXmlDeclaration` is `true`. The declaration the file had isn't in the tree, so the one that is written is the writer's: `<?xml version="1.0" encoding="utf-8"?>`.
+- A few spellings have no setting. Attribute values are written in double quotes, extra white space inside a tag isn't kept, and a character reference such as `&#65;` is written as the character. See [What a round trip keeps](/xmlessentials/guides/use-xmldocument#what-a-round-trip-keeps).
+
+### Call ToString on other nodes
+
+`ToString` works on any node that can stand alone at the top of a document. Text and attributes can't.
+
+```csharp
+output.WriteLine(new XmlCommentNode(" reviewed ").ToString());
+output.WriteLine(new XmlProcessingInstructionNode("print", "copies=\"2\"").ToString());
+output.WriteLine(new XmlDeclarationNode { Version = "1.1" }.ToString());
+
+try
+{
+    new XmlTextNode("Keyboard").ToString();
+}
+catch (XmlException ex)
+{
+    output.WriteLine($"Text: {ex.Message}");
+}
+
+try
+{
+    new XmlAttributeNode("id", "1042").ToString();
+}
+catch (XmlException ex)
+{
+    output.WriteLine($"Attribute: {ex.Message}");
+}
+```
+
+The code produces the following output:
+
+```text
+<!-- reviewed -->
+<?print copies="2"?>
+<?xml version="1.1" encoding="utf-8"?>
+Text: Text is not allowed at the document level.
+Attribute: Attributes must be written on an open start tag.
+```
+
+To see a text node or an attribute while you debug, read its `Value`.
+
+## Serialize to and from nodes
+
+`XmlSerializer.SerializeToNode` turns an object into a tree, and `XmlSerializer.Deserialize` accepts a node. Together they let you adjust the XML of an object before it's written, or adjust XML before it becomes an object.
+
+```csharp
+var product = new Product { Name = "Keyboard", Price = 49.90m };
+
+var node = (XmlElementNode)XmlSerializer.SerializeToNode(product)!;
+output.WriteLine(node.ToString());
+
+node["Price"]!.InnerText = "44.90";
+
+Product? discounted = XmlSerializer.Deserialize<Product>(node);
+output.WriteLine($"{discounted!.Name}: {discounted.Price.ToString(CultureInfo.InvariantCulture)}");
+```
+
+```csharp Product.cs
+public sealed class Product
+{
+    public string? Name { get; set; }
+
+    public decimal Price { get; set; }
+}
+```
+
+The code produces the following output:
+
+```text
+<Product><Name>Keyboard</Name><Price>49.90</Price></Product>
+Keyboard: 44.90
+```
+
+Both calls go through UTF-8: `SerializeToNode` serializes to a pooled buffer and parses it into a tree, and `Deserialize` writes the node to a pooled buffer and reads it. They're a convenience, not a faster path than text. Both have overloads that take an `XmlTypeInfo<T>` or an `XmlSerializerContext` for [source generation](/xmlessentials/guides/source-generation). For the serializer itself, see [Serialize XML](/xmlessentials/guides/serialize) and [Deserialize XML](/xmlessentials/guides/deserialize).
+
+## When the tree costs more
+
+The read-only document and the mutable tree store XML in different ways, and the difference matters when documents are large or frequent.
+
+- `XmlDocument` keeps one pooled copy of the input and a pooled table of rows. Parsing allocates the document object and nothing per node. See [Benchmarks](/xmlessentials/benchmarks#change-a-document) for the measured numbers of both, beside `System.Xml.XmlDocument`, `XDocument`, and `JsonNode`.
+- `XmlNode.Parse` parses into an `XmlDocument` and keeps it, outside the pool, for the tree. An element you reach into gets an object for each of its attributes and child nodes, with a string for each name and value. The elements you never reach into stay as rows of the parsed input. So the work and the memory grow with the part of the tree you look at, and the parsed input stays in memory while any of those elements is reachable.
+- `XmlElement.CloneNode` makes every node under the element at once.
+- Writing an element you have reached into converts its strings back to UTF-8. Writing an element you haven't reached into, or a document, writes from the parsed input.
+
+So:
+
+- To read values, parse with `XmlDocument` and don't build a tree.
+- To change a document, part of it or all of it, or to build one, use the tree. That's what it's for.
+- When the change needs `XmlDocumentOptions`, a `Stream`, or the typed getters of `XmlElement` to find what to change, parse with `XmlDocument` and call `CloneNode` on the element you change.
+- To produce XML with a fixed shape at high volume, write it with [`Utf8XmlWriter`](/xmlessentials/guides/use-utf8xmlwriter) or serialize a class. Both skip the tree.
+
+Several threads can read a tree at once while no thread is changing it, as they can a `JsonNode` tree. A parsed tree makes an element's attributes and child nodes the first time something reaches into it, and threads that reach in at the same moment all get the same nodes. Changes aren't synchronized: while one thread changes a tree, no other thread can use it. See [Thread safety](/xmlessentials/guides/thread-safety#xmlnode).
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Use XmlDocument" icon="file-code" href="/xmlessentials/guides/use-xmldocument">
+    Read XML with the read-only, pooled document.
+  </Card>
+  <Card title="Use Utf8XmlWriter" icon="pen" href="/xmlessentials/guides/use-utf8xmlwriter">
+    Control how a tree is written.
+  </Card>
+  <Card title="Use XML namespaces" icon="tags" href="/xmlessentials/guides/namespaces">
+    How names, prefixes, and URIs are handled.
+  </Card>
+  <Card title="Migrate from XDocument and XmlDocument" icon="right-left" href="/xmlessentials/guides/migrate/from-xdocument">
+    Map `System.Xml` DOM code to XmlEssentials.
+  </Card>
+</Columns>
+
+API reference:
+
+- [`XmlNode`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNode)
+- [`XmlElementNode`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlElementNode)
+- [`XmlAttributeNode`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlAttributeNode)
+- [`XmlNodeList`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlNodeList)
+- [`XmlAttributeNodeList`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlAttributeNodeList)
+- [`XmlTextNode`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlTextNode), [`XmlCDataNode`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlCDataNode), [`XmlCommentNode`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlCommentNode), [`XmlProcessingInstructionNode`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlProcessingInstructionNode), [`XmlDeclarationNode`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Nodes/XmlDeclarationNode)

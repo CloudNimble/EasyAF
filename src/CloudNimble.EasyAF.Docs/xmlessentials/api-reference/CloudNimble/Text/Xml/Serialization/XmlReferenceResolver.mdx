@@ -1,0 +1,334 @@
+---
+title: XmlReferenceResolver
+description: "Defines the core behavior of preserving references on serialization and deserialization and provides a base for resolvers that map objects to reference ident..."
+icon: shapes
+tag: "ABSTRACT"
+keywords: ['XmlReferenceResolver', 'CloudNimble.Text.Xml.Serialization.XmlReferenceResolver', 'CloudNimble.Text.Xml.Serialization', 'class', 'CloudNimble.Text.Xml.Serialization.XmlReferenceHandler', 'CloudNimble.Text.Xml.XmlSerializerOptions', 'CloudNimble.Text.Xml.XmlNamespaces']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlReferenceResolver
+```
+
+## Summary
+
+Defines the core behavior of preserving references on serialization and deserialization and provides a base for
+resolvers that map objects to reference identifiers during one operation.
+
+## Usage
+
+An `XmlReferenceResolver` maps objects to identifiers and back for one call to `Serialize` or `Deserialize`. The serializer gets it from `XmlReferenceHandler.CreateResolver`. Derive from both classes to control how the identifiers in a document are resolved. The class corresponds to `ReferenceResolver` in System.Text.Json.
+
+| Method | Called when |
+| --- | --- |
+| `AddReference(referenceId, value)` | Reading: an element has an `id` attribute. Store the object under that identifier. |
+| `ResolveReference(referenceId)` | Reading: an element has a `ref` attribute. Return the object, or `null` if the identifier is unknown, in which case the serializer throws `XmlException`. |
+| `GetReference(value, out alreadyExists)` | Writing: an object is about to be written. Return its identifier, and report whether the object was seen before. |
+
+The following resolver keeps the objects in a dictionary that its handler owns, so the caller can look them up after the document has been read.
+
+```csharp
+private sealed class DirectoryReferenceHandler : XmlReferenceHandler
+{
+    public Dictionary<string, object> Directory { get; } = new(StringComparer.Ordinal);
+
+    public override XmlReferenceResolver CreateResolver()
+    {
+        return new DirectoryReferenceResolver(Directory);
+    }
+}
+
+private sealed class DirectoryReferenceResolver(Dictionary<string, object> directory) : XmlReferenceResolver
+{
+    public override void AddReference(string referenceId, object value)
+    {
+        directory[referenceId] = value;
+    }
+
+    public override string GetReference(object value, out bool alreadyExists)
+    {
+        foreach (KeyValuePair<string, object> pair in directory)
+        {
+            if (ReferenceEquals(pair.Value, value))
+            {
+                alreadyExists = true;
+                return pair.Key;
+            }
+        }
+
+        alreadyExists = false;
+        string id = $"object-{directory.Count + 1}";
+        directory[id] = value;
+        return id;
+    }
+
+    public override object? ResolveReference(string referenceId)
+    {
+        return directory.TryGetValue(referenceId, out object? value) ? value : null;
+    }
+}
+```
+
+Reading a document with this handler resolves its references and fills the dictionary:
+
+```csharp
+string xml = """
+    <Project xmlns:r="urn:CloudNimble.Text.Xml:refs" r:id="atlas">
+      <Name>Atlas</Name>
+      <Owner r:id="dana">
+        <Name>Dana Birkby</Name>
+      </Owner>
+      <Reviewer r:ref="dana" />
+    </Project>
+    """;
+
+var handler = new DirectoryReferenceHandler();
+var options = new XmlSerializerOptions { ReferenceHandler = handler };
+
+Project? project = XmlSerializer.Deserialize<Project>(xml, options);
+output.WriteLine(ReferenceEquals(project!.Owner, project.Reviewer));
+
+var dana = (Employee)handler.Directory["dana"];
+output.WriteLine(dana.Name);
+output.WriteLine(string.Join(", ", handler.Directory.Keys));
+```
+
+The code produces the following output:
+
+```text
+True
+Dana Birkby
+atlas, dana
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/17_PreserveReferences.cs)
+
+## Considerations
+
+- A custom resolver takes effect when reading and when writing. When writing, the identifier `GetReference` returns is written as the `id` attribute of an object's first appearance and as the `ref` attribute of each later one.
+- When writing, `GetReference` can be called twice for one object: once by the member that holds it and once when the object itself is written. Return the same identifier both times.
+- Compare objects by reference, not with `Equals`. Two different objects that happen to be equal must not share an identifier. `ReferenceEqualityComparer.Instance` does this for a dictionary or a set.
+- A resolver is used for one operation and isn't called from more than one thread during it. If your handler shares state between resolvers, as the example does, that state needs its own protection when the options are used from several threads.
+- An object that is created through a constructor with parameters is passed to `AddReference` after the constructor runs. A `ref` to it from inside its own content can't be resolved.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> AddReference <Badge color="orange">Abstract</Badge>
+
+When overridden in a derived class, adds an entry to the bag of references by using the specified identifier and value.
+
+#### Syntax
+
+```csharp
+public abstract void AddReference(string referenceId, object value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `referenceId` | `string` | The identifier of the object. |
+| `value` | `object` | The object that results from reading the XML element. |
+
+#### Remarks
+
+The serializer calls this method when it reads an element that carries a reference identifier.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetReference <Badge color="orange">Abstract</Badge>
+
+When overridden in a derived class, gets the reference identifier of the specified value if one exists; otherwise, assigns a new identifier.
+
+#### Syntax
+
+```csharp
+public abstract string GetReference(object value, out bool alreadyExists)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `object` | The object to get an identifier for. |
+| `alreadyExists` | `bool` | When this method returns, contains [`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if a reference to *value* already exists; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). This parameter is treated as uninitialized. |
+
+#### Returns
+
+Type: `string`
+The reference identifier for *value*.
+
+#### Remarks
+
+The serializer calls this method before it writes an object, to decide whether to write the object or a reference to it.
+For a new object, it writes the returned identifier as an `id` attribute. For an object that already exists, it
+writes the identifier as a `ref` attribute on an empty element. When the identifier is an empty string, it writes
+no `id`, and writes `xsi:nil="true"` in place of an object that already exists.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ResolveReference <Badge color="orange">Abstract</Badge>
+
+When overridden in a derived class, returns the object related to the specified reference identifier.
+
+#### Syntax
+
+```csharp
+public abstract object ResolveReference(string referenceId)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `referenceId` | `string` | The reference identifier related to the returned object. |
+
+#### Returns
+
+Type: `object?`
+The object that was added under *referenceId*, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if there is none.
+
+#### Remarks
+
+The serializer calls this method when it reads an element that refers to another object by identifier.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Serialization.XmlReferenceHandler
+- CloudNimble.Text.Xml.XmlSerializerOptions
+- CloudNimble.Text.Xml.XmlNamespaces
+

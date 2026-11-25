@@ -1,0 +1,209 @@
+---
+title: "How to publish with Native AOT and trimming"
+sidebarTitle: "Publish with Native AOT"
+description: "Set up an XmlEssentials project to trim and compile ahead of time: generated contexts, safe overloads, and the reflection switch."
+icon: "rocket"
+---
+
+Native AOT compiles your application to machine code at publish time, and trimming removes the code it doesn't reach. Neither can follow code that inspects types with reflection at run time. This article shows how to use XmlEssentials in such an application: which parts work as they are, which serializer overloads to call, and how to turn the reflection path off so that a mistake fails at once instead of in production.
+
+The approach is the one System.Text.Json uses: a source-generated context, overloads that take type info, and an `IsReflectionEnabledByDefault` feature switch.
+
+## What works without any setup
+
+The library is built with `IsAotCompatible`, and it has no dependency on `System.Xml`. These parts use no reflection and need nothing from you:
+
+- [`Utf8XmlReader`](/xmlessentials/guides/use-utf8xmlreader) and [`Utf8XmlWriter`](/xmlessentials/guides/use-utf8xmlwriter).
+- [`XmlDocument`](/xmlessentials/guides/use-xmldocument) and the [`XmlNode`](/xmlessentials/guides/use-xmlnode) types.
+
+Only `XmlSerializer` needs care, because its default way of learning about a type is reflection.
+
+## Set up a project
+
+<Steps>
+  <Step title="Declare a context for the types you serialize">
+    In your project, add a partial class that derives from `XmlSerializerContext`, with one `[XmlSerializable]` attribute for each root type. Every [generation mode](/xmlessentials/guides/source-generation-modes) is safe for trimming and Native AOT.
+
+    ```csharp OrderXmlContext.cs
+    [XmlSerializable<Order>]
+    public partial class OrderXmlContext : XmlSerializerContext
+    {
+    }
+    ```
+
+    For the details, see [How to use source generation](/xmlessentials/guides/source-generation).
+  </Step>
+  <Step title="Call the overloads that take type info or a context">
+    In your code, replace each call that passes only a value, or a value and options, with one that passes the generated `XmlTypeInfo<T>` or the context.
+
+    ```csharp Program.cs
+    var order = new Order
+    {
+        Id = 1042,
+        Customer = "Ada",
+        Lines = [new OrderLine { Sku = "KB-01", Quantity = 1 }],
+    };
+
+    byte[] utf8 = XmlSerializer.SerializeToUtf8Bytes(order, OrderXmlContext.Default.Order);
+    output.WriteLine(Encoding.UTF8.GetString(utf8));
+
+    Order? copy = XmlSerializer.Deserialize(utf8, OrderXmlContext.Default.Order);
+    output.WriteLine($"Order {copy!.Id} for {copy.Customer}: {copy.Lines.Count} line");
+    ```
+
+    The code produces the following output:
+
+    ```text
+    <?xml version="1.0" encoding="utf-8"?><Order Id="1042"><Customer>Ada</Customer><Line><Quantity>1</Quantity><Sku>KB-01</Sku></Line></Order>
+    Order 1042 for Ada: 1 line
+    ```
+  </Step>
+  <Step title="Turn on Native AOT">
+    In the project file, set `PublishAot`. This also turns on the trim and AOT analyzers, so the compiler warns about unsafe calls while you work.
+
+    ```xml MyApp.csproj
+    <PropertyGroup>
+      <PublishAot>true</PublishAot>
+    </PropertyGroup>
+    ```
+
+    To trim without compiling ahead of time, set `PublishTrimmed` instead.
+  </Step>
+  <Step title="Turn off the reflection fallback">
+    In the project file, set the `IsReflectionEnabledByDefault` feature switch to `false`:
+
+    ```xml MyApp.csproj
+    <ItemGroup>
+      <RuntimeHostConfigurationOption Include="CloudNimble.Text.Xml.XmlSerializer.IsReflectionEnabledByDefault"
+                                      Value="false"
+                                      Trim="true" />
+    </ItemGroup>
+    ```
+
+    See [The reflection switch](#the-reflection-switch) for what this changes.
+  </Step>
+  <Step title="Publish and run">
+    From the project folder, publish the application, and then run the native executable to check that it behaves as the JIT-compiled build does:
+
+    ```bash
+    dotnet publish -c Release
+    ```
+
+    Fix every `IL2026` and `IL3050` warning the build reports. Each one marks a call that needs reflection.
+  </Step>
+</Steps>
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/34_NativeAot.cs)
+
+## Which overloads are safe
+
+Every `XmlSerializer` method comes in up to three forms. The form that takes `XmlSerializerOptions` uses reflection and is marked `[RequiresUnreferencedCode]` and `[RequiresDynamicCode]`. The forms that take an `XmlTypeInfo<T>` or an `XmlSerializerContext` carry no annotations.
+
+| Method and input or output | `XmlSerializerOptions` | `XmlTypeInfo<T>` | `XmlSerializerContext` |
+| --- | --- | --- | --- |
+| `Serialize` to a `string`, a `Utf8XmlWriter`, a `Stream`, or an `IBufferWriter<byte>` | Not safe | Safe | Safe |
+| `SerializeToUtf8Bytes`, `SerializeToDocument`, `SerializeToElement`, `SerializeToNode` | Not safe | Safe | Safe |
+| `SerializeAsync` to a `Stream` | Not safe | Safe | Safe |
+| `SerializeAsync` to a `PipeWriter` | Not safe | None | None |
+| `SerializeAsyncEnumerable` to a `Stream` | Not safe | Safe | None |
+| `SerializeAsyncEnumerable` to a `PipeWriter` | Not safe | None | None |
+| `Deserialize` from a `string`, a span, a `ReadOnlySequence<byte>`, a `Utf8XmlReader`, a `Stream`, or a DOM node | Not safe | Safe | Safe |
+| `DeserializeAsync` from a `Stream` | Not safe | Safe | Safe |
+| `DeserializeAsync` from a `PipeReader` | Not safe | Safe | None |
+| `DeserializeAsyncEnumerable` from a `Stream` or a `PipeReader` | Not safe | Safe | None |
+
+The overloads that take a `Type` and a context, such as `Serialize(object? value, Type inputType, XmlSerializerContext context)`, are safe too.
+
+<Note>
+To write to a `PipeWriter` in a trimmed or Native AOT application, serialize to the pipe's stream, `pipeWriter.AsStream()`, with a type info overload.
+</Note>
+
+The context overloads work with any destination that has one. The following example writes to a stream and reads it back:
+
+```csharp Program.cs
+var order = new Order { Id = 7, Customer = "Grace" };
+
+using var stream = new MemoryStream();
+XmlSerializer.Serialize(stream, order, OrderXmlContext.Default);
+output.WriteLine($"{stream.Length} bytes");
+
+stream.Position = 0;
+Order? copy = XmlSerializer.Deserialize<Order>(stream, OrderXmlContext.Default);
+output.WriteLine($"Order {copy!.Id} for {copy.Customer}");
+```
+
+The code produces the following output:
+
+```text
+86 bytes
+Order 7 for Grace
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/34_NativeAot.cs)
+
+## The reflection switch
+
+[`XmlSerializer.IsReflectionEnabledByDefault`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer) is a feature switch named `CloudNimble.Text.Xml.XmlSerializer.IsReflectionEnabledByDefault`. It's `true` unless you set it to `false`.
+
+When it's `true`, an `XmlSerializerOptions` instance with no `TypeInfoResolver` is given `DefaultXmlTypeInfoResolver`, the reflection resolver, by the members that need reflection: the `XmlSerializer` methods that take options, `XmlSerializerOptions.GetConverter`, `MakeReadOnly(populateMissingResolver: true)`, and the shared instances `Default`, `Web`, `Strict`, and `Bcl`. Each of them carries the trimming and Native AOT warnings. `TypeInfoResolver` itself, `GetTypeInfo`, the overloads that take type info or a context, and everything a generated context calls carry none, and they never bring the reflection resolver in.
+
+When it's `false`:
+
+- `XmlSerializerOptions.TypeInfoResolver` stays `null` until you set it.
+- A reflection overload called with such options throws `InvalidOperationException` with the message "Reflection-based XML serialization is disabled. Set TypeInfoResolver, or use an overload that takes an XmlTypeInfo or XmlSerializerContext."
+- The overloads that take type info or a context work as before.
+
+Setting the switch in the project file with `Trim="true"` also tells the trimmer the value, so it can treat the property as a constant.
+
+<Warning>
+The switch covers options that have no resolver. A generated context uses no reflection either. It creates every type it lists or reaches with generated code: classes, structs, and records, and the collection, dictionary, enumeration, and nullable types their members use. For a type it neither lists nor reaches, `GetTypeInfo` returns `null` and the serializer throws `NotSupportedException`, unless the type is a built-in value, an XML value such as `XmlElement`, or `object`. That includes a collection type no listed type uses, such as a `List<int>` that you serialize as the document element. List every type you pass to the serializer on a context, collections and arrays included, and prefer the `XmlTypeInfo<T>` overloads, which can only name a listed type.
+</Warning>
+
+## What the package adds to your build
+
+The `XmlEssentials` package carries three things:
+
+| Part | What it does |
+| --- | --- |
+| The library, `CloudNimble.XmlEssentials.dll` | The reader, writer, DOM, and serializer, for `net10.0` and `net11.0`. |
+| The source generator, as an analyzer | Fills in your `XmlSerializerContext` classes and generates types from `.xsd` files. It runs in the compiler and isn't part of your application. |
+| A build file, `XmlEssentials.props` | Adds `CloudNimble.Text.Xml.Generated` to the `InterceptorsNamespaces` property, which turns on [interceptors](/xmlessentials/guides/reflection-vs-source-generation#interceptors), and makes the `XmlEssentialsNamespace` and `XmlEssentialsContext` metadata of `AdditionalFiles` items visible to the generator. |
+
+The package doesn't set `PublishAot`, `PublishTrimmed`, or the reflection switch. Those are your choices.
+
+## Limits to know about
+
+A generated context applies every option and supports derived types, reference handling, and custom converters, as the reflection resolver does. See [How a context applies your options](/xmlessentials/guides/source-generation#how-a-context-applies-your-options). These limits apply:
+
+- **A context in the `Serialization` mode only writes.** A read through it throws `InvalidOperationException`. Use the `Default` or `Metadata` mode for a context that reads. See [Source-generation modes](/xmlessentials/guides/source-generation-modes).
+- **Custom converter factories often need reflection themselves.** A factory that calls `MakeGenericType` isn't safe. See [Custom converters](/xmlessentials/guides/custom-converters#write-a-converter-factory).
+- **Schemas stay at build time.** Types generated from an `.xsd` file come with their own context, and the schema isn't read at run time. Pass that context's type info: calls for those types aren't redirected by interceptors. See [Generate types from an XSD](/xmlessentials/guides/xsd-source-generation).
+
+## Working examples
+
+The repository has two projects that publish with Native AOT:
+
+- [`CloudNimble.XmlEssentials.Tests.Aot`](https://github.com/CloudNimble/XmlEssentials/tree/main/src/CloudNimble.XmlEssentials.Tests.Aot) runs with the reflection switch off. It round-trips types through a generated context and types generated from schemas, walks a document with `Utf8XmlReader`, and exercises derived types, reference handling, populating, the naming policies, and the `Bcl` defaults through generated metadata. It also checks that a reflection call throws.
+- [`CloudNimble.XmlEssentials.Samples.Cli`](https://github.com/CloudNimble/XmlEssentials/tree/main/src/CloudNimble.XmlEssentials.Samples.Cli) is a command-line tool that parses and serializes XML.
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Use source generation" icon="wand-magic-sparkles" href="/xmlessentials/guides/source-generation">
+    Declare a context and call the serializer with it.
+  </Card>
+  <Card title="Reflection vs. source generation" icon="scale-balanced" href="/xmlessentials/guides/reflection-vs-source-generation">
+    What each approach does and costs.
+  </Card>
+  <Card title="Generate types from an XSD (preview)" icon="file-code" href="/xmlessentials/guides/xsd-source-generation">
+    Classes and a context from a schema, with no reflection. In preview.
+  </Card>
+  <Card title="Security" icon="shield-halved" href="/xmlessentials/guides/security">
+    Limits and defaults for reading untrusted XML.
+  </Card>
+</Columns>
+
+- [`XmlSerializer`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer)
+- [`XmlSerializerContext`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializerContext)
+- [`XmlTypeInfo`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo)
+- [`DefaultXmlTypeInfoResolver`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/DefaultXmlTypeInfoResolver)

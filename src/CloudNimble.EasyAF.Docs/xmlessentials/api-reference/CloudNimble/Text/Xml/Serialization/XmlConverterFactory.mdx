@@ -1,0 +1,450 @@
+---
+title: XmlConverterFactory
+description: "Supports converting several types by using a factory pattern."
+icon: shapes
+tag: "ABSTRACT"
+keywords: ['XmlConverterFactory', 'CloudNimble.Text.Xml.Serialization.XmlConverterFactory', 'CloudNimble.Text.Xml.Serialization', 'class', 'CloudNimble.Text.Xml.Serialization.XmlConverter', 'CloudNimble.Text.Xml.Serialization.XmlConverterAttribute', 'CloudNimble.Text.Xml.XmlSerializerOptions', 'CloudNimble.Text.Xml.XmlNamingPolicy']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+**Inheritance:** CloudNimble.Text.Xml.Serialization.XmlConverter
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlConverterFactory
+```
+
+## Summary
+
+Supports converting several types by using a factory pattern.
+
+## Usage
+
+A factory is a converter that doesn't convert anything itself. It tells the serializer which types it covers, in `CanConvert`, and creates the converter for each one, in `CreateConverter`. Use it for a family of types that one `XmlConverter<T>` can't serve: every enumeration, or every closed form of a generic type.
+
+```csharp
+public sealed class KebabCaseEnumConverterFactory : XmlConverterFactory
+{
+    public override bool CanConvert(Type typeToConvert)
+    {
+        return typeToConvert.IsEnum;
+    }
+
+    public override XmlConverter? CreateConverter(Type typeToConvert, XmlSerializerOptions options)
+    {
+        Type converterType = typeof(KebabCaseEnumConverter<>).MakeGenericType(typeToConvert);
+        return (XmlConverter?)Activator.CreateInstance(converterType);
+    }
+}
+```
+
+Register a factory as you would a converter: add an instance to `XmlSerializerOptions.Converters`, or name the factory type in `[XmlConverter]`.
+
+`CreateConverter` must return an `XmlConverter<T>` whose `T` is exactly `typeToConvert`. The class is the counterpart of `JsonConverterFactory` in System.Text.Json.
+
+## Remarks
+
+Use a factory for a family of types, such as every enumeration or every closed form of a generic type.
+
+## Examples
+
+### Write every enumeration in kebab case
+
+The factory in the usage section creates one of these converters for each enumeration:
+
+```csharp
+public sealed class KebabCaseEnumConverter<TEnum> : XmlConverter<TEnum>
+    where TEnum : struct, Enum
+{
+    public override TEnum Read(ref Utf8XmlReader reader, Type typeToConvert, XmlSerializerOptions options)
+    {
+        TEnum value = default;
+        if (reader.IsEmptyElement)
+        {
+            return value;
+        }
+
+        while (reader.Read() && reader.TokenType is not XmlTokenType.EndElement)
+        {
+            if (reader.TokenType is XmlTokenType.Text)
+            {
+                value = Parse(reader.GetString()!);
+            }
+        }
+
+        return value;
+    }
+
+    public override void Write(Utf8XmlWriter writer, TEnum value, XmlSerializerOptions options)
+    {
+        writer.WriteStringValue(XmlNamingPolicy.KebabCaseLower.ConvertName(value.ToString()));
+    }
+
+    private static TEnum Parse(string text)
+    {
+        foreach (TEnum candidate in Enum.GetValues<TEnum>())
+        {
+            if (XmlNamingPolicy.KebabCaseLower.ConvertName(candidate.ToString()) == text)
+            {
+                return candidate;
+            }
+        }
+
+        throw new XmlException($"'{text}' is not a value of {typeof(TEnum).Name}.");
+    }
+}
+```
+
+With the factory registered, both enumeration members of `OrderTracking` use it:
+
+```csharp
+var options = new XmlSerializerOptions { OmitXmlDeclaration = true };
+options.Converters.Add(new KebabCaseEnumConverterFactory());
+
+var tracking = new OrderTracking
+{
+    OrderId = 1042,
+    Status = OrderStatus.ReadyToShip,
+    Priority = Priority.Rush,
+};
+
+string xml = XmlSerializer.Serialize(tracking, options);
+output.WriteLine(xml);
+
+OrderTracking? copy = XmlSerializer.Deserialize<OrderTracking>(xml, options);
+output.WriteLine($"Order {copy!.OrderId}: {copy.Status}, {copy.Priority}");
+```
+
+The code produces the following output:
+
+```text
+<OrderTracking><OrderId>1042</OrderId><Priority>rush</Priority><Status>ready-to-ship</Status></OrderTracking>
+Order 1042: ReadyToShip, Rush
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/35_CustomConverters.cs)
+
+## Considerations
+
+- **The returned converter must match the type exactly.** If `CreateConverter` returns `null`, the serializer throws `InvalidOperationException`. It also throws when the converter returned is for another type.
+- **`CreateConverter` runs once for each type and options instance.** The serializer keeps the converter it returns, so the work of creating it isn't repeated.
+- **Order in the `Converters` list matters.** The first converter or factory whose `CanConvert` returns `true` is used. Put a converter for one specific type before a factory that also covers it.
+- **Reflection in a factory isn't safe for Native AOT.** A factory that calls `MakeGenericType` or `Activator.CreateInstance` on a constructed type needs code the ahead-of-time compiler may not have produced. In an AOT application, construct the converters directly, for example in a `switch` on `typeToConvert`.
+- **Source generation.** A source-generated context in the default mode or in `Metadata` mode uses a factory as the reflection resolver does. A factory in `XmlSerializerOptions.Converters` applies to every type it covers: enumerations, classes, and structs.
+- **A factory makes `CanConvert` broad, so keep it precise.** A factory that returns `true` for types it can't handle hides the built-in converter for those types.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlConverter`</Note>
+
+Limits derivation to `XmlConverter`1` and [XmlConverterFactory](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterFactory).
+
+#### Syntax
+
+```csharp
+private protected XmlConverter()
+```
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CanPopulate <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlConverter`</Note>
+
+Gets whether the converter can read an element into a value that already exists.
+
+#### Syntax
+
+```csharp
+internal virtual bool CanPopulate { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) for the converters of objects and dictionaries that the library creates; otherwise,
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). A converter the caller wrote creates its value, so a member it reads is replaced.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsValueConverter <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlConverter`</Note>
+
+Gets whether this is one of the built-in converters that read and write a value from its lexical form,
+which the serializer can call directly.
+
+#### Syntax
+
+```csharp
+internal virtual bool IsValueConverter { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CanConvert <Badge color="gray">Inherited</Badge> <Badge color="orange">Abstract</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlConverter`</Note>
+
+When overridden in a derived class, determines whether the converter instance can convert the specified type.
+
+#### Syntax
+
+```csharp
+public abstract bool CanConvert(System.Type typeToConvert)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `typeToConvert` | `System.Type` | The type to check. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if the instance can convert *typeToConvert*; otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateConverter <Badge color="orange">Abstract</Badge>
+
+When overridden in a derived class, creates a converter for the specified type.
+
+#### Syntax
+
+```csharp
+public abstract CloudNimble.Text.Xml.Serialization.XmlConverter CreateConverter(System.Type typeToConvert, CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `typeToConvert` | `System.Type` | The type handled by the converter. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serialization options to use. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlConverter?`
+A converter that derives from `XmlConverter`1` for exactly *typeToConvert*. The serializer throws an
+[InvalidOperationException](https://learn.microsoft.com/dotnet/api/system.invalidoperationexception) if the factory returns [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateTypeInfo <Badge color="gray">Inherited</Badge> <Badge color="orange">Abstract</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlConverter`</Note>
+
+Creates type info that reads and writes *typeToConvert* with this converter.
+
+#### Syntax
+
+```csharp
+internal abstract CloudNimble.Text.Xml.Serialization.XmlTypeInfo CreateTypeInfo(System.Type typeToConvert, CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `typeToConvert` | `System.Type` | The CLR type. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serializer options. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlTypeInfo?`
+The type info, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) when this converter cannot produce values of that exact type.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Populate <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlConverter`</Note>
+
+Reads the element *reader* is on into *existing*.
+
+#### Syntax
+
+```csharp
+internal virtual void Populate(ref CloudNimble.Text.Xml.Utf8XmlReader reader, object existing, CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `reader` | `CloudNimble.Text.Xml.Utf8XmlReader` | The reader, on a start tag that is not marked nil. |
+| `existing` | `object` | The value to populate. A value type is boxed, and the box is what is changed. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serializer options. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `NotSupportedException` | The converter cannot populate: [XmlConverter.CanPopulate](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverterFactory#canpopulate) is [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool). |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Resolve <Badge color="gray">Inherited</Badge> <Badge color="orange">Abstract</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlConverter`</Note>
+
+Returns the converter that does the work for *typeToConvert*: this converter, or the
+one a factory creates.
+
+#### Syntax
+
+```csharp
+internal abstract CloudNimble.Text.Xml.Serialization.XmlConverter Resolve(System.Type typeToConvert, CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `typeToConvert` | `System.Type` | The CLR type. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serializer options. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlConverter`
+The converter.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Serialization.XmlConverter
+- CloudNimble.Text.Xml.Serialization.XmlConverterAttribute
+- CloudNimble.Text.Xml.XmlSerializerOptions
+- CloudNimble.Text.Xml.XmlNamingPolicy
+

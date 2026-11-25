@@ -1,0 +1,674 @@
+---
+title: "Migrate from System.Xml.Serialization.XmlSerializer"
+sidebarTitle: "From XmlSerializer"
+description: "Move code from System.Xml.Serialization.XmlSerializer to XmlEssentials: the attributes that carry over, the defaults that differ, and what's missing."
+icon: "right-left"
+---
+
+This article is for developers who have types and code written for `System.Xml.Serialization.XmlSerializer` and want to move them to the XmlEssentials `XmlSerializer`. It lists what carries over, what changes the XML you get, and what has no counterpart.
+
+The two serializers share a class name and most attribute names, and that is on purpose: most mapped types need a different `using` directive and little else. The API around the types is different. The XmlEssentials `XmlSerializer` is a static class with generic methods and an options object, the same shape as `JsonSerializer` in System.Text.Json.
+
+The move also buys speed. In the project's [benchmarks](/xmlessentials/benchmarks#serialize-and-deserialize), reading and writing objects is 1.8× to 5.9× faster than the old serializer, and writing into a buffer you own allocates nothing.
+
+<Note>
+XmlEssentials doesn't read `System.Xml.Serialization` attributes. A type that still carries the old attributes compiles, and is serialized as if it had none. Change the `using` directive on every file that declares a mapped type. A source-generated context that lists a type with the old `[XmlInclude(typeof(T))]` reports error `XMLESS007`.
+</Note>
+
+## Table of differences
+
+| Feature | `System.Xml.Serialization` | XmlEssentials | More information |
+| --- | --- | --- | --- |
+| Entry point | `new XmlSerializer(typeof(T))`, then instance methods | Static `XmlSerializer.Serialize<T>` and `XmlSerializer.Deserialize<T>` | [Call the serializer](#call-the-serializer) |
+| Settings | Constructor arguments, `XmlWriterSettings`, `XmlSerializerNamespaces` | `XmlSerializerOptions` | [Configure options](/xmlessentials/guides/configure-options) |
+| Mapping attributes | `System.Xml.Serialization` | `CloudNimble.Text.Xml.Serialization`, same names | [Attribute mapping](#attribute-mapping) |
+| `xmlns:xsi` and `xmlns:xsd` on the root | Always written | Not written. `xmlns:xsi` appears only on an element that needs it | [Differences in default behavior](#differences-in-default-behavior) |
+| Text encoding | Any .NET encoding. `utf-16` in the declaration when you write to a `TextWriter` | UTF-8 only | [Encoding](#encoding) |
+| Indentation | Indented | Not indented unless `WriteIndented` is `true` | [Differences in default behavior](#differences-in-default-behavior) |
+| `null` reference | Element left out | Element written with `xsi:nil="true"` | [Null values](#null-values) |
+| Collections | Wrapper element with one child per item | One element per item, no wrapper | [Collections](#collections) |
+| Derived types | `[XmlInclude(typeof(T))]`, `xsi:type` | `[XmlDerivedType<T>]`, element name by default, `xsi:type` on request | [Derived types](#derived-types) |
+| Type requirements | Public type, public parameterless constructor, public read/write members | Internal types, records, constructors with parameters, `init` and `required` members | [Types the old serializer can't map](#types-the-old-serializer-cant-map) |
+| Dictionaries | Not supported | Supported | [Types the old serializer can't map](#types-the-old-serializer-cant-map) |
+| Native AOT and trimming | Not compatible | Compatible with source generation | [Source generation, Native AOT, and trimming](#source-generation-native-aot-and-trimming) |
+| Pre-generated serializers | `sgen` serializer assemblies | Roslyn source generator | [Source generation, Native AOT, and trimming](#source-generation-native-aot-and-trimming) |
+| Asynchronous I/O | Not supported | `SerializeAsync`, `DeserializeAsync` | [UTF-8 and asynchronous streams](#utf-8-and-asynchronous-streams) |
+| UTF-8 input and output without a string | Through a `Stream` | `byte[]`, `ReadOnlySpan<byte>`, `ReadOnlySequence<byte>`, `IBufferWriter<byte>`, `Stream` | [UTF-8 and asynchronous streams](#utf-8-and-asynchronous-streams) |
+| Custom serialization | `IXmlSerializable` | `XmlConverter<T>` | [Custom converters](/xmlessentials/guides/custom-converters) |
+| Unknown content | `[XmlAnyElement]`, `[XmlAnyAttribute]`, `UnknownElement` events | `[XmlExtensionData]`, `UnmappedMemberHandling` | [What isn't supported](#what-isnt-supported) |
+| DTD | `DtdProcessing` on the reader you pass | Always rejected | [What isn't supported](#what-isnt-supported) |
+
+## Call the serializer
+
+The old serializer is an object that you build for one type and keep. XmlEssentials has no object to build or cache: you call a static generic method, and the metadata for each type is cached by the options instance you pass.
+
+<CodeGroup>
+
+```csharp System.Xml.Serialization
+using System.Xml.Serialization;
+
+var serializer = new XmlSerializer(typeof(PurchaseOrder));
+
+string xml;
+using (var writer = new StringWriter())
+{
+    serializer.Serialize(writer, order);
+    xml = writer.ToString();
+}
+
+PurchaseOrder? copy;
+using (var reader = new StringReader(xml))
+{
+    copy = (PurchaseOrder?)serializer.Deserialize(reader);
+}
+```
+
+```csharp XmlEssentials
+using CloudNimble.Text.Xml;
+
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n" };
+string xml = XmlSerializer.Serialize(order, options);
+output.WriteLine(xml);
+
+PurchaseOrder? copy = XmlSerializer.Deserialize<PurchaseOrder>(xml, options);
+```
+
+</CodeGroup>
+
+`PurchaseOrder` and `OrderLine` use the attributes you already know. Only the `using` directive is different:
+
+```csharp PurchaseOrder.cs
+using System.Collections.Generic;
+using CloudNimble.Text.Xml.Serialization;
+
+[XmlRoot("purchaseOrder")]
+public sealed class PurchaseOrder
+{
+    [XmlElement("customer")]
+    public string? Customer { get; set; }
+
+    [XmlAttribute("id")]
+    public int Id { get; set; }
+
+    [XmlIgnore]
+    public string? InternalNote { get; set; }
+
+    [XmlArray("items")]
+    [XmlArrayItem("item")]
+    public List<OrderLine> Lines { get; set; } = [];
+}
+
+public sealed class OrderLine
+{
+    [XmlText]
+    public string? Description { get; set; }
+
+    [XmlAttribute("sku")]
+    public string? Sku { get; set; }
+}
+```
+
+The complete sample fills in an order, serializes it, and reads it back:
+
+```csharp Program.cs
+var order = new PurchaseOrder
+{
+    Id = 1042,
+    Customer = "Contoso",
+    InternalNote = "Call before delivery",
+    Lines =
+    [
+        new OrderLine { Sku = "KB-01", Description = "Keyboard" },
+        new OrderLine { Sku = "MS-02", Description = "Mouse" },
+    ],
+};
+
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n" };
+string xml = XmlSerializer.Serialize(order, options);
+output.WriteLine(xml);
+
+PurchaseOrder? copy = XmlSerializer.Deserialize<PurchaseOrder>(xml, options);
+output.WriteLine($"{copy!.Customer}: {copy.Lines.Count} lines, note is {(copy.InternalNote is null ? "not set" : "set")}");
+```
+
+The code produces the following output:
+
+```text
+<?xml version="1.0" encoding="utf-8"?>
+<purchaseOrder id="1042">
+  <customer>Contoso</customer>
+  <items>
+    <item sku="KB-01">Keyboard</item>
+    <item sku="MS-02">Mouse</item>
+  </items>
+</purchaseOrder>
+Contoso: 2 lines, note is not set
+```
+
+The old serializer writes the same elements for the same type. Its output differs in two places: the declaration says `encoding="utf-16"` because the target is a `StringWriter`, and the root element carries `xmlns:xsi` and `xmlns:xsd` declarations.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/40_MigrateFromXmlSerializer.cs)
+
+<Tip>
+Create one `XmlSerializerOptions` instance and reuse it, as you would with `JsonSerializerOptions`. The options hold the cached metadata, so a new instance for each call repeats the work that `new XmlSerializer(typeof(T))` used to repeat.
+</Tip>
+
+## Attribute mapping
+
+The attributes in this table exist in both libraries under the same name. The right-hand column lists every property that differs.
+
+| Attribute | In XmlEssentials | Differences |
+| --- | --- | --- |
+| `[XmlRoot]` | [`XmlRootAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlRootAttribute) | `ElementName`, `Namespace`. No `DataType` or `IsNullable`: a `null` root is always written as an element marked `xsi:nil="true"`. Can also be applied to an interface. |
+| `[XmlElement]` | [`XmlElementAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlElementAttribute) | `ElementName`, `Namespace`, `Order`, `IsNullable`. No `DataType`. In place of `Form = XmlSchemaForm.Unqualified`, set `Namespace = ""`. `Type` is read-only: write `[XmlElement<Book>("Book")]` in place of `[XmlElement("Book", typeof(Book))]`. An unset `Order` is `-1`. |
+| `[XmlAttribute]` | [`XmlAttributeAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlAttributeAttribute) | `AttributeName`, `Namespace`. No `DataType`, `Form`, or `Type`. |
+| `[XmlText]` | [`XmlTextAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTextAttribute) | No properties. A type can have one `[XmlText]` member. For interleaved text and elements, see [Mixed content](/xmlessentials/guides/mixed-content). |
+| `[XmlIgnore]` | [`XmlIgnoreAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlIgnoreAttribute) | Adds `Condition`, which takes the place of the `ShouldSerialize` and `Specified` patterns. See [Ignore properties](/xmlessentials/guides/ignore-properties). |
+| `[XmlArray]` | [`XmlArrayAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlArrayAttribute) | `ElementName`, `Namespace`, `Order`. No `Form` or `IsNullable`: a `null` collection is always written as the wrapper marked `xsi:nil="true"`. Required when you want a wrapper element. See [Collections](#collections). |
+| `[XmlArrayItem]` | [`XmlArrayItemAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlArrayItemAttribute) | `ElementName`, `Namespace`. No `DataType`, `Form`, `IsNullable`, or `NestingLevel`. `Type` is read-only: write `[XmlArrayItem<Book>("Book")]`. |
+| `[XmlInclude]` | [`XmlIncludeAttribute`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlIncludeAttribute) | **Different meaning.** See the warning that follows. |
+
+<Warning>
+`[XmlInclude]` in XmlEssentials is not the attribute you know. It goes on a non-public property or field to include it in serialization, as `[JsonInclude]` does in System.Text.Json, and it has no constructor that takes a type. To declare a derived type, use `[XmlDerivedType<T>]`. See [Derived types](#derived-types).
+</Warning>
+
+These `System.Xml.Serialization` attributes have a counterpart with another name:
+
+| `System.Xml.Serialization` | XmlEssentials | More information |
+| --- | --- | --- |
+| `[XmlInclude(typeof(T))]` | `[XmlDerivedType<T>]`, with `[XmlPolymorphic]` to choose where the type name goes | [Polymorphism](/xmlessentials/guides/polymorphism) |
+| `[XmlAnyElement]`, `[XmlAnyAttribute]` | `[XmlExtensionData]` on a member of type `XmlExtensionData` | [Deserialize](/xmlessentials/guides/deserialize) |
+| `[XmlElement(DataType = "date")]` | A `DateOnly` member. `TimeOnly` and `TimeSpan` map to `xs:time` and `xs:duration` | [Supported types](/xmlessentials/guides/supported-types) |
+| `[DefaultValue]`, `ShouldSerializeX()`, `XSpecified` | `[XmlIgnore(Condition = XmlIgnoreCondition.WhenWritingDefault)]` or `WhenWritingNull` | [Ignore properties](/xmlessentials/guides/ignore-properties) |
+
+XmlEssentials also has attributes that the old serializer has no equivalent for, such as `[XmlPropertyName]`, `[XmlPropertyOrder]`, `[XmlRequired]`, `[XmlConstructor]`, `[XmlConverter]`, `[XmlCData]`, and `[XmlMixed]`. They follow System.Text.Json where it has the same idea. See [Customize names](/xmlessentials/guides/customize-names) and [Coming from System.Text.Json](/xmlessentials/guides/migrate/from-system-text-json).
+
+## Differences in default behavior
+
+The same unannotated type produces different XML in the two libraries. This `Shipment` class has no mapping attributes:
+
+```csharp Shipment.cs
+public sealed class Shipment
+{
+    public string? Carrier { get; set; }
+    public bool Insured { get; set; }
+    public List<string> Packages { get; set; } = [];
+    public DateTime ShippedOn { get; set; }
+    public ShipmentStatus Status { get; set; }
+    public string? TrackingNumber { get; set; }
+    public decimal Weight { get; set; }
+}
+
+public enum ShipmentStatus
+{
+    Pending = 0,
+    InTransit = 1,
+    Delivered = 2,
+}
+```
+
+The following code serializes one with XmlEssentials. It turns on `WriteIndented` so that the output fits the page:
+
+```csharp Program.cs
+var shipment = new Shipment
+{
+    Carrier = "Contoso Freight",
+    Insured = true,
+    Packages = ["PKG-1", "PKG-2"],
+    ShippedOn = new DateTime(2026, 3, 14, 9, 30, 0, DateTimeKind.Utc),
+    Status = ShipmentStatus.InTransit,
+    TrackingNumber = null,
+    Weight = 12.50m,
+};
+
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n" };
+output.WriteLine(XmlSerializer.Serialize(shipment, options));
+```
+
+<CodeGroup>
+
+```xml System.Xml.Serialization
+<?xml version="1.0" encoding="utf-16"?>
+<Shipment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Carrier>Contoso Freight</Carrier>
+  <Insured>true</Insured>
+  <Packages>
+    <string>PKG-1</string>
+    <string>PKG-2</string>
+  </Packages>
+  <ShippedOn>2026-03-14T09:30:00Z</ShippedOn>
+  <Status>InTransit</Status>
+  <Weight>12.50</Weight>
+</Shipment>
+```
+
+```xml XmlEssentials
+<?xml version="1.0" encoding="utf-8"?>
+<Shipment>
+  <Carrier>Contoso Freight</Carrier>
+  <Insured>true</Insured>
+  <Packages>PKG-1</Packages>
+  <Packages>PKG-2</Packages>
+  <ShippedOn>2026-03-14T09:30:00Z</ShippedOn>
+  <Status>InTransit</Status>
+  <TrackingNumber xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+  <Weight>12.50</Weight>
+</Shipment>
+```
+
+</CodeGroup>
+
+The first block is what `System.Xml.Serialization.XmlSerializer` writes to a `StringWriter` for the same object. The second block is the output of the sample.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/40_MigrateFromXmlSerializer.cs)
+
+| Behavior | `System.Xml.Serialization` | XmlEssentials | To get the old behavior |
+| --- | --- | --- | --- |
+| Namespace declarations on the root | `xmlns:xsi` and `xmlns:xsd`, always | None | Set `Namespaces` to the two declarations. A reader that follows the Namespaces in XML recommendation doesn't need them. |
+| XML declaration | Written. The encoding is the encoding of the target | Written, always `encoding="utf-8"` | Set `OmitXmlDeclaration` to leave it out. See [Encoding](#encoding). |
+| Indentation | Two spaces | One line | Set `WriteIndented = true`. |
+| Element with no content | `<e />` | `<e/>` | Set `EmptyElementStyle = XmlEmptyElementStyle.SelfClosingWithSpace`. |
+| Element order | Declaration order, base class first | Declaration order, base class first | No change. `[XmlPropertyOrder]` or `Order` sets an explicit order. |
+| Public field | Written, before the properties of its class | Not written | Set `IncludeFields = true` and `MemberOrder = XmlMemberOrder.FieldsFirst`. |
+| Property with no setter | Not written, unless it is a collection | Written | Set `IgnoreReadOnlyProperties = true`. |
+| Collection with no setter, on read | Filled | Left as it is | Set `PreferredObjectCreationHandling = XmlObjectCreationHandling.Populate`. |
+| `null` reference | Element left out | `xsi:nil="true"` | Set `DefaultIgnoreCondition = XmlIgnoreCondition.WhenWritingNullReference`. See [Null values](#null-values). |
+| Nullable value type with no value, such as `int?` | `xsi:nil="true"` | `xsi:nil="true"` | No change. `WhenWritingNullReference` keeps it; `WhenWritingNull` leaves it out. |
+| Collection | `<Packages>` wrapper, items named for their type (`<string>`) | Repeated `<Packages>`, no wrapper | Set `DefaultCollectionMapping = XmlCollectionMapping.Wrapped`, or add `[XmlArray]` to one member. The items are then named for their type, as before. See [Collections](#collections). |
+| A value or a collection as the whole document | `<int>`, `<string>`, `<ArrayOfInt>`, `<ArrayOfShipment>` | The same names | No change. |
+| Empty collection | Empty wrapper element | Nothing without a wrapper. An empty wrapper with one | Set `DefaultCollectionMapping = XmlCollectionMapping.Wrapped`, or add `[XmlArray]`. |
+| Enum | Member name | Member name | No change. Replace `[XmlEnum("name")]` with `[XmlPropertyName("name")]`. |
+| `DateTime` | `xs:dateTime`, for example `2026-03-14T09:30:00Z` | The same form | No change. |
+| `DateTimeOffset` with a zero offset | Ends with `Z` | Ends with `+00:00` | Set `UtcOffsetHandling = XmlUtcOffsetHandling.WriteZ`. Both libraries read both forms. |
+| `char` | The number of the character, `97` for `a` | The character | Set `CharHandling = XmlCharHandling.Number`. |
+| `bool`, numbers | XSD lexical form (`true`, `12.50`) | The same form | No change. |
+| Unknown element on read | Skipped | Skipped | No change. Set `UnmappedMemberHandling = XmlUnmappedMemberHandling.Disallow` to reject it. |
+| Root element name on read | Must match | Must match | No change. |
+
+### Keep the old defaults
+
+`XmlSerializerOptions.Bcl` sets every option the table names for a difference: `Namespaces`, `WriteIndented`, `EmptyElementStyle`, `IncludeFields`, `MemberOrder`, `IgnoreReadOnlyProperties`, `PreferredObjectCreationHandling`, `DefaultIgnoreCondition`, `DefaultCollectionMapping`, `UtcOffsetHandling` and `CharHandling`. Pass it when the documents have to stay the ones the old serializer wrote, for a consumer that already reads them:
+
+```csharp Program.cs
+var options = new XmlSerializerOptions(XmlSerializerDefaults.Bcl) { NewLine = "\n" };
+output.WriteLine(XmlSerializer.Serialize(shipment, options));
+```
+
+The output is the first block above, with `encoding="utf-8"`:
+
+```xml Output
+<?xml version="1.0" encoding="utf-8"?>
+<Shipment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Carrier>Contoso Freight</Carrier>
+  <Insured>true</Insured>
+  <Packages>
+    <string>PKG-1</string>
+    <string>PKG-2</string>
+  </Packages>
+  <ShippedOn>2026-03-14T09:30:00Z</ShippedOn>
+  <Status>InTransit</Status>
+  <Weight>12.50</Weight>
+</Shipment>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/40_MigrateFromXmlSerializer.cs)
+
+`XmlSerializerOptions.Bcl` is read-only. The constructor in the sample gives an instance you can change, here to pin the line ending. The same options read the documents the old serializer wrote.
+
+Some things stay different under these options. Among them:
+
+- The declared encoding is always `utf-8`. See [Encoding](#encoding).
+- A derived type needs `[XmlPolymorphic]` and `[XmlDerivedType]` to be written with `xsi:type`. See [Derived types](#derived-types).
+
+### Null values
+
+The old serializer leaves a `null` reference out unless the member has `IsNullable = true`, and writes a nullable value type with no value as `xsi:nil="true"`. XmlEssentials writes every `null` as an element with `xsi:nil="true"`, and declares the `xsi` prefix on that element. To do as the old serializer does, set `DefaultIgnoreCondition` to `XmlIgnoreCondition.WhenWritingNullReference`. To leave every `null` member out, set it to `XmlIgnoreCondition.WhenWritingNull`. Either condition can go on one member with `[XmlIgnore(Condition = ...)]`.
+
+Reading is the same in both: a missing element leaves the property at its default, and an element with `xsi:nil="true"` sets it to `null`. For the full rules, see [Null and nil](/xmlessentials/guides/null-and-nil).
+
+### Collections
+
+This is the difference most likely to break a document that another system reads. The old serializer wraps every collection in an element named for the member and names each item for its type. XmlEssentials writes one element per item, named for the member, with no wrapper, because that is the closest XML shape to a JSON array and the most common shape in hand-written XML.
+
+To keep the wrapped shape for every collection, set `DefaultCollectionMapping` to `XmlCollectionMapping.Wrapped`. To keep it for one, annotate the member. The items need no attribute: they are named for their type, with the names the old serializer uses.
+
+```csharp
+[XmlArray]
+public List<string> Packages { get; set; } = [];
+```
+
+See [Collections](/xmlessentials/guides/collections) for every supported collection type and shape.
+
+### Encoding
+
+XmlEssentials reads and writes UTF-8 and nothing else. Three things follow from that:
+
+- A string that `XmlSerializer.Serialize` returns has `encoding="utf-8"` in its declaration, even though a .NET string is UTF-16 in memory. The declaration describes the bytes you get when you save the text as UTF-8.
+- There's no `Encoding` setting. To produce another encoding, transcode the UTF-8 output yourself.
+- Bytes whose declaration names another encoding are rejected. A `string` or a span of characters has no encoding of its own, so the encoding its declaration names isn't checked.
+
+The last point matters for XML that the old serializer wrote to a `StringWriter` and that you stored as text: its declaration says `utf-16`. You can read that text as it is.
+
+```csharp Program.cs
+const string xml = """<?xml version="1.0" encoding="utf-16"?><Shipment><Carrier>Contoso Freight</Carrier></Shipment>""";
+
+Shipment? shipment = XmlSerializer.Deserialize<Shipment>(xml);
+output.WriteLine(shipment!.Carrier);
+
+try
+{
+    XmlSerializer.Deserialize<Shipment>(Encoding.UTF8.GetBytes(xml));
+}
+catch (XmlException ex)
+{
+    output.WriteLine(ex.Message);
+}
+```
+
+The code produces the following output:
+
+```text
+Contoso Freight
+XmlEssentials is UTF-8 only. Declared encoding 'utf-16' is not supported. Path: /Shipment | LineNumber: 1 | BytePositionInLine: 40.
+```
+
+If you save such text as UTF-8 bytes, remove the declaration or rewrite it to say `utf-8` first. A file that is really encoded as UTF-16 has to be transcoded to UTF-8 before XmlEssentials can read it; the reader reports `XmlEssentials is UTF-8 only. The input is UTF-16 or UTF-32.`
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/40_MigrateFromXmlSerializer.cs)
+
+## Read documents the old serializer wrote
+
+You don't have to change your stored documents to move. Either read them with [`XmlSerializerOptions.Bcl`](#keep-the-old-defaults), or map the type so that it describes the old shape: add `[XmlArray]` and `[XmlArrayItem]` where the old serializer wrapped a collection, and leave the rest alone. The `xmlns:xsi` and `xmlns:xsd` declarations on the root are read and ignored.
+
+```csharp ArchivedShipment.cs
+[XmlRoot("Shipment")]
+public sealed class ArchivedShipment
+{
+    public string? Carrier { get; set; }
+
+    [XmlArray]
+    public List<string> Packages { get; set; } = [];
+
+    public DateTime ShippedOn { get; set; }
+
+    public ShipmentStatus Status { get; set; }
+
+    public string? TrackingNumber { get; set; }
+}
+```
+
+```csharp Program.cs
+const string xml = """
+    <?xml version="1.0" encoding="utf-8"?>
+    <Shipment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <Carrier>Contoso Freight</Carrier>
+      <Insured>true</Insured>
+      <Packages>
+        <string>PKG-1</string>
+        <string>PKG-2</string>
+      </Packages>
+      <ShippedOn>2026-03-14T09:30:00Z</ShippedOn>
+      <Status>InTransit</Status>
+      <Weight>12.50</Weight>
+    </Shipment>
+    """;
+
+ArchivedShipment? shipment = XmlSerializer.Deserialize<ArchivedShipment>(xml);
+
+output.WriteLine($"Carrier: {shipment!.Carrier}");
+output.WriteLine($"Packages: {string.Join(", ", shipment.Packages)}");
+output.WriteLine($"Shipped: {shipment.ShippedOn.ToString("u", CultureInfo.InvariantCulture)} ({shipment.ShippedOn.Kind})");
+output.WriteLine($"Status: {shipment.Status}");
+output.WriteLine($"Tracking number is null: {shipment.TrackingNumber is null}");
+```
+
+The code produces the following output:
+
+```text
+Carrier: Contoso Freight
+Packages: PKG-1, PKG-2
+Shipped: 2026-03-14 09:30:00Z (Utc)
+Status: InTransit
+Tracking number is null: True
+```
+
+`ArchivedShipment` has no `Insured` or `Weight` member, so those elements are skipped. The document has no `TrackingNumber` element, so the property stays `null`.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/40_MigrateFromXmlSerializer.cs)
+
+## Derived types
+
+The old serializer learns about derived types from `[XmlInclude(typeof(T))]` on the base class and writes the runtime type in an `xsi:type` attribute. XmlEssentials uses `[XmlDerivedType<T>]`, and `[XmlPolymorphic]` chooses where the type name goes. The default is the element name. To keep the `xsi:type` shape that your documents already have, set `DiscriminatorPlacement` to `XmlDiscriminatorPlacement.XsiType`.
+
+<CodeGroup>
+
+```csharp System.Xml.Serialization
+[XmlInclude(typeof(CardPayment))]
+[XmlInclude(typeof(BankTransfer))]
+public class Payment
+{
+    public decimal Amount { get; set; }
+}
+```
+
+```csharp XmlEssentials
+[XmlPolymorphic(DiscriminatorPlacement = XmlDiscriminatorPlacement.XsiType)]
+[XmlDerivedType<CardPayment>("CardPayment")]
+[XmlDerivedType<BankTransfer>("BankTransfer")]
+public class Payment
+{
+    public decimal Amount { get; set; }
+}
+```
+
+</CodeGroup>
+
+```csharp Program.cs
+Payment payment = new CardPayment { Amount = 129.90m, LastFour = "4242" };
+
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n" };
+string xml = XmlSerializer.Serialize(payment, options);
+output.WriteLine(xml);
+
+Payment? copy = XmlSerializer.Deserialize<Payment>(xml, options);
+output.WriteLine(copy!.GetType().Name);
+```
+
+The code produces the following output:
+
+```text
+<?xml version="1.0" encoding="utf-8"?>
+<Payment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="CardPayment">
+  <Amount>129.90</Amount>
+  <LastFour>4242</LastFour>
+</Payment>
+CardPayment
+```
+
+Apart from the `xmlns:xsd` declaration and the encoding name, this is the document the old serializer writes for the same object. For the other placements and for unknown type names, see [Polymorphism](/xmlessentials/guides/polymorphism).
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/40_MigrateFromXmlSerializer.cs)
+
+## Types the old serializer can't map
+
+`System.Xml.Serialization.XmlSerializer` needs a public type with a public parameterless constructor and public read/write members, and it throws for any `IDictionary`. XmlEssentials follows the rules of System.Text.Json: it can call a constructor with parameters, set `init` and `required` members, map a record, and read and write a dictionary. A type doesn't have to be public.
+
+```csharp Reservation.cs
+internal sealed record Reservation(string Guest, int Nights)
+{
+    public Dictionary<string, decimal> Charges { get; init; } = [];
+
+    public required string Room { get; init; }
+}
+```
+
+```csharp Program.cs
+var reservation = new Reservation("Ada Lovelace", 3)
+{
+    Room = "204",
+    Charges = new Dictionary<string, decimal> { ["Room"] = 420.00m, ["Breakfast"] = 45.50m },
+};
+
+var options = new XmlSerializerOptions { WriteIndented = true, NewLine = "\n" };
+string xml = XmlSerializer.Serialize(reservation, options);
+output.WriteLine(xml);
+
+Reservation? copy = XmlSerializer.Deserialize<Reservation>(xml, options);
+output.WriteLine($"{copy!.Guest}, room {copy.Room}, {copy.Nights} nights, {copy.Charges.Count} charges");
+```
+
+The code produces the following output:
+
+```text
+<?xml version="1.0" encoding="utf-8"?>
+<Reservation>
+  <Guest>Ada Lovelace</Guest>
+  <Nights>3</Nights>
+  <Charges>
+    <Room>420.00</Room>
+    <Breakfast>45.50</Breakfast>
+  </Charges>
+  <Room>204</Room>
+</Reservation>
+Ada Lovelace, room 204, 3 nights, 2 charges
+```
+
+A dictionary with string keys is written as one child element per entry, named for the key. A `required` member that is missing from the document is an `XmlException` on read.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/40_MigrateFromXmlSerializer.cs)
+
+| Topic | More information |
+| --- | --- |
+| Records, constructors, and `init` members | [Immutable types](/xmlessentials/guides/immutable-types) |
+| `required` members and `[XmlRequired]` | [Required properties](/xmlessentials/guides/required-properties) |
+| Dictionaries and every collection type | [Collections](/xmlessentials/guides/collections) |
+| Object graphs with shared or circular references | [Preserve references](/xmlessentials/guides/preserve-references) |
+
+## UTF-8 and asynchronous streams
+
+The old serializer has no asynchronous methods, and it produces UTF-8 only when you hand it a stream. XmlEssentials works in UTF-8 throughout, so the UTF-8 overloads skip the conversion to and from a string.
+
+```csharp Program.cs
+var order = new PurchaseOrder { Id = 1042, Customer = "Contoso" };
+
+byte[] utf8 = XmlSerializer.SerializeToUtf8Bytes(order);
+output.WriteLine(Encoding.UTF8.GetString(utf8));
+
+PurchaseOrder? fromBytes = XmlSerializer.Deserialize<PurchaseOrder>(utf8);
+output.WriteLine($"From bytes: order {fromBytes!.Id.ToString(CultureInfo.InvariantCulture)}");
+
+using var stream = new MemoryStream();
+await XmlSerializer.SerializeAsync(stream, order);
+stream.Position = 0;
+
+PurchaseOrder? fromStream = await XmlSerializer.DeserializeAsync<PurchaseOrder>(stream);
+output.WriteLine($"From stream: {fromStream!.Customer}");
+```
+
+The code produces the following output:
+
+```text
+<?xml version="1.0" encoding="utf-8"?><purchaseOrder id="1042"><customer>Contoso</customer><items/></purchaseOrder>
+From bytes: order 1042
+From stream: Contoso
+```
+
+This output also shows the default formatting: one line, and an empty wrapped collection as `<items/>`.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/40_MigrateFromXmlSerializer.cs)
+
+The serializer also reads from and writes to `ReadOnlySequence<byte>`, `IBufferWriter<byte>`, `PipeReader`, `PipeWriter`, `Utf8XmlReader`, `Utf8XmlWriter`, and the DOM types. See [Serialize](/xmlessentials/guides/serialize), [Deserialize](/xmlessentials/guides/deserialize), and [Streaming](/xmlessentials/guides/streaming).
+
+## Source generation, Native AOT, and trimming
+
+`System.Xml.Serialization.XmlSerializer` generates code at run time, so it can't be used in a Native AOT application, and its constructors are marked as unsafe for trimming. The `sgen` tool moves that work to build time, but still as a separate serializer assembly.
+
+XmlEssentials has a Roslyn source generator, with the same model as System.Text.Json. You declare a context class, list your types on it, and pass the generated metadata to the serializer. No reflection runs for those types.
+
+```csharp MigrationXmlContext.cs
+using CloudNimble.Text.Xml.Serialization;
+
+[XmlSerializable<OrderLine>]
+internal sealed partial class MigrationXmlContext : XmlSerializerContext
+{
+}
+```
+
+```csharp Program.cs
+var line = new OrderLine { Sku = "KB-01", Description = "Keyboard" };
+
+string xml = XmlSerializer.Serialize(line, MigrationXmlContext.Default.OrderLine);
+output.WriteLine(xml);
+
+OrderLine? copy = XmlSerializer.Deserialize(xml, MigrationXmlContext.Default.OrderLine);
+output.WriteLine($"{copy!.Sku}: {copy.Description}");
+```
+
+The code produces the following output:
+
+```text
+<?xml version="1.0" encoding="utf-8"?><OrderLine sku="KB-01">Keyboard</OrderLine>
+KB-01: Keyboard
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/40_MigrateFromXmlSerializer.cs)
+
+The overloads that take `XmlSerializerOptions` use reflection and are marked with `RequiresUnreferencedCode` and `RequiresDynamicCode`, so the compiler warns you when a trimmed or Native AOT application calls one. See [Reflection versus source generation](/xmlessentials/guides/reflection-vs-source-generation), [Use source generation](/xmlessentials/guides/source-generation), and [Native AOT](/xmlessentials/guides/native-aot).
+
+If you generate classes from a schema with `xsd.exe`, see [Generate types from XSD](/xmlessentials/guides/xsd-source-generation) for the build-time replacement.
+
+## What isn't supported
+
+These features of `System.Xml.Serialization` have no counterpart in XmlEssentials. Check this list before you plan a migration.
+
+| Feature | Status | What to do instead |
+| --- | --- | --- |
+| `System.Xml.Serialization` attributes on your types | Ignored | Change the `using` directive to `CloudNimble.Text.Xml.Serialization`. |
+| `IXmlSerializable` | Not called | Write an [`XmlConverter<T>`](/xmlessentials/guides/custom-converters). |
+| `[XmlAnyElement]`, `[XmlAnyAttribute]` | No attribute of that name | Use `[XmlExtensionData]`, which collects unmapped elements and attributes in one `XmlExtensionData` member. |
+| `[XmlType]` | Not supported | Name the root with `[XmlRoot]`, and a derived type with the argument of `[XmlDerivedType<T>]`. |
+| `[XmlChoiceIdentifier]` | Not supported | Use several `[XmlElement<T>]` attributes on one member, or [polymorphism](/xmlessentials/guides/polymorphism). |
+| `XmlSerializerNamespaces` | [`XmlSerializerOptions.Namespaces`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions), or `[XmlNamespaceDeclaration]` on the type | The prefixes are set once on the options or on the type, not passed to each `Serialize` call. See [Choose the prefixes](/xmlessentials/guides/namespaces#choose-the-prefixes). |
+| `[XmlNamespaceDeclarations]` | No counterpart | The prefixes a document was read with aren't kept on the object. [`XmlDocument.DiscoverNamespaces`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlDocument) reads them from a document. |
+| `XmlAttributeOverrides`, `XmlRootAttribute` passed to the constructor | Not supported | Put the attributes on the type, or use a custom converter. |
+| `[DefaultValue]` | Ignored | `XmlIgnoreCondition.WhenWritingDefault` leaves out a member that has the default value of its type. |
+| `ShouldSerializeX()` and `XSpecified` | Ignored | Use `[XmlIgnore(Condition = ...)]`. |
+| A collection property with no setter is filled when it is read | Not read by default | Mark the property `[XmlObjectCreationHandling(XmlObjectCreationHandling.Populate)]`, or set `PreferredObjectCreationHandling` to `Populate`. See [Collections](/xmlessentials/guides/collections#populate-a-collection-that-already-holds-a-value). |
+| `UnknownElement`, `UnknownAttribute`, and `UnknownNode` events | No events | Use `[XmlExtensionData]` to keep unmapped content, or `UnmappedMemberHandling` to reject it. |
+| `Serialize<object>` with the runtime type in `xsi:type` | The value is written as the type it has, with no `xsi:type`. It is read back as an `XmlElement`, or as an `XmlNode` when `UnknownTypeHandling` says so. | To read the type back, declare the base type with `[XmlDerivedType<T>]`. |
+| SOAP encoding (`SoapAttribute`, `SoapReflectionImporter`) | Not supported | No replacement. |
+| Encodings other than UTF-8 | Rejected on read, not written | Transcode. See [Encoding](#encoding). |
+| DTDs and entity declarations | A document with `<!DOCTYPE` is an `XmlException` | Remove the DTD. Only the five predefined entities and character references are read. See [Security](/xmlessentials/guides/security). |
+| `System.Xml.XmlReader` and `System.Xml.XmlWriter` as the source or target | Not supported | Use `Utf8XmlReader` and `Utf8XmlWriter`. See [Migrate from XmlReader and XmlWriter](/xmlessentials/guides/migrate/from-xmlreader-xmlwriter). |
+| Schema export and import (`XmlSchemaExporter`, `XmlSchemaImporter`) | Not supported | [Generate types from XSD](/xmlessentials/guides/xsd-source-generation) covers the import direction at build time. |
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Serialize" icon="arrow-right-from-bracket" href="/xmlessentials/guides/serialize">
+    Every way to write an object as XML.
+  </Card>
+  <Card title="Deserialize" icon="arrow-right-to-bracket" href="/xmlessentials/guides/deserialize">
+    Every way to read XML into an object.
+  </Card>
+  <Card title="Configure options" icon="sliders" href="/xmlessentials/guides/configure-options">
+    The settings on `XmlSerializerOptions`.
+  </Card>
+  <Card title="Polymorphism" icon="sitemap" href="/xmlessentials/guides/polymorphism">
+    Derived types and where the type name goes.
+  </Card>
+  <Card title="Migrate from XmlReader and XmlWriter" icon="right-left" href="/xmlessentials/guides/migrate/from-xmlreader-xmlwriter">
+    Move low-level reading and writing code.
+  </Card>
+  <Card title="Coming from System.Text.Json" icon="code" href="/xmlessentials/guides/migrate/from-system-text-json">
+    The API by its System.Text.Json counterparts.
+  </Card>
+</Columns>
+
+API reference:
+
+- [`XmlSerializer`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializer)
+- [`XmlSerializerOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions)
+- [`XmlSerializerContext`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSerializerContext)
+- [`XmlDerivedTypeAttribute<T>`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlDerivedTypeAttribute)
+- [`XmlIgnoreCondition`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlIgnoreCondition)

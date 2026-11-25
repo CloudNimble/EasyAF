@@ -1,0 +1,88 @@
+---
+title: XmlPropertyMapping
+description: "Specifies how a property or field without a mapping attribute is mapped: as a child element or as an XML attribute."
+icon: list-ol
+tag: "ENUM"
+keywords: ['XmlPropertyMapping', 'CloudNimble.Text.Xml.XmlPropertyMapping', 'CloudNimble.Text.Xml', 'enum', 'System.Enum', 'CloudNimble.Text.Xml.XmlSerializerOptions', 'CloudNimble.Text.Xml.Serialization.XmlAttributeAttribute', 'CloudNimble.Text.Xml.Serialization.XmlElementAttribute', 'CloudNimble.Text.Xml.Serialization.XmlTextAttribute']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlPropertyMapping
+```
+
+## Summary
+
+Specifies how a property or field without a mapping attribute is mapped: as a child element or as an XML attribute.
+
+## Usage
+
+`XmlPropertyMapping` says what a member becomes in XML when it has no `[XmlElement]`, `[XmlAttribute]`, or `[XmlText]` attribute. Set it through `XmlSerializerOptions.DefaultPropertyMapping`.
+
+| Value | A member with no mapping attribute is written as |
+| --- | --- |
+| `Element` (default) | A child element. |
+| `Attribute` | An XML attribute when its type is a simple value. Objects and collections are still child elements. |
+
+Use `Attribute` for formats that put most values in attributes, so you don't have to annotate every property:
+
+```csharp
+var order = new PurchaseOrder
+{
+    Id = 1042,
+    Customer = "Contoso",
+    Placed = new DateOnly(2026, 3, 14),
+    Total = 129.90m,
+};
+
+var options = new XmlSerializerOptions
+{
+    OmitXmlDeclaration = true,
+    DefaultPropertyMapping = XmlPropertyMapping.Attribute,
+};
+
+string xml = XmlSerializer.Serialize(order, options);
+output.WriteLine(xml);
+```
+
+The code produces the following output:
+
+```xml
+<PurchaseOrder Id="1042" Customer="Contoso" Placed="2026-03-14" Total="129.90"/>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/08_CustomizeNames.cs)
+
+## Considerations
+
+- The setting applies to every type serialized with the options, so the simple members of nested objects become XML attributes too.
+- A mapping attribute on a member always wins. With `Attribute` as the default, mark a member with `[XmlElement]` to keep it as an element.
+- An XML attribute can't be marked nil. A member that is `null` and mapped to an attribute is left out, so with `Attribute` a `null` value and a missing value look the same in the XML.
+- Attribute names come from `AttributeNamingPolicy`, or from `PropertyNamingPolicy` when that is `null`.
+- Use the same options to read the XML back. A member that is mapped to an attribute isn't read from an element of the same name.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Element` | 0 | A child element for each member. This is the default. |
+| `Attribute` | 1 | An XML attribute for each unannotated simple member. Nested objects stay child elements, and their
+unannotated simple members are also attributes (the option applies at every type). Collections stay
+child elements. A per-member `[XmlElement]`, `[XmlAttribute]`, or `[XmlText]` takes precedence. |
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlSerializerOptions
+- CloudNimble.Text.Xml.Serialization.XmlAttributeAttribute
+- CloudNimble.Text.Xml.Serialization.XmlElementAttribute
+- CloudNimble.Text.Xml.Serialization.XmlTextAttribute
+

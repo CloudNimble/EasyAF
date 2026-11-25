@@ -1,0 +1,783 @@
+---
+title: XmlTypeInfo
+description: "Provides XML serialization-related metadata about a type."
+icon: code-branch
+tag: "ABSTRACT"
+keywords: ['XmlTypeInfo', 'CloudNimble.Text.Xml.Serialization.XmlTypeInfo<T>', 'CloudNimble.Text.Xml.Serialization', 'class', 'CloudNimble.Text.Xml.Serialization.XmlTypeInfo', 'CloudNimble.Text.Xml.Serialization.XmlPropertyInfo', 'CloudNimble.Text.Xml.Serialization.XmlSerializerContext', 'CloudNimble.Text.Xml.Serialization.IXmlTypeInfoResolver', 'CloudNimble.Text.Xml.Serialization.DefaultXmlTypeInfoResolver', 'CloudNimble.Text.Xml.Serialization.XmlConverter']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+**Inheritance:** CloudNimble.Text.Xml.Serialization.XmlTypeInfo
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlTypeInfo<T>
+```
+
+## Summary
+
+Provides XML serialization-related metadata about a type.
+
+## Usage
+
+An `XmlTypeInfo` is the serializer's contract for one type: the converter that reads and writes it, the name of its document element, and the options it was built for. `XmlTypeInfo<T>` is the typed form you pass to `XmlSerializer`.
+
+You don't create type info. You get it from one of two places:
+
+- A property of a source-generated context, such as `OrderXmlContext.Default.Order`.
+- An options instance that has a resolver, with `XmlSerializerOptions.GetTypeInfo<T>()`, `GetTypeInfo(Type)`, or `TryGetTypeInfo`.
+
+Pass it to an `XmlSerializer` overload. These overloads use no reflection, so they're safe in trimmed and Native AOT applications:
+
+```csharp
+string xml = XmlSerializer.Serialize(order, OrderXmlContext.Default.Order);
+
+Order? copy = XmlSerializer.Deserialize(xml, OrderXmlContext.Default.Order);
+```
+
+The classes correspond to `JsonTypeInfo` and `JsonTypeInfo<T>` in System.Text.Json.
+
+## Remarks
+
+Instances are created by the library. This class cannot be derived from outside the library.
+
+## Type Parameters
+
+- `T` - The type that the metadata describes.
+
+## Examples
+
+### Read the contract of a type
+
+The following example lists the members of `Order` as the serializer maps them. The type info comes from a source-generated context, which builds it from generated metadata. A context in the default mode gives the same list.
+
+```csharp
+XmlTypeInfo<Order> metadata = MetadataOrderXmlContext.Default.Order;
+
+output.WriteLine($"Root element: {metadata.RootName.LocalName}");
+foreach (XmlPropertyInfo property in metadata.Properties)
+{
+    string kind = property.IsAttribute ? "attribute" : "element";
+    output.WriteLine($"{property.Name.LocalName}: {kind}, {property.PropertyType.Type.Name}");
+}
+```
+
+```csharp
+public sealed class Order
+{
+    public string? Customer { get; set; }
+
+    [XmlAttribute]
+    public int Id { get; set; }
+
+    [XmlElement("Line")]
+    public List<OrderLine> Lines { get; set; } = [];
+}
+```
+
+The code produces the following output:
+
+```text
+Root element: Order
+Id: attribute, Int32
+Customer: element, String
+Line: element, List`1
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/33_SourceGenerationModes.cs)
+
+## Considerations
+
+- **Type info is read-only.** Every property has a getter only. Unlike `JsonTypeInfo`, you can't add, remove, or change members to customize a contract. Change the mapping with attributes, options, or a custom converter.
+- **You can't derive from it or construct it.** The constructors aren't accessible outside the library.
+- **`Properties` lists the members of a type mapped as an object.** Type info from the reflection resolver, or from a source-generated context in the default mode or in `Metadata` mode, lists one `XmlPropertyInfo` for each member in the order they're written. Type info for a simple value, for a custom converter, or from a context in `Serialization` mode has an empty list.
+- **`CreateObject` is `null` unless the type is mapped as an object and is created with no arguments.** It's `null` for a type that is created through a constructor with parameters, and for type info from a context in `Serialization` mode.
+- **Type info is bound to its `Options`.** The serializer uses those options when you pass the type info, whatever other options exist. Type info from `XmlSerializerOptions.GetTypeInfo` is cached on that instance, and asking for it makes the instance read-only.
+- **It's safe to share.** Keep and reuse type info across threads, as you would the options or the context it came from.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Creates type info.
+
+#### Syntax
+
+```csharp
+private protected XmlTypeInfo(System.Type type, CloudNimble.Text.Xml.Serialization.XmlConverter converter, CloudNimble.Text.Xml.XmlSerializerOptions options, CloudNimble.Text.Xml.XmlName rootName, bool isNillable)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `type` | `System.Type` | The CLR type. |
+| `converter` | `CloudNimble.Text.Xml.Serialization.XmlConverter` | The converter. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serializer options. |
+| `rootName` | `CloudNimble.Text.Xml.XmlName` | The document element name. |
+| `isNillable` | `bool` | Whether null is representable. |
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Converter
+
+Gets the converter that reads and writes values of type *T*.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.Serialization.XmlConverter<T> Converter { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlConverter<T>`
+The converter associated with the type.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Converter <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Gets the [XmlConverter](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlConverter) associated with the current type.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.Serialization.XmlConverter Converter { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlConverter`
+The converter that reads and writes values of [XmlTypeInfo.Type](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo#type).
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateObject <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Gets a parameterless factory that creates an instance of [XmlTypeInfo.Type](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo#type) on deserialization.
+
+#### Syntax
+
+```csharp
+public virtual System.Func<object> CreateObject { get; }
+```
+
+#### Property Value
+
+Type: `System.Func<object>?`
+A factory that creates an instance of [XmlTypeInfo.Type](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo#type), or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if the type is not mapped as an
+object or is created through a constructor that has parameters.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsNillable <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Gets a value that indicates whether a value of [XmlTypeInfo.Type](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo#type) can be [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+
+#### Syntax
+
+```csharp
+public bool IsNillable { get; }
+```
+
+#### Property Value
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) if [XmlTypeInfo.Type](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo#type) is a reference type or a [Nullable`1](https://learn.microsoft.com/dotnet/api/system.nullable-1); otherwise, [`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool).
+
+#### Remarks
+
+Only a nillable type can be read from an element marked `xsi:nil="true"` or written from a [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) value.
+A [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) value that is written is an element marked `xsi:nil="true"`.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Options <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Gets the [XmlSerializerOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions) value associated with the current [XmlTypeInfo](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo) instance.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlSerializerOptions Options { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlSerializerOptions`
+The options that the metadata was created for.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Properties <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Gets the list of [XmlPropertyInfo](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlPropertyInfo) metadata corresponding to the current type.
+
+#### Syntax
+
+```csharp
+public virtual System.Collections.Generic.IList<CloudNimble.Text.Xml.Serialization.XmlPropertyInfo> Properties { get; }
+```
+
+#### Property Value
+
+Type: `System.Collections.Generic.IList<CloudNimble.Text.Xml.Serialization.XmlPropertyInfo>`
+The serialized members of an object type, in the order they are written. The list is empty for a type that is not mapped as an object,
+and for a type that a context generated in [XmlSourceGenerationMode.Serialization](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlSourceGenerationMode) mode.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ResumableBinding <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Gets the binding of an object that the built-in object converter reads, which is what a read from a
+stream can stop in the middle of and go on with; otherwise [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null).
+
+#### Syntax
+
+```csharp
+internal virtual CloudNimble.Text.Xml.Serialization.XmlObjectBinding ResumableBinding { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlObjectBinding?`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> RootLeafCloseTag <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Gets the whole end tag of the element named for [XmlTypeInfo.Type](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo#type), `</name>`, or null
+when the name has a namespace or is not a short ASCII name.
+
+#### Syntax
+
+```csharp
+internal byte[] RootLeafCloseTag { get; }
+```
+
+#### Property Value
+
+Type: `byte[]?`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> RootLeafOpenTag <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Gets the whole start tag of the element named for [XmlTypeInfo.Type](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo#type), `<name>`, or null
+when the name has a namespace or is not a short ASCII name.
+
+#### Syntax
+
+```csharp
+internal byte[] RootLeafOpenTag { get; }
+```
+
+#### Property Value
+
+Type: `byte[]?`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> RootName <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Gets the name of the document element that a value of [XmlTypeInfo.Type](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo#type) is serialized as.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlName RootName { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlName`
+The name of the document element.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SequenceElementName <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Gets the UTF-8 name of the element that holds a sequence of values of [XmlTypeInfo.Type](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo#type). It is found
+through the attributes of the type, so it is found once and kept.
+
+#### Syntax
+
+```csharp
+internal byte[] SequenceElementName { get; }
+```
+
+#### Property Value
+
+Type: `byte[]`
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Type <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Gets the [Type](https://learn.microsoft.com/dotnet/api/system.type) for which the XML serialization contract is defined.
+
+#### Syntax
+
+```csharp
+public System.Type Type { get; }
+```
+
+#### Property Value
+
+Type: `System.Type`
+The type that the metadata describes.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CheckRoot <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Checks that the start tag *reader* is on is the document element
+of [XmlTypeInfo.Type](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo#type).
+
+#### Syntax
+
+```csharp
+internal void CheckRoot(ref CloudNimble.Text.Xml.Utf8XmlReader reader)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `reader` | `CloudNimble.Text.Xml.Utf8XmlReader` | The reader. |
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CreateRootName <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Builds the document element name of *type*.
+
+#### Syntax
+
+```csharp
+internal static CloudNimble.Text.Xml.XmlName CreateRootName(System.Type type, CloudNimble.Text.Xml.XmlSerializerOptions options)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `type` | `System.Type` | The CLR type. |
+| `options` | `CloudNimble.Text.Xml.XmlSerializerOptions` | The serializer options. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.XmlName`
+The local name from [XmlRootAttribute.ElementName](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlRootAttribute#elementname), or the XML name of the type under the
+element naming policy when the attribute gives none; in the namespace from
+[XmlRootAttribute.Namespace](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlRootAttribute#namespace), or [XmlSerializerOptions.DefaultNamespace](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#defaultnamespace) when
+the attribute gives none.
+
+#### Remarks
+
+Every kind of type info uses this one rule, so a type has the same document element whether the
+reflection resolver, a generated context, or a converter of the caller's reads and writes it.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> IsNilElement <Badge color="gray">Inherited</Badge> <Badge color="orange">Abstract</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Returns whether the start tag the reader is on is marked `xsi:nil`, so that the value is null.
+
+#### Syntax
+
+```csharp
+internal abstract bool IsNilElement(ref CloudNimble.Text.Xml.Utf8XmlReader reader)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `reader` | `CloudNimble.Text.Xml.Utf8XmlReader` | The reader, on a start tag. |
+
+#### Returns
+
+Type: `bool`
+[`true`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) when the element stands for null.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `XmlException` | The element is marked nil and the type cannot be null. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReadElementAsObject <Badge color="gray">Inherited</Badge> <Badge color="orange">Abstract</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Reads the element the reader is on, whatever its name, and returns the value boxed.
+
+#### Syntax
+
+```csharp
+internal abstract object ReadElementAsObject(ref CloudNimble.Text.Xml.Utf8XmlReader reader)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `reader` | `CloudNimble.Text.Xml.Utf8XmlReader` | The reader, on a start tag. |
+
+#### Returns
+
+Type: `object?`
+The value.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReadRootAsObject <Badge color="gray">Inherited</Badge> <Badge color="orange">Abstract</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Reads the document element of [XmlTypeInfo.Type](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo#type) and returns the value boxed.
+
+#### Syntax
+
+```csharp
+internal abstract object ReadRootAsObject(ref CloudNimble.Text.Xml.Utf8XmlReader reader)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `reader` | `CloudNimble.Text.Xml.Utf8XmlReader` | The reader. |
+
+#### Returns
+
+Type: `object?`
+The value.
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> RootLeafTags <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Gets the tags of the element named for [XmlTypeInfo.Type](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo#type), built ahead of time, for a value that is
+written without an element frame.
+
+#### Syntax
+
+```csharp
+internal byte[] RootLeafTags(CloudNimble.Text.Xml.Utf8XmlWriter writer, out byte[] closeTag)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The writer. |
+| `closeTag` | `byte[]?` | The whole end tag, `</name>`. |
+
+#### Returns
+
+Type: `byte[]?`
+The whole start tag, `<name>`, or null when the writer is not inside an element or the
+name cannot be written from bytes built ahead of time.
+
+#### Remarks
+
+For an item of a collection that is the document root. The caller writes exactly one value.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> TryWriteStartDocumentElement <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Starts an element as the document element of [XmlTypeInfo.Type](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo#type), with the namespaces of
+[XmlSerializerOptions.Namespaces](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#namespaces) and of the type's
+[XmlNamespaceDeclarationAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlNamespaceDeclarationAttribute)s declared on it, when there are any and the writer is
+at the document level.
+
+#### Syntax
+
+```csharp
+internal bool TryWriteStartDocumentElement(CloudNimble.Text.Xml.Utf8XmlWriter writer, System.ReadOnlySpan<byte> utf8LocalName, System.ReadOnlySpan<byte> utf8NamespaceUri)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The writer. |
+| `utf8LocalName` | `System.ReadOnlySpan<byte>` | The local name of the element. |
+| `utf8NamespaceUri` | `System.ReadOnlySpan<byte>` | The namespace of the element, or empty. |
+
+#### Returns
+
+Type: `bool`
+[`false`](https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool) when nothing was written, and the caller starts the element itself.
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | The declared namespaces cannot be written on the element. |
+
+#### Remarks
+
+The name is a parameter because a document element is not always named for the type: a value of a
+derived type is written under the derived type's name, and a sequence under a name of its own.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> WriteContentAsObject <Badge color="gray">Inherited</Badge> <Badge color="orange">Abstract</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Writes a boxed value as element or attribute content, without a wrapping start tag.
+
+#### Syntax
+
+```csharp
+internal abstract void WriteContentAsObject(CloudNimble.Text.Xml.Utf8XmlWriter writer, object value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The writer. |
+| `value` | `object` | The value. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> WriteNullRoot <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Writes a null value as the document element.
+
+#### Syntax
+
+```csharp
+internal void WriteNullRoot(CloudNimble.Text.Xml.Utf8XmlWriter writer)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The writer. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> WriteRootAsObject <Badge color="gray">Inherited</Badge> <Badge color="orange">Abstract</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Writes a boxed value as the document element.
+
+#### Syntax
+
+```csharp
+internal abstract void WriteRootAsObject(CloudNimble.Text.Xml.Utf8XmlWriter writer, object value)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The writer. |
+| `value` | `object?` | The value. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> WriteStartRoot <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Writes the start tag of the element named for [XmlTypeInfo.Type](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo#type), declaring its namespace when it has
+one. When it is the document element, the namespaces of
+[XmlSerializerOptions.Namespaces](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#namespaces) and of the type's
+[XmlNamespaceDeclarationAttribute](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlNamespaceDeclarationAttribute)s are declared on it.
+
+#### Syntax
+
+```csharp
+internal void WriteStartRoot(CloudNimble.Text.Xml.Utf8XmlWriter writer)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The writer. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | The declared namespaces cannot be written on the document element. |
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> WriteStartRoot <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `CloudNimble.Text.Xml.Serialization.XmlTypeInfo`</Note>
+
+Writes the start tag of an element in the namespace of [XmlTypeInfo.Type](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlTypeInfo#type) under another local name:
+the element that holds a sequence of values of the type.
+
+#### Syntax
+
+```csharp
+internal void WriteStartRoot(CloudNimble.Text.Xml.Utf8XmlWriter writer, System.ReadOnlySpan<byte> utf8LocalName)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `writer` | `CloudNimble.Text.Xml.Utf8XmlWriter` | The writer. |
+| `utf8LocalName` | `System.ReadOnlySpan<byte>` | The local name of the element. |
+
+#### Exceptions
+
+| Exception | Description |
+|-----------|-------------|
+| `InvalidOperationException` | The declared namespaces cannot be written on the document element. |
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Serialization.XmlPropertyInfo
+- CloudNimble.Text.Xml.Serialization.XmlSerializerContext
+- CloudNimble.Text.Xml.Serialization.IXmlTypeInfoResolver
+- CloudNimble.Text.Xml.Serialization.DefaultXmlTypeInfoResolver
+- CloudNimble.Text.Xml.Serialization.XmlConverter
+- CloudNimble.Text.Xml.XmlSerializer
+- CloudNimble.Text.Xml.XmlSerializerOptions
+- CloudNimble.Text.Xml.XmlName
+

@@ -1,0 +1,416 @@
+---
+title: XmlNamingPolicy
+description: "Defines the core behavior of policies that convert CLR type and member names to XML local names and provides a base for derived classes."
+icon: shapes
+tag: "ABSTRACT"
+keywords: ['XmlNamingPolicy', 'CloudNimble.Text.Xml.XmlNamingPolicy', 'CloudNimble.Text.Xml', 'class', 'CloudNimble.Text.Xml.XmlSerializerOptions', 'CloudNimble.Text.Xml.Serialization.XmlKnownNamingPolicy', 'CloudNimble.Text.Xml.Serialization.XmlPropertyNameAttribute', 'CloudNimble.Text.Xml.Serialization.XmlRootAttribute']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlNamingPolicy
+```
+
+## Summary
+
+Defines the core behavior of policies that convert CLR type and member names to XML local names and provides a base for derived classes.
+
+## Usage
+
+`XmlNamingPolicy` converts .NET type and member names to XML names, so you can follow a naming convention without annotating every member. It is the counterpart of `JsonNamingPolicy`. Assign a policy to one of three properties of [`XmlSerializerOptions`](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions):
+
+| Property | Names it converts |
+| --- | --- |
+| `PropertyNamingPolicy` | Elements, XML attributes, and the document element, unless one of the next two is set. Also string dictionary keys, unless `DictionaryKeyPolicy` is set. |
+| `ElementNamingPolicy` | Elements and the document element. |
+| `AttributeNamingPolicy` | XML attributes. |
+
+```csharp
+var warehouse = new Warehouse { WarehouseCode = "SEA-2", StreetAddress = "400 Dock Rd", LoadingDocks = 12 };
+
+var options = new XmlSerializerOptions
+{
+    OmitXmlDeclaration = true,
+    PropertyNamingPolicy = XmlNamingPolicy.CamelCase,
+};
+
+string xml = XmlSerializer.Serialize(warehouse, options);
+output.WriteLine(xml);
+
+Warehouse? copy = XmlSerializer.Deserialize<Warehouse>(xml, options);
+output.WriteLine($"{copy!.WarehouseCode}: {copy.LoadingDocks} docks");
+```
+
+The code produces the following output:
+
+```text
+<warehouse warehouseCode="SEA-2"><streetAddress>400 Dock Rd</streetAddress><loadingDocks>12</loadingDocks></warehouse>
+SEA-2: 12 docks
+```
+
+A policy of `null`, the default, leaves names unchanged. The built-in policies are static properties: `CamelCase`, `PascalCase`, `SnakeCaseLower`, `SnakeCaseUpper`, `KebabCaseLower`, and `KebabCaseUpper`. To define your own, derive from `XmlNamingPolicy` and override `ConvertName`.
+
+## Remarks
+
+There is no identity policy. A [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) policy on [XmlSerializerOptions](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions) leaves
+names unchanged, matching `System.Text.Json.JsonNamingPolicy`.
+
+## Examples
+
+The following examples show the built-in policies, separate policies for elements and attributes, and a policy of your own.
+
+### The built-in policies
+
+```csharp
+const string name = "StreetAddress";
+
+output.WriteLine($"CamelCase:      {XmlNamingPolicy.CamelCase.ConvertName(name)}");
+output.WriteLine($"PascalCase:     {XmlNamingPolicy.PascalCase.ConvertName("streetAddress")}");
+output.WriteLine($"SnakeCaseLower: {XmlNamingPolicy.SnakeCaseLower.ConvertName(name)}");
+output.WriteLine($"SnakeCaseUpper: {XmlNamingPolicy.SnakeCaseUpper.ConvertName(name)}");
+output.WriteLine($"KebabCaseLower: {XmlNamingPolicy.KebabCaseLower.ConvertName(name)}");
+output.WriteLine($"KebabCaseUpper: {XmlNamingPolicy.KebabCaseUpper.ConvertName(name)}");
+```
+
+The code produces the following output:
+
+```text
+CamelCase:      streetAddress
+PascalCase:     StreetAddress
+SnakeCaseLower: street_address
+SnakeCaseUpper: STREET_ADDRESS
+KebabCaseLower: street-address
+KebabCaseUpper: STREET-ADDRESS
+```
+
+### Different policies for elements and attributes
+
+```csharp
+var warehouse = new Warehouse { WarehouseCode = "SEA-2", StreetAddress = "400 Dock Rd", LoadingDocks = 12 };
+
+var options = new XmlSerializerOptions
+{
+    OmitXmlDeclaration = true,
+    ElementNamingPolicy = XmlNamingPolicy.KebabCaseLower,
+    AttributeNamingPolicy = XmlNamingPolicy.SnakeCaseLower,
+};
+
+string xml = XmlSerializer.Serialize(warehouse, options);
+output.WriteLine(xml);
+```
+
+The code produces the following output:
+
+```xml
+<warehouse warehouse_code="SEA-2"><street-address>400 Dock Rd</street-address><loading-docks>12</loading-docks></warehouse>
+```
+
+### A custom policy
+
+```csharp
+public sealed class LowerCaseNamingPolicy : XmlNamingPolicy
+{
+    public override string ConvertName(string name)
+    {
+        return name.ToLowerInvariant();
+    }
+}
+```
+
+```csharp
+var warehouse = new Warehouse { WarehouseCode = "SEA-2", StreetAddress = "400 Dock Rd", LoadingDocks = 12 };
+
+var options = new XmlSerializerOptions
+{
+    OmitXmlDeclaration = true,
+    PropertyNamingPolicy = new LowerCaseNamingPolicy(),
+};
+
+string xml = XmlSerializer.Serialize(warehouse, options);
+output.WriteLine(xml);
+```
+
+The code produces the following output:
+
+```xml
+<warehouse warehousecode="SEA-2"><streetaddress>400 Dock Rd</streetaddress><loadingdocks>12</loadingdocks></warehouse>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/08_CustomizeNames.cs)
+
+## Best Practices
+
+- **Use the same options to read and to write.** The converted names are the ones the serializer looks for when it reads.
+- **Prefer a policy to many attributes** when a whole format follows one convention, and use `[XmlPropertyName]` for the exceptions. A name set by an attribute isn't converted.
+- **Make `ConvertName` deterministic.** The serializer calls it for the members of a type when it first uses the type and caches the result with the options, so a policy that returns different names over time gives inconsistent XML between options instances.
+- **Return valid XML names** from a custom policy: no spaces, and no leading digit.
+- **Don't apply a policy to dictionary keys unless the reader expects the converted keys.** The conversion happens when writing and can't be undone when reading.
+
+## Considerations
+
+- A policy converts type names as well as member names, so it changes the document element. With `CamelCase`, a type named `Warehouse` is written as `<warehouse>`.
+- A policy doesn't convert names set with `[XmlRoot]`, `[XmlPropertyName]`, `[XmlElement]`, `[XmlAttribute]`, `[XmlArray]`, or `[XmlArrayItem]`, and it doesn't convert enumeration values.
+- `CamelCase` and `PascalCase` change only the first character. `CamelCase` turns `XMLParser` into `xMLParser`. `JsonNamingPolicy.CamelCase` lowercases the whole leading run of capitals instead.
+- The snake case and kebab case policies insert a separator before a capital that follows a lowercase letter, and before the last capital of a run that is followed by a lowercase letter. `XMLParser` becomes `xml_parser`. A digit doesn't start a new word.
+- In a source-generated context, a policy is named with the [`XmlKnownNamingPolicy`](/xmlessentials/api-reference/CloudNimble/Text/Xml/Serialization/XmlKnownNamingPolicy) enumeration, because an attribute argument has to be a constant.
+- The built-in policies are shared instances with no state.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> CamelCase
+
+Gets the naming policy for camel-casing.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlNamingPolicy CamelCase { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlNamingPolicy`
+A naming policy that converts the first character of a name to lowercase.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> KebabCaseLower
+
+Gets the naming policy for lowercase kebab-casing.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlNamingPolicy KebabCaseLower { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlNamingPolicy`
+A naming policy that separates the words of a name with `-` and converts every character to lowercase.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> KebabCaseUpper
+
+Gets the naming policy for uppercase kebab-casing.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlNamingPolicy KebabCaseUpper { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlNamingPolicy`
+A naming policy that separates the words of a name with `-` and converts every character to uppercase.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> PascalCase
+
+Gets the naming policy for Pascal-casing.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlNamingPolicy PascalCase { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlNamingPolicy`
+A naming policy that converts the first character of a name to uppercase.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SnakeCaseLower
+
+Gets the naming policy for lowercase snake-casing.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlNamingPolicy SnakeCaseLower { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlNamingPolicy`
+A naming policy that separates the words of a name with `_` and converts every character to lowercase.
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> SnakeCaseUpper
+
+Gets the naming policy for uppercase snake-casing.
+
+#### Syntax
+
+```csharp
+public static CloudNimble.Text.Xml.XmlNamingPolicy SnakeCaseUpper { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlNamingPolicy`
+A naming policy that separates the words of a name with `_` and converts every character to uppercase.
+
+## Methods
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ConvertName <Badge color="orange">Abstract</Badge>
+
+When overridden in a derived class, converts the specified CLR name to an XML local name according to the policy.
+
+#### Syntax
+
+```csharp
+public abstract string ConvertName(string name)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `name` | `string` | The CLR name to convert. |
+
+#### Returns
+
+Type: `string`
+The converted XML local name.
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlSerializerOptions
+- CloudNimble.Text.Xml.Serialization.XmlKnownNamingPolicy
+- CloudNimble.Text.Xml.Serialization.XmlPropertyNameAttribute
+- CloudNimble.Text.Xml.Serialization.XmlRootAttribute
+

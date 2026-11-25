@@ -1,0 +1,313 @@
+---
+title: XmlSerializerContext
+description: "Provides metadata about a set of types that is relevant to XML serialization, and provides a base for source-generated contexts."
+icon: shapes
+tag: "ABSTRACT"
+keywords: ['XmlSerializerContext', 'CloudNimble.Text.Xml.Serialization.XmlSerializerContext', 'CloudNimble.Text.Xml.Serialization', 'class', 'CloudNimble.Text.Xml.Serialization.XmlSerializableAttribute', 'CloudNimble.Text.Xml.Serialization.XmlSourceGenerationOptionsAttribute', 'CloudNimble.Text.Xml.Serialization.XmlSourceGenerationMode', 'CloudNimble.Text.Xml.Serialization.XmlTypeInfo', 'CloudNimble.Text.Xml.Serialization.IXmlTypeInfoResolver']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml.Serialization
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.Serialization.XmlSerializerContext
+```
+
+## Summary
+
+Provides metadata about a set of types that is relevant to XML serialization, and provides a base for source-generated contexts.
+
+## Usage
+
+You don't use `XmlSerializerContext` directly. You declare a partial class that derives from it, list your types with `[XmlSerializable]`, and the source generator in the `XmlEssentials` package writes the rest of the class.
+
+```csharp
+[XmlSerializable<Order>]
+public partial class OrderXmlContext : XmlSerializerContext
+{
+}
+```
+
+The generated half adds a static `Default` instance, a parameterless constructor, a constructor that takes `XmlSerializerOptions`, one `XmlTypeInfo<T>` property for each type, and an implementation of `GetTypeInfo`. Pass a type info property, or the context itself, to an `XmlSerializer` overload:
+
+```csharp
+string xml = XmlSerializer.Serialize(order, OrderXmlContext.Default.Order);
+
+Order? copy = XmlSerializer.Deserialize(xml, OrderXmlContext.Default.Order);
+```
+
+A context is bound to one `XmlSerializerOptions` instance, available from `Options`. The constructor makes the context the `TypeInfoResolver` of those options.
+
+The class is the counterpart of `JsonSerializerContext` in System.Text.Json. For the full procedure, see [How to use source generation](/xmlessentials/guides/source-generation).
+
+## Remarks
+
+This class is analogous to `JsonSerializerContext` in `System.Text.Json`.
+
+## Examples
+
+### Serialize and deserialize with generated type info
+
+```csharp
+Order order = CreateOrder();
+
+string xml = XmlSerializer.Serialize(order, OrderXmlContext.Default.Order);
+output.WriteLine(xml);
+
+Order? copy = XmlSerializer.Deserialize(xml, OrderXmlContext.Default.Order);
+output.WriteLine($"Order {copy!.Id} for {copy.Customer}: {copy.Lines.Count} lines");
+```
+
+The code produces the following output:
+
+```text
+<?xml version="1.0" encoding="utf-8"?><Order Id="1042"><Customer>Ada</Customer><Line><Quantity>1</Quantity><Sku>KB-01</Sku></Line><Line><Quantity>2</Quantity><Sku>MS-02</Sku></Line></Order>
+Order 1042 for Ada: 2 lines
+```
+
+### Create a context from your own options
+
+```csharp
+var options = new XmlSerializerOptions
+{
+    NewLine = "\n",
+    OmitXmlDeclaration = true,
+    WriteIndented = true,
+};
+var context = new OrderXmlContext(options);
+
+string xml = XmlSerializer.Serialize(CreateOrder(), context.Order);
+output.WriteLine(xml);
+```
+
+The code produces the following output:
+
+```xml
+<Order Id="1042">
+  <Customer>Ada</Customer>
+  <Line>
+    <Quantity>1</Quantity>
+    <Sku>KB-01</Sku>
+  </Line>
+  <Line>
+    <Quantity>2</Quantity>
+    <Sku>MS-02</Sku>
+  </Line>
+</Order>
+```
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/32_UseSourceGeneration.cs)
+
+## Best Practices
+
+- **Use `Default` unless you need other options.** It's created once and shared. When you do pass options to the constructor, create that context once and keep it.
+- **Prefer the `XmlTypeInfo<T>` properties to the context overloads.** `OrderXmlContext.Default.Order` fails to compile when the type isn't in the context. `XmlSerializer.Serialize(value, context)` finds out at run time.
+- **List every root type.** A generated context uses no reflection: a type that it doesn't list and can't reach from a listed type is a `NotSupportedException`, unless it is a built-in value. That includes a collection or array type that you serialize as the document element, so list it too.
+- **Declare the naming policies, `DefaultPropertyMapping`, and `IncludeFields` you serialize with in `[XmlSourceGenerationOptions]`.** The write fast path is compiled for the values the attribute declares, and it's used when the run-time options agree with them. With other options a context in the default mode writes from the metadata, with the result the reflection resolver gives.
+- **Register a custom converter as you would without a context.** A context in the default mode or in `Metadata` mode uses a converter in `XmlSerializerOptions.Converters`, and a converter named by `[XmlConverter]` on a type or a member.
+- **List the base type of a hierarchy.** The context reaches the types that `[XmlDerivedType]` names, on a type or on a member, and reads and writes them as the reflection resolver does.
+- **Keep `Serialization` mode for types you only write.** Type info generated in that mode has no metadata. It can't read, and it writes only with the options the context was compiled for.
+
+## Considerations
+
+- **The constructor changes the options you pass.** It sets `TypeInfoResolver` on them, and throws `InvalidOperationException` when they're read-only. `XmlSerializerOptions.Default`, `Web`, `Strict`, and `Bcl` are read-only. If you pass the same options to two contexts, the second one becomes the resolver.
+- **A type info property belongs to the context's options.** `OrderXmlContext.Default.Order.Options` is the options of `Default`. Other options that ask the context for a type get type info of their own.
+- **Contexts combine through `TypeInfoResolverChain`.** A generated `GetTypeInfo` returns `null` for a type the context neither lists nor reaches, unless the type is a built-in value, an XML value, `object`, or a type with a custom converter, so the next context in the chain is asked. The options that hold the chain decide how each type is written: a generated context creates type info for the options that ask. A context you write by hand answers with whatever its `GetTypeInfo(Type)` returns.
+- **A generated context follows every option.** In the default mode and in `Metadata` mode, the context gives the serializer metadata, and the engine that the reflection resolver uses reads and writes from it. Naming policies, `DefaultPropertyMapping`, `IncludeFields`, `IgnoreReadOnlyProperties`, `IgnoreReadOnlyFields`, `DefaultIgnoreCondition`, `ReferenceHandler`, custom converters, and the other settings of `XmlSerializerOptions` apply when the type info is created, with the result the reflection resolver gives.
+- **The write fast path is used when the options allow it.** In the default mode, the generator also writes a method that writes a type directly. The context uses it when the naming policies, `DefaultPropertyMapping`, and `IncludeFields` of the options equal what `[XmlSourceGenerationOptions]` declares, `IgnoreReadOnlyProperties` and `IgnoreReadOnlyFields` are `false`, there is no `ReferenceHandler`, and the options hold no custom converter for the type or for a simple type the method writes directly. With any other options the context writes from the metadata.
+- **Some types have no write fast path.** In the default mode they're written from the metadata, and no diagnostic is reported: a type that declares derived types, a type with a member that declares derived types or whose type or item type does, a member with `[XmlConverter]`, mixed content, extension data, a member the context can't access, and two members with the same C# name in the type's hierarchy.
+- **`Serialization` mode writes and can't read.** Type info generated in that mode has the write fast path and no metadata. Every read, and a write with options the fast path wasn't compiled for, throws `InvalidOperationException`.
+- **No member is found through reflection.** Getters and setters are generated delegates, and `init`-only members, `required` members, non-public members marked `[XmlInclude]`, and a non-public constructor marked `[XmlConstructor]` are reached through `[UnsafeAccessor]`. Every mode is safe for trimming and Native AOT. Under Native AOT, call the `XmlSerializer` overloads that take an `XmlTypeInfo<T>`.
+- **Interceptors route other calls to the context.** With the package's build file in effect, `XmlSerializer.Serialize<T>(value)` and `XmlSerializer.Deserialize<T>(input)` for a listed type are rewritten to use the context's `Default` instance. A call that passes an `XmlSerializerOptions` argument is never rewritten. The trimming and Native AOT analyzers still warn on a rewritten call, because they look at the method your code names, so pass the type info or the context in an application you publish that way. See [Interceptors](/xmlessentials/guides/reflection-vs-source-generation#interceptors).
+- **Unlike `JsonSerializerContext`,** the class has no `GeneratedSerializerOptions` member. The generated code is a constructor and properties.
+
+## Constructors
+
+### <Icon icon="hammer" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> .ctor <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public Object()
+```
+
+## Properties
+
+### <Icon icon="tag" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Options
+
+Gets the run-time specified options of the context.
+
+#### Syntax
+
+```csharp
+public CloudNimble.Text.Xml.XmlSerializerOptions Options { get; }
+```
+
+#### Property Value
+
+Type: `CloudNimble.Text.Xml.XmlSerializerOptions`
+The options bound to the context. If no options were passed when the context was created, a new instance is bound and returned.
+
+#### Remarks
+
+The [XmlSerializerOptions.TypeInfoResolver](/xmlessentials/api-reference/CloudNimble/Text/Xml/XmlSerializerOptions#typeinforesolver) of the options is this context.
+
+## Methods
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual bool Equals(object obj)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `obj` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> Equals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool Equals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetHashCode <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual int GetHashCode()
+```
+
+#### Returns
+
+Type: `int`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetType <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public System.Type GetType()
+```
+
+#### Returns
+
+Type: `System.Type`
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> GetTypeInfo <Badge color="orange">Abstract</Badge>
+
+When overridden in a derived class, gets metadata for the specified type.
+
+#### Syntax
+
+```csharp
+public abstract CloudNimble.Text.Xml.Serialization.XmlTypeInfo GetTypeInfo(System.Type type)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `type` | `System.Type` | The type to fetch metadata about. |
+
+#### Returns
+
+Type: `CloudNimble.Text.Xml.Serialization.XmlTypeInfo?`
+The metadata for *type*, or [`null`](https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null) if the context has no metadata for the type.
+
+### <Icon icon="function" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> MemberwiseClone <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+protected internal object MemberwiseClone()
+```
+
+#### Returns
+
+Type: `object`
+
+### <Icon icon="thumbtack" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ReferenceEquals <Badge color="gray">Inherited</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public static bool ReferenceEquals(object objA, object objB)
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `objA` | `object?` | - |
+| `objB` | `object?` | - |
+
+#### Returns
+
+Type: `bool`
+
+### <Icon icon="code-fork" iconType="duotone" color="#419AC5" size={24} className="mr-2" /> ToString <Badge color="gray">Inherited</Badge> <Badge color="orange">Virtual</Badge>
+
+<Note>Inherited from `object`</Note>
+
+#### Syntax
+
+```csharp
+public virtual string ToString()
+```
+
+#### Returns
+
+Type: `string?`
+
+## Related APIs
+
+- CloudNimble.Text.Xml.Serialization.XmlSerializableAttribute
+- CloudNimble.Text.Xml.Serialization.XmlSourceGenerationOptionsAttribute
+- CloudNimble.Text.Xml.Serialization.XmlSourceGenerationMode
+- CloudNimble.Text.Xml.Serialization.XmlTypeInfo
+- CloudNimble.Text.Xml.Serialization.IXmlTypeInfoResolver
+- CloudNimble.Text.Xml.Serialization.DefaultXmlTypeInfoResolver
+- CloudNimble.Text.Xml.XmlSerializer
+- CloudNimble.Text.Xml.XmlSerializerOptions
+

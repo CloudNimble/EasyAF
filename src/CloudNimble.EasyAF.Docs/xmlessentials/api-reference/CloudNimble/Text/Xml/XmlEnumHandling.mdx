@@ -1,0 +1,77 @@
+---
+title: XmlEnumHandling
+description: "Specifies how enumeration values are written."
+icon: list-ol
+tag: "ENUM"
+keywords: ['XmlEnumHandling', 'CloudNimble.Text.Xml.XmlEnumHandling', 'CloudNimble.Text.Xml', 'enum', 'System.Enum', 'CloudNimble.Text.Xml.XmlSerializerOptions', 'CloudNimble.Text.Xml.XmlSerializer', 'CloudNimble.Text.Xml.Serialization.XmlSourceGenerationOptionsAttribute']
+---
+
+## Definition
+
+**Assembly:** CloudNimble.XmlEssentials.dll
+
+**Namespace:** CloudNimble.Text.Xml
+
+**Inheritance:** System.Enum
+
+## Syntax
+
+```csharp
+CloudNimble.Text.Xml.XmlEnumHandling
+```
+
+## Summary
+
+Specifies how enumeration values are written.
+
+## Usage
+
+`XmlEnumHandling` is the type of `XmlSerializerOptions.EnumHandling`. It decides whether an enumeration value is written as the name of its member or as its number. The default is `Name`.
+
+```csharp
+var ticket = new Ticket { Id = 311, Priority = TicketPriority.High };
+
+var byName = new XmlSerializerOptions { OmitXmlDeclaration = true };
+output.WriteLine(XmlSerializer.Serialize(ticket, byName));
+
+var byNumber = new XmlSerializerOptions { OmitXmlDeclaration = true, EnumHandling = XmlEnumHandling.Integer };
+string xml = XmlSerializer.Serialize(ticket, byNumber);
+output.WriteLine(xml);
+
+Ticket? copy = XmlSerializer.Deserialize<Ticket>(xml);
+output.WriteLine(copy!.Priority);
+```
+
+The code produces the following output:
+
+```text
+<Ticket><Id>311</Id><Priority>High</Priority></Ticket>
+<Ticket><Id>311</Id><Priority>2</Priority></Ticket>
+High
+```
+
+The last call reads the numeric document with the default options, which shows that a number is accepted when reading even though `EnumHandling` is `Name`.
+
+[View the complete sample on GitHub](https://github.com/CloudNimble/XmlEssentials/blob/main/src/CloudNimble.XmlEssentials.Samples/15_NullAndNil.cs)
+
+## Considerations
+
+- The setting affects writing. It applies to enumeration members written as elements and as attributes.
+- With `Name`, a `[Flags]` value is written as the names of its flags separated by spaces, for example `Class Struct`. A value that has no name is written as its number.
+- A name that isn't a member of the enumeration is an `XmlException` when read, with the message `The value is not a valid enum member.`
+- Names are more readable and survive a renumbering of the enumeration. Numbers survive a rename. Choose the form that matches how the type is expected to change.
+- System.Text.Json writes enumerations as numbers by default and needs `JsonStringEnumConverter` for names. XmlEssentials writes names by default, as `System.Xml.Serialization` does.
+
+## Values
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `Name` | 0 | The name of the enumeration member. A combination of flags is written as the member names separated by spaces. |
+| `Integer` | 1 | The underlying integer value. |
+
+## Related APIs
+
+- CloudNimble.Text.Xml.XmlSerializerOptions
+- CloudNimble.Text.Xml.XmlSerializer
+- CloudNimble.Text.Xml.Serialization.XmlSourceGenerationOptionsAttribute
+

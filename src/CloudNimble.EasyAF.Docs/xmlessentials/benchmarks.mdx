@@ -1,0 +1,349 @@
+---
+title: "XmlEssentials benchmarks"
+sidebarTitle: "Benchmarks"
+description: "How XmlEssentials compares with System.Xml and System.Text.Json for reading, writing, parsing, and serializing, with every number measured."
+icon: "gauge-high"
+---
+
+XmlEssentials is faster than `System.Xml` in 66 of the 67 like-for-like comparisons on this page, by 3.0× on average, and it allocates 85% less memory on average. This page shows every number, explains what each one measures, names the comparison `System.Xml` wins, and tells you where XmlEssentials stands against System.Text.Json.
+
+<Columns cols={3}>
+  <Card title="3.0× faster on average" icon="bolt">
+    Than `System.Xml`, across 67 comparisons. The range is 1.1× to 19×, with one exception.
+  </Card>
+  <Card title="85% less memory" icon="memory">
+    On average. 32 of the 67 comparisons allocate 0 bytes.
+  </Card>
+  <Card title="104 bytes" icon="feather">
+    To parse a document of any size into a DOM. `System.Xml` needs 127 KB to 709 KB for the same files.
+  </Card>
+</Columns>
+
+## How to read these tables
+
+Each table compares the same work done by two or three libraries.
+
+- **Time** is the mean time for one operation. A microsecond (µs) is 1,000 nanoseconds (ns).
+- **Allocated** is the managed memory one operation allocates. Less memory means fewer garbage collections under load.
+- **Faster** is the `System.Xml` time divided by the XmlEssentials time. "2.4×" means XmlEssentials does the work in well under half the time. It's computed from the measured times, before they're rounded for the table.
+- **Less memory** is how much less XmlEssentials allocates than `System.Xml` for the same operation. "100%" means XmlEssentials allocates nothing. The cell is empty where `System.Xml` allocates nothing either, and "more" marks the two rows where XmlEssentials allocates more.
+
+`System.Xml` is the baseline: `XmlReader`, `XmlWriter`, `XmlDocument`, `XDocument`, and a cached `System.Xml.Serialization.XmlSerializer`. System.Text.Json appears beside it as a yardstick for what a modern .NET serializer achieves. It reads and writes JSON, not XML, so it isn't doing the same job.
+
+## Read real documents
+
+The reader walks every token of four real files and keeps whitespace and comments. These files come from other parsers' test suites, and none of them was written for this library.
+
+| Document | System.Xml | XmlEssentials | Faster | Less memory |
+| --- | --- | --- | --- | --- |
+| Word document (WordprocessingML, 11 KB) | 19.7 µs / 25,144 B | 12.9 µs / 944 B | 1.5× | 96% |
+| RPM package metadata (21 KB) | 31.3 µs / 20,064 B | 15.3 µs / 80 B | 2.0× | 99.6% |
+| OpenDocument text (57 KB) | 79.8 µs / 56,017 B | 43.9 µs / 6,952 B | 1.8× | 88% |
+| RSS feed (198 KB) | 191.9 µs / 47,137 B | 82.4 µs / 1,441 B | 2.3× | 97% |
+
+The few bytes XmlEssentials allocates are per reader, not per token: buffers for decoded values and for documents with more than eight attributes or namespaces on one element. Pass the reader a scratch buffer and all four files read with **0 bytes** allocated, in the same time:
+
+| Document | XmlEssentials |
+| --- | --- |
+| Word document, scratch buffer | 12.8 µs / 0 B |
+| RPM package metadata, scratch buffer | 15.2 µs / 0 B |
+| OpenDocument text, scratch buffer | 43.3 µs / 0 B |
+| RSS feed, scratch buffer | 83.0 µs / 0 B |
+
+See [Use Utf8XmlReader](/xmlessentials/guides/use-utf8xmlreader#read-without-allocating).
+
+## Parse into a DOM
+
+Each library parses the whole file into its read-only document object model.
+
+| Document | System.Xml | XmlEssentials | Faster | Less memory |
+| --- | --- | --- | --- | --- |
+| Word document (11 KB) | 52.9 µs / 127,176 B | 17.0 µs / 104 B | 3.1× | 99.9% |
+| RPM package metadata (21 KB) | 72.8 µs / 170,953 B | 21.3 µs / 104 B | 3.4× | 99.9% |
+| OpenDocument text (57 KB) | 198.4 µs / 353,889 B | 59.1 µs / 104 B | 3.4× | 99.9% |
+| RSS feed (198 KB) | 345.4 µs / 709,083 B | 108.8 µs / 105 B | 3.2× | 99.9% |
+
+The 104 bytes are the document object. Everything else lives in pooled buffers that go back to the pool when you dispose the document, which is why the number doesn't grow with the file. `System.Xml` allocates one object per node.
+
+## Write a DOM back out
+
+Each library writes a parsed document to UTF-8.
+
+| Document | System.Xml | XmlEssentials | Faster | Less memory |
+| --- | --- | --- | --- | --- |
+| Word document (11 KB) | 28.8 µs / 11,032 B | 20.6 µs / 0 B | 1.4× | 100% |
+| RPM package metadata (21 KB) | 32.6 µs / 8,016 B | 21.5 µs / 0 B | 1.5× | 100% |
+| OpenDocument text (57 KB) | 97.7 µs / 23,273 B | 68.0 µs / 0 B | 1.4× | 100% |
+| RSS feed (198 KB) | 148.8 µs / 8,017 B | 89.6 µs / 0 B | 1.7× | 100% |
+
+## Small documents
+
+Small payloads show the fixed cost of each API: what you pay before the first byte is read or written. The tiny document is `<root id="1"><n>42</n></root>`. The catalog has 200 items.
+
+| Operation | System.Xml | XmlEssentials | Faster | Less memory |
+| --- | --- | --- | --- | --- |
+| Write the tiny document | 326 ns / 7,328 B | 33 ns / 0 B | 9.9× | 100% |
+| Read the tiny document | 325 ns / 2,472 B | 63 ns / 0 B | 5.2× | 100% |
+| Parse the tiny document into a DOM | 645 ns / 5,176 B | 114 ns / 104 B | 5.7× | 98% |
+| Write the catalog | 33.4 µs / 13,728 B | 16.4 µs / 0 B | 2.0× | 100% |
+| Read the catalog | 25.9 µs / 15,088 B | 17.3 µs / 0 B | 1.5× | 100% |
+| Read the catalog and parse its integers | 30.4 µs / 35,808 B | 18.6 µs / 0 B | 1.6× | 100% |
+| Read the catalog with namespaces | 21.0 µs / 15,200 B | 14.6 µs / 0 B | 1.4× | 100% |
+| Parse the catalog into a DOM | 55.8 µs / 136,128 B | 25.8 µs / 104 B | 2.2× | 99.9% |
+| Parse the catalog with namespaces into a DOM | 44.6 µs / 110,760 B | 20.0 µs / 104 B | 2.2× | 99.9% |
+| Navigate the parsed catalog | 3.56 µs / 0 B | 2.84 µs / 0 B | 1.3× |  |
+| Write the parsed catalog | 28.3 µs / 7,368 B | 15.5 µs / 0 B | 1.8× | 100% |
+
+`System.Xml` allocates 7 KB to write a 30-byte document because every `XmlWriter` starts with its own buffers. A `Utf8XmlWriter` writes straight into your buffer, and you can reuse one writer with `Reset`.
+
+## Reader: blocks, skipping, and wide elements
+
+| Operation | System.Xml | XmlEssentials | Faster | Less memory |
+| --- | --- | --- | --- | --- |
+| Read a catalog from a stream, in blocks | 261.1 µs / 27,603 B | 190.6 µs / 17,042 B | 1.4× | 38% |
+| Skip the content of every item in a catalog | 197.7 µs / 27,738 B | 172.4 µs / 42 B | 1.1× | 99.8% |
+| Read one element with 1,000 attributes | 69.4 µs / 344,281 B | 16.1 µs / 73,320 B | 4.3× | 79% |
+| Read one element with 5,000 attributes | 1.67 ms / 1,755,804 B | 119.2 µs / 589,936 B | 14× | 66% |
+
+`System.Xml` reads a stream in blocks of its own. XmlEssentials reads 4 KB blocks and carries an `XmlReaderState` from one to the next, which is where its allocation in the first row comes from. Two more rows show what that costs beside reading the same input whole:
+
+| Operation | XmlEssentials |
+| --- | --- |
+| Read the same input as one block | 194.3 µs / 114 B |
+| TrySkip across blocks | 187.9 µs / 6,506 B |
+
+## Writer: formatting and large values
+
+| Operation | System.Xml | System.Text.Json | XmlEssentials | Faster than System.Xml | Less memory than System.Xml |
+| --- | --- | --- | --- | --- | --- |
+| Indented output | 44.7 µs / 13,784 B | 16.0 µs / 0 B | 21.5 µs / 0 B | 2.1× | 100% |
+| Indented, one attribute per line | 26.3 µs / 7,384 B |  | 15.8 µs / 0 B | 1.7× | 100% |
+| Names encoded once and reused | 32.2 µs / 13,728 B | 11.9 µs / 0 B | 14.8 µs / 0 B | 2.2× | 100% |
+| 60 KB of binary as Base64, in segments | 27.5 µs / 9,448 B | 1.68 µs / 0 B | 1.78 µs / 0 B | 15× | 100% |
+| One long text value, in segments | 31.9 µs / 7,328 B | 50.6 µs / 0 B | 7.56 µs / 0 B | 4.2× | 100% |
+| Text with line breaks, rewritten as CR LF | 310.1 µs / 7,332 B |  | 103.6 µs / 0 B | 3.0× | 100% |
+
+Three more rows aren't paired with a `System.Xml` row:
+
+| Operation | XmlEssentials |
+| --- | --- |
+| Same names, given as strings | 14.4 µs / 0 B |
+| Text with line breaks, CR LF, XML 1.1 | 104.1 µs / 0 B |
+| Text with line breaks, written as they are | 24.8 µs / 0 B |
+
+### Raw XML
+
+`WriteRawValue` copies XML you already have into the output. By default it checks that the fragment is well formed, and `skipInputValidation: true` turns the check off. `XmlWriter.WriteRaw` in `System.Xml` never checks, so only the second row is a like-for-like comparison, and there `System.Xml` takes the fragment as a string and transcodes it. Neither row is part of the averages on this page.
+
+| Operation | System.Xml | System.Text.Json | XmlEssentials | Faster than System.Xml | Less memory than System.Xml |
+| --- | --- | --- | --- | --- | --- |
+| Raw fragment, checked |  | 9.55 µs / 0 B | 17.5 µs / 0 B |  |  |
+| Raw fragment, not checked | 6.75 µs / 7,328 B | 54 ns / 0 B | 82 ns / 0 B | 82× | 100% |
+
+## Change a document
+
+The mutable tree, `XmlNode`, is the counterpart of `JsonNode`. `System.Xml` has two trees you can change, so each row appears once against `XmlDocument` and once against `XDocument`. The catalog has 200 items, and the second pair of rows adds an attribute and a child to every item and writes the result.
+
+| Operation | System.Xml | System.Text.Json | XmlEssentials | Faster than System.Xml | Less memory than System.Xml |
+| --- | --- | --- | --- | --- | --- |
+| Parse into a tree, against `XmlDocument` | 54.6 µs / 135,296 B | 18.2 µs / 48,936 B | 35.5 µs / 87,544 B | 1.5× | 35% |
+| Parse into a tree, against `XDocument` | 52.9 µs / 105,049 B | 18.2 µs / 48,936 B | 35.5 µs / 87,544 B | 1.5× | 17% |
+| Parse, change, and write, against `XmlDocument` | 119.6 µs / 195,729 B | 71.3 µs / 226,537 B | 108.4 µs / 257,193 B | 1.1× | 31% more |
+| Parse, change, and write, against `XDocument` | 92.2 µs / 136,297 B | 71.3 µs / 226,537 B | 108.4 µs / 257,193 B | 0.85× | 89% more |
+
+This table holds the one comparison on the page that `System.Xml` wins: `XDocument` parses, changes, and writes the catalog in 0.85× the time XmlEssentials takes. Both of those rows are also the only ones where XmlEssentials allocates more than `System.Xml`.
+
+## Serialize and deserialize
+
+### Single values
+
+One value as a whole document, such as `<int>12345</int>`.
+
+| Operation | System.Xml | System.Text.Json | XmlEssentials | Faster than System.Xml | Less memory than System.Xml |
+| --- | --- | --- | --- | --- | --- |
+| Read an `int` | 1.07 µs / 5,968 B | 27 ns / 0 B | 56 ns / 0 B | 19× | 100% |
+| Read an `int` from a stream | 1.07 µs / 5,968 B |  | 68 ns / 0 B | 16× | 100% |
+| Read a `DateTime` | 1.10 µs / 6,040 B |  | 74 ns / 0 B | 15× | 100% |
+| Read an enum | 828 ns / 4,480 B |  | 62 ns / 0 B | 13× | 100% |
+| Read a `string` | 1.25 µs / 6,120 B | 77 ns / 96 B | 125 ns / 96 B | 10× | 98% |
+| Write an `int` to a buffer | 345 ns / 7,648 B |  | 35 ns / 0 B | 10× | 100% |
+| Write an `int` to a byte array | 333 ns / 7,728 B | 28 ns / 32 B | 49 ns / 80 B | 6.8× | 99% |
+| Write an `int` to a string | 352 ns / 7,784 B | 32 ns / 32 B | 58 ns / 136 B | 6.1× | 98% |
+| Write a `string` | 360 ns / 7,888 B | 66 ns / 80 B | 83 ns / 128 B | 4.3× | 98% |
+| Write a `DateTime` | 368 ns / 7,784 B |  | 58 ns / 104 B | 6.4× | 99% |
+| Write an enum | 365 ns / 7,744 B |  | 52 ns / 96 B | 7.0× | 99% |
+| Write a nullable `int` | 604 ns / 8,024 B |  | 75 ns / 144 B | 8.0× | 98% |
+
+### Objects
+
+An order is one flat object with nine properties. A customer is a small graph: two addresses, 20 line items, and four tags. The lists hold 1,000 objects.
+
+| Operation | System.Xml | System.Text.Json | XmlEssentials | Faster than System.Xml | Less memory than System.Xml |
+| --- | --- | --- | --- | --- | --- |
+| Read an order | 2.14 µs / 7,368 B | 311 ns / 232 B | 363 ns / 232 B | 5.9× | 97% |
+| Write an order | 1.05 µs / 8,192 B | 179 ns / 0 B | 207 ns / 0 B | 5.1× | 100% |
+| Read a customer | 8.75 µs / 16,496 B | 2.97 µs / 3,576 B | 2.67 µs / 3,168 B | 3.3× | 81% |
+| Write a customer | 4.26 µs / 8,648 B | 1.43 µs / 312 B | 1.33 µs / 0 B | 3.2× | 100% |
+| Read 1,000 orders | 771.2 µs / 567,312 B | 325.8 µs / 249,076 B | 320.3 µs / 248,604 B | 2.4× | 56% |
+| Write 1,000 orders | 425.1 µs / 214,508 B | 202.1 µs / 314 B | 201.1 µs / 0 B | 2.1× | 100% |
+| Read 1,000 objects mapped as attributes | 353.1 µs / 267,716 B | 156.2 µs / 105,074 B | 157.2 µs / 104,602 B | 2.2× | 61% |
+| Write 1,000 objects mapped as attributes | 209.4 µs / 131,138 B | 108.2 µs / 313 B | 110.3 µs / 0 B | 1.9× | 100% |
+| Read 1,000 objects of three derived types | 208.6 µs / 130,866 B | 142.6 µs / 117,914 B | 100.4 µs / 90,793 B | 2.1× | 31% |
+| Write 1,000 objects of three derived types | 131.2 µs / 30,098 B | 79.8 µs / 313 B | 61.5 µs / 0 B | 2.1× | 100% |
+| Read 1,000 objects with a decimal amount | 262.4 µs / 146,252 B | 88.9 µs / 89,073 B | 87.9 µs / 88,601 B | 3.0× | 39% |
+| Write 1,000 objects with a decimal amount | 82.6 µs / 48,009 B | 50.4 µs / 312 B | 47.2 µs / 0 B | 1.8× | 100% |
+
+When XmlEssentials reads objects, the memory it allocates is the objects and strings it gives you back. When it writes into your buffer, it allocates nothing.
+
+`System.Xml` can't serialize positional records or dictionaries, so these rows have System.Text.Json beside them alone:
+
+| Operation | System.Text.Json | XmlEssentials |
+| --- | --- | --- |
+| Read 1,000 positional records | 170.1 µs / 240,274 B | 141.7 µs / 143,802 B |
+| Write 1,000 positional records | 56.3 µs / 312 B | 50.6 µs / 0 B |
+| Read a dictionary of 100 integers | 3.48 µs / 13,392 B | 4.10 µs / 13,392 B |
+| Write a dictionary of 100 integers | 928 ns / 0 B | 1.79 µs / 0 B |
+
+### Documents shaped for System.Xml
+
+The `Bcl` preset reads and writes the XML that `System.Xml.Serialization.XmlSerializer` produces. The feed and the `xsi:type` rows use shapes that serializer was designed around: prefixed namespaces, and derived types marked with `xsi:type`.
+
+| Operation | System.Xml | XmlEssentials | Faster | Less memory |
+| --- | --- | --- | --- | --- |
+| Read a customer written by `System.Xml`, `Bcl` preset | 4.65 µs / 10,704 B | 1.66 µs / 1,320 B | 2.8× | 88% |
+| Write a customer as `System.Xml` writes it, `Bcl` preset | 2.27 µs / 8,224 B | 747 ns / 0 B | 3.0× | 100% |
+| Read a feed of 200 episodes in four namespaces | 169.0 µs / 197,882 B | 122.5 µs / 153,585 B | 1.4× | 22% |
+| Write a feed of 200 episodes in four namespaces | 85.0 µs / 15,009 B | 64.2 µs / 0 B | 1.3× | 100% |
+| Read 1,000 objects marked with `xsi:type` | 234.0 µs / 228,570 B | 197.8 µs / 90,798 B | 1.2× | 60% |
+| Write 1,000 objects marked with `xsi:type` | 164.9 µs / 30,506 B | 96.1 µs / 0 B | 1.7× | 100% |
+
+### References, cycles, and discriminators
+
+These features follow System.Text.Json, so it's the comparison.
+
+| Operation | System.Text.Json | XmlEssentials |
+| --- | --- | --- |
+| Read 200 customers | 206.8 µs / 254,338 B | 195.2 µs / 266,666 B |
+| Write 200 customers | 107.2 µs / 313 B | 101.4 µs / 0 B |
+| Read 200 customers, references preserved | 366.3 µs / 385,516 B | 368.8 µs / 494,396 B |
+| Write 200 customers, references preserved | 167.1 µs / 150,666 B | 199.6 µs / 148,578 B |
+| Write 200 customers, cycles ignored | 116.1 µs / 425 B | 112.4 µs / 360 B |
+| Read 1,000 objects with a type discriminator | 150.8 µs / 117,914 B | 133.5 µs / 90,794 B |
+| Write 1,000 objects with a type discriminator | 79.6 µs / 313 B | 76.7 µs / 0 B |
+
+### Streams of values
+
+`SerializeAsyncEnumerable` and `DeserializeAsyncEnumerable` write and read one value at a time. `System.Xml` has no counterpart, so its figures are for an array read or written whole, and these rows aren't part of the averages on this page.
+
+| Operation | System.Xml | System.Text.Json | XmlEssentials | Faster than System.Xml | Less memory than System.Xml |
+| --- | --- | --- | --- | --- | --- |
+| Read 1,000 integers as a stream | 42.4 µs / 61,152 B | 26.5 µs / 8,968 B | 21.0 µs / 9,224 B | 2.0× | 85% |
+| Write 1,000 integers as a stream | 33.4 µs / 30,408 B | 13.7 µs / 376 B | 18.5 µs / 184 B | 1.8× | 99% |
+| Read 1,000 orders as a stream |  | 462.6 µs / 235,220 B | 340.3 µs / 240,892 B |  |  |
+| Write 1,000 orders as a stream |  | 225.5 µs / 690 B | 214.1 µs / 186 B |  |  |
+
+### Source generation
+
+A [source-generated context](/xmlessentials/guides/source-generation) needs no reflection, which makes it safe for trimming and Native AOT. It has a write fast path, and it reads with the same engine as the reflection resolver.
+
+| Operation | System.Xml | System.Text.Json | XmlEssentials, reflection | XmlEssentials, source generation |
+| --- | --- | --- | --- | --- |
+| Read a customer | 8.67 µs / 16,496 B | 2.87 µs / 3,576 B | 2.64 µs / 3,168 B | 2.59 µs / 3,168 B |
+| Write a customer | 4.30 µs / 8,648 B | 1.41 µs / 312 B | 1.42 µs / 0 B | 1.21 µs / 0 B |
+
+The first call for a type through reflection costs about 0.6 ms while the serializer builds the type info for that type and options instance. Every later call with the same options uses the cached type info. See [Reflection vs. source generation](/xmlessentials/guides/reflection-vs-source-generation#what-each-approach-costs).
+
+Each generation mode beside the same mode of the System.Text.Json generator:
+
+| Operation | System.Text.Json | XmlEssentials |
+| --- | --- | --- |
+| Read, default mode | 2.88 µs / 3,576 B | 2.54 µs / 3,168 B |
+| Read, metadata mode | 2.83 µs / 3,576 B | 2.56 µs / 3,168 B |
+| Read, reflection |  | 2.66 µs / 3,168 B |
+| Write, default mode | 856 ns / 0 B | 1.07 µs / 0 B |
+| Write, serialization mode | 853 ns / 0 B | 1.12 µs / 0 B |
+| Write, metadata mode | 1.41 µs / 312 B | 1.31 µs / 0 B |
+| Write, default mode, other options |  | 1.34 µs / 0 B |
+| Write, reflection |  | 1.38 µs / 0 B |
+
+## How XmlEssentials compares with System.Xml
+
+The headline numbers come from every row above that has a `System.Xml` figure for the same work: 67 comparisons.
+
+- **Speed.** XmlEssentials is faster in 66 of them. The average is 3.0×, which is the geometric mean of the Faster column, the right kind of average for ratios. The median is 2.3×. The smallest win is 1.1× and the largest is 19×.
+- **Memory.** In the 66 comparisons where `System.Xml` allocates anything, XmlEssentials allocates 85% less on average, which is the mean of the Less memory column over those rows. In 32 of the 67 it allocates 0 bytes. It allocates more in two: the rows that change a tree.
+- **By kind of work.** Single values are 4.3× to 19× faster, parsing real documents into a DOM is 3.1× to 3.4×, objects are 1.8× to 5.9×, reading real documents is 1.5× to 2.3×, and writing a DOM back out is 1.4× to 1.7×.
+
+What's counted, so that you can check it:
+
+- The tree rows count twice, once against `XmlDocument` and once against `XDocument`.
+- The raw XML rows and the stream rows aren't counted, because `System.Xml` isn't doing the same work in them.
+- Rows that have no `System.Xml` figure aren't counted.
+
+## How XmlEssentials compares with System.Text.Json
+
+XmlEssentials has the same API shape as System.Text.Json, so it's fair to ask whether it has the same speed. For objects, it does. For single values and the mutable tree, it doesn't. Of the 47 rows above that have a System.Text.Json figure:
+
+- **Ahead in 10.** Objects of three derived types (read 100.4 µs against 142.6 µs, write 61.5 µs against 79.8 µs), a stream of 1,000 orders read (340.3 µs against 462.6 µs), and a long text value written in segments are the widest.
+- **Level in 19.** The difference is inside the measurement error of the run. That covers most of the object rows: a customer, 1,000 orders, objects mapped as attributes, and objects with a decimal amount, read and written.
+- **Behind in 18,** by 1.15× to 2.1×. The widest gaps are single values (56 ns against 27 ns to read an `int`), the mutable tree, a dictionary written, and checked raw XML.
+- **Equal or lower in memory in 38 of the 47.**
+
+XML asks more of a parser than JSON does. `<int>1</int>` is three tokens, and the name has to match at both ends; in JSON, `1` is one token. A whole XML document for one value also carries more bytes than the JSON for it. So a single XML value can't be read or written as fast as a JSON one. What you get instead is XML objects at the speed of JSON objects.
+
+## How the benchmarks are run
+
+- [BenchmarkDotNet](https://benchmarkdotnet.org) 0.15.8, `ShortRun` job with the in-process toolchain, .NET 11.0 on x64, Windows 11 on an Intel Core Ultra 9 285K (run under Hyper-V on 2026-11-25). Every table on this page comes from one run of the whole suite: 229 benchmarks.
+- Each library reads the document it wrote itself, and each side keeps the same whitespace and comments.
+- The `System.Xml` serializer and its reader and writer settings are created once and reused, which is the fastest way to use them. XmlEssentials writers are reused with `Reset`.
+- The 0 B results are also enforced by unit tests that measure allocated bytes, so they can't drift without a test failing.
+- The run uses the just-in-time compiler with its defaults. It doesn't measure a Native AOT build.
+- Times move by 5% to 8% between runs on this machine. Compare the ratios, not the last digit.
+
+<Note>
+  Your documents aren't these documents. The benchmark project is in the repository so that you can add your own payloads and measure them.
+</Note>
+
+## Run the benchmarks yourself
+
+<Steps>
+  <Step title="Clone the repository">
+    ```bash
+    git clone https://github.com/CloudNimble/XmlEssentials.git
+    cd XmlEssentials/src
+    ```
+  </Step>
+  <Step title="Run every benchmark">
+    ```bash
+    dotnet run -c Release --project CloudNimble.XmlEssentials.Performance -f net11.0 -- --filter "*"
+    ```
+
+  </Step>
+  <Step title="Or run one group">
+    ```bash
+    dotnet run -c Release --project CloudNimble.XmlEssentials.Performance -f net11.0 -- --filter "*RealDocumentBenchmarks*"
+    ```
+
+    The groups are `RealDocumentBenchmarks`, `Utf8XmlReaderBenchmarks`, `Utf8XmlReaderFlowBenchmarks`, `Utf8XmlWriterBenchmarks`, `Utf8XmlWriterStyleBenchmarks`, `XmlDocumentBenchmarks`, `XmlNodeBenchmarks`, `XmlSerializerBenchmarks`, `XmlSerializerFeatureBenchmarks`, `XmlSerializerGraphBenchmarks`, `XmlSerializerObjectBenchmarks`, `XmlSerializerObjectSequenceBenchmarks`, `XmlSerializerSequenceBenchmarks`, and `XmlSerializerSourceGenBenchmarks`. Every group has rows on this page.
+  </Step>
+  <Step title="Read the results">
+    BenchmarkDotNet writes a Markdown table for each group to `BenchmarkDotNet.Artifacts/results`.
+  </Step>
+</Steps>
+
+## See also
+
+<Columns cols={2}>
+  <Card title="Why XmlEssentials?" icon="lightbulb" href="/xmlessentials/why-xmlessentials">
+    Where the library comes from and what it replaces.
+  </Card>
+  <Card title="Quickstart" icon="play" href="/xmlessentials/quickstart">
+    Install the package and read, write, and serialize your first document.
+  </Card>
+  <Card title="Reflection vs. source generation" icon="code-compare" href="/xmlessentials/guides/reflection-vs-source-generation">
+    Choose how the serializer learns about your types.
+  </Card>
+  <Card title="Benchmark source" icon="github" href="https://github.com/CloudNimble/XmlEssentials/tree/main/src/CloudNimble.XmlEssentials.Performance">
+    Every benchmark on this page, ready to run.
+  </Card>
+</Columns>
