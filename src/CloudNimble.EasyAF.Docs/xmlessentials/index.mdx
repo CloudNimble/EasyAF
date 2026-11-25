@@ -1,7 +1,7 @@
 ---
 title: "XmlEssentials: The XML API .NET developers begged for"
 sidebarTitle: "Welcome"
-description: "System.Text.Json-shaped, UTF-8 first, 3x faster, 85% less memorysource generated, Native AOT ready, with XML 1.0 and 1.1 support."
+description: "System.Text.Json-shaped, UTF-8 first, 3x faster, 85% less memory, source generated, Native AOT ready, with XML 1.0 and 1.1 support."
 icon: "house"
 ---
 
@@ -66,7 +66,9 @@ XmlEssentials reads and writes UTF-8 directly. There's no transcoding to UTF-16,
 
 On lists and graphs of objects it runs level with System.Text.Json, which is remarkable for a format that demands much more of a parser. The [benchmarks page](/xmlessentials/benchmarks) shows every row, including the ones where JSON still wins and the one where `System.Xml` does.
 
-## Built for how you ship .NET today
+## Built for .NET in 2027 and beyond
+
+XmlEssentials targets .NET 10 and .NET 11 and nothing older. There's no .NET Framework or .NET Standard build to hold it back, so the API uses the language and the runtime as they are today.
 
 <Columns cols={4}>
   <Card title="Source generation" icon="wand-magic-sparkles" href="/xmlessentials/guides/source-generation">
@@ -75,25 +77,39 @@ On lists and graphs of objects it runs level with System.Text.Json, which is rem
   <Card title="Native AOT and trimming" icon="rocket" href="/xmlessentials/guides/native-aot">
     Publish with `PublishAot` and it works. A test in the suite publishes a real app with Native AOT and runs it.
   </Card>
-  <Card title="XML 1.0 and XML 1.1" icon="check-double" href="/xmlessentials/guides/xml-conformance">
-    Both versions of the specification, plus Namespaces in XML, verified against the W3C conformance suite. `System.Xml` never implemented XML 1.1.
-  </Card>
-  <Card title="Your types, as you write them" icon="cubes" href="/xmlessentials/guides/immutable-types">
-    Records, constructors, `init` and `required` members, internal types, dictionaries, and polymorphism. No public parameterless constructor needed.
-  </Card>
-  <Card title="Streaming and async" icon="water" href="/xmlessentials/guides/streaming">
-    Streams, pipes, and `IAsyncEnumerable<T>`, so you can read a huge feed one item at a time.
-  </Card>
-  <Card title="Classes from your schema (preview)" icon="diagram-project" href="/xmlessentials/guides/xsd-source-generation">
-    Add an `.xsd` file to your project and get types and a serialization context generated for you. In preview.
-  </Card>
   <Card title="Safe by default" icon="shield-halved" href="/xmlessentials/guides/security">
     No DTDs, no external entities, and limits on depth and size. Billion-laughs and XXE attacks have nothing to attack.
+  </Card>
+  <Card title="Streaming and async" icon="water" href="/xmlessentials/guides/streaming">
+    `Stream`, `PipeReader` and `PipeWriter`, and `IAsyncEnumerable<T>`, each with a `CancellationToken`, so you can read a huge feed one item at a time.
+  </Card>
+  <Card title="Spans and buffers" icon="memory" href="/xmlessentials/guides/use-utf8xmlreader">
+    `ReadOnlySpan<byte>`, `ReadOnlySequence<byte>`, and `IBufferWriter<byte>` throughout. The reader is a `ref struct` that lives on the stack.
+  </Card>
+  <Card title="Your types, as you write them" icon="cubes" href="/xmlessentials/guides/immutable-types">
+    Positional records, constructors, `init` and `required` members, internal types, dictionaries, and polymorphism. No public parameterless constructor needed.
+  </Card>
+  <Card title="XML 1.0 and XML 1.1" icon="check-double" href="/xmlessentials/guides/xml-conformance">
+    Both versions of the specification, plus Namespaces in XML, verified against the W3C conformance suite. `System.Xml` never implemented XML 1.1.
   </Card>
   <Card title="No System.Xml" icon="feather" href="/xmlessentials/why-xmlessentials">
     One package with no dependency on the old XML stack, so nothing of it lands in your trimmed app.
   </Card>
+  <Card title="Generic attributes" icon="code" href="/xmlessentials/guides/source-generation">
+    `[XmlSerializable<Person>]`, `[XmlDerivedType<Dog>]`, `[XmlConverter<MoneyConverter>]`. The compiler checks the type, and there's no `typeof` to get wrong.
+  </Card>
+  <Card title="Closed types" icon="lock" href="/xmlessentials/guides/polymorphism">
+    On .NET 11, declare a hierarchy `closed` and the serializer takes its derived types from the compiler. You register nothing.
+  </Card>
+  <Card title="Today's value types" icon="hashtag" href="/xmlessentials/guides/supported-types">
+    `DateOnly`, `TimeOnly`, `Int128`, `UInt128`, and `Half` work out of the box, next to the types you've always had.
+  </Card>
+  <Card title="Classes from your schema (preview)" icon="diagram-project" href="/xmlessentials/guides/xsd-source-generation">
+    Add an `.xsd` file to your project and get types and a serialization context generated for you. In preview.
+  </Card>
 </Columns>
+
+The same goes for what you don't see. Generated contexts reach `init`, `required`, and non-public members through `[UnsafeAccessor]`, not reflection, and the reader and writer are built on `SearchValues<T>`, `IUtf8SpanFormattable`, and frozen collections. As .NET adds to the language and the runtime, XmlEssentials is free to follow.
 
 ## How it compares
 

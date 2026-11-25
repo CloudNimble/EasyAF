@@ -7,6 +7,12 @@ on:
     paths-ignore:
       - 'src/CloudNimble.EasyAF.Docs/**'
       - 'specs/**'
+      - 'external/**'
+      - '.gitmodules'
+      - 'README.md'
+      - 'EasyAF-CLI-Guide.md'
+      - 'LICENSE'
+      - '.gitignore'
   workflow_dispatch:
 
 permissions:

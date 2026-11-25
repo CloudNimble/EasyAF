@@ -1,0 +1,490 @@
+/* EasyAF home page (index.mdx) and its system map (snippets/easyaf/system-map.jsx).
+   Everything is scoped to .eaf-home so no other page is affected. */
+
+.eaf-home {
+    --eaf-ink: #16180c;
+    --eaf-muted: #575a47;
+    --eaf-line: rgba(22, 24, 12, 0.16);
+    --eaf-surface: rgba(22, 24, 12, 0.035);
+    --eaf-app: #596100;
+    --eaf-app-fill: #E0EC32;
+    --eaf-si: #a8480f;
+    --eaf-si-fill: #F58D4D;
+    --eaf-on-fill: #16180c;
+
+    color: var(--eaf-ink);
+    max-width: 76rem;
+    margin: 0 auto;
+    padding: clamp(2.5rem, 6vw, 5rem) clamp(1.25rem, 4vw, 3rem) 5rem;
+    line-height: 1.55;
+}
+
+html.dark .eaf-home {
+    --eaf-ink: #f3f4e8;
+    --eaf-muted: #a9ac98;
+    --eaf-line: rgba(243, 244, 232, 0.16);
+    --eaf-surface: rgba(243, 244, 232, 0.04);
+    --eaf-app: #E0EC32;
+    --eaf-si: #F58D4D;
+}
+
+.eaf-home a {
+    text-decoration: none;
+}
+
+.eaf-home :focus-visible {
+    outline: 2px solid var(--eaf-ink);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* ---------- Hero ---------- */
+
+.eaf-title {
+    font-size: clamp(2.5rem, 6.4vw, 5rem);
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    max-width: 16ch;
+    margin: 0;
+    color: var(--eaf-ink);
+}
+
+.eaf-lede {
+    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+    color: var(--eaf-muted);
+    max-width: 58ch;
+    margin: 1.5rem 0 0;
+}
+
+/* ---------- Two ways in ---------- */
+
+.eaf-paths {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.eaf-path {
+    --eaf-accent: var(--eaf-app);
+    --eaf-accent-fill: var(--eaf-app-fill);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.75rem;
+    border: 1px solid var(--eaf-line);
+    border-top: 4px solid var(--eaf-accent-fill);
+    border-radius: 6px;
+    background: var(--eaf-surface);
+    color: var(--eaf-ink);
+    transition: border-color 0.15s ease;
+}
+
+.eaf-path-si {
+    --eaf-accent: var(--eaf-si);
+    --eaf-accent-fill: var(--eaf-si-fill);
+}
+
+.eaf-path:hover {
+    border-color: var(--eaf-accent);
+    border-top-color: var(--eaf-accent-fill);
+}
+
+.eaf-path-who {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--eaf-accent);
+}
+
+.eaf-path-title {
+    font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+    font-weight: 750;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+}
+
+.eaf-path-text {
+    color: var(--eaf-muted);
+    max-width: 44ch;
+}
+
+.eaf-path-parts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+}
+
+.eaf-path-part {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.6rem;
+    border: 1px solid var(--eaf-line);
+    border-radius: 999px;
+    color: var(--eaf-ink);
+}
+
+.eaf-path-go {
+    align-self: flex-start;
+    margin-top: 1rem;
+    padding: 0.55rem 1rem;
+    border-radius: 4px;
+    background: var(--eaf-accent-fill);
+    color: var(--eaf-on-fill);
+    font-weight: 650;
+    font-size: 0.95rem;
+}
+
+/* ---------- Sections ---------- */
+
+.eaf-section {
+    margin-top: clamp(4rem, 9vw, 7rem);
+}
+
+.eaf-h2 {
+    font-size: clamp(1.7rem, 3.4vw, 2.6rem);
+    font-weight: 780;
+    letter-spacing: -0.028em;
+    line-height: 1.1;
+    margin: 0;
+    color: var(--eaf-ink);
+}
+
+.eaf-sub {
+    color: var(--eaf-muted);
+    max-width: 62ch;
+    margin: 0.9rem 0 0;
+    font-size: 1.05rem;
+}
+
+.eaf-sub a {
+    color: var(--eaf-app);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.eaf-steps {
+    max-width: 46rem;
+    margin-top: 2rem;
+}
+
+/* ---------- System map ---------- */
+
+.eaf-map {
+    --eaf-accent: var(--eaf-app);
+    --eaf-accent-fill: var(--eaf-app-fill);
+    margin-top: 2rem;
+}
+
+.eaf-map[data-mode="agent"] {
+    --eaf-accent: var(--eaf-si);
+    --eaf-accent-fill: var(--eaf-si-fill);
+}
+
+.eaf-map button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
+.eaf-toggle {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--eaf-line);
+    border-radius: 6px;
+}
+
+.eaf-toggle-btn {
+    padding: 0.5rem 0.95rem;
+    border: 0;
+    border-radius: 3px;
+    background: transparent;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.eaf-toggle-btn[aria-pressed="true"] {
+    background: var(--eaf-accent-fill);
+    color: var(--eaf-on-fill);
+}
+
+.eaf-map-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 23rem);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+    margin-top: 1.5rem;
+}
+
+.eaf-stack {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) 1.5rem minmax(0, 1fr);
+}
+
+.eaf-clients {
+    grid-column: 1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+}
+
+.eaf-wires {
+    grid-column: 1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+}
+
+.eaf-wire {
+    grid-column: 1;
+    justify-self: center;
+    width: 2px;
+    height: 1.25rem;
+    background: var(--eaf-line);
+    transition: background-color 0.25s ease;
+}
+
+.eaf-wire.is-on {
+    background: var(--eaf-accent);
+}
+
+.eaf-hwire {
+    grid-column: 2;
+    align-self: center;
+    height: 2px;
+    background: var(--eaf-line);
+    transition: background-color 0.25s ease;
+}
+
+.eaf-hwire.is-on {
+    background: var(--eaf-accent);
+}
+
+.eaf-main {
+    grid-column: 1;
+}
+
+.eaf-side {
+    grid-column: 3;
+    grid-row: 3 / span 3;
+}
+
+.eaf-node {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.15rem;
+    width: 100%;
+    height: 100%;
+    min-height: 3.6rem;
+    padding: 0.7rem 0.9rem;
+    text-align: left;
+    border: 1px solid var(--eaf-line);
+    border-left: 4px solid var(--eaf-line);
+    border-radius: 4px;
+    background: var(--eaf-surface);
+    transition: border-color 0.25s ease, opacity 0.25s ease, background-color 0.25s ease;
+}
+
+.eaf-node-name {
+    font-weight: 680;
+    font-size: 0.98rem;
+    line-height: 1.25;
+}
+
+.eaf-node-lib,
+.eaf-detail-lib {
+    font-family: "Cascadia Code", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.eaf-node-lib {
+    font-size: 0.78rem;
+    color: var(--eaf-muted);
+    overflow-wrap: anywhere;
+}
+
+.eaf-node.is-on {
+    border-color: var(--eaf-accent);
+    border-left-color: var(--eaf-accent-fill);
+}
+
+.eaf-node.is-dim {
+    opacity: 0.45;
+}
+
+.eaf-node.is-selected {
+    background: var(--eaf-accent-fill);
+    border-color: var(--eaf-accent-fill);
+    color: var(--eaf-on-fill);
+}
+
+.eaf-node.is-selected .eaf-node-lib {
+    color: var(--eaf-on-fill);
+}
+
+.eaf-node:hover {
+    border-color: var(--eaf-accent);
+    opacity: 1;
+}
+
+.eaf-around {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px dashed var(--eaf-line);
+}
+
+.eaf-around-label {
+    font-size: 0.9rem;
+    color: var(--eaf-muted);
+    margin: 0 0 0.75rem;
+}
+
+.eaf-around-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+    gap: 0.6rem;
+}
+
+.eaf-detail {
+    position: sticky;
+    top: 6rem;
+    padding: 1.5rem;
+    border: 1px solid var(--eaf-line);
+    border-radius: 6px;
+    background: var(--eaf-surface);
+}
+
+.eaf-detail-title {
+    font-size: 1.3rem;
+    font-weight: 750;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.eaf-detail-lib {
+    font-size: 0.82rem;
+    color: var(--eaf-accent);
+    margin: 0.25rem 0 0;
+}
+
+.eaf-detail-text {
+    color: var(--eaf-muted);
+    margin: 0.9rem 0 0;
+}
+
+.eaf-detail-steps {
+    margin: 1rem 0 0;
+    padding: 0 0 0 1.25rem;
+    color: var(--eaf-muted);
+    list-style: decimal;
+}
+
+.eaf-detail-steps li {
+    margin-top: 0.55rem;
+    padding-left: 0.2rem;
+}
+
+.eaf-detail-steps li::marker {
+    color: var(--eaf-accent);
+    font-weight: 700;
+}
+
+.eaf-detail-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin: 1.25rem 0 0.5rem;
+}
+
+.eaf-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.eaf-chip {
+    padding: 0.25rem 0.65rem;
+    border: 1px solid var(--eaf-line);
+    border-radius: 999px;
+    background: transparent;
+    font-size: 0.85rem;
+}
+
+.eaf-chip:hover {
+    border-color: var(--eaf-accent);
+}
+
+.eaf-detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    margin-top: 1.4rem;
+}
+
+.eaf-detail-link {
+    padding: 0.5rem 0.9rem;
+    border-radius: 4px;
+    background: var(--eaf-accent-fill);
+    color: var(--eaf-on-fill);
+    font-weight: 650;
+    font-size: 0.92rem;
+}
+
+.eaf-detail-reset {
+    padding: 0.35rem 0;
+    border: 0;
+    background: transparent;
+    font-size: 0.9rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+    .eaf-map-body {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .eaf-detail {
+        position: static;
+    }
+}
+
+@media (max-width: 640px) {
+    .eaf-paths {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .eaf-stack {
+        grid-template-columns: minmax(0, 1.25fr) 0.75rem minmax(0, 1fr);
+    }
+
+    .eaf-node {
+        padding: 0.6rem 0.65rem;
+    }
+
+    /* The two clients take the full width; a single wire drops from whichever one is active. */
+    .eaf-clients {
+        grid-column: 1 / -1;
+    }
+
+    .eaf-wires {
+        display: flex;
+        justify-content: center;
+        min-height: 1.25rem;
+    }
+
+    .eaf-wires .eaf-wire:not(.is-on) {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eaf-home *,
+    .eaf-home *::before,
+    .eaf-home *::after {
+        transition: none !important;
+    }
+}

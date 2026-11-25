@@ -4,4 +4,103 @@ sidebarTitle: Home
 description: Build Secure, Scalable .NET Applications Faster
 mode: "custom"
 icon: house
+keywords: ["EasyAF", ".NET", "application framework", "OData", "Restier", "MCP", "code generation"]
 ---
+
+import { SystemMap } from '/snippets/easyaf/system-map.jsx';
+
+<div className="eaf-home">
+
+<h1 className="eaf-title">The application framework that's easy as f&#42;ck</h1>
+
+<p className="eaf-lede">Point EasyAF at a SQL Server or PostgreSQL database and it generates the entities, managers, and OData API for a .NET application. The same stack serves the people using your app and the AI agents working alongside them.</p>
+
+<div className="eaf-paths">
+  <a className="eaf-path" href="/quickstart">
+    <span className="eaf-path-who">For people</span>
+    <span className="eaf-path-title">Build an app</span>
+    <span className="eaf-path-text">Scaffold a solution, generate every layer from your schema, and put a Blazor UI on top.</span>
+    <span className="eaf-path-parts">
+      <span className="eaf-path-part">Core framework</span>
+      <span className="eaf-path-part">REST APIs</span>
+      <span className="eaf-path-part">Async events</span>
+      <span className="eaf-path-part">Blazor UI</span>
+      <span className="eaf-path-part">Testing</span>
+    </span>
+    <span className="eaf-path-go">Start the quickstart</span>
+  </a>
+  <a className="eaf-path eaf-path-si" href="https://si.nimbleapps.cloud">
+    <span className="eaf-path-who">For agents</span>
+    <span className="eaf-path-title">Build for SuperIntelligence</span>
+    <span className="eaf-path-text">Give AI agents the same API over MCP, and build tools that plug into Claude Code.</span>
+    <span className="eaf-path-parts">
+      <span className="eaf-path-part">OData MCP</span>
+      <span className="eaf-path-part">MCP Essentials</span>
+      <span className="eaf-path-part">ClaudeEssentials</span>
+    </span>
+    <span className="eaf-path-go">Open the SuperIntelligence docs</span>
+  </a>
+</div>
+
+<div className="eaf-section">
+  <h2 className="eaf-h2">One stack, two kinds of user</h2>
+  <p className="eaf-sub">Whether a person or an agent is asking, the request travels through the same parts. Switch between them to follow the path, or select a part to see what it does and what it works with.</p>
+  <SystemMap />
+</div>
+
+<Visibility for="agents">
+
+## How the parts fit together
+
+- **Blazor UI (BlazorEssentials)**: the front end people use. It reaches your data through the REST API. See [/blazoressentials/guides](/blazoressentials/guides).
+- **AI agent (OData MCP)**: OData MCP points an agent at the same live OData API. See [https://si.nimbleapps.cloud](https://si.nimbleapps.cloud).
+- **REST API (EasyAF.Restier)**: a Restier host that exposes your entities over OData. See [/restier](/restier).
+- **Managers (EasyAF.Business)**: one per entity. They wrap create, update, and delete, fill audit fields, and provide lifecycle hooks. See [/guides/business-layer](/guides/business-layer).
+- **Async events (SimpleMessageBus)**: the API and every manager receive a message publisher. See [/simplemessagebus](/simplemessagebus).
+- **Data (EasyAF.Data.EFCore)**: an Entity Framework DbContext generated for your schema. See [/guides/table-design](/guides/table-design).
+- **Database**: SQL Server or PostgreSQL. The CLI reads the schema and generates the layers above it.
+- **CLI and code generation (`dotnet easyaf`)**: scaffolds the solution and generates entities, the DbContext, managers, and the API. See [/quickstart](/quickstart).
+- **Core (EasyAF.Core)**: entities, interfaces, observable objects, and intervals. It works on its own in any .NET project.
+- **Testing (Breakdance)**: the scaffolded solution includes Breakdance test projects. See [/breakdance](/breakdance).
+- **XML (XmlEssentials)**: a standalone XML library. See [/xmlessentials](/xmlessentials).
+
+</Visibility>
+
+<div className="eaf-section">
+  <h2 className="eaf-h2">From an empty folder to a running API</h2>
+  <p className="eaf-sub">These are the commands from the <a href="/quickstart">quickstart</a>, which explains each one.</p>
+  <div className="eaf-steps">
+
+<Steps>
+  <Step title="Install the CLI">
+    ```bash
+    dotnet tool install EasyAF --global
+    ```
+  </Step>
+  <Step title="Create a solution">
+    ```bash
+    dotnet easyaf new CloudNimble.Contoso
+    ```
+  </Step>
+  <Step title="Connect a database">
+    ```bash
+    dotnet easyaf init -c "appsettings.json:ConnectionStrings:DefaultConnection" -x ContosoContext -p SqlServer
+    ```
+  </Step>
+  <Step title="Generate from your schema">
+    ```bash
+    dotnet easyaf database generate --context-name ContosoContext
+    dotnet easyaf code generate all
+    ```
+  </Step>
+  <Step title="Run the API">
+    ```bash
+    dotnet run --project CloudNimble.Contoso.Api
+    ```
+  </Step>
+</Steps>
+
+  </div>
+</div>
+
+</div>

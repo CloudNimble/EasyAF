@@ -7,6 +7,12 @@ on:
       - '.github/**'
       - 'src/CloudNimble.EasyAF.Docs/**'
       - 'specs/**'
+      - 'external/**'
+      - '.gitmodules'
+      - 'README.md'
+      - 'EasyAF-CLI-Guide.md'
+      - 'LICENSE'
+      - '.gitignore'
   workflow_dispatch:
     inputs:
       deploy_to_nuget:
